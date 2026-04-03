@@ -6,7 +6,7 @@
   "bottomRow": 49,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => (  \n  (() => {\n    const config = WeatherHelper.getTimeSeriesConfig();\n    return typeof config === \"string\"\n      ? JSON.parse(config)\n      : JSON.parse(JSON.stringify(config));\n  })()\n))(WeatherTimeSeriesChart.chartType) }}",
+  "customEChartConfig": "{{WeatherHelper.getTimeSeriesConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

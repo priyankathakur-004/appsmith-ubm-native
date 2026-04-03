@@ -1,0 +1,46 @@
+SELECT
+    TO_CHAR(ah.created_at, 'MM-DD-YYYY') AS created_at,
+    ah.bill_meta_id,
+    STRING_AGG(DISTINCT bbm.batch_id::text, ',') AS batch_ids,
+    ah.text AS activity_text,
+    u.email AS user_email,
+    CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name') AS user_name,
+    cs.id AS customer_id,
+    cs.name AS customer_name
+FROM bill_management_v2.activity_history ah
+LEFT JOIN bill_management_v2.bill_metas bm 
+    ON bm.id = ah.bill_meta_id
+LEFT JOIN bill_management_v2.batches_bill_metas bbm 
+    ON bbm.bill_meta_id = ah.bill_meta_id
+LEFT JOIN bill_management_v2.customers_search cs 
+    ON cs.id = bm.customer_id 
+LEFT JOIN bill_management_v2.users u 
+    ON u.id = ah.user_id 
+WHERE
+    1=1
+    {{ customers.selectedOptionValues && customers.selectedOptionValues.length 
+			? `AND cs.id IN (${customers.selectedOptionValues.map(v => `'${v}'`).join(',')})` 
+			: "" 
+		}}
+    {{ users.selectedOptionValues && users.selectedOptionValues.length 
+        ? `AND u.id IN (${users.selectedOptionValues.map(v => `'${v}'`).join(',')})`
+        : ""
+    }}
+    {{ dateFrom.selectedDate && dateTo.selectedDate ? 
+        `AND ah.created_at >= '${moment(dateFrom.selectedDate).startOf('day').format('YYYY-MM-DD HH:mm:ss')}'
+        AND ah.created_at <= '${moment(dateTo.selectedDate).endOf('day').format('YYYY-MM-DD HH:mm:ss')}'`
+        : ""
+    }}
+    {{ columnDropdown.selectedOptionValue && columnSearchInput.text ?
+        `AND CAST(${columnDropdown.selectedOptionValue} AS TEXT) ILIKE '%${columnSearchInput.text}%'`
+        : ""
+    }}
+GROUP BY
+    ah.created_at,
+    ah.bill_meta_id,
+    ah.text,
+    u.email,
+    u.profile,
+    cs.id,
+    cs.name
+ORDER BY ah.created_at DESC;

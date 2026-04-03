@@ -3,7 +3,8 @@ SELECT DISTINCT ON (l.name)
 FROM bill_management_v2.analytics_billing_line_items abli
 LEFT JOIN bill_management_v2.locations l 
     ON abli.location_id = l.id
-WHERE abli.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
+WHERE abli.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
+
 ORDER BY l.name
 
 

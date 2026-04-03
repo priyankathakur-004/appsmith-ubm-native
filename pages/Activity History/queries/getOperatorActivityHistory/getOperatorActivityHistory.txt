@@ -1,0 +1,45 @@
+SELECT
+    TO_CHAR(ah.created_at, 'MM-DD-YYYY') AS "Created At",
+    ah.bill_meta_id AS "Bill ID",
+    STRING_AGG(DISTINCT bbm.batch_id::text, ',') AS "Batch IDs",
+    u.email AS "User Email",
+    CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name') AS "User Name",
+    cs.name AS "Customer",
+		ah.text AS "Activity Text"
+FROM bill_management_v2.activity_history ah
+LEFT JOIN bill_management_v2.bill_metas bm 
+    ON bm.id = ah.bill_meta_id
+LEFT JOIN bill_management_v2.batches_bill_metas bbm 
+    ON bbm.bill_meta_id = ah.bill_meta_id
+LEFT JOIN bill_management_v2.customers_search cs 
+    ON cs.id = bm.customer_id 
+LEFT JOIN bill_management_v2.users u 
+    ON u.id = ah.user_id 
+WHERE
+    1=1
+		AND (
+        {{ operatorSelect.selectedOptionValues?.length || 0 }} = 0
+        OR u.id = ANY(string_to_array('{{ operatorSelect.selectedOptionValues.join(",") }}', ',')::int[])
+    )
+    AND u.email IN (
+			'juana.mejia+admin@constellation.com',
+			'jaclyn.hayes+admin@constellation.com',
+			'rmoss+admin@pear.ai',
+			'meghan+admin@pear.ai',
+			'elizabeth.say+admin@constellation.com',
+			'karen+admin@pear.ai',
+			'agha.bilal+admin@constellation.com',
+			'daniel.torres+admin@constellation.com',
+			'mary.foster+admin@constellation.com'
+		)
+GROUP BY
+    ah.created_at,
+    ah.bill_meta_id,
+    ah.text,
+    u.email,
+    u.profile,
+    cs.id,
+    cs.name
+ORDER BY ah.created_at DESC
+LIMIT {{ Table2.pageSize }}
+OFFSET {{ (Table2.pageNo - 1) * Table2.pageSize }};

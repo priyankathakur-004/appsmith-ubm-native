@@ -25,11 +25,7 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [
-    {
-      "key": "onOptionChange"
-    }
-  ],
+  "dynamicTriggerPathList": [],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
@@ -50,7 +46,6 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onOptionChange": "{{FilterActions.OnCustomerChange();}}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 26,

@@ -6,7 +6,7 @@
   "bottomRow": 53,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => (  \n  (() => {\n    const config = WeatherHelper.getCorrelationConfig();\n    return typeof config === \"string\"\n      ? JSON.parse(config)\n      : JSON.parse(JSON.stringify(config));\n  })()\n))(WeatherCorrelationChart.chartType) }}",
+  "customEChartConfig": "{{WeatherHelper.getCorrelationConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

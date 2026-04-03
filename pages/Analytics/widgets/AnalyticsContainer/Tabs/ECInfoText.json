@@ -4,7 +4,7 @@
   "borderColor": "{{appsmith.theme.colors.primaryColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 21,
+  "bottomRow": 20,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -30,7 +30,7 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 63,
   "mobileTopRow": 1,
-  "originalBottomRow": 21,
+  "originalBottomRow": 20,
   "originalTopRow": 13,
   "parentColumnSpace": 15,
   "parentId": "ck1dopp8ku",

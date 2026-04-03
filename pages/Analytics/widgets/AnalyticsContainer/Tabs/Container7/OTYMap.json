@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 34,
+  "bottomRow": 44,
   "boxShadow": "none",
   "defaultMarkers": "{{OverTheYearsHelper.getMapMarkers()}}",
   "dynamicBindingPathList": [
@@ -12,7 +12,12 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onMarkerClick"
+    }
+  ],
+  "onMarkerClick": "{{\nstoreValue('otyClickedLocation', OTYMap.selectedMarker?.title);\nshowModal(showLocationInfo.name);\n}}",
   "enablePickLocation": false,
   "enableSearch": false,
   "isClickedMarkerCentered": true,

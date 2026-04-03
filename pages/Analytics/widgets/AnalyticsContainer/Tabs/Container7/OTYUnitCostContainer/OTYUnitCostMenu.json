@@ -4,14 +4,50 @@
   "bottomRow": 54,
   "boxShadow": "none",
   "dynamicBindingPathList": [],
-  "dynamicTriggerPathList": [],
-  "iconName": "more-horizontal",
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.menuItem_uc_export.onClick"
+    },
+    {
+      "key": "menuItems.menuItem_uc_table.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.menuItem_uc_export.onClick"
+    },
+    {
+      "key": "menuItems.menuItem_uc_table.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
   "isLoading": false,
   "isVisible": true,
   "key": "x4k6p0rnvm",
   "leftColumn": 62,
-  "menuColor": "#2563eb",
-  "menuItems": {},
+  "menuColor": "#ffffff",
+  "menuItems": {
+    "menuItem_uc_export": {
+      "id": "menuItem_uc_export",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export ",
+      "onClick": "{{\nstoreValue('chartName', \"OTY_UnitCost\");\ndownload(\nObject.values(AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"unitcost.csv\",\n\"text/csv\"\n)}}",
+      "widgetId": "rv4gnqi7pp"
+    },
+    "menuItem_uc_table": {
+      "id": "menuItem_uc_table",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', \"OTY_UnitCost\");\nshowModal(showTable.name);}}",
+      "widgetId": "rv4gnqi7pp"
+    }
+  },
+  "menuItemsSource": "STATIC",
   "menuVariant": "TERTIARY",
   "mobileBottomRow": 8,
   "mobileLeftColumn": 60,

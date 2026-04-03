@@ -7,13 +7,13 @@
   "defaultOptionValue": "All",
   "dynamicBindingPathList": [
     {
+      "key": "sourceData"
+    },
+    {
       "key": "borderRadius"
     },
     {
       "key": "isDisabled"
-    },
-    {
-      "key": "sourceData"
     }
   ],
   "dynamicPropertyPathList": [
@@ -43,7 +43,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 48,
-  "sourceData": "{{ \n  (fetch_attribute_values.data?.length\n    ? fetch_attribute_values.data\n    : [{ attribute_value: \"\" }]\n  ).map(d => ({\n    label: d.attribute_value || \"\",\n    value: d.attribute_value || \"\"\n  }))\n}}\n",
+  "sourceData": "{{ (fetch_attribute_values.data || []).map(d => ({\n  label: d.attribute_value,\n  value: d.attribute_value\n})) }}",
   "topRow": 12,
   "type": "SELECT_WIDGET",
   "version": 1,

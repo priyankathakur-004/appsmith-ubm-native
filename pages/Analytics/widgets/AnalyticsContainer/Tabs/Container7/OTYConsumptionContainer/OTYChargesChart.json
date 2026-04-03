@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 41,
+  "bottomRow": 44,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{OverTheYearsHelper.getChargesChartConfig()}}",
@@ -13,7 +13,12 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
+  "onDataPointClick": "{{\nconst months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst monthIdx = months.indexOf(OTYChargesChart.selectedDataPoint?.x) + 1;\nconst year = Number(OTYChargesChart.selectedDataPoint?.seriesTitle);\nstoreValue('otyClickedMonth', monthIdx || null);\nstoreValue('otyClickedYear', year || null);\nstoreValue('otyClickedChart', 'charges');\nshowModal(showChart.name);\n}}",
   "isLoading": false,
   "isVisible": true,
   "key": "rbxgrbm1zb",

@@ -1,10 +1,10 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 89,
+  "bottomRow": 97,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{OverTheYearsHelper.getConsumptionChartConfig()}}",
+  "customEChartConfig": "{{ ((chartType) => ( OverTheYearsHelper.getConsumptionChartConfig()))(OTYConsumptionChart.chartType) }}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"
@@ -13,7 +13,12 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
+  "onDataPointClick": "{{\nconst months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst monthIdx = months.indexOf(OTYConsumptionChart.selectedDataPoint?.x) + 1;\nconst year = Number(OTYConsumptionChart.selectedDataPoint?.seriesTitle);\nstoreValue('otyClickedMonth', monthIdx || null);\nstoreValue('otyClickedYear', year || null);\nstoreValue('otyClickedChart', 'consumption');\nshowModal(showChart.name);\n}}",
   "isLoading": false,
   "isVisible": true,
   "key": "bpjaeniiag",
@@ -27,7 +32,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 47,
+  "topRow": 50,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "2p0ynkvzpe",

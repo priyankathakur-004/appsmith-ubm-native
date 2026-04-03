@@ -15,15 +15,15 @@ INNER JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item
 INNER JOIN bill_management_v2.locations l ON l.id = biva.location_id
 LEFT JOIN bill_management_v2.calculations c ON c.bill_item_id = bi.id
 WHERE bm.deleted_at IS NULL AND bm.customer_ready IS NOT NULL
-AND bm.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
+AND bm.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
 {{ DateSelect.selectedOptionValues?.filter(d => d.includes('-')).length > 0 ?
 	`AND date_trunc('month', br.statement_date)::date IN (${DateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
 : "" }}
 
 -- Utility Type
-{{ UtilityTypeSelect.selectedOptionValues && UtilityTypeSelect.selectedOptionValues.length > 0
-? `AND bi.commodity IN ('${UtilityTypeSelect.selectedOptionValues.join("','")}')`
+{{ UtilityTypeSelect.selectedOptionValue ?
+	`AND bi.commodity = '${UtilityTypeSelect.selectedOptionValue}'`
 : "" }}
 
 -- Bill Type

@@ -1,5 +1,7 @@
-SELECT DISTINCT bill_type
-FROM bill_management_v2.reports_customer_monthly_usage
-WHERE bill_type IS NOT NULL
-AND customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
-ORDER BY bill_type
+SELECT DISTINCT m.bill_type
+FROM bill_management_v2.reports_customer_monthly_usage m
+WHERE m.bill_type IS NOT NULL
+{{ CustomerSelect.selectedOptionValue ?
+	`AND m.customer_id = '${CustomerSelect.selectedOptionValue || 76013}'`
+: "" }}
+ORDER BY m.bill_type

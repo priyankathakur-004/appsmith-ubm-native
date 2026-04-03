@@ -1,18 +1,53 @@
 {
-  "animateLoading": true,
+  "animateLoading": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 13,
+  "bottomRow": 15,
   "boxShadow": "none",
   "dynamicBindingPathList": [],
-  "dynamicTriggerPathList": [],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.menuItemx06nx2k67f.onClick"
+    },
+    {
+      "key": "menuItems.menuItembz6ldwa0c7.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.menuItemx06nx2k67f.onClick"
+    },
+    {
+      "key": "menuItems.menuItembz6ldwa0c7.onClick"
+    }
+  ],
   "iconAlign": "left",
   "iconName": "menu",
   "isLoading": false,
   "isVisible": true,
-  "key": "2216g0wp9j",
+  "key": "swjsxcrnun",
   "leftColumn": 59,
-  "menuColor": "#f1f5f9",
-  "menuItems": {},
+  "menuColor": "#ffffff",
+  "menuItems": {
+    "menuItembz6ldwa0c7": {
+      "id": "menuItembz6ldwa0c7",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export ",
+      "onClick": "{{\nstoreValue('chartName', \"MEC_Monthly\");\ndownload(\nObject.values(AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"monthly_energy.csv\",\n\"text/csv\"\n)}}",
+      "widgetId": "by839taw50"
+    },
+    "menuItemx06nx2k67f": {
+      "id": "menuItemx06nx2k67f",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', \"MEC_Monthly\");\nshowModal(showTable.name);}}",
+      "widgetId": "gr1l75skil"
+    }
+  },
+  "menuItemsSource": "STATIC",
   "menuVariant": "TERTIARY",
   "mobileBottomRow": 8,
   "mobileLeftColumn": 60,
@@ -23,10 +58,10 @@
   "parentRowSpace": 10,
   "placement": "CENTER",
   "renderMode": "CANVAS",
-  "rightColumn": 63,
-  "topRow": 10,
+  "rightColumn": 64,
+  "topRow": 11,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
-  "widgetId": "erzlctgml1",
+  "widgetId": "n5xd54fvf6",
   "widgetName": "MECChartMenu"
 }

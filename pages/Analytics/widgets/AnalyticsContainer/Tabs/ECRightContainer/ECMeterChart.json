@@ -1,16 +1,16 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 38,
+  "bottomRow": 39,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => ( \nEnergyConsumptionHelper.getMeterChartConfig()\n))(ECMeterChart.chartType) }}",
+  "customEChartConfig": "{{EnergyConsumptionHelper.getMeterChartConfig()}}",
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "customEChartConfig"
     },
     {
-      "key": "customEChartConfig"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -27,7 +27,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 5,
+  "topRow": 6,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "9wjjptvafk",

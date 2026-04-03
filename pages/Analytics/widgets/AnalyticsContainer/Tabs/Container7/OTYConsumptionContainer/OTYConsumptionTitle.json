@@ -1,14 +1,11 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 47,
+  "bottomRow": 49,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
-    },
-    {
-      "key": "text"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -29,10 +26,10 @@
   "renderMode": "CANVAS",
   "rightColumn": 58,
   "shouldTruncate": false,
-  "text": "{{OverTheYearsHelper.getConsumptionTitle()}}",
+  "text": "Consumption",
   "textAlign": "CENTER",
   "textColor": "#e2e8f0",
-  "topRow": 44,
+  "topRow": 46,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "zjtbfsz84r",

@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 86,
+  "bottomRow": 100,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: OverTheYearsHelper.getLocationOptions(),\nselected: OverTheYearsHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
@@ -27,10 +27,14 @@
   "dynamicTriggerPathList": [
     {
       "key": "onResetClick"
+    },
+    {
+      "key": "onSelectChange"
     }
   ],
   "events": [
-    "onResetClick"
+    "onResetClick",
+    "onSelectChange"
   ],
   "isCanvas": false,
   "isLoading": false,
@@ -45,7 +49,8 @@
   "mobileRightColumn": 19,
   "mobileTopRow": 145,
   "needsErrorInfo": false,
-  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "onResetClick": "{{removeValue('otySelectedLocation'); showAlert('Successfully reset!!', '');}}",
+  "onSelectChange": "{{OTYLocCheckbox.model.selectedValue ? storeValue('otySelectedLocation', OTYLocCheckbox.model.selectedValue) : removeValue('otySelectedLocation');}}",
   "parentColumnSpace": 16.734375,
   "parentId": "5sg6fxepo9",
   "parentRowSpace": 10,
