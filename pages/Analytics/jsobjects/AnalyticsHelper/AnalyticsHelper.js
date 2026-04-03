@@ -6,25 +6,41 @@ export default {
 						data = RankLocationHelper.getTableData();
 
 				if (Tabs.selectedTab === 'Weather Sensitivity') {
-						if (appsmith.store.chartName === 'WS_Time_Series')
+						if (appsmith.store.chartName === 'Time Series')
 								data = WeatherHelper.getTimeSeriesTable();
 
-						if (appsmith.store.chartName === 'WS_Correlation')
+						if (appsmith.store.chartName === 'Correlation')
 								data = WeatherHelper.getCorrelationTable();
 
-						if (appsmith.store.chartName === 'WS_Scatter')
+						if (appsmith.store.chartName === 'Scatter')
 								data = WeatherHelper.getScatterTable();
 				}
 			
 				if (Tabs.selectedTab === 'Energy Consumption') {
-					if (appsmith.store.chartName === 'EC_Location')
-						data = EnergyConsumptionHelper.getLocationTable();
+						if (appsmith.store.chartName === 'EC_Location')
+							data = EnergyConsumptionHelper.getLocationTable();
 
-					if (appsmith.store.chartName === 'EC_Meter')
-						data = EnergyConsumptionHelper.getMeterTable();
+						if (appsmith.store.chartName === 'EC_Meter')
+							data = EnergyConsumptionHelper.getMeterTable();
 
-					if (appsmith.store.chartName === 'EC_Utility')
-						data = EnergyConsumptionHelper.getUtilityTable();
+						if (appsmith.store.chartName === 'EC_Utility')
+							data = EnergyConsumptionHelper.getUtilityTable();
+				}
+
+				if (Tabs.selectedTab === 'Monthly Energy Consumption') {
+						if (appsmith.store.chartName === 'MEC_Monthly')
+							data = MonthlyEnergyHelper.getMonthlyTable();
+				}
+
+				if (Tabs.selectedTab === 'Over the Years') {
+						if (appsmith.store.chartName === 'OTY_Charges')
+							data = OverTheYearsHelper.getChargesTable();
+
+						if (appsmith.store.chartName === 'OTY_Consumption')
+							data = OverTheYearsHelper.getConsumptionTable();
+
+						if (appsmith.store.chartName === 'OTY_UnitCost')
+							data = OverTheYearsHelper.getUnitCostTable();
 				}
 
 				/* Auto format numbers */
@@ -69,6 +85,17 @@ export default {
 			removeValue('mecActiveView');
 			removeValue('mecChartType');
 			removeValue('mecUOM');
+			removeValue('mecSelectedLocation');
+			removeValue('ecSelectedLocation');
+			removeValue('otySelectedLocation');
 		},
-	
+
+		setDefaults() {
+			if (Tabs.selectedTab === 'Weather Sensitivity') {
+				 UtilityTypeSelect.setSelectedOption("ELECTRIC");
+			}
+			removeValue('mecSelectedLocation');
+			removeValue('ecSelectedLocation');
+			removeValue('otySelectedLocation');
+		}
 }

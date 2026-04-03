@@ -4,7 +4,7 @@
   "bottomRow": 80,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => ( \nEnergyConsumptionHelper.getLocationChartConfig()\n))(ECLocationChart.chartType) }}",
+  "customEChartConfig": "{{EnergyConsumptionHelper.getLocationChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"
@@ -26,7 +26,7 @@
   "parentId": "hfal41s8xi",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 62,
+  "rightColumn": 64,
   "topRow": 5,
   "type": "CHART_WIDGET",
   "version": 1,

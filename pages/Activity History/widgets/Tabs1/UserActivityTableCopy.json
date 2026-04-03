@@ -1,0 +1,370 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowAddNewRow": false,
+  "animateLoading": true,
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 98,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "cachedTableData": {},
+  "canFreezeColumn": true,
+  "cellBackground": "#ffffff",
+  "childStylesheet": {
+    "button": {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "boxShadow": "none",
+      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+    },
+    "editActions": {
+      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
+    },
+    "iconButton": {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "boxShadow": "none",
+      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
+    },
+    "menuButton": {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "boxShadow": "none",
+      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
+    }
+  },
+  "columnOrder": [
+    "user_name",
+    "activity_text_count",
+    "customColumn1",
+    "user_id",
+    "email"
+  ],
+  "columnUpdatedAt": 1771921637609,
+  "columnWidthMap": {
+    "activity_count": 290,
+    "activity_text": 485,
+    "activity_text_count": 220,
+    "batch_ids": 220,
+    "created_at": 197,
+    "customColumn1": 338,
+    "user_email": 317,
+    "user_name": 404
+  },
+  "customIsLoading": false,
+  "customIsLoadingValue": "",
+  "defaultPageSize": 0,
+  "defaultSelectedRowIndex": "-1",
+  "defaultSelectedRowIndices": "[\n  0\n]",
+  "delimiter": ",",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "totalRecordsCount"
+    },
+    {
+      "key": "tableData"
+    },
+    {
+      "key": "primaryColumns.user_id.computedValue"
+    },
+    {
+      "key": "primaryColumns.activity_text_count.computedValue"
+    },
+    {
+      "key": "primaryColumns.email.computedValue"
+    },
+    {
+      "key": "primaryColumns.user_name.computedValue"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "primaryColumns.user_id.textColor"
+    },
+    {
+      "key": "primaryColumns.email.textColor"
+    },
+    {
+      "key": "primaryColumns.user_name.textColor"
+    },
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "primaryColumns.activity_text_count.buttonLabel"
+    },
+    {
+      "key": "primaryColumns.activity_text_count.textColor"
+    },
+    {
+      "key": "primaryColumns.customColumn1.textColor"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "tableData"
+    },
+    {
+      "key": "primaryColumns.activity_text_count.onClick"
+    },
+    {
+      "key": "primaryColumns.customColumn1.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onPageChange"
+    },
+    {
+      "key": "onRowSelected"
+    },
+    {
+      "key": "primaryColumns.activity_text_count.onClick"
+    },
+    {
+      "key": "onSort"
+    },
+    {
+      "key": "primaryColumns.customColumn1.onClick"
+    }
+  ],
+  "enableClientSideSearch": false,
+  "endOfData": false,
+  "flexVerticalAlignment": "start",
+  "horizontalAlignment": "LEFT",
+  "infiniteScrollEnabled": false,
+  "inlineEditingSaveOption": "ROW_LEVEL",
+  "isLoading": false,
+  "isSortable": true,
+  "isVisible": true,
+  "isVisibleDownload": true,
+  "isVisibleFilters": true,
+  "isVisiblePagination": true,
+  "isVisibleSearch": true,
+  "key": "voeqjtxsdg",
+  "label": "Data",
+  "leftColumn": 0,
+  "minWidth": 450,
+  "mobileBottomRow": 35,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 35,
+  "mobileTopRow": 7,
+  "multiRowSelection": false,
+  "needsErrorInfo": false,
+  "onPageChange": "{{getOperatorActivitySummary.run()}}",
+  "onRowSelected": "",
+  "onSort": "",
+  "originalBottomRow": 133,
+  "originalTopRow": 45,
+  "parentColumnSpace": 20.03125,
+  "parentId": "eabps0hz2g",
+  "parentRowSpace": 10,
+  "primaryColumns": {
+    "activity_text_count": {
+      "alias": "activity_text_count",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "buttonLabel": "{{(() => { const tableData = UserActivityTableCopy.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => ( currentRow['activity_text_count'] )) :  currentRow['activity_text_count']  })()}}",
+      "buttonVariant": "TERTIARY",
+      "cellBackground": "#ffffff",
+      "columnType": "number",
+      "computedValue": "{{(() => { const tableData = UserActivityTableCopy.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"activity_text_count\"])) : activity_text_count })()}}",
+      "currencyCode": "USD",
+      "customAlias": "",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "activity_text_count",
+      "index": 2,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Activity Text Count",
+      "menuItemsSource": "STATIC",
+      "notation": "standard",
+      "onClick": "{{UserActivityData.loadUserActivityData(currentRow[\"user_id\"]);}}",
+      "originalId": "activity_text_count",
+      "sticky": "",
+      "textColor": "{{UserActivityTableCopy.processedTableData.map((currentRow, currentIndex) => ( (appsmith.theme.colors.primaryColor)))}}",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "customColumn1": {
+      "alias": "Action",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "buttonColor": "#3b82f6",
+      "buttonStyle": "rgb(3, 179, 101)",
+      "buttonVariant": "TERTIARY",
+      "cellBackground": "#ffffff",
+      "columnType": "iconButton",
+      "computedValue": "",
+      "currencyCode": "USD",
+      "customAlias": "",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "horizontalAlignment": "LEFT",
+      "iconName": "eye-open",
+      "id": "customColumn1",
+      "index": 3,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": true,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Action",
+      "labelColor": "#FFFFFF",
+      "notation": "standard",
+      "onClick": "{{UserActivityData.loadUserActivityData(currentRow[\"user_id\"]);}}",
+      "originalId": "customColumn1",
+      "sticky": "",
+      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "email": {
+      "alias": "email",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "cellBackground": "#ffffff",
+      "columnType": "text",
+      "computedValue": "{{(() => { const tableData = UserActivityTableCopy.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"email\"])) : email })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "email",
+      "index": 1,
+      "isCellEditable": true,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": true,
+      "isSaveVisible": true,
+      "isVisible": false,
+      "label": "email",
+      "notation": "standard",
+      "originalId": "email",
+      "sticky": "",
+      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "user_id": {
+      "alias": "user_id",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "cellBackground": "#ffffff",
+      "columnType": "number",
+      "computedValue": "{{(() => { const tableData = UserActivityTableCopy.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"user_id\"])) : user_id })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "user_id",
+      "index": 0,
+      "isCellEditable": true,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": true,
+      "isSaveVisible": true,
+      "isVisible": false,
+      "label": "user_id",
+      "notation": "standard",
+      "originalId": "user_id",
+      "sticky": "",
+      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    },
+    "user_name": {
+      "alias": "user_name",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "cellBackground": "#ffffff",
+      "columnType": "text",
+      "computedValue": "{{(() => { const tableData = UserActivityTableCopy.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => ( currentRow.user_name?.trim() ? currentRow.user_name : currentRow.email )) :  currentRow.user_name?.trim() ? currentRow.user_name : currentRow.email  })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "user_name",
+      "index": 2,
+      "isCellEditable": true,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": true,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "User",
+      "notation": "standard",
+      "originalId": "user_name",
+      "sticky": "",
+      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 150
+    }
+  },
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "searchKey": "",
+  "serverSidePaginationEnabled": true,
+  "tableData": "{{ \ngetOperatorActivitySummary.data.length ? getOperatorActivitySummary.data : [{ message: \"No data available.\" }] \n}}",
+  "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "textSize": "0.875rem",
+  "topRow": 2,
+  "totalRecordsCount": "{{getOperatorSummaryCount.data[0].total_count }}",
+  "type": "TABLE_WIDGET_V2",
+  "version": 2,
+  "verticalAlignment": "CENTER",
+  "widgetId": "cwdkxtjcay",
+  "widgetName": "UserActivityTableCopy"
+}

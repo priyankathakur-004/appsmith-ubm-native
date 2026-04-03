@@ -1,16 +1,16 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 329,
+  "bottomRow": 330,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => (  RankLocationHelper.getChartConfig()\n))(AnalyticsChart.chartType) }}",
+  "customEChartConfig": "{{RankLocationHelper.getChartConfig()}}",
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "customEChartConfig"
     },
     {
-      "key": "customEChartConfig"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [],

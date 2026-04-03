@@ -1,0 +1,30 @@
+SELECT
+    u.id AS user_id,
+		u.email,
+    CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name') AS user_name,
+    COUNT(ah.id) AS activity_text_count
+FROM bill_management_v2.activity_history ah
+LEFT JOIN bill_management_v2.bill_metas bm 
+    ON bm.id = ah.bill_meta_id
+LEFT JOIN bill_management_v2.customers_search cs 
+    ON cs.id = bm.customer_id 
+LEFT JOIN bill_management_v2.users u 
+    ON u.id = ah.user_id
+WHERE
+    1=1
+    AND u.email IN (
+			'juana.mejia+admin@constellation.com',
+			'jaclyn.hayes+admin@constellation.com',
+			'rmoss+admin@pear.ai',
+			'meghan+admin@pear.ai',
+			'elizabeth.say+admin@constellation.com',
+			'karen+admin@pear.ai',
+			'agha.bilal+admin@constellation.com',
+			'daniel.torres+admin@constellation.com',
+			'mary.foster+admin@constellation.com'
+		)
+GROUP BY
+    u.id,
+    u.email,
+    u.profile
+ORDER BY user_name ASC

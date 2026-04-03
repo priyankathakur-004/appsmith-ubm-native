@@ -4,7 +4,7 @@
   "bottomRow": 80,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ ((chartType) => ( \nEnergyConsumptionHelper.getUtilityPieConfig()\n))(ECUtilityPieChart.chartType) }}",
+  "customEChartConfig": "{{EnergyConsumptionHelper.getUtilityPieConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

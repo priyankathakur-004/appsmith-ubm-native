@@ -1,0 +1,22 @@
+SELECT
+    COUNT(*) AS total_count
+FROM (
+    SELECT
+        ah.id
+    FROM bill_management_v2.activity_history ah
+    LEFT JOIN bill_management_v2.bill_metas bm 
+        ON bm.id = ah.bill_meta_id
+    LEFT JOIN bill_management_v2.batches_bill_metas bbm 
+        ON bbm.bill_meta_id = ah.bill_meta_id
+    LEFT JOIN bill_management_v2.customers_search cs 
+        ON cs.id = bm.customer_id
+    WHERE
+         ah.user_id = {{ this.params.user_id }}
+        {{ dateFrom.selectedDate && dateTo.selectedDate ? 
+            `AND ah.created_at >= '${moment(dateFrom.selectedDate).startOf('day').format('YYYY-MM-DD HH:mm:ss')}'
+             AND ah.created_at <= '${moment(dateTo.selectedDate).endOf('day').format('YYYY-MM-DD HH:mm:ss')}'`
+            : ""
+        }}
+    GROUP BY
+        ah.id
+) AS grouped_activity_rows;

@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 229,
+  "bottomRow": 191,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: MonthlyEnergyHelper.getLocationOptions(),\nselected: MonthlyEnergyHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
@@ -27,10 +27,14 @@
   "dynamicTriggerPathList": [
     {
       "key": "onResetClick"
+    },
+    {
+      "key": "onSelectChange"
     }
   ],
   "events": [
-    "onResetClick"
+    "onResetClick",
+    "onSelectChange"
   ],
   "isCanvas": false,
   "isLoading": false,
@@ -45,8 +49,9 @@
   "mobileRightColumn": 19,
   "mobileTopRow": 145,
   "needsErrorInfo": false,
-  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 14,
+  "onResetClick": "{{removeValue('mecSelectedLocation'); showAlert('Successfully reset!!', '');}}",
+  "onSelectChange": "{{MECLocCheckbox.model.selectedValue ? storeValue('mecSelectedLocation', MECLocCheckbox.model.selectedValue) : removeValue('mecSelectedLocation');}}",
+  "originalBottomRow": 190,
   "originalTopRow": 9,
   "parentColumnSpace": 16.734375,
   "parentId": "op4pghclvd",

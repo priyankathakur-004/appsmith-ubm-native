@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT * FROM bill_management_v2.\"reports_customer_monthly_usage\" LIMIT 10;",
+      "body": "SELECT * FROM bill_management_v2.\"account_history\" LIMIT 10;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -22,7 +22,6 @@
       "name": "UBM_Database",
       "pluginId": "postgres-plugin"
     },
-    "dynamicBindingPathList": [],
     "name": "Query1",
     "pageId": "Analytics",
     "runBehaviour": "MANUAL",

@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 53,
+  "bottomRow": 55,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{OverTheYearsHelper.getUnitCostChartConfig()}}",
@@ -13,7 +13,12 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
+  "onDataPointClick": "{{\nconst months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst monthIdx = months.indexOf(OTYUnitCostChart.selectedDataPoint?.x) + 1;\nconst year = Number(OTYUnitCostChart.selectedDataPoint?.seriesTitle);\nstoreValue('otyClickedMonth', monthIdx || null);\nstoreValue('otyClickedYear', year || null);\nstoreValue('otyClickedChart', 'unitCost');\nshowModal(showChart.name);\n}}",
   "isLoading": false,
   "isVisible": true,
   "key": "27a1zsogrd",
@@ -27,7 +32,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 62,
-  "topRow": 5,
+  "topRow": 7,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "yjghqfm4ly",

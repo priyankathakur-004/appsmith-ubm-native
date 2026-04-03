@@ -1,0 +1,42 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_1c556fdc-eb1a-42f4-837d-e087a98e4526",
+  "unpublishedPage": {
+    "isHidden": false,
+    "layouts": [
+      {
+        "dsl": {
+          "backgroundColor": "none",
+          "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+          "bottomRow": 1230,
+          "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+          "canExtend": true,
+          "containerStyle": "none",
+          "detachFromLayout": true,
+          "dynamicBindingPathList": [
+            {
+              "key": "borderRadius"
+            },
+            {
+              "key": "boxShadow"
+            }
+          ],
+          "dynamicTriggerPathList": [],
+          "leftColumn": 0,
+          "minHeight": 690,
+          "parentColumnSpace": 1,
+          "parentRowSpace": 1,
+          "rightColumn": 1224,
+          "snapColumns": 64,
+          "snapRows": 67,
+          "topRow": 0,
+          "type": "CANVAS_WIDGET",
+          "version": 94,
+          "widgetId": "0",
+          "widgetName": "MainContainer"
+        }
+      }
+    ],
+    "name": "Activity History",
+    "slug": "activity-history"
+  }
+}

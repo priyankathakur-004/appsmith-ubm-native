@@ -1,0 +1,14 @@
+SELECT id, email
+FROM bill_management_v2.users
+WHERE email IN (
+	'juana.mejia+admin@constellation.com',
+	'jaclyn.hayes+admin@constellation.com',
+	'rmoss+admin@pear.ai',
+	'meghan+admin@pear.ai',
+	'elizabeth.say+admin@constellation.com',
+	'karen+admin@pear.ai',
+	'agha.bilal+admin@constellation.com',
+	'daniel.torres+admin@constellation.com',
+	'mary.foster+admin@constellation.com'
+)
+ORDER BY email;

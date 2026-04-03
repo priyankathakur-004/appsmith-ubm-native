@@ -1,0 +1,54 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 6,
+  "boxShadow": "none",
+  "buttonColor": "#61e5b0",
+  "buttonVariant": "SECONDARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "download",
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "704kady1n6",
+  "leftColumn": 54,
+  "minWidth": 120,
+  "mobileBottomRow": 22,
+  "mobileLeftColumn": 27,
+  "mobileRightColumn": 43,
+  "mobileTopRow": 18,
+  "needsErrorInfo": false,
+  "onClick": "{{\n  getActivityHistoryAll.run(() => {\n    const rows = getActivityHistoryAll.data;\n\n    if (Array.isArray(rows) && rows.length > 0) {\n      // Get headers from keys of the first row\n      const headers = Object.keys(rows[0]);\n\n      // Build CSV rows\n      const csvRows = [\n        headers.join(\",\"), // header row\n        ...rows.map(row => \n          headers.map(field => {\n            const value = row[field] ?? \"\";\n            // Escape quotes and wrap in double quotes if needed\n            const escaped = String(value).replace(/\"/g, '\"\"');\n            return `\"${escaped}\"`;\n          }).join(\",\")\n        )\n      ];\n\n      // Join rows with newlines\n      const csvData = csvRows.join(\"\\n\");\n\n      // Trigger CSV download\n      download(csvData, \"ActivityHistory_All.csv\", \"text/csv\");\n      showAlert(\"✅ Export completed successfully!\", \"success\");\n    } else {\n      showAlert(\"⚠️ No records found to export.\", \"warning\");\n    }\n  });\n}}\n",
+  "parentColumnSpace": 16.765625,
+  "parentId": "yey162enke",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 63,
+  "text": "Download All",
+  "topRow": 2,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "210lwnq6yb",
+  "widgetName": "Button2"
+}

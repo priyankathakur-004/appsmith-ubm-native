@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 265,
+  "bottomRow": 16,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: PerSquareFeetHelper.getLocationOptions(),\nselected: PerSquareFeetHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [

@@ -1,5 +1,5 @@
 SELECT DISTINCT m.utility_type
 FROM bill_management_v2.reports_customer_monthly_usage m
 WHERE m.utility_type IS NOT NULL
-AND m.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
+AND m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 ORDER BY m.utility_type

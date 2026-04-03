@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_3cad12c8-d53f-406c-881a-f6c01690eab4",
+  "id": "Activity History_ApplyFilters",
+  "unpublishedCollection": {
+    "name": "ApplyFilters",
+    "pageId": "Activity History",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

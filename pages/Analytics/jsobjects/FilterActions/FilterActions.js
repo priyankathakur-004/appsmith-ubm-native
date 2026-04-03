@@ -54,13 +54,5 @@ export default {
 
     async onLocationAttrChange() {
         await fetch_attribute_values.run();
-    },
-	
-	 async OnCustomerChange() {
-		 	fetch_utility_types.run();
-			fetch_locations.run();
-		 	fetch_bill_types.run()
-		 	fetch_location_attributes.run();
-		 	this.applyFilters();
-	 }
+    }
 }

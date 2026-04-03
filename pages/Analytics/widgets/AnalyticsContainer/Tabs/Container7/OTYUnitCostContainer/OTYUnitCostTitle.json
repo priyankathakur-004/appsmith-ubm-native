@@ -6,9 +6,6 @@
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
-    },
-    {
-      "key": "text"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -29,7 +26,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 55,
   "shouldTruncate": false,
-  "text": "{{OverTheYearsHelper.getUnitCostTitle()}}",
+  "text": "Unit Cost ($/CCF)",
   "textAlign": "CENTER",
   "textColor": "#e2e8f0",
   "topRow": 1,

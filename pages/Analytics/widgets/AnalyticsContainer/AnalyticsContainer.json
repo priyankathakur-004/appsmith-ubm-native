@@ -4,11 +4,11 @@
   "borderColor": "#ffffff",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 158,
+  "bottomRow": 156,
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 1580,
+      "bottomRow": 1560,
       "canExtend": true,
       "detachFromLayout": true,
       "dynamicBindingPathList": [],

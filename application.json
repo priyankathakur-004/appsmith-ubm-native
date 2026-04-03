@@ -22,12 +22,16 @@
   },
   "applicationVersion": 2,
   "collapseInvisibleWidgets": true,
-  "color": "#C7F3F0",
+  "color": "#FFEBFB",
   "evaluationVersion": 2,
   "pages": [
     {
       "id": "Home Page",
       "isDefault": true
+    },
+    {
+      "id": "Activity History",
+      "isDefault": false
     },
     {
       "id": "Portfolio View",

@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 17,
   "boxShadow": "none",
-  "defaultOptionValue": "",
+  "defaultOptionValue": "All",
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
@@ -38,7 +38,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 16,
-  "sourceData": "{{fetch_bill_types.data.map(d => ({label: d.bill_type, value: d.bill_type}))}}",
+  "sourceData": "{{(fetch_bill_types.data || []).map(d => ({label: d.bill_type, value: d.bill_type}))}}",
   "topRow": 12,
   "type": "SELECT_WIDGET",
   "version": 1,

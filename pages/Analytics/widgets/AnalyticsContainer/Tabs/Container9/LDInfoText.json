@@ -4,7 +4,7 @@
   "borderColor": "{{appsmith.theme.colors.primaryColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 12,
+  "bottomRow": 11,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -39,7 +39,7 @@
   "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Make sure only <b style=\"color:#f1f5f9;\">one utility</b> is selected (in the filter above) if <b style=\"color:#f1f5f9;\">Consumption</b> is on the x or y axis. Locations can be limited to one or more.</p></div>",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
-  "topRow": 8,
+  "topRow": 7,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "fwyib44gqj",

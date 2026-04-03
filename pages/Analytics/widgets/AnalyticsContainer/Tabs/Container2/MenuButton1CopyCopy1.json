@@ -54,7 +54,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export Data",
-      "onClick": "{{\nstoreValue('chartName', \"WS_Correlation\");\ndownload(\n  AnalyticsHelper.getTableData(),\n  \"analytics.csv\",\n  \"text/csv\"\n)\n}}",
+      "onClick": "{{\nstoreValue('chartName', \"Correlation\");\ndownload(\n  AnalyticsHelper.getTableData(),\n  \"analytics.csv\",\n  \"text/csv\"\n)\n}}",
       "widgetId": ""
     },
     "menuItem2": {
@@ -63,7 +63,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', \"WS_Correlation\");\nshowModal(showTable.name);}}",
+      "onClick": "{{\nstoreValue('chartName', \"Correlation\");\nshowModal(showTable.name);}}",
       "widgetId": ""
     }
   },

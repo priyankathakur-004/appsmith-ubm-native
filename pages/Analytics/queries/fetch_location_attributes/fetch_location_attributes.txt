@@ -1,5 +1,8 @@
 SELECT DISTINCT 
 attribute_name
 FROM bill_management_v2.custom_location_attributes
-WHERE customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
+WHERE 1=1
+{{ CustomerSelect.selectedOptionValue ?
+	`AND customer_id = '${CustomerSelect.selectedOptionValue || 76013}'`
+: "" }}
 ORDER BY attribute_name;

@@ -1,0 +1,6 @@
+SELECT 
+    id, 
+    email
+FROM bill_management_v2.users
+ORDER BY email;
+

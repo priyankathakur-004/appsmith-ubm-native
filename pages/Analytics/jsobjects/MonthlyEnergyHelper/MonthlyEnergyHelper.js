@@ -1,165 +1,270 @@
 export default {
-    getBTUConversionFactor(utilityType, uom) {
-        const btuFactors = {
-            'ELECTRIC': 3412.14,
-            'NATURALGAS': 102800,
-            'OIL2': 138500,
-            'STEAM': 1000,
-            'WATER': 0,
-            'SEWER': 0
-        };
-        const baseBTU = btuFactors[utilityType] || 0;
-        const selectedUOM = uom || appsmith.store.mecUOM || 'BTU';
-        if (selectedUOM === 'Wh') return baseBTU * 0.29307107;
-        if (selectedUOM === 'Joule') return baseBTU * 1055.06;
-        return baseBTU;
-    },
 
-    getUOMLabel() {
-        const uom = appsmith.store.mecUOM || 'BTU';
-        if (uom === 'Wh') return 'Watt hour';
-        if (uom === 'Joule') return 'Joule';
-        return 'mmBTU';
-    },
+	/* ===============================
+	   ACTIVE SETTINGS
+	=============================== */
 
-    getActiveView() {
-        return appsmith.store.mecActiveView || 'Consumption';
-    },
+	getActiveView() {
+		return appsmith.store.mecActiveView || 'Consumption';
+	},
 
-    getChartType() {
-        return appsmith.store.mecChartType || 'scatter';
-    },
+	getUOMLabel() {
+		const u = appsmith.store.mecUOM || 'BTU';
+		if (u === 'Wh') return 'Watt hour';
+		if (u === 'Joule') return 'Joule';
+		return 'mmBTU';
+	},
 
-    getChartTitle() {
-        const view = this.getActiveView();
-        const uomLabel = this.getUOMLabel();
-        const titles = {
-            'Consumption': 'Monthly energy consumption by location',
-            'UnitCost': 'Monthly unit cost by location',
-            'EnergyUseIntensity': 'Monthly energy use intensity by location'
-        };
-        return titles[view] || titles['Consumption'];
-    },
+	getChartType() {
+		return appsmith.store.mecChartType || 'scatter';
+	},
 
-    getLocationOptions() {
-        const raw = fetch_analytics_data.data || [];
-        const locs = new Set();
-        raw.forEach(r => {
-            const loc = r.location_description || 'Unknown';
-            locs.add(loc);
-        });
-        return Array.from(locs).sort().map(loc => ({ label: loc, value: loc }));
-    },
+	getChartTitle() {
+		const view = this.getActiveView();
+		const titles = {
+			'Consumption': 'Monthly energy consumption by location',
+			'UnitCost': 'Monthly unit cost by location',
+			'EnergyUseIntensity': 'Monthly energy use intensity by location'
+		};
+		return titles[view] || titles['Consumption'];
+	},
 
-    getSelectedLocations() {
-				const stored = appsmith.store.mecSelectedLocations;
-				if (stored && stored.length > 0) {
-						return stored;
-				}
-				return this.getLocationOptions().map(o => o.value);
-		},
+	/* ===============================
+	   UNIT CONVERSION
+	=============================== */
 
-    getMonthlyData() {
-        const raw = fetch_analytics_data.data || [];
-        const uom = appsmith.store.mecUOM || 'BTU';
-        const selectedLocs = this.getSelectedLocations();
-        const byLocMonth = {};
+	getBTUConversionFactor(utilityType, uom) {
+		const map = {
+			ELECTRIC: 3412,
+			NATURALGAS: 102800,
+			OIL2: 138500,
+			STEAM: 1000,
+			WATER: 0,
+			SEWER: 0
+		};
+		const base = map[utilityType] || 0;
+		const u = uom || appsmith.store.mecUOM || 'BTU';
+		if (u === 'Wh') return base * 0.29307107;
+		if (u === 'Joule') return base * 1055.06;
+		return base;
+	},
 
-        raw.forEach(r => {
-            const loc = r.location_description || 'Unknown';
-            if (!selectedLocs.includes(loc)) return;
+	/* ===============================
+	   LOCATION OPTIONS
+	=============================== */
 
-            const date = r.time_period || '';
-            const month = date.substring(0, 7);
-            if (!month) return;
+	getLocationOptions() {
+		const raw = fetch_analytics_data.data || [];
+		const locs = new Set();
+		raw.forEach(r => {
+			const loc = r.location_description || 'Unknown';
+			locs.add(loc);
+		});
+		return Array.from(locs).sort().map(loc => ({ label: loc, value: loc }));
+	},
 
-            if (!byLocMonth[loc]) byLocMonth[loc] = {};
-            if (!byLocMonth[loc][month]) byLocMonth[loc][month] = { consumption: 0, charges: 0, sqft: parseFloat(r.square_feet) || 0 };
+	getSelectedLocations() {
+		const loc = appsmith.store.mecSelectedLocation;
+		if (loc) {
+			return [loc];
+		}
+		return this.getLocationOptions().map(o => o.value);
+	},
 
-            const factor = this.getBTUConversionFactor(r.utility_type, uom);
-            const cons = parseFloat(r.consumption) || 0;
-            byLocMonth[loc][month].consumption += (cons * factor) / 1000000;
-            byLocMonth[loc][month].charges += parseFloat(r.total_charges) || 0;
-        });
+	/* ===============================
+	   VALUE CALCULATION
+	=============================== */
 
-        return byLocMonth;
-    },
+	_computeValue(d, view) {
+		const u = appsmith.store.mecUOM || 'BTU';
+		const scale = u === 'Joule' ? 1 : 1000;
 
-    getMonthlyChartConfig() {
-        const byLocMonth = this.getMonthlyData();
-        const view = this.getActiveView();
-        const chartType = this.getChartType();
-        const uomLabel = this.getUOMLabel();
+		if (view === 'UnitCost')
+			return d.cons ? (d.charges * 1000) / (d.cons * scale) : 0;
 
-        const allMonths = new Set();
-        Object.values(byLocMonth).forEach(months => {
-            Object.keys(months).forEach(m => allMonths.add(m));
-        });
-        const sortedMonths = Array.from(allMonths).sort();
+		if (view === 'EnergyUseIntensity')
+			return d.sqft ? (d.cons * scale) / d.sqft : 0;
 
-        const monthLabels = sortedMonths.map(m => {
-            const parts = m.split('-');
-            const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            return monthNames[parseInt(parts[1])-1] + ' ' + parts[0];
-        });
+		return u === 'Joule' ? d.cons / 1000 : d.cons;
+	},
 
-        const locations = Object.keys(byLocMonth).sort();
+	/* ===============================
+	   MONTHLY AGGREGATED DATA
+	=============================== */
 
-        const header = ['Month'].concat(locations);
-        const rows = sortedMonths.map((m, i) => {
-            const row = [monthLabels[i]];
-            locations.forEach(loc => {
-                const d = (byLocMonth[loc] || {})[m];
-                if (!d) { row.push(null); return; }
-                let val = d.consumption;
-                if (view === 'UnitCost') val = d.charges;
-                if (view === 'EnergyUseIntensity') val = d.sqft > 0 ? d.consumption / d.sqft : 0;
-                row.push(Number(val.toFixed(2)));
-            });
-            return row;
-        });
+	getMonthlyData() {
+		const raw = fetch_analytics_data.data || [];
+		const u = appsmith.store.mecUOM || 'BTU';
+		const selectedLocs = this.getSelectedLocations();
+		const byLocMonth = {};
 
-        const source = [header].concat(rows);
+		raw.forEach(r => {
+			const loc = r.location_description || 'Unknown';
+			if (!selectedLocs.includes(loc)) return;
 
-        const series = locations.map(() => ({
-            type: chartType
-        }));
+			const date = r.time_period || '';
+			const month = date.substring(0, 7);
+			if (!month) return;
 
-        let yName = 'Equivalent Energy Consumption (' + uomLabel + ')';
-        if (view === 'UnitCost') yName = 'Total Charges ($)';
-        if (view === 'EnergyUseIntensity') yName = 'Energy Use Intensity (' + uomLabel + '/sqft)';
+			if (!byLocMonth[loc]) byLocMonth[loc] = {};
+			if (!byLocMonth[loc][month])
+				byLocMonth[loc][month] = { cons: 0, charges: 0, sqft: Number(r.square_feet) || 0 };
 
-        return {
-            dataset: { source: source },
-            tooltip: {
-                trigger: chartType === 'scatter' ? 'item' : 'axis',
-                axisPointer: { type: 'shadow' }
-            },
-            legend: {
-                type: 'scroll',
-                top: 10
-            },
-            grid: {
-                left: 15,
-                right: 15,
-                bottom: 30,
-                top: 60,
-                containLabel: true
-            },
-            xAxis: [{ type: 'category' }],
-            yAxis: [{
-                type: 'value',
-                name: yName,
-                nameLocation: 'middle',
-                nameGap: 55
-            }],
-            series: series
-        };
-    },
+			const f = this.getBTUConversionFactor(r.utility_type, u);
+			byLocMonth[loc][month].cons += ((Number(r.consumption) || 0) * f) / 1000000;
+			byLocMonth[loc][month].charges += Number(r.total_charges) || 0;
+		});
 
-    setDefaults() {
-        if (!appsmith.store.mecActiveView) storeValue('mecActiveView', 'Consumption');
-        if (!appsmith.store.mecChartType) storeValue('mecChartType', 'scatter');
-        if (!appsmith.store.mecUOM) storeValue('mecUOM', 'BTU');
-    }
+		return byLocMonth;
+	},
+
+	/* ===============================
+	   CHART HELPERS
+	=============================== */
+
+	_getYLabel(view, uom) {
+		if (view === 'UnitCost') return 'Unit Cost ($/mm' + uom + ')';
+		if (view === 'EnergyUseIntensity') return 'EUI (' + uom + '/sqft)';
+		return 'Equivalent Energy Consumption (' + uom + ')';
+	},
+
+	_getUOMColumnLabel(view) {
+		const uom = this.getUOMLabel();
+		if (view === 'UnitCost') return '$/mm' + uom;
+		if (view === 'EnergyUseIntensity') return uom + '/sqft';
+		return uom;
+	},
+
+	/* ===============================
+	   MONTHLY CHART CONFIG
+	=============================== */
+
+	getMonthlyChartConfig() {
+		const byLocMonth = this.getMonthlyData();
+		const view = this.getActiveView();
+		const chartType = this.getChartType();
+		const uomLabel = this.getUOMLabel();
+
+		const allMonths = new Set();
+		Object.values(byLocMonth).forEach(months => {
+			Object.keys(months).forEach(m => allMonths.add(m));
+		});
+		const sortedMonths = Array.from(allMonths).sort();
+
+		const monthLabels = sortedMonths.map(m => {
+			const parts = m.split('-');
+			const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+			return monthNames[parseInt(parts[1]) - 1] + ' ' + parts[0];
+		});
+
+		const colors = ['#3366CC','#22AA66','#DD8844','#555555','#8B5CF6','#EC4899','#06B6D4','#84CC16','#F97316','#6366F1','#14B8A6','#E11D48','#A855F7','#0EA5E9','#D946EF'];
+
+		const locations = Object.keys(byLocMonth).sort();
+		const series = locations.map((loc, idx) => {
+			const data = sortedMonths.map(m => {
+				const d = (byLocMonth[loc] || {})[m];
+				if (!d) return 0;
+				return Number(this._computeValue(d, view).toFixed(2));
+			});
+			return {
+				name: loc,
+				type: chartType,
+				data: data,
+				symbolSize: chartType === 'scatter' ? 10 : 6,
+				itemStyle: { color: colors[idx % colors.length] },
+				lineStyle: chartType === 'line' ? { width: 2 } : undefined
+			};
+		});
+
+		const yLabel = this._getYLabel(view, uomLabel);
+
+		return {
+			backgroundColor: '#1E293B',
+			tooltip: {
+				trigger: 'axis',
+				backgroundColor: '#0F172A',
+				borderColor: '#334155',
+				textStyle: { color: '#E2E8F0' }
+			},
+			legend: {
+				type: 'scroll',
+				orient: 'vertical',
+				right: 10,
+				top: 'middle',
+				textStyle: { color: '#E2E8F0', fontSize: 11 },
+				pageTextStyle: { color: '#94A3B8' },
+				pageIconColor: '#94A3B8',
+				pageIconInactiveColor: '#334155'
+			},
+			grid: { left: 80, right: 160, top: 20, bottom: 60 },
+			xAxis: {
+				type: 'category',
+				data: monthLabels,
+				axisLabel: { color: '#CBD5E1', fontSize: 11 },
+				axisLine: { lineStyle: { color: '#475569' } },
+				splitLine: { show: false }
+			},
+			yAxis: {
+				type: 'value',
+				name: yLabel,
+				nameLocation: 'middle',
+				nameGap: 55,
+				nameTextStyle: { color: '#CBD5E1', fontSize: 12 },
+				axisLabel: { color: '#CBD5E1' },
+				axisLine: { lineStyle: { color: '#475569' } },
+				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
+			},
+			series: series
+		};
+	},
+
+	/* ===============================
+	   TABLE DATA
+	=============================== */
+
+	getMonthlyTable() {
+		const byLocMonth = this.getMonthlyData();
+		const view = this.getActiveView();
+		const uomLabel = this._getUOMColumnLabel(view);
+		const valLabel = this._getValueLabel();
+		const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+		const allMonths = new Set();
+		Object.values(byLocMonth).forEach(months => {
+			Object.keys(months).forEach(m => allMonths.add(m));
+		});
+		const sortedMonths = Array.from(allMonths).sort();
+		const locations = Object.keys(byLocMonth).sort();
+
+		return sortedMonths.map(m => {
+			const parts = m.split('-');
+			const monthLabel = monthNames[parseInt(parts[1]) - 1] + ' ' + parts[0];
+			const row = { MonthYear: monthLabel };
+
+			locations.forEach(loc => {
+				const d = (byLocMonth[loc] || {})[m];
+				row[loc + ' ' + valLabel] = d ? Number(this._computeValue(d, view).toFixed(2)) : 0;
+				row[loc + ' Selected UOM'] = uomLabel;
+			});
+
+			return row;
+		});
+	},
+	
+	_getValueLabel() {
+		const view = this.getActiveView();
+		if (view === 'UnitCost') return 'Unit Cost';
+		if (view === 'EnergyUseIntensity') return 'Energy Use Intensity';
+		return 'Consumption';
+	},
+
+	/* ===============================
+	   DEFAULTS
+	=============================== */
+
+	setDefaults() {
+		if (!appsmith.store.mecActiveView) storeValue('mecActiveView', 'Consumption');
+		if (!appsmith.store.mecChartType) storeValue('mecChartType', 'scatter');
+		if (!appsmith.store.mecUOM) storeValue('mecUOM', 'BTU');
+	}
 }
