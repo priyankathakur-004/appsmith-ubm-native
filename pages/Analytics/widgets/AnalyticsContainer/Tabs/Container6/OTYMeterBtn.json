@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.otyViewBy || 'Location') === 'Meter' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.otyViewBy || 'Location') === 'Meter' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "2lq84jw3g1",
+  "leftColumn": 39,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 33,
+  "mobileRightColumn": 41,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('otyViewBy', 'Meter')}}",
+  "parentColumnSpace": 15,
+  "parentId": "2hr1qryg50",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 52,
+  "text": "Meter",
+  "textColor": "{{(appsmith.store.otyViewBy || 'Location') === 'Meter' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 0,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "4c3m4hjq3v",
+  "widgetName": "OTYMeterBtn"
+}

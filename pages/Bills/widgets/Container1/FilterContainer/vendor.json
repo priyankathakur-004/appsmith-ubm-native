@@ -1,0 +1,57 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowClear": true,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "defaultOptionValue": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "options"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [],
+  "expandAll": false,
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "v4gbq3l4zb",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Vendor",
+  "labelTextColor": "#f4f4f5",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 7,
+  "mobileTopRow": 2,
+  "mode": "SHOW_ALL",
+  "needsErrorInfo": false,
+  "options": "{{ getVendors.data?.map(v => ({ label: v.vendor_name, value: v.vendor_code })) || [] }}",
+  "parentColumnSpace": 13.52099609375,
+  "parentId": "l7nwdqklw3",
+  "parentRowSpace": 10,
+  "placeholderText": "Select",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 7,
+  "topRow": 0,
+  "type": "MULTI_SELECT_TREE_WIDGET",
+  "version": 1,
+  "widgetId": "4a8z6z70o2",
+  "widgetName": "vendor"
+}

@@ -1,0 +1,39 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_info",
+  "leftColumn": 0,
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "xzbz0p88pf",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 48,
+  "text": "{{RankLocationHelper.getInfoText()}}",
+  "textAlign": "LEFT",
+  "textColor": "#ac6c2f",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "ejw0vdkmm3",
+  "widgetName": "InfoText"
+}

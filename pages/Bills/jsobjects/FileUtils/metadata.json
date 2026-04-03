@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_4d3dbfdc-3f89-403f-a638-db342244c87f",
+  "id": "Bills_FileUtils",
+  "unpublishedCollection": {
+    "name": "FileUtils",
+    "pageId": "Bills",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 17,
+  "boxShadow": "none",
+  "defaultOptionValue": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": "{{ !Location_Attribute.selectedOptionValue }}",
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "6y1kf1b30e",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Attribute Value",
+  "labelTextColor": "#f4f4f5",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 26,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 17,
+  "mobileLeftColumn": 27,
+  "mobileRightColumn": 47,
+  "mobileTopRow": 10,
+  "needsErrorInfo": false,
+  "optionLabel": "label",
+  "optionValue": "label",
+  "parentColumnSpace": 24.19305419921875,
+  "parentId": "l7nwdqklw3",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 34,
+  "serverSideFiltering": false,
+  "sourceData": "{{ \n_.uniq(\n  getAttributeValues.data\n    ?.map(av => av.attribute_value)\n    ?.filter(v => v && v !== \"\")\n).map(v => ({ label: v, value: v })) || [] \n}}\n",
+  "topRow": 10,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "wwc8eq1lv5",
+  "widgetName": "Attribute_Value"
+}

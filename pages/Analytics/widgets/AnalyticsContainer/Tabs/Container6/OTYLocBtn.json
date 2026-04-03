@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.otyViewBy || 'Location') === 'Location' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.otyViewBy || 'Location') === 'Location' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "e3c9dvcu51",
+  "leftColumn": 11,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 13,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('otyViewBy', 'Location')}}",
+  "parentColumnSpace": 15,
+  "parentId": "2hr1qryg50",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 25,
+  "text": "Location",
+  "textColor": "{{(appsmith.store.otyViewBy || 'Location') === 'Location' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 0,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "oym7nprgfp",
+  "widgetName": "OTYLocBtn"
+}

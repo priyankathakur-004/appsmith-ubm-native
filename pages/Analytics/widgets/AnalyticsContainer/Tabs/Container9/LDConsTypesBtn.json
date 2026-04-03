@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 6,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.ldViewBy || 'ChargesVsConsumption') === 'ConsumptionTypes' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.ldViewBy || 'ChargesVsConsumption') === 'ConsumptionTypes' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "n67fp7jkky",
+  "leftColumn": 32,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 32,
+  "mobileRightColumn": 43,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('ldViewBy', 'ConsumptionTypes')}}",
+  "parentColumnSpace": 15,
+  "parentId": "njpbk6s2r0",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 43,
+  "text": "Consumption Types",
+  "textColor": "{{(appsmith.store.ldViewBy || 'ChargesVsConsumption') === 'ConsumptionTypes' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 2,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "cueryabq1a",
+  "widgetName": "LDConsTypesBtn"
+}

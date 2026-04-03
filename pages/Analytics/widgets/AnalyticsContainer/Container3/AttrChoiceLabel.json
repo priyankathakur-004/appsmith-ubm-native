@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_attrchoice_lbl",
+  "leftColumn": 34,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 54,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 15,
+  "parentId": "ia1ed10g78",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 48,
+  "text": "Attribute Choice",
+  "textAlign": "LEFT",
+  "textColor": "#94a3b8",
+  "topRow": 9,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "pzfw39udk6",
+  "widgetName": "AttrChoiceLabel"
+}

@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "7paeylkycx",
+  "leftColumn": 0,
+  "mobileBottomRow": 20,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 12,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 15,
+  "parentId": "enimfi0lhm",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 11,
+  "shouldTruncate": false,
+  "text": "Select to View by:",
+  "textAlign": "LEFT",
+  "textColor": "#e2e8f0",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "gthq28zvex",
+  "widgetName": "MECViewByLabel"
+}

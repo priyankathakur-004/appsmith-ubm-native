@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 53,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{OverTheYearsHelper.getUnitCostChartConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "27a1zsogrd",
+  "leftColumn": 0,
+  "mobileBottomRow": 290,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 5,
+  "parentColumnSpace": 15,
+  "parentId": "ukzzqnbbtt",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 62,
+  "topRow": 5,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "yjghqfm4ly",
+  "widgetName": "OTYUnitCostChart"
+}

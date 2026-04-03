@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 6,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "4vu2y0pq3b",
+  "leftColumn": 0,
+  "mobileBottomRow": 40,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "u3ysd6l4t8",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ To change the decomposition and see the most notable contributor at the various levels, click on the item of interest. For example click on NATURALGAS to see the most important contributors to the natural gas charges/consumption.</p></div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "7dj4z1plbv",
+  "widgetName": "UTInfoText"
+}

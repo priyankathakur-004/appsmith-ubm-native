@@ -1,0 +1,113 @@
+SELECT 
+{{ Most_Recent_Bill_per_Account.isSwitchedOn 
+    ? "DISTINCT ON (br.client_account)" 
+    : "DISTINCT ON (abi.bill_id, br.client_account)" 
+}}
+    COALESCE(cvn.pretty_name, br.vendor_code) AS "Vendor",
+    TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS "Invoice Date",
+    br.client_account AS "Billing ID",
+    abi.bill_id,
+    bmbr.bill_record_id,
+    TO_CHAR(bi.start_date, 'MM/DD/YYYY') AS "Billing Start Date",
+    TO_CHAR(bi.end_date, 'MM/DD/YYYY') AS "Billing End Date",
+    btac.total_charges AS "Current Charges",
+    btac.total_amount AS "Total Amount Due",
+    btac.total_amount AS "Pay Amount",
+    bm.marked_for_payment AS "Marked For Payment",
+    bm.deleted_at,
+    bi.commodity AS "Utility Type"
+FROM bill_management_v2.bill_metas bm
+LEFT JOIN bill_management_v2.bill_metas_bill_records bmbr 
+    ON bmbr.bill_meta_id = bm.id 
+    AND bmbr.status = 'active'
+LEFT JOIN bill_management_v2.bill_records br 
+    ON br.id = bmbr.bill_record_id
+LEFT JOIN bill_management_v2.bill_items bi 
+    ON bi.bill_record_id = br.id
+LEFT JOIN bill_management_v2.bill_items_virtual_accounts biva 
+    ON biva.bill_item_id = bi.id
+LEFT JOIN bill_management_v2.locations l 
+    ON l.id = biva.location_id
+LEFT JOIN bill_management_v2.billing_line_items bli 
+    ON br.id = bli.bill_record_id
+LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn 
+    ON cvn.code = br.vendor_code 
+    AND cvn.customer_id = br.customer_id
+LEFT JOIN bill_management_v2.analytics_bills_items abi 
+    ON br.id = abi.bill_record_id
+LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac 
+    ON abi.bill_id = btac.bill_id
+WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue }}
+
+{{ vendor.selectedOptionValues && vendor.selectedOptionValues.length > 0
+    ? "AND br.vendor_code IN (" + vendor.selectedOptionValues.map(v => "'" + v.replace(/'/g, "''") + "'").join(",") + ")"
+    : "" 
+}}
+
+{{ Utility_Type.selectedOptionValue 
+    ? "AND bi.commodity = '" + Utility_Type.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+
+{{ locations.selectedOptionValue 
+    ? "AND l.id = '" + locations.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+
+{{ Attribute_Value.selectedOptionValue && FilterUtils.getSelectedAttributeLocationIds().length > 0 
+  ? "AND l.id IN (" + FilterUtils.getSelectedAttributeLocationIds().join(",") + ")" 
+  : "" 
+}}
+
+{{ state.selectedOptionValue 
+    ? "AND l.state = '" + state.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+
+{{ Cost_Range_From.text 
+    ? "AND btac.total_amount >= '" + Cost_Range_From.text + "'" 
+    : "" 
+}}
+
+{{ Cost_Range_To.text 
+    ? "AND btac.total_amount <= '" + Cost_Range_To.text + "'" 
+    : "" 
+}}
+
+{{ Invoice_Date_From.selectedDate 
+    ? "AND br.statement_date >= '" + moment(Invoice_Date_From.selectedDate).format('YYYY-MM-DD') + "'" 
+    : "" 
+}}
+
+{{ Invoice_DateT_To.selectedDate 
+    ? "AND br.statement_date <= '" + moment(Invoice_DateT_To.selectedDate).format('YYYY-MM-DD') + "'" 
+    : "" 
+}}
+
+{{ Date_Marked_for_Payment_From.selectedDate 
+    ? "AND bm.marked_for_payment >= '" + moment(Date_Marked_for_Payment_From.selectedDate).format('YYYY-MM-DD') + "'" 
+    : "" 
+}}
+
+{{ Date_Marked_for_Payment_To.selectedDate 
+    ? "AND bm.marked_for_payment <= '" + moment(Date_Marked_for_Payment_To.selectedDate).format('YYYY-MM-DD') + "'" 
+    : "" 
+}}
+
+{{ Billing_Line_Item_Description.text 
+    ? "AND bli.description = '" + Billing_Line_Item_Description.text + "'" 
+    : "" 
+}}
+
+{{ !Include_Deleted_Bills.isSwitchedOn 
+    ? "AND bm.deleted_at IS NULL AND abi.bill_id IS NOT NULL" 
+    : "" 
+}}
+
+{{ Most_Recent_Bill_per_Account.isSwitchedOn 
+    ? "ORDER BY br.client_account, abi.bill_id DESC" 
+    : "ORDER BY abi.bill_id DESC, br.client_account" 
+}}
+
+LIMIT {{ bills.pageSize }}
+OFFSET {{ (bills.pageNo - 1) * bills.pageSize }};

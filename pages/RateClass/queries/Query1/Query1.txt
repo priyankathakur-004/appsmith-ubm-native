@@ -1,0 +1,5 @@
+SELECT *
+FROM bill_management_v2.account_level_budget_source
+WHERE service_zip = '06457'
+AND DATE_PART('year', time_period) = 2025
+LIMIT 10

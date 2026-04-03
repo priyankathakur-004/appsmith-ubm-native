@@ -1,0 +1,18 @@
+SELECT
+    l.name AS location_description,
+    SUM(
+        COALESCE(amf.total_charges_consumption, 0) + 
+        COALESCE(amf.total_charges_generation, 0)
+    ) /
+    NULLIF(SUM(COALESCE(amf.total_consumption, 0)), 0) AS unit_cost
+FROM bill_management_v2.analytics_monthly_feed amf
+JOIN bill_management_v2.locations l
+    ON l.id = amf.location_id
+WHERE amf.customer_id = {{this.params.customer_id}}
+  {{ this.params.utility_type ? `AND amf.utility_type = '${this.params.utility_type}'` : '' }}
+  {{ this.params.date_start && this.params.date_end ? `AND amf.time_period BETWEEN '${this.params.date_start}' AND '${this.params.date_end}'` : '' }}
+	{{ this.params.location_ids && this.params.location_ids.length ? `AND amf.location_id IN (${this.params.location_ids.join(',')})` : '' }}
+
+GROUP BY l.id, l.name
+HAVING SUM(COALESCE(amf.total_consumption, 0)) > 0
+ORDER BY unit_cost DESC;

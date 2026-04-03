@@ -1,0 +1,1 @@
+SELECT * FROM bill_management_v2.users WHERE email = {{inp_email.text}};

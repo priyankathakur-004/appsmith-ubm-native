@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "#1e293b",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 53,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => (  \n  (() => {\n    const config = WeatherHelper.getCorrelationConfig();\n    return typeof config === \"string\"\n      ? JSON.parse(config)\n      : JSON.parse(JSON.stringify(config));\n  })()\n))(WeatherCorrelationChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cht_correlation",
+  "leftColumn": 0,
+  "mobileBottomRow": 120,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 57,
+  "originalBottomRow": 132,
+  "originalTopRow": 52,
+  "parentColumnSpace": 15,
+  "parentId": "v8e3h6cqx3",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 4,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "zatczk3ee6",
+  "widgetName": "WeatherCorrelationChart"
+}

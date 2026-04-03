@@ -1,0 +1,56 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.mecActiveView || 'Consumption') === 'EnergyUseIntensity' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.mecActiveView || 'Consumption') === 'EnergyUseIntensity' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "buttonColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "tfxb3w6ki4",
+  "leftColumn": 43,
+  "minWidth": 80,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 30,
+  "mobileRightColumn": 41,
+  "mobileTopRow": 6,
+  "onClick": "{{storeValue('mecActiveView', 'EnergyUseIntensity')}}",
+  "parentColumnSpace": 15,
+  "parentId": "enimfi0lhm",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 59,
+  "text": "Energy Use Intensity",
+  "textColor": "{{(appsmith.store.mecActiveView || 'Consumption') === 'EnergyUseIntensity' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 1,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "55987khgtg",
+  "widgetName": "MECEUIBtn"
+}

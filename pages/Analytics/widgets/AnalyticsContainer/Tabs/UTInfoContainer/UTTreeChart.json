@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 134,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{UtilityTreeHelper.getTreeChartConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "fgwun0siyq",
+  "leftColumn": 0,
+  "mobileBottomRow": 330,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 9,
+  "parentColumnSpace": 15,
+  "parentId": "u3ysd6l4t8",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 9,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "wzentow3tj",
+  "widgetName": "UTTreeChart"
+}

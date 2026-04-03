@@ -1,0 +1,23 @@
+SELECT 
+    CASE
+        WHEN bvd.workflow_state = 'data_verification_1' THEN 'Data Verification I'
+        WHEN bvd.workflow_state = 'data_verification_2' THEN 'Data Verification II'
+        WHEN bvd.workflow_state = 'data_audit_1' THEN 'Data Audit I'
+        WHEN bvd.workflow_state = 'data_audit_2' THEN 'Data Audit II'
+        WHEN bvd.workflow_state = 'integrity_check' THEN 'Integrity Check'
+        ELSE INITCAP(REPLACE(bvd.workflow_state, '_', ' '))
+    END AS error_stage,
+    be.message AS error_message,
+    be.validation_check_id,
+		be.resolved
+FROM bill_management_v2.bill_records AS br
+LEFT JOIN bill_management_v2.analytics_billing_line_items AS abli 
+    ON abli.bill_record_id = br.id
+LEFT JOIN bill_management_v2.bill_errors AS be
+    ON abli.bill_record_id = be.bill_record_id
+LEFT JOIN bill_management_v2.bill_validation_definitions AS bvd 
+    ON bvd.id = be.validation_check_id
+WHERE abli.bill_id = {{ appsmith.URL.queryParams.bill_id }}
+ORDER BY 
+    be.severity DESC,
+    error_stage;

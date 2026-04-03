@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 80,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => ( \nEnergyConsumptionHelper.getLocationChartConfig()\n))(ECLocationChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "6fczef8yor",
+  "leftColumn": 0,
+  "mobileBottomRow": 330,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 8,
+  "parentColumnSpace": 15,
+  "parentId": "hfal41s8xi",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 62,
+  "topRow": 5,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "abb7p2kfhd",
+  "widgetName": "ECLocationChart"
+}

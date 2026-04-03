@@ -1,0 +1,2 @@
+SELECT COUNT(*) FROM bill_management_v2.locations
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue }};

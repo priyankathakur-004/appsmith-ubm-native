@@ -1,0 +1,29 @@
+SELECT COUNT(*) AS total_rows
+FROM (
+    SELECT
+        DISTINCT ON (abi.bill_id, br.client_account)
+        br.id
+    FROM bill_management_v2.bill_metas bm
+    LEFT JOIN bill_management_v2.bill_metas_bill_records bmbr
+        ON bmbr.bill_meta_id = bm.id
+        AND bmbr.status = 'active'
+    LEFT JOIN bill_management_v2.bill_records br
+        ON br.id = bmbr.bill_record_id
+    LEFT JOIN bill_management_v2.bill_items bi
+        ON bi.bill_record_id = br.id
+    LEFT JOIN bill_management_v2.bill_items_virtual_accounts biva
+        ON biva.bill_item_id = bi.id
+    LEFT JOIN bill_management_v2.locations l
+        ON l.id = biva.location_id
+    LEFT JOIN bill_management_v2.billing_line_items bli
+        ON br.id = bli.bill_record_id
+    LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+        ON cvn.code = br.vendor_code
+        AND cvn.customer_id = br.customer_id
+    LEFT JOIN bill_management_v2.analytics_bills_items abi
+        ON br.id = abi.bill_record_id
+    LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac
+        ON abi.bill_id = btac.bill_id
+    WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue }}
+    {{ FilterUtils.generateSqlWhereClause(this.params.filters) }}
+) AS subquery;

@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 17,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "b1f4gvqxrn",
+  "leftColumn": 0,
+  "mobileBottomRow": 40,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "2kp102fzza",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 14,
+  "shouldTruncate": false,
+  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Graphs show the aggregated measures for all <b style=\"color:#f1f5f9;\">locations</b> by default. To show data for selected locations, use the list in the box below, or filter above. Hold the Control key for multiple options.</p></div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "qh26ycnldm",
+  "widgetName": "OTYInfoText"
+}

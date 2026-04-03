@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_date_lbl",
+  "leftColumn": 0,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 11,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 15,
+  "parentId": "ia1ed10g78",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 16,
+  "text": "Customer",
+  "textAlign": "LEFT",
+  "textColor": "#94a3b8",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "t7zeviz03o",
+  "widgetName": "CustomerLabel"
+}

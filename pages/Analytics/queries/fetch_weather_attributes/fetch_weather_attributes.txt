@@ -1,0 +1,14 @@
+SELECT
+    m.customer_id,
+    v.location_id,
+    l.name AS location_description,
+    m.attribute_name,
+    v.attribute_value,
+    v.date_month
+FROM bill_management_v2.location_monthly_attributes_metadata m
+INNER JOIN bill_management_v2.location_monthly_attributes_values v
+    ON m.id = v.location_monthly_attributes_metadata_id
+INNER JOIN bill_management_v2.locations l ON l.id = v.location_id
+WHERE m.attribute_type = 'Numeric'
+    AND v.attribute_value <> ''
+ORDER BY v.date_month, v.location_id

@@ -1,0 +1,113 @@
+SELECT DISTINCT ON (bi.id)
+    -- 🧾 Bill Header + Vendor Info
+    cpv.name AS vendor_name,
+    cpv.vendor_id,
+		cpv.provider_id as provider_vendor_id,
+		cpv.main_phone,
+    br.client_account AS billing_id,
+    br.bill_source,
+    br.invoice_number,
+    br.received_on,
+    TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS invoice_date,
+    TO_CHAR(br.due_date, 'MM/DD/YYYY') AS due_date,
+    TO_CHAR(rbpt.loaded_date, 'MM/DD/YYYY | HH24:MI') AS loaded_date,
+    TO_CHAR(rbpt.marked_for_payment, 'MM/DD/YYYY') AS marked_for_payment,
+    abc.chain_id AS bill_chain_id,
+
+    -- 💰 Billing Amounts
+    btac.total_charges AS current_charges,
+    btac.total_amount AS total_amount_due,
+    btac.prior_balance AS past_due_amount,
+
+    -- ⚙️ Bill Item Details
+    abli.virtual_account_id,
+    bi.commodity AS utility_type,
+    bi.account_code AS service_account_id,
+    bi.service_address,
+    bi.service_zip,
+    bi.meter_serial AS meter_id,
+    bi.bill_type AS vendor_type,
+    bi.service_location AS delivery_location,
+    bi.days_of_service,
+    bi.service_date_method,
+    bi.estimated,
+    TO_CHAR(bi.start_date, 'MM/DD/YYYY') AS billing_start_date,
+    TO_CHAR(bi.end_date, 'MM/DD/YYYY') AS billing_end_date,
+    TO_CHAR(bi.adjusted_end_date, 'MM/DD/YYYY') AS adjusted_service_end_date,
+    bi.rate_code AS rate_plan,
+    abc.prior_bill_id AS prior_meter_reading,
+    ld.location_address,
+    ld.location_description,
+    ld.location_division AS division,
+
+    -- ✅ Get Usage JSON
+    (
+        SELECT COALESCE(
+            json_agg(
+                json_build_object(
+                    'value', value,
+                    'usage', usage,
+                    'uom', uom,
+                    'charge', charge,
+                    'description', description
+                )
+            ), '[]'::json
+        )
+        FROM bill_management_v2.analytics_billing_line_items AS u
+        WHERE u.bill_item_id = bi.id
+    ) AS usage,
+
+    -- ✅ Get Regular Daily Values JSON
+    (
+        SELECT COALESCE(
+            json_agg(
+                json_build_object(
+                    'name', INITCAP(REPLACE(REPLACE(c.name, '_', ' '), 'billblock', '')),
+                    'value', c.value,
+                    'units', 
+                        CASE 
+                            WHEN UPPER(c.units::text) = 'KWHDD' THEN 'kWh/DD'
+                            ELSE LOWER(c.units::text)
+                        END
+                )
+            ), '[]'::json
+        )
+        FROM bill_management_v2.calculations c
+        WHERE c.bill_item_id = bi.id
+    ) AS regularDailyValues,
+
+    -- ✅ Get Weather Values JSON
+    (
+        SELECT COALESCE(
+            json_agg(
+                json_build_object(
+                    'name', INITCAP(REPLACE(REPLACE(wc.name, '_', ' '), 'billblock', '')),
+                    'value', wc.value,
+                    'units', 
+                        CASE 
+                            WHEN UPPER(wc.units::text) = 'KWHDD' THEN 'kWh/DD'
+                            ELSE LOWER(wc.units::text)
+                        END
+                )
+            ), '[]'::json
+        )
+        FROM bill_management_v2.weather_calculations wc
+        WHERE wc.bill_item_id = bi.id
+    ) AS weatherValues
+
+FROM bill_management_v2.bill_items bi
+LEFT JOIN bill_management_v2.analytics_billing_line_items abli 
+    ON abli.bill_item_id = bi.id
+LEFT JOIN bill_management_v2.bill_records br 
+    ON br.id = abli.bill_record_id
+LEFT JOIN bill_management_v2.customers_providers_vendors cpv
+    ON cpv.code = br.vendor_code AND cpv.customer_id = br.customer_id
+LEFT JOIN bill_management_v2.analytics_bills_chains abc 
+    ON abli.bill_id = abc.bill_id
+LEFT JOIN bill_management_v2.reports_bill_processing_time rbpt
+    ON abli.bill_id = rbpt.bill_id
+LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac 
+    ON abli.bill_id = btac.bill_id
+LEFT JOIN bill_management_v2.location_detail ld
+    ON ld.location_id = abli.location_id
+WHERE abli.bill_id = {{ appsmith.URL.queryParams.bill_id }};

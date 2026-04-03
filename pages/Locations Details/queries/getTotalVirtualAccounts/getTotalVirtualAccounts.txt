@@ -1,0 +1,2 @@
+SELECT COUNT(*) FROM bill_management_v2.virtual_accounts_locations
+WHERE customer_id = {{ appsmith.store.selectedCustomerId }} AND location_id = {{ JSON.parse(appsmith.URL.queryParams.rowData).id }};

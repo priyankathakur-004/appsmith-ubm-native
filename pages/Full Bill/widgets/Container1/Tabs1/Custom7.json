@@ -1,0 +1,70 @@
+{
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 108,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{ data: getBillErrors.data\n}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "33haxvy8gb",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 31,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 24,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "originalBottomRow": 106,
+  "originalTopRow": 1,
+  "parentColumnSpace": 5.091209411621094,
+  "parentId": "iqtai70hxa",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "body {\n  margin: 0;\n}\n\n.errors-container {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow-y: auto;\n  font-family: \"Inter\", system-ui, sans-serif;\n  background: #fff;\n  padding: 24px;\n  box-sizing: border-box;\n  border-radius: var(--appsmith-theme-borderRadius);\n  box-shadow: var(--appsmith-theme-boxShadow);\n}\n\n/* Top toggle row */\n.toggle-row {\n  display: flex;\n  gap: 16px;\n  margin-bottom: 20px;\n  font-size: 14px;\n}\n\n.toggle {\n  cursor: pointer;\n  font-weight: 500;\n  color: #081a45;\n}\n\n.toggle.active {\n  font-weight: 600;\n  color: #0f1c3f;\n}\n\n/* Section header */\n.section-title {\n  color: #6b6f82;\n  font-weight: 600;\n  font-size: 14px;\n  margin-top: 12px;\n  margin-bottom: 8px;\n}\n\n/* Group title (e.g., Data Verification I) */\n.error-title {\n  font-weight: 600;\n  font-size: 14px;\n  color: #0f1c3f;\n  margin: 12px 24px;\n}\n\n/* Group container */\n.error-group {\n  margin-bottom: 12px;\n}\n\n/* Error row (checkmark + message + id) */\n.error-row {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 8px;\n  margin: 12px 0px;\n  border-radius: 4px;\n  transition: background-color 0.2s ease;\n}\n\n.error-row:hover {\n  background-color: #eef5ff;\n}\n\n.checkmark {\n  flex-shrink: 0;\n  width: 16px;\n  text-align: center;\n  margin-top: 3px;\n  color: #222;\n}\n\n.error-message {\n  flex: 1;\n  font-size: 13px;\n  color: #222;\n  line-height: 1.5;\n}\n\n.error-id {\n  font-size: 12px;\n  color: #7b8191;\n  white-space: nowrap;\n  margin-left: 8px;\n}\n\n.no-errors {\n  text-align: left;\n  color: #6b6f82;\n  font-weight: 500;\n  font-size: 14px;\n  padding: 24px 0;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App() {\n  const errors = appsmith.model.data || [];\n\n  // Define stage groupings\n  const criticalStages = [\"Data Verification I\", \"Data Verification II\", \"Integrity Check\"];\n  const auditStages = [\"Data Audit I\", \"Data Audit II\"];\n\n  // Helper to group by stage\n  const groupByStage = items => {\n    return items.reduce((acc, err) => {\n      if (!acc[err.error_stage]) acc[err.error_stage] = [];\n      acc[err.error_stage].push(err);\n      return acc;\n    }, {});\n  };\n  const criticalGrouped = groupByStage(errors.filter(e => criticalStages.includes(e.error_stage)));\n  const auditGrouped = groupByStage(errors.filter(e => auditStages.includes(e.error_stage)));\n  const hasCritical = Object.keys(criticalGrouped).length > 0;\n  const hasAudit = Object.keys(auditGrouped).length > 0;\n  const hasAnyErrors = hasCritical || hasAudit;\n  const renderGroupedErrors = grouped => Object.entries(grouped).map(([stage, errs]) => /*#__PURE__*/React.createElement(\"div\", {\n    className: \"error-group\",\n    key: stage\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"error-title\"\n  }, stage), errs.map(error => /*#__PURE__*/React.createElement(\"div\", {\n    className: \"error-row\",\n    key: error.validation_check_id\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"checkmark\"\n  }, error.resolved ? \"✓\" : \"•\"), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"error-message\"\n  }, error.error_message), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"error-id\"\n  }, error.validation_check_id)))));\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"errors-container\"\n  }, hasAnyErrors && /*#__PURE__*/React.createElement(\"div\", {\n    className: \"toggle-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"toggle\"\n  }, \"\\u2022 Unresolved\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"toggle\"\n  }, \"\\u2713 Resolved\")), !hasAnyErrors && /*#__PURE__*/React.createElement(\"div\", {\n    className: \"no-errors\"\n  }, \"0 Errors\"), hasCritical && /*#__PURE__*/React.createElement(\"div\", {\n    className: \"section\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"section-title\"\n  }, \"Critical Errors\"), renderGroupedErrors(criticalGrouped)), hasAudit && /*#__PURE__*/React.createElement(\"div\", {\n    className: \"section\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"section-title\"\n  }, \"Audit Errors\"), renderGroupedErrors(auditGrouped)));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body {\n  margin: 0;\n}\n\n.errors-container {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow-y: auto;\n  font-family: \"Inter\", system-ui, sans-serif;\n  background: #fff;\n  padding: 24px;\n  box-sizing: border-box;\n  border-radius: var(--appsmith-theme-borderRadius);\n  box-shadow: var(--appsmith-theme-boxShadow);\n}\n\n/* Top toggle row */\n.toggle-row {\n  display: flex;\n  gap: 16px;\n  margin-bottom: 20px;\n  font-size: 14px;\n}\n\n.toggle {\n  cursor: pointer;\n  font-weight: 500;\n  color: #081a45;\n}\n\n.toggle.active {\n  font-weight: 600;\n  color: #0f1c3f;\n}\n\n/* Section header */\n.section-title {\n  color: #6b6f82;\n  font-weight: 600;\n  font-size: 14px;\n  margin-top: 12px;\n  margin-bottom: 8px;\n}\n\n/* Group title (e.g., Data Verification I) */\n.error-title {\n  font-weight: 600;\n  font-size: 14px;\n  color: #0f1c3f;\n  margin: 12px 24px;\n}\n\n/* Group container */\n.error-group {\n  margin-bottom: 12px;\n}\n\n/* Error row (checkmark + message + id) */\n.error-row {\n  display: flex;\n  align-items: flex-start;\n  justify-content: space-between;\n  gap: 8px;\n\tmargin: 12px 0px;\n  border-radius: 4px;\n  transition: background-color 0.2s ease;\n}\n\n.error-row:hover {\n  background-color: #eef5ff;\n}\n\n.checkmark {\n  flex-shrink: 0;\n  width: 16px;\n  text-align: center;\n  margin-top: 3px;\n\tcolor:#222;\n}\n\n.error-message {\n  flex: 1;\n  font-size: 13px;\n  color: #222;\n  line-height: 1.5;\n}\n\n.error-id {\n  font-size: 12px;\n  color: #7b8191;\n  white-space: nowrap;\n  margin-left: 8px;\n}\n\n.no-errors {\n  text-align: left;\n  color: #6b6f82;\n  font-weight: 500;\n  font-size: 14px;\n  padding: 24px 0;\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nfunction App() {\n  const errors = appsmith.model.data || [];\n\n  // Define stage groupings\n   const criticalStages = [\"Data Verification I\", \"Data Verification II\", \"Integrity Check\"];\n  const auditStages = [\"Data Audit I\", \"Data Audit II\"];\n\n  // Helper to group by stage\n  const groupByStage = (items) => {\n    return items.reduce((acc, err) => {\n      if (!acc[err.error_stage]) acc[err.error_stage] = [];\n      acc[err.error_stage].push(err);\n      return acc;\n    }, {});\n  };\n\n  const criticalGrouped = groupByStage(\n    errors.filter((e) => criticalStages.includes(e.error_stage))\n  );\n  const auditGrouped = groupByStage(\n    errors.filter((e) => auditStages.includes(e.error_stage))\n  );\n\n  const hasCritical = Object.keys(criticalGrouped).length > 0;\n  const hasAudit = Object.keys(auditGrouped).length > 0;\n  const hasAnyErrors = hasCritical || hasAudit;\n\n  const renderGroupedErrors = (grouped) =>\n    Object.entries(grouped).map(([stage, errs]) => (\n      <div className=\"error-group\" key={stage}>\n        <div className=\"error-title\">{stage}</div>\n        {errs.map((error) => (\n          <div className=\"error-row\" key={error.validation_check_id}>\n            <div className=\"checkmark\">{error.resolved ? \"✓\" : \"•\"}</div>\n            <div className=\"error-message\">{error.error_message}</div>\n            <div className=\"error-id\">{error.validation_check_id}</div>\n          </div>\n        ))}\n      </div>\n    ));\n\n  return (\n    <div className=\"errors-container\">\n      {hasAnyErrors && (\n        <div className=\"toggle-row\">\n          <span className=\"toggle\">• Unresolved</span>\n          <span className=\"toggle\">✓ Resolved</span>\n        </div>\n      )}\n\n      {!hasAnyErrors && (\n        <div className=\"no-errors\">0 Errors</div>\n      )}\n\n      {hasCritical && (\n        <div className=\"section\">\n          <div className=\"section-title\">Critical Errors</div>\n          {renderGroupedErrors(criticalGrouped)}\n        </div>\n      )}\n\n      {hasAudit && (\n        <div className=\"section\">\n          <div className=\"section-title\">Audit Errors</div>\n          {renderGroupedErrors(auditGrouped)}\n        </div>\n      )}\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "morh3lxinr",
+  "widgetName": "Custom7"
+}

@@ -1,0 +1,55 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 39,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "a7kkulk590",
+  "leftColumn": 23,
+  "minWidth": 120,
+  "mobileBottomRow": 61,
+  "mobileLeftColumn": 20,
+  "mobileRightColumn": 36,
+  "mobileTopRow": 57,
+  "needsErrorInfo": false,
+  "onClick": "{{navigateTo('https://app.dromo.io/import/87b54d2b-f053-4578-9e64-6ccd6997b42c/?dev=true, \"_blank\"', {}, 'NEW_WINDOW').then(() => {\n  navigateTo(\"\", {}, 'SAME_WINDOW');\n});}}",
+  "parentColumnSpace": 17.796875,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 41,
+  "text": "Upload & Validate (Dromo)",
+  "topRow": 33,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "cnsz2w7val",
+  "widgetName": "btnOpenDromo"
+}

@@ -1,0 +1,5 @@
+SELECT DISTINCT ON (attribute_name)
+attribute_name
+FROM bill_management_v2.custom_location_attributes
+WHERE customer_id = {{CustomerSelect.selectedOptionValue}}
+ORDER BY attribute_name;

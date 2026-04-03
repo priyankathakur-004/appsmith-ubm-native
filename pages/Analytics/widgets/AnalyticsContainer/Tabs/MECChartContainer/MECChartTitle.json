@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 13,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "uqv44i3u96",
+  "leftColumn": 0,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 3,
+  "mobileRightColumn": 60,
+  "mobileTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "m1e1yrlycp",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 59,
+  "shouldTruncate": false,
+  "text": "{{MonthlyEnergyHelper.getChartTitle()}}",
+  "textAlign": "LEFT",
+  "textColor": "#e2e8f0",
+  "topRow": 10,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "kewnaewmfj",
+  "widgetName": "MECChartTitle"
+}

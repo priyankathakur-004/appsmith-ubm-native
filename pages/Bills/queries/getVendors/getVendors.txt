@@ -1,0 +1,30 @@
+SELECT 
+    br.vendor_code,
+    MAX(
+        COALESCE(
+            NULLIF(btrim(cvpn.pretty_name::text), ''),
+            pvn.pretty_name::text,
+            br.vendor_code::text
+        )
+    )::character varying AS vendor_name
+FROM bill_management_v2.bill_records br
+LEFT JOIN bill_management_v2.analytics_billing_line_items abli 
+    ON abli.bill_record_id = br.id
+LEFT JOIN bill_management_v2.providers_pretty_name pvn 
+    ON pvn.code::text = br.vendor_code::text
+LEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn 
+    ON cvpn.customer_id = br.customer_id 
+    AND cvpn.vendor_id = pvn.vendor_id
+WHERE br.customer_id = {{CustomerSelect.selectedOptionValue}}
+{{ Utility_Type.selectedOptionValue 
+    ? "AND abli.commodity = '" + Utility_Type.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+
+{{ locations.selectedOptionValue 
+    ? "AND abli.location_id = '" + locations.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+GROUP BY br.vendor_code
+ORDER BY vendor_name;
+

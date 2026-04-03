@@ -1,0 +1,52 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 17,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": "{{ !LocationAttrSelect.selectedOptionValue }}",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "sel_attrchoice",
+  "labelText": "",
+  "leftColumn": 34,
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 54,
+  "mobileTopRow": 9,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "ia1ed10g78",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 48,
+  "sourceData": "{{ \n  (fetch_attribute_values.data?.length\n    ? fetch_attribute_values.data\n    : [{ attribute_value: \"\" }]\n  ).map(d => ({\n    label: d.attribute_value || \"\",\n    value: d.attribute_value || \"\"\n  }))\n}}\n",
+  "topRow": 12,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "qe9fcw0mi0",
+  "widgetName": "AttrChoiceSelect"
+}

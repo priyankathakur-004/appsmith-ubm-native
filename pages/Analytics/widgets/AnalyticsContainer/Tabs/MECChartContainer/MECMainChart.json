@@ -1,0 +1,79 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowScroll": false,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 97,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "chartData": {
+    "3m3l07euym": {
+      "data": [
+        {
+          "x": "Product1",
+          "y": 20000
+        },
+        {
+          "x": "Product2",
+          "y": 22000
+        },
+        {
+          "x": "Product3",
+          "y": 32000
+        }
+      ],
+      "seriesName": "2023"
+    }
+  },
+  "chartName": "Sales Report",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => (  \n  (() => {\n    const config = MonthlyEnergyHelper.getMonthlyChartConfig();\n    return typeof config === \"string\"\n      ? JSON.parse(config)\n      : JSON.parse(JSON.stringify(config));\n  })()\n))(MECMainChart.chartType) }}",
+  "customFusionChartConfig": "{{MonthlyEnergyHelper.getMonthlyChartConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "customFusionChartConfig"
+    },
+    {
+      "key": "customEChartConfig"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "start",
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "mrar5upa8s",
+  "labelOrientation": "auto",
+  "leftColumn": 0,
+  "minWidth": 450,
+  "mobileBottomRow": 47,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 24,
+  "mobileTopRow": 15,
+  "needsErrorInfo": true,
+  "parentColumnSpace": 12.4228515625,
+  "parentId": "m1e1yrlycp",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "showDataPointLabel": false,
+  "topRow": 15,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "n7ai94e9yv",
+  "widgetName": "MECMainChart",
+  "xAxisName": "Product Line",
+  "yAxisName": "Revenue($)"
+}

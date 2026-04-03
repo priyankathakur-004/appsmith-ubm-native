@@ -1,0 +1,26 @@
+WITH current_chain AS (
+  SELECT bill_chain_id
+  FROM bill_management_v2.reports_customer_bill_chains
+  WHERE bill_id = {{ appsmith.URL.queryParams.bill_id }}
+  LIMIT 1
+)
+SELECT sub.bill_id, sub.bill_chain_id
+FROM (
+  SELECT 
+    bill_id,
+    bill_chain_id,
+    ROW_NUMBER() OVER (
+      PARTITION BY bill_chain_id 
+      ORDER BY 
+        CASE WHEN bill_id = {{ appsmith.URL.queryParams.bill_id }} THEN 0 ELSE 1 END
+    ) AS rn
+  FROM bill_management_v2.reports_customer_bill_chains
+  WHERE billing_id = '{{ getBill.data[0].billing_id }}'
+) sub, current_chain
+WHERE sub.rn = 1
+ORDER BY 
+  CASE 
+    WHEN sub.bill_chain_id = current_chain.bill_chain_id THEN 0 
+    ELSE 1 
+  END,
+  sub.bill_chain_id;

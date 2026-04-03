@@ -1,0 +1,1 @@
+SELECT * FROM bill_management_v2."vendors_search" WHERE id = '2250'

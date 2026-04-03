@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 46,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_weather_info",
+  "leftColumn": 0,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 20,
+  "parentColumnSpace": 15,
+  "parentId": "2dfhkpjwsx",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 22,
+  "shouldTruncate": false,
+  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ This tab is for <b style=\"color:#f1f5f9;\">Electricity only</b>. We suggest using <b style=\"color:#f1f5f9;\">at least 2 years</b> of data to get more accurate estimation of the correlation between consumption and weather.</p><br/><p>- Very high correlation: changes of temperature directly impact the consumption.</p><p>- Correlation around 0: not much sensitivity.</p><p>- Correlation around -1: hotter and colder days inversely impact consumption.</p><br/><p style=\"color:#94a3b8;\">If all data shows up as zero degree days, it is an indicator that weather recording is inactive. Please contact your Pear customer success manager for more information.</p></div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 3,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "0ww9u5zzwq",
+  "widgetName": "WeatherInfoText"
+}

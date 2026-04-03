@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "jsogz7bi3r",
+  "leftColumn": 0,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 3,
+  "mobileRightColumn": 60,
+  "mobileTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "hfal41s8xi",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 59,
+  "shouldTruncate": false,
+  "text": "{{EnergyConsumptionHelper.getLeftChartTitle()}}",
+  "textAlign": "LEFT",
+  "textColor": "#e2e8f0",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "m4gvax9out",
+  "widgetName": "ECLeftTitle"
+}

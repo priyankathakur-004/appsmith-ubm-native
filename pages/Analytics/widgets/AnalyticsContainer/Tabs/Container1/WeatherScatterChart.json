@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "#1e293b",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 98,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => (  \n  (() => {\n    const config = WeatherHelper.getScatterConfig();\n    return typeof config === \"string\"\n      ? JSON.parse(config)\n      : JSON.parse(JSON.stringify(config));\n  })()\n))(WeatherScatterChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cht_scatter",
+  "leftColumn": 0,
+  "mobileBottomRow": 120,
+  "mobileLeftColumn": 23,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 57,
+  "originalBottomRow": 186,
+  "originalTopRow": 111,
+  "parentColumnSpace": 15,
+  "parentId": "olv0s73vwl",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 53,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "e0z18frgt5",
+  "widgetName": "WeatherScatterChart"
+}

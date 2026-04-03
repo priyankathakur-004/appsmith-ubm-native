@@ -1,0 +1,60 @@
+SELECT 
+    m.customer_id,
+    m.time_period,
+    m.utility_type,
+    m.bill_type,
+    m.location_id,
+		m.client_account as service_account,
+		m.meter_serial as meter,
+    m.location_description,
+        l.address,
+        l.state,
+        l.city,
+        l.square_feet,
+
+    CASE 
+        WHEN m.bill_type = 'Supply Only' 
+        THEN m.total_gen_consumption 
+        ELSE m.total_consumption 
+    END AS consumption,
+    m.total_consumption_uom,
+    m.total_charges,
+    m.total_cdd,
+    m.total_hdd,
+    m.total_dd
+
+FROM bill_management_v2.reports_customer_monthly_usage m
+INNER JOIN bill_management_v2.locations l 
+    ON l.id = m.location_id
+
+WHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
+
+
+{{ DateSelect.selectedOptionValues.filter(d => d.includes('-')).length > 0 ?
+    `AND m.time_period IN (${ DateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
+: "" }}
+
+{{ UtilityTypeSelect.selectedOptionValues &&  UtilityTypeSelect.selectedOptionValues.length > 0
+? `AND m.utility_type IN ('${UtilityTypeSelect.selectedOptionValues.join("','")}')`
+: "" }}
+
+{{ BillTypeSelect.selectedOptionValue ?
+`AND m.bill_type = '${BillTypeSelect.selectedOptionValue}'`
+: "" }}
+
+{{ LocationSelect.selectedOptionValue ?
+`AND m.location_id = ${LocationSelect.selectedOptionValue}`
+: "" }}
+
+{{ LocationAttrSelect.selectedOptionValue && LocationAttrSelect.selectedOptionValue !== 'All' ?
+`AND EXISTS (
+    SELECT 1
+    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr
+    WHERE attr->>'id' = '${LocationAttrSelect.selectedOptionValue}'
+    ${AttrChoiceSelect.selectedOptionValue && AttrChoiceSelect.selectedOptionValue !== 'All'
+      ? `AND attr->>'value' = '${AttrChoiceSelect.selectedOptionValue}'`
+      : "" }
+)`
+: "" }}
+
+ORDER BY m.location_description, m.time_period DESC;

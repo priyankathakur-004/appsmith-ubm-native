@@ -1,0 +1,16 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_9c2d97e6-afb6-4ff8-8234-f87ebb90be56",
+  "id": "Locations_StateMapper",
+  "unpublishedCollection": {
+    "name": "StateMapper",
+    "pageId": "Locations",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "stateNameMap",
+        "value": "{\n  \"US-AL\": \"Alabama\",\n  \"US-AK\": \"Alaska\",\n  \"US-AZ\": \"Arizona\",\n  \"US-AR\": \"Arkansas\",\n  \"US-CA\": \"California\",\n  \"US-CO\": \"Colorado\",\n  \"US-CT\": \"Connecticut\",\n  \"US-DE\": \"Delaware\",\n  \"US-FL\": \"Florida\",\n  \"US-GA\": \"Georgia\",\n  \"US-HI\": \"Hawaii\",\n  \"US-ID\": \"Idaho\",\n  \"US-IL\": \"Illinois\",\n  \"US-IN\": \"Indiana\",\n  \"US-IA\": \"Iowa\",\n  \"US-KS\": \"Kansas\",\n  \"US-KY\": \"Kentucky\",\n  \"US-LA\": \"Louisiana\",\n  \"US-ME\": \"Maine\",\n  \"US-MD\": \"Maryland\",\n  \"US-MA\": \"Massachusetts\",\n  \"US-MI\": \"Michigan\",\n  \"US-MN\": \"Minnesota\",\n  \"US-MS\": \"Mississippi\",\n  \"US-MO\": \"Missouri\",\n  \"US-MT\": \"Montana\",\n  \"US-NE\": \"Nebraska\",\n  \"US-NV\": \"Nevada\",\n  \"US-NH\": \"New Hampshire\",\n  \"US-NJ\": \"New Jersey\",\n  \"US-NM\": \"New Mexico\",\n  \"US-NY\": \"New York\",\n  \"US-NC\": \"North Carolina\",\n  \"US-ND\": \"North Dakota\",\n  \"US-OH\": \"Ohio\",\n  \"US-OK\": \"Oklahoma\",\n  \"US-OR\": \"Oregon\",\n  \"US-PA\": \"Pennsylvania\",\n  \"US-RI\": \"Rhode Island\",\n  \"US-SC\": \"South Carolina\",\n  \"US-SD\": \"South Dakota\",\n  \"US-TN\": \"Tennessee\",\n  \"US-TX\": \"Texas\",\n  \"US-UT\": \"Utah\",\n  \"US-VT\": \"Vermont\",\n  \"US-VA\": \"Virginia\",\n  \"US-WA\": \"Washington\",\n  \"US-WV\": \"West Virginia\",\n  \"US-WI\": \"Wisconsin\",\n  \"US-WY\": \"Wyoming\",\n  \"CA-AB\": \"Alberta\",\n  \"CA-BC\": \"British Columbia\",\n  \"CA-MB\": \"Manitoba\",\n  \"CA-NB\": \"New Brunswick\",\n  \"CA-NL\": \"Newfoundland and Labrador\",\n  \"CA-NS\": \"Nova Scotia\",\n  \"CA-NT\": \"Northwest Territories\",\n  \"CA-NU\": \"Nunavut\",\n  \"CA-ON\": \"Ontario\",\n  \"CA-PE\": \"Prince Edward Island\",\n  \"CA-QC\": \"Quebec\",\n  \"CA-SK\": \"Saskatchewan\",\n  \"CA-YT\": \"Yukon\"\n}"
+      }
+    ]
+  }
+}

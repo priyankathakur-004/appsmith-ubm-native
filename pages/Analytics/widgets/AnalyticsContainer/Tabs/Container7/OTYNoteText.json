@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 34,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "qe98az9ysu",
+  "leftColumn": 0,
+  "mobileBottomRow": 60,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 19,
+  "parentColumnSpace": 15,
+  "parentId": "2kp102fzza",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 14,
+  "shouldTruncate": false,
+  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p><b style=\"color:#fbbf24;\">Note</b>: Choose one utility for the consumption and unit cost charts to show correct data. Choosing multiple utilities works for aggregated charges but not other charts.</p></div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 17,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "y27s08xtvc",
+  "widgetName": "OTYNoteText"
+}

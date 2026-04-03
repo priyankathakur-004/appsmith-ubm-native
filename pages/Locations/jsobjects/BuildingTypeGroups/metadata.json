@@ -1,0 +1,16 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_379ad7e9-f45d-4515-8249-021980f5ba06",
+  "id": "Locations_BuildingTypeGroups",
+  "unpublishedCollection": {
+    "name": "BuildingTypeGroups",
+    "pageId": "Locations",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "groups",
+        "value": "{\n  \"\": [\"\"],\n  \"ACUTE\": [\"ACUTE\"],\n  \"ADMIN OFFICE\": [\"ADMIN OFFICE\"],\n  \"AUCTIONS\": [\"AUCTIONS\", \"AUCTIONS - AUCTIONS\", \"AUCTIONS _ AUCTIONS\", \"AUCTIONS - AUCTIONS, MAIN ADDRESS\", \"AUCTIONS _ AUCTIONS, MAIN ADDRESS\", \"AUCTIONS - AUCTIONS, MAIN ADDRESS, VEHICLE STORAGE\", \"AUCTIONS _ AUCTIONS, MAIN ADDRESS, VEHICLE STORAGE\", \"AUCTIONS - PARKING\", \"AUCTIONS _ PARKING\", \"AUCTIONS - STORAGE, PARKING\", \"AUCTIONS _ STORAGE, PARKING\", \"AUCTIONS - VEHICLE STORAGE\", \"AUCTIONS _ VEHICLE STORAGE\"],\n  \"BUILDING\": [\"BUILDING\", \"Building\"],\n  \"CAMPUS\": [\"CAMPUS\", \"Campus\"],\n  \"OFFICE\": [\"OFFICE\", \"OFFICE - OFFICE\", \"OFFICE _ OFFICE\"],\n  \"PARKING\": [\"PARKING - PARKING\", \"PARKING _ PARKING\", \"PARKING - STORAGE\", \"PARKING _ STORAGE\", \"PARKING - VEHICLE STORAGE\", \"PARKING _ VEHICLE STORAGE\", \"PARKING - VEHICLE STORAGE, PARKING\", \"PARKING _ VEHICLE STORAGE, PARKING\"],\n  \"WAREHOUSE - AUTOMOBILE BODY & REPAIR\": [\"WAREHOUSE - AUTOMOBILE BODY & REPAIR\", \"WAREHOUSE _ AUTOMOBILE BODY AND REPAIR\"]\n}"
+      }
+    ]
+  }
+}

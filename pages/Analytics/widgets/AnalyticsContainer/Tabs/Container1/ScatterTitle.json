@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 53,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_scatter_title",
+  "leftColumn": 0,
+  "mobileBottomRow": 60,
+  "mobileLeftColumn": 23,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 56,
+  "originalBottomRow": 111,
+  "originalTopRow": 107,
+  "parentColumnSpace": 15,
+  "parentId": "olv0s73vwl",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 51,
+  "shouldTruncate": false,
+  "text": "Average Monthly Consumption vs Degree Days",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 49,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "7l0slftk5b",
+  "widgetName": "ScatterTitle"
+}

@@ -1,0 +1,19 @@
+SELECT DISTINCT ON (l.name)
+   l.id, l.name, l.state
+FROM bill_management_v2.analytics_billing_line_items abli
+LEFT JOIN bill_management_v2.locations l 
+    ON abli.location_id = l.id
+WHERE abli.customer_id = {{CustomerSelect.selectedOptionValue}}
+
+{{ vendor.selectedOptionValues && vendor.selectedOptionValues.length > 0 
+    ? " AND abli.vendor_code IN (" + vendor.selectedOptionValues.map(v => "'" + v.replace(/'/g, "''") + "'").join(",") + ")" 
+    : "" 
+}}
+{{ Utility_Type.selectedOptionValue 
+    ? "AND abli.commodity = '" + Utility_Type.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+
+ORDER BY l.name
+
+

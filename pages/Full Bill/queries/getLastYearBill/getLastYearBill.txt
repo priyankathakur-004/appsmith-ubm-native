@@ -1,0 +1,38 @@
+SELECT 
+    abc.bill_id,
+    abc.chain_id,
+    TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS invoice_date,
+    br.statement_date,
+    btac.total_charges AS current_charges,
+    btac.prior_balance AS past_due_amount,
+    btac.total_amount AS total_amount_due,
+    btac.total_amount AS pay_amount,
+    TO_CHAR(br.due_date, 'MM/DD/YYYY') AS due_date
+FROM bill_management_v2.analytics_bills_chains abc
+LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac 
+    ON btac.bill_id = abc.bill_id
+LEFT JOIN bill_management_v2.bill_records br 
+    ON btac.record_id = br.id
+WHERE abc.chain_id = (
+    SELECT chain_id 
+    FROM bill_management_v2.analytics_bills_chains 
+    WHERE bill_id = {{ appsmith.URL.queryParams.bill_id }}
+)
+AND EXTRACT(YEAR FROM br.statement_date) = (
+    SELECT EXTRACT(YEAR FROM br2.statement_date) - 1
+    FROM bill_management_v2.bills_total_amount_charges_prior btac2
+    JOIN bill_management_v2.bill_records br2 
+        ON btac2.record_id = br2.id
+    WHERE btac2.bill_id = {{ appsmith.URL.queryParams.bill_id }}
+    LIMIT 1
+)
+AND EXTRACT(MONTH FROM br.statement_date) = (
+    SELECT EXTRACT(MONTH FROM br3.statement_date)
+    FROM bill_management_v2.bills_total_amount_charges_prior btac3
+    JOIN bill_management_v2.bill_records br3 
+        ON btac3.record_id = br3.id
+    WHERE btac3.bill_id = {{ appsmith.URL.queryParams.bill_id }}
+    LIMIT 1
+)
+ORDER BY br.statement_date DESC
+LIMIT 1;

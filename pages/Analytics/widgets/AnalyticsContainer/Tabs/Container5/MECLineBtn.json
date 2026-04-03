@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 11,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.mecChartType || 'scatter') === 'line' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.mecChartType || 'scatter') === 'line' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "101uoh84vo",
+  "leftColumn": 56,
+  "minWidth": 80,
+  "mobileBottomRow": 17,
+  "mobileLeftColumn": 20,
+  "mobileRightColumn": 28,
+  "mobileTopRow": 11,
+  "onClick": "{{storeValue('mecChartType', 'line')}}",
+  "parentColumnSpace": 15,
+  "parentId": "enimfi0lhm",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Line Chart",
+  "textColor": "{{(appsmith.store.mecChartType || 'scatter') === 'line' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 7,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "ujpkvchp6o",
+  "widgetName": "MECLineBtn"
+}

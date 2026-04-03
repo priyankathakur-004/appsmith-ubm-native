@@ -1,0 +1,4 @@
+SELECT *
+FROM bill_management_v2.account_history 
+WHERE virtual_account_id = {{ this.params.virtual_account_id }}
+ORDER BY bill_id DESC;

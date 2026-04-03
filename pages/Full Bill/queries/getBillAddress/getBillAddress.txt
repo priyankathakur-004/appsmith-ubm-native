@@ -1,0 +1,1 @@
+SELECT bill_to_address, remittance_address FROM bill_management_v2."records" WHERE bill_id =  {{ appsmith.URL.queryParams.bill_id }}

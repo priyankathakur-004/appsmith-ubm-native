@@ -1,0 +1,14 @@
+SELECT 
+  utility_type
+FROM bill_management_v2.analytics_monthly_feed
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue }}
+
+{{ vendor.selectedOptionValues && vendor.selectedOptionValues.length > 0 
+    ? " AND vendor_code IN (" + vendor.selectedOptionValues.map(v => "'" + v.replace(/'/g, "''") + "'").join(",") + ")" 
+    : "" 
+}}
+{{ locations.selectedOptionValue 
+    ? " AND l_id = '" + locations.selectedOptionValue.replace(/'/g, "''") + "'" 
+    : "" 
+}}
+GROUP BY utility_type;

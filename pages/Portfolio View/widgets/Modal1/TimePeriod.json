@@ -1,0 +1,69 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "alignment": "left",
+  "animateLoading": true,
+  "bottomRow": 27,
+  "boxShadow": "none",
+  "defaultOptionValue": "all_time",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "label"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "start",
+  "isDisabled": false,
+  "isInline": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "jvarmbamjl",
+  "label": "Time period: {{TimePeriod.selectedOptionValue}}",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelStyle": "BOLD",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 32,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 18,
+  "mobileTopRow": 26,
+  "needsErrorInfo": false,
+  "options": [
+    {
+      "label": "Year to date",
+      "value": "Year to date"
+    },
+    {
+      "label": "Custom",
+      "value": "Custom"
+    },
+    {
+      "label": "Last x months",
+      "value": "Last x months"
+    },
+    {
+      "label": "All time",
+      "value": "All time"
+    }
+  ],
+  "originalBottomRow": 27,
+  "originalTopRow": 21,
+  "parentColumnSpace": 9.0625,
+  "parentId": "kch1dk4q0g",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "topRow": 21,
+  "type": "RADIO_GROUP_WIDGET",
+  "version": 1,
+  "widgetId": "odpbisxe4j",
+  "widgetName": "TimePeriod"
+}

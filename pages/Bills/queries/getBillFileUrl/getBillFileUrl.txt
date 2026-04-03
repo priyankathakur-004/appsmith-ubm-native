@@ -1,0 +1,5 @@
+SELECT 
+    path
+FROM bill_management_v2.bill_files
+WHERE bill_id = {{ bills.selectedRow.bill_id }}
+LIMIT 1;

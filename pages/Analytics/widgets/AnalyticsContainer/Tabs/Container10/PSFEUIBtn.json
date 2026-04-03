@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'EUI' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'EUI' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "poybzri6uz",
+  "leftColumn": 45,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 39,
+  "mobileRightColumn": 49,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('psfViewBy', 'EUI')}}",
+  "parentColumnSpace": 15,
+  "parentId": "8zp9m19sqi",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 59,
+  "text": "Energy Use Intensity",
+  "textColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'EUI' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 3,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "2bgfyxuem3",
+  "widgetName": "PSFEUIBtn"
+}

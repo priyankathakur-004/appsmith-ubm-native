@@ -1,0 +1,17 @@
+SELECT 
+    l.name AS location_description,
+    SUM(COALESCE(amf.total_consumption, 0)) AS distribution_consumption,
+    SUM(COALESCE(amf.total_gen_consumption, 0)) AS supply_consumption
+
+FROM bill_management_v2.analytics_monthly_feed amf
+JOIN bill_management_v2.locations l 
+    ON l.id = amf.location_id
+
+WHERE amf.customer_id = {{this.params.customer_id}}
+	{{ this.params.utility_type ? `AND utility_type = '${this.params.utility_type}'` : '' }}
+	{{ this.params.date_start && this.params.date_end ? `AND amf.time_period BETWEEN '${this.params.date_start}' AND '${this.params.date_end}'` : '' }}
+	{{ this.params.location_ids && this.params.location_ids.length ? `AND amf.location_id IN (${this.params.location_ids.join(',')})` : '' }}
+
+
+GROUP BY l.name
+ORDER BY distribution_consumption DESC;

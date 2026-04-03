@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "wl31y2po6f",
+  "leftColumn": 0,
+  "mobileBottomRow": 30,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 51,
+  "mobileTopRow": 11,
+  "parentColumnSpace": 15,
+  "parentId": "op4pghclvd",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "Select UOM:",
+  "textAlign": "CENTER",
+  "textColor": "#e2e8f0",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "po16f3icq1",
+  "widgetName": "MECUOMLabel"
+}

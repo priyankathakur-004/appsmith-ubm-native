@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 38,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => ( \nEnergyConsumptionHelper.getMeterChartConfig()\n))(ECMeterChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "customEChartConfig"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "la7j8oja22",
+  "leftColumn": 0,
+  "mobileBottomRow": 180,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 5,
+  "parentColumnSpace": 15,
+  "parentId": "jjbvwcw1in",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 5,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "9wjjptvafk",
+  "widgetName": "ECMeterChart"
+}

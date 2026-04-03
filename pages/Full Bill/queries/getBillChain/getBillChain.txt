@@ -1,0 +1,24 @@
+SELECT 
+  abc.bill_id,
+  TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS invoice_date,
+  btac.total_charges AS current_charges,
+  btac.prior_balance AS past_due_amount,
+  btac.total_amount AS total_amount_due,
+  btac.total_amount AS pay_amount,
+  TO_CHAR(br.due_date, 'MM/DD/YYYY') AS due_date,
+  ABS(DATE_PART('day', LEAD(br.statement_date) OVER (ORDER BY br.statement_date DESC) - br.statement_date)) AS days_diff
+FROM bill_management_v2."analytics_bills_chains" abc
+LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac 
+  ON btac.bill_id = abc.bill_id
+LEFT JOIN bill_management_v2.bill_records br 
+  ON btac.record_id = br.id
+LEFT JOIN bill_management_v2.bill_items bi 
+  ON bi.bill_record_id = br.id
+WHERE 
+1=1
+{{ bill_chain_id.selectedOptionValue ?
+ "AND abc.chain_id = '" + bill_chain_id.selectedOptionValue + "'" 
+    : "AND abc.chain_id = '" + getBill.data[0].bill_chain_id + "'" 
+}}
+ORDER BY br.statement_date DESC
+LIMIT 20;

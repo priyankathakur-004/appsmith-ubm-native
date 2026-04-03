@@ -1,0 +1,18 @@
+SELECT
+    TO_CHAR(time_period, 'Mon') AS month,
+    SUM(
+        COALESCE(total_charges_consumption, 0) +
+        COALESCE(total_charges_generation, 0)
+    ) AS cost
+
+FROM bill_management_v2.analytics_monthly_feed
+WHERE customer_id = {{this.params.customer_id}}
+{{ this.params.utility_type ? `AND utility_type = '${this.params.utility_type}'` : '' }}
+{{ this.params.year ? ` AND EXTRACT(YEAR FROM time_period) = ${this.params.year}` : '' }}
+{{ this.params.location_ids && this.params.location_ids.length ? `AND location_id IN (${this.params.location_ids.join(',')})` : '' }}
+
+GROUP BY 
+    TO_CHAR(time_period, 'Mon'),
+    DATE_TRUNC('month', time_period)
+
+ORDER BY DATE_TRUNC('month', time_period);

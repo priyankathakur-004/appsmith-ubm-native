@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 24,
+  "boxShadow": "none",
+  "buttonColor": "#61e5b0",
+  "buttonVariant": "TERTIARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "iconAlign": "right",
+  "iconName": "arrow-right",
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "aqesc8l80v",
+  "leftColumn": 0,
+  "minWidth": 120,
+  "mobileBottomRow": 17,
+  "mobileLeftColumn": 11,
+  "mobileRightColumn": 27,
+  "mobileTopRow": 13,
+  "needsErrorInfo": false,
+  "onClick": "{{navigateTo('Bill Pay', {}, 'SAME_WINDOW');}}",
+  "originalBottomRow": 24,
+  "originalTopRow": 20,
+  "parentColumnSpace": 16.765625,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "placement": "START",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 16,
+  "text": "Get PayClearly Payments",
+  "topRow": 20,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "apgf2o2bzb",
+  "widgetName": "Button1CopyCopy1"
+}

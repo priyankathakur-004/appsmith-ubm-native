@@ -1,0 +1,5 @@
+SELECT DISTINCT location_city
+FROM bill_management_v2.location_detail
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue }}
+  AND location_city IS NOT NULL
+ORDER BY location_city;

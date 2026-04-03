@@ -1,0 +1,73 @@
+{
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 52,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{\n  data: getBillSummary.data,\n  lastYear: getLastYearBill.data[0]\n}\n}}\n",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    },
+    {
+      "key": "onNavigate"
+    }
+  ],
+  "events": [
+    "onResetClick",
+    "onNavigate"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "bbd2gs6jfc",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 63,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 19,
+  "mobileTopRow": 33,
+  "needsErrorInfo": false,
+  "onNavigate": "{{navigateTo('Full Bill', {\n  bill_id: bill_id\n}, 'NEW_WINDOW').then(() => {});}}",
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "parentColumnSpace": 10.494918823242188,
+  "parentId": "oiwht7qbtc",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 60,
+  "srcDoc": {
+    "css": "@charset \"UTF-8\";\n.bill-grid {\n  display: grid;\n  grid-auto-flow: column; /* keep in single row */\n  grid-auto-columns: 180px;\n  gap: 24px; /* increased from 12px → 24px */\n  background: #f6f7f8;\n  padding: 0px;\n  font-family: system-ui, sans-serif;\n  overflow-x: auto;\n  border-radius: 10px;\n  white-space: nowrap;\n}\n\n.label-column {\n  background: #f6f7f8;\n  padding: 5px 10px;\n}\n\n.label-cell {\n  margin: 12px 0;\n  color: #102349;\n  font-size: 14px;\n  font-weight: 500;\n}\n\n.bill-card {\n  background: #fff;\n  border-radius: 8px;\n  box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);\n  padding: 12px 8px;\n  text-align: center;\n  min-width: 180px;\n  flex-shrink: 0;\n}\n\n.bill-title {\n  font-weight: 700;\n  color: #102349;\n  margin-bottom: 8px;\n  font-size: 15px;\n}\n\n.value-cell {\n  padding: 10px 6px;\n  font-size: 14px;\n  font-weight: 600;\n  color: #102349;\n  text-align: right;\n}\n\n.value-cell:nth-child(even) {\n  background: #F1F2F4;\n}\n\n.value-cell:nth-child(odd) {\n  background: #fff;\n}\n\n.value-cell a {\n  color: #1b57d2;\n  text-decoration: none;\n}\n\n.value-cell a:hover {\n  text-decoration: underline;\n}",
+    "html": "<div id=\"root\"></div>",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App() {\n  const bills = appsmith.model.data || [];\n  if (!bills.length) return /*#__PURE__*/React.createElement(\"div\", null, \"No data available\");\n\n  // Sort by invoice_date ascending\n  const sortedBills = [...bills].sort((a, b) => new Date(a.invoice_date) - new Date(b.invoice_date));\n  const lastYear = appsmith.model.lastYear || [];\n  const priorBill = sortedBills[0];\n  const currentBill = sortedBills[1];\n  const nextBill = sortedBills[2];\n\n  // Use triggerEvent for navigation requests to be handled by Appsmith page\n  const handleNavigate = React.useCallback(bill_id => {\n    appsmith.triggerEvent(\"onNavigate\", {\n      bill_id: bill_id\n    });\n  }, []);\n  const renderBillValue = (bill, key) => {\n    if (!bill) return \"-\";\n    const value = bill[key];\n    if (key === \"current_charges\" || key === \"past_due_amount\" || key === \"total_amount_due\") {\n      return `$${Number(value || 0).toFixed(2)}`;\n    }\n    if (key === \"bill_id\") {\n      return /*#__PURE__*/React.createElement(\"a\", {\n        href: \"#\",\n        onClick: e => {\n          e.preventDefault();\n          handleNavigate(bill.bill_id);\n        },\n        style: {\n          color: \"#1b57d2\",\n          textDecoration: \"none\",\n          cursor: \"pointer\"\n        }\n      }, bill.bill_id);\n    }\n    return value || \"-\";\n  };\n  const fields = [{\n    label: \"Pear ID\",\n    key: \"bill_id\"\n  }, {\n    label: \"Invoice Date\",\n    key: \"invoice_date\"\n  }, {\n    label: \"Date Due\",\n    key: \"due_date\"\n  }, {\n    label: \"Current Charges\",\n    key: \"current_charges\"\n  }, {\n    label: \"Past Due\",\n    key: \"past_due_amount\"\n  }, {\n    label: \"Total Amount Due\",\n    key: \"total_amount_due\"\n  }];\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"bill-grid\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"label-column\"\n  }, /*#__PURE__*/React.createElement(\"h3\", {\n    className: \"label-header\"\n  }, \" \"), fields.map(f => /*#__PURE__*/React.createElement(\"div\", {\n    key: f.key,\n    className: \"label-cell\"\n  }, f.label))), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"bill-card\"\n  }, /*#__PURE__*/React.createElement(\"h3\", {\n    className: \"bill-title\"\n  }, \"Approx. Last Year\"), fields.map(f => /*#__PURE__*/React.createElement(\"div\", {\n    key: f.key,\n    className: \"value-cell\"\n  }, renderBillValue(lastYear, f.key)))), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"bill-card\"\n  }, /*#__PURE__*/React.createElement(\"h3\", {\n    className: \"bill-title\"\n  }, \"Prior Bill\"), fields.map(f => /*#__PURE__*/React.createElement(\"div\", {\n    key: f.key,\n    className: \"value-cell\"\n  }, renderBillValue(priorBill, f.key)))), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"bill-card\"\n  }, /*#__PURE__*/React.createElement(\"h3\", {\n    className: \"bill-title\"\n  }, \"Current Bill\"), fields.map(f => /*#__PURE__*/React.createElement(\"div\", {\n    key: f.key,\n    className: \"value-cell\"\n  }, renderBillValue(currentBill, f.key)))), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"bill-card\"\n  }, /*#__PURE__*/React.createElement(\"h3\", {\n    className: \"bill-title\"\n  }, \"Next Bill\"), fields.map(f => /*#__PURE__*/React.createElement(\"div\", {\n    key: f.key,\n    className: \"value-cell\"\n  }, renderBillValue(nextBill, f.key)))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 22,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": ".bill-grid {\n  display: grid;\n  grid-auto-flow: column; /* keep in single row */\n  grid-auto-columns: 180px;\n  gap: 24px; /* increased from 12px → 24px */\n  background: #f6f7f8;\n  padding: 0px;\n  font-family: system-ui, sans-serif;\n  overflow-x: auto;\n  border-radius: 10px;\n  white-space: nowrap;\n}\n\n.label-column {\n  background: #f6f7f8;\n  padding: 5px 10px;\n}\n\n.label-cell {\n  margin: 12px 0;\n  color: #102349;\n  font-size: 14px;\n  font-weight: 500;\n}\n\n.bill-card {\n  background: #fff;\n  border-radius: 8px;\n  box-shadow: 0 0 4px rgba(0, 0, 0, 0.08);\n  padding: 12px 8px;\n  text-align: center;\n  min-width: 180px;\n  flex-shrink: 0;\n}\n\n.bill-title {\n  font-weight: 700;\n  color: #102349;\n  margin-bottom: 8px;\n  font-size: 15px;\n}\n\n.value-cell {\n  padding: 10px 6px;\n  font-size: 14px;\n  font-weight: 600;\n  color: #102349;\n  text-align: right;\n}\n\n.value-cell:nth-child(even) {\n  background: #F1F2F4;\n}\n\n.value-cell:nth-child(odd) {\n  background: #fff;\n}\n\n.value-cell a {\n  color: #1b57d2;\n  text-decoration: none;\n}\n\n.value-cell a:hover {\n  text-decoration: underline;\n}\n",
+    "html": "<div id=\"root\"></div>",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nfunction App() {\n  const bills = appsmith.model.data || [];\n  if (!bills.length) return <div>No data available</div>;\n\n  // Sort by invoice_date ascending\n  const sortedBills = [...bills].sort(\n    (a, b) => new Date(a.invoice_date) - new Date(b.invoice_date)\n  );\n\n  const lastYear = appsmith.model.lastYear || [];\n  const priorBill = sortedBills[0];\n  const currentBill = sortedBills[1];\n  const nextBill = sortedBills[2];\n\n  // Use triggerEvent for navigation requests to be handled by Appsmith page\n  const handleNavigate = React.useCallback((bill_id) => {\n    appsmith.triggerEvent(\"onNavigate\", { bill_id: bill_id });\n  }, []);\n\n  const renderBillValue = (bill, key) => {\n    if (!bill) return \"-\";\n    const value = bill[key];\n\n    if (key === \"current_charges\" || key === \"past_due_amount\" || key === \"total_amount_due\") {\n      return `$${Number(value || 0).toFixed(2)}`;\n    }\n\n    if (key === \"bill_id\") {\n      return (\n        <a\n          href=\"#\"\n          onClick={e => {\n            e.preventDefault();\n            handleNavigate(bill.bill_id);\n          }}\n          style={{ color: \"#1b57d2\", textDecoration: \"none\", cursor: \"pointer\" }}\n        >\n          {bill.bill_id}\n        </a>\n      );\n    }\n\n    return value || \"-\";\n  };\n\n  const fields = [\n    { label: \"Pear ID\", key: \"bill_id\" },\n    { label: \"Invoice Date\", key: \"invoice_date\" },\n    { label: \"Date Due\", key: \"due_date\" },\n    { label: \"Current Charges\", key: \"current_charges\" },\n    { label: \"Past Due\", key: \"past_due_amount\" },\n    { label: \"Total Amount Due\", key: \"total_amount_due\" },\n  ];\n\n  return (\n    <div className=\"bill-grid\">\n      <div className=\"label-column\">\n        <h3 className=\"label-header\"> </h3>\n        {fields.map((f) => (\n          <div key={f.key} className=\"label-cell\">\n            {f.label}\n          </div>\n        ))}\n      </div>\n\n      <div className=\"bill-card\">\n        <h3 className=\"bill-title\">Approx. Last Year</h3>\n        {fields.map((f) => (\n          <div key={f.key} className=\"value-cell\">\n            {renderBillValue(lastYear, f.key)}\n          </div>\n        ))}\n      </div>\n\n      <div className=\"bill-card\">\n        <h3 className=\"bill-title\">Prior Bill</h3>\n        {fields.map((f) => (\n          <div key={f.key} className=\"value-cell\">\n            {renderBillValue(priorBill, f.key)}\n          </div>\n        ))}\n      </div>\n\n      <div className=\"bill-card\">\n        <h3 className=\"bill-title\">Current Bill</h3>\n        {fields.map((f) => (\n          <div key={f.key} className=\"value-cell\">\n            {renderBillValue(currentBill, f.key)}\n          </div>\n        ))}\n      </div>\n\n      <div className=\"bill-card\">\n        <h3 className=\"bill-title\">Next Bill</h3>\n        {fields.map((f) => (\n          <div key={f.key} className=\"value-cell\">\n            {renderBillValue(nextBill, f.key)}\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "nrpx4uf98p",
+  "widgetName": "Custom5"
+}

@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "r78sv6xgc6",
+  "leftColumn": 0,
+  "mobileBottomRow": 20,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 15,
+  "parentId": "njpbk6s2r0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Make sure only <b style=\"color:#f1f5f9;\">one utility</b> is selected (in the filter above) if <b style=\"color:#f1f5f9;\">Consumption</b> is on the x or y axis. Locations can be limited to one or more.</p></div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 8,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "fwyib44gqj",
+  "widgetName": "LDInfoText"
+}

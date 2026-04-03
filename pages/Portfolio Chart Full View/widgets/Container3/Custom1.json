@@ -1,0 +1,73 @@
+{
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 15,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{{filters: getWidget.data[0].payload.filters}}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "4f49izs1wn",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 35,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 8,
+  "mobileTopRow": 5,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "parentColumnSpace": 16.5888671875,
+  "parentId": "5ja3xyr4nw",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "srcDoc": {
+    "css": ".container {\n  display: inline-grid;\n  grid-template-columns: repeat(3, auto); /* 3 columns */\n  font-family: system-ui, sans-serif;\n  color: #fff;\n  background: #1E293B;\n}\n\n.row {\n  display: contents; /* allows grid cells to align in the container */\n}\n\n.cell {\n  text-align: left;\n  font-size: 16px;\n}\n\n.labels .cell {\n  font-weight: bold;\n  margin-bottom: 4px;\n  margin-right: 40px;\n}\n\n.values .cell {\n  color: #94a3b8;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App() {\n  const filters = appsmith.model?.filters || [];\n  let year = \"All time\";\n  let locations = \"All Locations\";\n  let utilityType = \"All Utilities\";\n  filters.forEach(filter => {\n    if (filter.filter === \"year\" && filter.year?.year) year = filter.year.year;\n    if (filter.filter === \"locations\" && filter.locations?.name) locations = filter.locations.name;\n    if (filter.filter === \"utility_type\" && filter.utility_type?.type) utilityType = filter.utility_type.type;\n  });\n  const labels = [\"Year\", \"Locations\", \"Utility Type\"];\n  const values = [year, locations, utilityType];\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"container\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"row labels\"\n  }, labels.map(label => /*#__PURE__*/React.createElement(\"div\", {\n    className: \"cell\",\n    key: label\n  }, label, \":\"))), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"row values\"\n  }, values.map((value, i) => /*#__PURE__*/React.createElement(\"div\", {\n    className: \"cell\",\n    key: i\n  }, value))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 4,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": ".container {\n  display: inline-grid;\n  grid-template-columns: repeat(3, auto); /* 3 columns */\n  font-family: system-ui, sans-serif;\n\tcolor:#fff;\n\tbackground:#1E293B;\n}\n\n.row {\n  display: contents; /* allows grid cells to align in the container */\n}\n\n.cell {\n  text-align: left;\n  font-size: 16px;\n}\n\n.labels .cell {\n  font-weight: bold;\n  margin-bottom: 4px;\n\tmargin-right: 40px;\n}\n\n.values .cell {\n  color: #94a3b8;\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nfunction App() {\n  const filters = appsmith.model?.filters || [];\n\n  let year = \"All time\";\n  let locations = \"All Locations\";\n  let utilityType = \"All Utilities\";\n\n  filters.forEach((filter) => {\n    if (filter.filter === \"year\" && filter.year?.year) year = filter.year.year;\n    if (filter.filter === \"locations\" && filter.locations?.name) locations = filter.locations.name;\n    if (filter.filter === \"utility_type\" && filter.utility_type?.type) utilityType = filter.utility_type.type;\n  });\n\n  const labels = [\"Year\", \"Locations\", \"Utility Type\"];\n  const values = [year, locations, utilityType];\n\n  return (\n    <div className=\"container\">\n      <div className=\"row labels\">\n        {labels.map((label) => (\n          <div className=\"cell\" key={label}>{label}:</div>\n        ))}\n      </div>\n      <div className=\"row values\">\n        {values.map((value, i) => (\n          <div className=\"cell\" key={i}>{value}</div>\n        ))}\n      </div>\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "2ndjfltnhu",
+  "widgetName": "Custom1"
+}

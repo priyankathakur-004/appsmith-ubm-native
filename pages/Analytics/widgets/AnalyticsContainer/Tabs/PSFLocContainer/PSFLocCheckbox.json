@@ -1,0 +1,73 @@
+{
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 265,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ {\ndata: PerSquareFeetHelper.getLocationOptions(),\nselected: PerSquareFeetHelper.getLocationOptions().map(o => o.value)\n}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "r7m8ov4a4r",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 175,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 19,
+  "mobileTopRow": 145,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "originalBottomRow": 181,
+  "originalTopRow": 0,
+  "parentColumnSpace": 16.734375,
+  "parentId": "8u6y8sly5w",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "html, body {\n  overflow: hidden !important;\n  margin: 0;\n  padding: 0;\n}\n\n.app {\n  width: 100%;\n  font-family: system-ui;\n  background: #1E293B;\n  border-radius: 6px;\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n}\n\n.header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 8px 10px;\n  color: white;\n  border-bottom: 2px solid #64748b;\n  font-weight: 600;\n  width: 100%;\n  box-sizing: border-box;\n}\n\n.sortIcon {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 20px;\n  flex-shrink: 0;\n}\n\n.list {\n  width: 100%;\n  overflow: visible; /* remove internal scroll */\n}\n\n.row {\n  padding: 7px 10px;\n  cursor: pointer;\n  color: white;\n  font-size: 14px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.row:nth-child(odd) {\n  background: #243447;\n}\n\n.row:nth-child(even) {\n  background: #1E293B;\n}\n\n.row:hover {\n  background: #334155;\n}\n\n.selected {\n  background: #86efac !important;\n  color: black;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App() {\n  const options = appsmith.model.data || [];\n  const defaultSelected = appsmith.model.defaultSelected?.[0] || null;\n  const [selected, setSelected] = React.useState(defaultSelected);\n  const [ascending, setAscending] = React.useState(true);\n  const sortedOptions = React.useMemo(() => {\n    return [...options].sort((a, b) => {\n      if (ascending) return a.label.localeCompare(b.label);\n      return b.label.localeCompare(a.label);\n    });\n  }, [options, ascending]);\n  const toggleValue = value => {\n    let newValue = selected === value ? null : value;\n    setSelected(newValue);\n    appsmith.updateModel({\n      selectedValue: newValue\n    });\n    appsmith.triggerEvent(\"onSelectChange\");\n  };\n  const toggleSort = () => {\n    setAscending(!ascending);\n  };\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"app\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"header\"\n  }, /*#__PURE__*/React.createElement(\"div\", null, \"Locations\"), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"sortIcon\",\n    onClick: toggleSort\n  }, ascending ? \"▲\" : \"▼\")), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"list\"\n  }, sortedOptions.map((opt, i) => /*#__PURE__*/React.createElement(\"div\", {\n    key: i,\n    className: \"row \" + (selected === opt.value ? \"selected\" : \"\"),\n    onClick: () => toggleValue(opt.value)\n  }, opt.label))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html, body {\n  overflow: hidden !important;\n  margin: 0;\n  padding: 0;\n}\n.app {\n  width: 100%;\n  font-family: system-ui;\n  background: #1E293B;\n  border-radius: 6px;\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n}\n\n.header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 8px 10px;\n  color: white;\n  border-bottom: 2px solid #64748b;\n  font-weight: 600;\n  width: 100%;\n  box-sizing: border-box;\n}\n\n.sortIcon {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 20px;\n  flex-shrink: 0;\n}\n\n.list {\n  width: 100%;\n  overflow: visible;   /* remove internal scroll */\n}\n\n.row {\n  padding: 7px 10px;\n  cursor: pointer;\n  color: white;\n  font-size: 14px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.row:nth-child(odd) {\n  background: #243447;\n}\n\n.row:nth-child(even) {\n  background: #1E293B;\n}\n\n.row:hover {\n  background: #334155;\n}\n\n.selected {\n  background: #86efac !important;\n  color: black;\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nfunction App() {\n\n  const options = appsmith.model.data || [];\n  const defaultSelected = appsmith.model.defaultSelected?.[0] || null;\n\n  const [selected, setSelected] = React.useState(defaultSelected);\n  const [ascending, setAscending] = React.useState(true);\n\n  const sortedOptions = React.useMemo(() => {\n\n    return [...options].sort((a,b)=>{\n\n      if(ascending)\n        return a.label.localeCompare(b.label);\n\n      return b.label.localeCompare(a.label);\n\n    });\n\n  },[options,ascending]);\n\n\n  const toggleValue = (value) => {\n\n    let newValue = selected === value ? null : value;\n\n    setSelected(newValue);\n\n    appsmith.updateModel({\n      selectedValue: newValue\n    });\n\n    appsmith.triggerEvent(\"onSelectChange\");\n  };\n\n\n  const toggleSort = () => {\n    setAscending(!ascending);\n  };\n\n\n  return (\n    <div className=\"app\">\n\n      <div className=\"header\">\n\n        <div>Locations</div>\n\n        <div\n          className=\"sortIcon\"\n          onClick={toggleSort}\n        >\n          {ascending ? \"▲\" : \"▼\"}\n        </div>\n\n      </div>\n\n      <div className=\"list\">\n\n        {sortedOptions.map((opt,i)=>(\n\n          <div\n            key={i}\n            className={\n              \"row \" +\n              (selected===opt.value ? \"selected\":\"\")\n            }\n            onClick={()=>toggleValue(opt.value)}\n          >\n\n            {opt.label}\n\n          </div>\n\n        ))}\n\n      </div>\n\n    </div>\n  );\n}\n\nappsmith.onReady(()=>{\n\n ReactDOM.render(\n   <App />,\n   document.getElementById(\"root\")\n );\n\n});\n"
+  },
+  "version": 1,
+  "widgetId": "zjwpty9ytd",
+  "widgetName": "PSFLocCheckbox"
+}

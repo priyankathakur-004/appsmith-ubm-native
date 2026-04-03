@@ -1,0 +1,43 @@
+WITH ordered_bills AS (
+  SELECT 
+    abc.bill_id,
+    TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS invoice_date,
+    br.statement_date,
+    btac.total_charges AS current_charges,
+    btac.prior_balance AS past_due_amount,
+    btac.total_amount AS total_amount_due,
+    btac.total_amount AS pay_amount,
+    TO_CHAR(br.due_date, 'MM/DD/YYYY') AS due_date,
+    ROW_NUMBER() OVER (ORDER BY br.statement_date DESC, abc.bill_id DESC) AS rn
+  FROM bill_management_v2."analytics_bills_chains" abc
+  LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac 
+    ON btac.bill_id = abc.bill_id
+  LEFT JOIN bill_management_v2.bill_records br 
+    ON btac.record_id = br.id
+  WHERE 1=1
+  {{ bill_chain_id.selectedOptionValue ?
+    "AND abc.chain_id = '" + bill_chain_id.selectedOptionValue + "'" 
+    : "" 
+  }}
+),
+target_rn AS (
+  SELECT rn 
+  FROM ordered_bills 
+  WHERE bill_id = {{ appsmith.URL.queryParams.bill_id }}
+  ORDER BY rn 
+  LIMIT 1
+)
+SELECT 
+  ob.bill_id,
+  ob.invoice_date,
+  ob.current_charges,
+  ob.past_due_amount,
+  ob.total_amount_due,
+  ob.pay_amount,
+  ob.due_date
+FROM ordered_bills ob
+WHERE ob.rn BETWEEN 
+  (SELECT rn - 1 FROM target_rn)
+  AND 
+  (SELECT rn + 1 FROM target_rn)
+ORDER BY ob.statement_date DESC, ob.bill_id DESC;

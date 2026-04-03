@@ -1,0 +1,1 @@
+SELECT * FROM bill_management_v2."widgets" WHERE customer_id = 76013 AND user_id = 166377 ORDER BY sort_order ASC, id DESC;

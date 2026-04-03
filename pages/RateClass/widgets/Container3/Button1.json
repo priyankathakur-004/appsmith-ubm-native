@@ -1,0 +1,42 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 59,
+  "boxShadow": "none",
+  "buttonColor": "#3b82f6",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "5rg9kipc53",
+  "leftColumn": 1,
+  "minWidth": 120,
+  "mobileBottomRow": 59,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 17,
+  "mobileTopRow": 55,
+  "needsErrorInfo": false,
+  "parentColumnSpace": 13.83349609375,
+  "parentId": "lwrrpklsjz",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 14,
+  "text": "Find Eligible Tariffs",
+  "topRow": 55,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "w3oa4ag180",
+  "widgetName": "Button1"
+}

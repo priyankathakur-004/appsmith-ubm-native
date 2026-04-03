@@ -1,0 +1,62 @@
+{{
+(function() {
+	const customerId = CustomerSelect.selectedOptionValue;
+	const searchText = SearchInput.text;
+	const buildingTypes = buildingTypeFilter.selectedOptionValues;
+	const city = cityFilter.selectedOptionValues;
+	const state = stateFilter.selectedOptionValues
+	const pageSize = locations.pageSize;
+	const pageNo = locations.pageNo;
+
+	let query = `
+      SELECT l.id,
+             lt.location_description AS "Description",
+             lt.building_type AS "Type",
+             lt.location_address AS "Service Address",
+             lt.location_city AS "City",
+             lt.location_state AS "State",
+             lt.location_postcode AS "Zip",
+             lt.square_feet AS "Area (Sq. Ft)",
+             CASE
+                 WHEN l.weather_setup THEN 'Active'
+                 ELSE 'Inactive'
+             END AS "Weather"
+      FROM bill_management_v2.locations AS l
+      LEFT JOIN bill_management_v2.location_detail AS lt ON l.id = lt.location_id
+      WHERE l.customer_id = ${customerId}
+    `;
+
+	// Add search filter if text exists
+	if (searchText && searchText.trim() !== '') {
+		query += ` AND (
+        lt.location_description ILIKE '%${searchText}%' OR
+				lt.location_id::text ILIKE '%${searchText}%' OR
+        lt.building_type ILIKE '%${searchText}%' OR
+        lt.location_city ILIKE '%${searchText}%' OR
+        lt.location_address ILIKE '%${searchText}%' OR
+        lt.location_state ILIKE '%${searchText}%' OR
+        lt.location_postcode ILIKE '%${searchText}%'
+      )`;
+	}
+
+	// Add building type filter if values exist
+	if (buildingTypes && buildingTypes.length > 0) {
+		const typeList = buildingTypes.map(type => `'${type}'`).join(',');
+		query += ` AND lt.building_type IN (${typeList})`;
+	}
+
+	if (city && city.length > 0) {
+		const cities = city.map(ct => `'${ct}'`).join(',');
+		query += ` AND lt.location_city IN (${cities})`;
+	}
+
+	if (state && state.length > 0) {
+		const states = state.map(st => `'${st}'`).join(',');
+		query += ` AND lt.location_state IN (${states})`;
+	}
+
+	query += ` ORDER BY l.id LIMIT ${pageSize} OFFSET ${(pageNo - 1) * pageSize}`;
+
+	return query;
+})()
+}}

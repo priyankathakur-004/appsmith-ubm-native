@@ -1,0 +1,49 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 8,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "gl763oedu6",
+  "leftColumn": 0,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "originalBottomRow": 21,
+  "originalTopRow": 14,
+  "parentColumnSpace": 15,
+  "parentId": "m1e1yrlycp",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Energy equivalency in BTU of different energy sources is shown here. This allows comparing monthly energy consumption trends across locations and meters. <b style=\"color:#f1f5f9;\">Energy equivalencies are based on numbers provided by <u>EIA</u>.</b></p></div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "t0fzi1kqlw",
+  "widgetName": "MECInfoText"
+}

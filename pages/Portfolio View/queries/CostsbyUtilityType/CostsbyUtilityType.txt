@@ -1,0 +1,10 @@
+SELECT
+    amf.utility_type,
+    TO_CHAR(ROUND(SUM(amf.total_charges)), 'FM9999999990.00') AS total_cost
+FROM bill_management_v2.analytics_monthly_feed amf
+WHERE amf.customer_id = {{this.params.customer_id}}
+{{ this.params.date_start && this.params.date_end ? `AND amf.time_period BETWEEN '${this.params.date_start}' AND '${this.params.date_end}'` : '' }}
+{{ this.params.location_ids && this.params.location_ids.length ? `AND amf.location_id IN (${this.params.location_ids.join(',')})` : '' }}
+
+GROUP BY amf.utility_type
+ORDER BY ROUND(SUM(amf.total_charges)) DESC;

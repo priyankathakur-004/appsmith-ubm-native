@@ -1,0 +1,11 @@
+SELECT wc.bill_item_id,
+    INITCAP(REPLACE(REPLACE(wc.name, '_', ' '), 'billblock', '')) AS name,
+    wc.value,
+    CASE 
+        WHEN UPPER(wc.units::text) = 'KWHDD' THEN 'kWh/DD'
+        ELSE LOWER(wc.units::text)
+    END AS units
+FROM bill_management_v2.weather_calculations wc
+JOIN bill_management_v2.analytics_billing_line_items abli
+    ON abli.bill_item_id = wc.bill_item_id
+WHERE abli.bill_id =  {{ appsmith.URL.queryParams.bill_id }}

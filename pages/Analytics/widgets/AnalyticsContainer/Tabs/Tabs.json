@@ -1,0 +1,481 @@
+{
+  "accentColor": "#86efac",
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": 1,
+  "bottomRow": 135,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "children": [
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1060,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isDisabled": false,
+      "isLoading": false,
+      "isVisible": true,
+      "key": "hdoxloy5am",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 150,
+      "minWidth": 450,
+      "mobileBottomRow": 150,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 394.875,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 394.875,
+      "shouldScrollContents": false,
+      "tabId": "tab1",
+      "tabName": "Rank of Locations",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "9amqshcg87",
+      "widgetName": "Canvas2"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1060,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "i0emjq7j8b",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1350,
+      "minWidth": 450,
+      "mobileBottomRow": 1351,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabwjssfe2rkw",
+      "tabName": "Weather Sensitivity",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "2dfhkpjwsx",
+      "widgetName": "Canvas3"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1060,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "sstmk2ktla",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 750,
+      "minWidth": 450,
+      "mobileBottomRow": 751,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1036.546875,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1036.546875,
+      "tabId": "tabs2n862hy0g",
+      "tabName": "Energy Consumption",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "ck1dopp8ku",
+      "widgetName": "Canvas7"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1130,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "f19xlb402j",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 750,
+      "minWidth": 450,
+      "mobileBottomRow": 751,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1036.546875,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1036.546875,
+      "tabId": "tablq3g17x77s",
+      "tabName": "Monthly Energy Consumption",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "jta8d1riq2",
+      "widgetName": "Canvas9"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1060,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "f19xlb402j",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1190,
+      "minWidth": 450,
+      "mobileBottomRow": 1191,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabx3afn5wcwl",
+      "tabName": "Over the Years",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "9wuv2dzdu5",
+      "widgetName": "Canvas11"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1470,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "dvo67t1x7d",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1100,
+      "minWidth": 450,
+      "mobileBottomRow": 1101,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabvm35spudlf",
+      "tabName": "Utility Tree",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "13xc3a3tip",
+      "widgetName": "Canvas14"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1060,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "dvo67t1x7d",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 720,
+      "minWidth": 450,
+      "mobileBottomRow": 721,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabszk2y72wzh",
+      "tabName": "Location Details",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "uknl3yqu8w",
+      "widgetName": "Canvas16"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1110,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "dvo67t1x7d",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 720,
+      "minWidth": 450,
+      "mobileBottomRow": 721,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabxh99tfcdko",
+      "tabName": "Per Square Feet",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "i1dd5rvtpp",
+      "widgetName": "Canvas17"
+    }
+  ],
+  "defaultTab": "Rank of Locations",
+  "dynamicBindingPathList": [
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "boxShadow"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onTabSelected"
+    }
+  ],
+  "flexVerticalAlignment": "stretch",
+  "isCanvas": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "anzmqn83j7",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 15,
+  "minWidth": 450,
+  "mobileBottomRow": 48,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 25,
+  "mobileTopRow": 33,
+  "needsErrorInfo": false,
+  "onTabSelected": "",
+  "originalBottomRow": 135,
+  "originalTopRow": 25,
+  "parentColumnSpace": 16.453125,
+  "parentId": "b8l49xalbh",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "shouldShowTabs": true,
+  "tabsObj": {
+    "tab1": {
+      "id": "tab1",
+      "index": 0,
+      "isVisible": true,
+      "label": "Rank of Locations",
+      "positioning": "vertical",
+      "widgetId": "9amqshcg87"
+    },
+    "tablq3g17x77s": {
+      "id": "tablq3g17x77s",
+      "index": 3,
+      "isVisible": true,
+      "label": "Monthly Energy Consumption",
+      "widgetId": "jta8d1riq2"
+    },
+    "tabs2n862hy0g": {
+      "id": "tabs2n862hy0g",
+      "index": 2,
+      "isVisible": true,
+      "label": "Energy Consumption",
+      "widgetId": "ck1dopp8ku"
+    },
+    "tabszk2y72wzh": {
+      "id": "tabszk2y72wzh",
+      "index": 6,
+      "isVisible": true,
+      "label": "Location Details",
+      "widgetId": "uknl3yqu8w"
+    },
+    "tabvm35spudlf": {
+      "id": "tabvm35spudlf",
+      "index": 5,
+      "isVisible": true,
+      "label": "Utility Tree",
+      "widgetId": "13xc3a3tip"
+    },
+    "tabwjssfe2rkw": {
+      "id": "tabwjssfe2rkw",
+      "index": 1,
+      "isVisible": true,
+      "label": "Weather Sensitivity",
+      "widgetId": "2dfhkpjwsx"
+    },
+    "tabx3afn5wcwl": {
+      "id": "tabx3afn5wcwl",
+      "index": 4,
+      "isVisible": true,
+      "label": "Over the Years",
+      "widgetId": "9wuv2dzdu5"
+    },
+    "tabxh99tfcdko": {
+      "id": "tabxh99tfcdko",
+      "index": 7,
+      "isVisible": true,
+      "label": "Per Square Feet",
+      "widgetId": "i1dd5rvtpp"
+    }
+  },
+  "topRow": 25,
+  "type": "TABS_WIDGET",
+  "version": 3,
+  "widgetId": "0cus04a0ok",
+  "widgetName": "Tabs"
+}

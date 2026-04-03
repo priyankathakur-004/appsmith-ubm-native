@@ -1,0 +1,16 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_390f954b-41bc-49b6-9de0-c3bcc861ab71",
+  "id": "Home Page_FilterUtils",
+  "unpublishedCollection": {
+    "name": "FilterUtils",
+    "pageId": "Home Page",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "columnMap",
+        "value": "{\n  \"Vendor\": `COALESCE(cvn.pretty_name, br.vendor_code)`,\n  \"Invoice Date\": `TO_CHAR(br.statement_date, 'YYYY-MM-DD')`,\n  \"Billing ID\": `br.client_account`,\n  \"Utility Type\": `bi.commodity`\n}"
+      }
+    ]
+  }
+}

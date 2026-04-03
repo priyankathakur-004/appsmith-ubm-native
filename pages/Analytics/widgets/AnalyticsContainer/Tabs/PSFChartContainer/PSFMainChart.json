@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 93,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{PerSquareFeetHelper.getChartConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "2nl8mgnhln",
+  "leftColumn": 0,
+  "mobileBottomRow": 330,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 5,
+  "parentColumnSpace": 15,
+  "parentId": "uf61y15gsu",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 5,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "54unxgaspw",
+  "widgetName": "PSFMainChart"
+}

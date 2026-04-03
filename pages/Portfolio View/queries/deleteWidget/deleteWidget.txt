@@ -1,0 +1,2 @@
+DELETE FROM bill_management_v2.widgets
+WHERE id = {{ this.params.chart_id }};

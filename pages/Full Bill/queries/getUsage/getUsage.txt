@@ -1,0 +1,2 @@
+SELECT value, usage, uom, charge, description FROM bill_management_v2.analytics_billing_line_items
+WHERE bill_id = {{ appsmith.URL.queryParams.bill_id }}

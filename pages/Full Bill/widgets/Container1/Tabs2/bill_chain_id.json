@@ -1,0 +1,66 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( getBill.data[0].bill_chain_id))(bill_chain_id.options, bill_chain_id.serverSideFiltering) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "defaultOptionValue"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "kaudlhjecz",
+  "labelAlignment": "left",
+  "labelPosition": "Left",
+  "labelStyle": "BOLD",
+  "labelText": "Bill Chain ID",
+  "labelTextSize": "0.875rem",
+  "labelWidth": "9",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 5,
+  "mobileRightColumn": 25,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 10.494918823242188,
+  "parentId": "q5s4hj9x3i",
+  "parentRowSpace": 10,
+  "placeholderText": "",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 32,
+  "serverSideFiltering": false,
+  "sourceData": "{{ \ngetBillChainIds.data.map(bc => ({ \n  label: bc.bill_chain_id + (bc.bill_id == appsmith.URL.queryParams.bill_id ? \" (This Bill's Chain)\" : \"\"), \n  value: bc.bill_chain_id \n})) \n}}\n",
+  "topRow": 0,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "ize4yq8xij",
+  "widgetName": "bill_chain_id"
+}

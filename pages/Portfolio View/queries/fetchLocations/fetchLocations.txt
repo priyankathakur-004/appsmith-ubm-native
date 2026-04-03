@@ -1,0 +1,11 @@
+SELECT 
+		lg.id,
+    lg.location_id,
+    lg.parent_id,
+    lg.name,
+    l.address
+FROM bill_management_v2."location_groups" lg
+LEFT JOIN bill_management_v2.locations l
+        ON l.id = lg.location_id
+WHERE lg.customer_id = 76013
+ORDER BY lg.name;

@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "x1be4g4bzv",
+  "leftColumn": 3,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 3,
+  "mobileRightColumn": 55,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "uf61y15gsu",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 55,
+  "shouldTruncate": false,
+  "text": "{{PerSquareFeetHelper.getChartTitle()}}",
+  "textAlign": "LEFT",
+  "textColor": "#e2e8f0",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "aq3fkbfh64",
+  "widgetName": "PSFChartTitle"
+}

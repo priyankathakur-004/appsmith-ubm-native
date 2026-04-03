@@ -1,0 +1,58 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowClear": false,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 55,
+  "boxShadow": "none",
+  "defaultOptionValue": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "options"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [],
+  "expandAll": false,
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "x2o8mcdwx7",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Locations",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 70,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 20,
+  "mobileTopRow": 63,
+  "mode": "SHOW_ALL",
+  "needsErrorInfo": false,
+  "options": "{{ formatLocationsTree.getTreeData() }}\n",
+  "originalBottomRow": 55,
+  "originalTopRow": 48,
+  "parentColumnSpace": 9.4375,
+  "parentId": "kch1dk4q0g",
+  "parentRowSpace": 10,
+  "placeholderText": "Select Locations",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 62,
+  "topRow": 48,
+  "type": "MULTI_SELECT_TREE_WIDGET",
+  "version": 1,
+  "widgetId": "lutuj0gfwg",
+  "widgetName": "MultiTreeSelect1"
+}

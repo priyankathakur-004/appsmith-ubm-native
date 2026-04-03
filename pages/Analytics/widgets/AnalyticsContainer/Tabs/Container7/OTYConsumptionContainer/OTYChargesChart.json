@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 41,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{OverTheYearsHelper.getChargesChartConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rbxgrbm1zb",
+  "leftColumn": 0,
+  "mobileBottomRow": 330,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 5,
+  "parentColumnSpace": 15,
+  "parentId": "2ew6f8lze2",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 4,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "zrmwavbx3h",
+  "widgetName": "OTYChargesChart"
+}

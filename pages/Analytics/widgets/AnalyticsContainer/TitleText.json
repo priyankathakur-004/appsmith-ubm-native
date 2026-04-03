@@ -1,0 +1,38 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1.5rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_title",
+  "leftColumn": 1,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "b8l49xalbh",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 25,
+  "shouldTruncate": false,
+  "text": "Analytics",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 1,
+  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "t2tpwec10i",
+  "widgetName": "TitleText"
+}

@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_541b2ef9-b3b1-4804-892b-758af6749385",
+  "id": "Full Bill_RunQueries",
+  "unpublishedCollection": {
+    "name": "RunQueries",
+    "pageId": "Full Bill",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

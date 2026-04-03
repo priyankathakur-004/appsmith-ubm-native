@@ -1,0 +1,67 @@
+{
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 22,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{\n  data: getBill.data[0]\n}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "vfkp5qk740",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 30,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 8,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "parentColumnSpace": 10.90423583984375,
+  "parentId": "oiwht7qbtc",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "srcDoc": {
+    "css": "body {\n  margin: 0px;\n}\n\n.container {\n  font-family: \"Inter\", \"Segoe UI\", Arial, sans-serif;\n  width: 100%;\n}\n\n.info-grid {\n  display: flex;\n  gap: 40px;\n  background: #f2f3f5;\n  border-radius: 5px;\n  padding: 20px;\n}\n\n.info-column {\n  width: 60%;\n}\n\n.info-row {\n  display: flex;\n  justify-content: space-between;\n  padding: 6px 0;\n}\n\n.label {\n  font-weight: 500;\n  color: #222;\n}\n\n.value {\n  font-weight: 600;\n  color: #111;\n  text-align: right;\n}\n\n.value:empty::after {\n  content: \"-\";\n  color: #aaa;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App() {\n  // ✅ Get data dynamically from Appsmith live model\n  const data = appsmith.model?.data || {};\n  const infoLeft = [{\n    label: \"Invoice Number\",\n    value: data.invoice_number || \"-\"\n  }, {\n    label: \"Bill Source\",\n    value: data.bill_source || \"-\"\n  }, {\n    label: \"Date Bill Received\",\n    value: data.received_on || \"-\"\n  }, {\n    label: \"Date Loaded\",\n    value: data.loaded_date || \"-\"\n  }, {\n    label: \"Date Marked for Payment\",\n    value: data.marked_for_payment || \"-\"\n  }, {\n    label: \"Date Fund Request Sent by A/P File\",\n    value: data.date_fund_request_sent || \"-\"\n  }];\n  const infoRight = [];\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"container\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"info-grid\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"info-column\"\n  }, infoLeft.map(item => /*#__PURE__*/React.createElement(\"div\", {\n    className: \"info-row\",\n    key: item.label\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, item.label), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, item.value))))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body {\n    margin: 0px;\n}\n.container {\n  font-family: \"Inter\", \"Segoe UI\", Arial, sans-serif;\n  width: 100%;\n}\n\n.info-grid {\n  display: flex;\n  gap: 40px;\n  background: #f2f3f5;\n  border-radius: 5px;\n\tpadding: 20px;\n}\n\n.info-column {\n    width: 60%;\n}\n\n.info-row {\n  display: flex;\n  justify-content: space-between;\n  padding: 6px 0;\n}\n\n.label {\n  font-weight: 500;\n  color: #222;\n}\n\n.value {\n  font-weight: 600;\n  color: #111;\n  text-align: right;\n}\n\n.value:empty::after {\n  content: \"-\";\n  color: #aaa;\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nfunction App() {\n  // ✅ Get data dynamically from Appsmith live model\n  const data = appsmith.model?.data || {};\n\n  const infoLeft = [\n    { label: \"Invoice Number\", value: data.invoice_number || \"-\" },\n    { label: \"Bill Source\", value: data.bill_source || \"-\" },\n    { label: \"Date Bill Received\", value: data.received_on || \"-\" },\n    { label: \"Date Loaded\", value: data.loaded_date || \"-\" },\n    { label: \"Date Marked for Payment\", value: data.marked_for_payment || \"-\" },\n    { label: \"Date Fund Request Sent by A/P File\", value: data.date_fund_request_sent || \"-\" },\n  ];\n\n  const infoRight = [];\n\n  return (\n    <div className=\"container\">\n      <div className=\"info-grid\">\n        <div className=\"info-column\">\n          {infoLeft.map((item) => (\n            <div className=\"info-row\" key={item.label}>\n              <span className=\"label\">{item.label}</span>\n              <span className=\"value\">{item.value}</span>\n            </div>\n          ))}\n        </div>\n      </div>\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "bl4tckgdh1",
+  "widgetName": "Custom3"
+}

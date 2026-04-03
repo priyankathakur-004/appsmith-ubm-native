@@ -1,0 +1,67 @@
+{
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 30,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{ data: getBillAddress.data }\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "p9o7w8k4j1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 30,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 24,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "parentColumnSpace": 10.90423583984375,
+  "parentId": "nepjteii3a",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "srcDoc": {
+    "css": "body {\n  font-family: \"Inter\", \"Segoe UI\", Arial, sans-serif;\n  background: #f8f9fb;\n  margin: 0;\n}\n\n.address-container {\n  display: flex;\n  gap: 40px;\n  background: #fff;\n  border-radius: 8px;\n  padding: 20px 24px;\n  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);\n  animation: slideDown 0.5s ease;\n}\n\n.address-column {\n  flex: 1;\n}\n\n.address-title {\n  color: #002050;\n  font-weight: 700;\n  font-size: 15px;\n  margin-bottom: 10px;\n}\n\n.address-row {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 6px 12px;\n  border-radius: 4px;\n  animation: fadeIn 0.4s ease;\n}\n\n/* Alternate row background */\n.address-row:nth-child(odd) {\n  background: #ffffff; /* light gray */\n}\n\n.address-row:nth-child(even) {\n  background: #f5f5f5; /* white */\n}\n\n.label {\n  color: #222;\n  font-weight: 500;\n}\n\n.value {\n  font-weight: 700;\n  color: #0a0a0a;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0/client\";\nfunction App() {\n  const modelData = appsmith?.model?.data?.[0] || {};\n  const billAddressRaw = modelData.bill_to_address || \"\";\n  const remitAddressRaw = modelData.remittance_address || \"\";\n  const parseAddress = addressString => {\n    if (!addressString) return {};\n    const clean = addressString.replace(/[()\"]/g, \"\");\n    const parts = clean.split(\",\").map(p => p.trim());\n    console.log(parts);\n    return {\n      address_line_1: parts[0] || \"-\",\n      address_line_2: parts[1] || \"-\",\n      city: parts[4] || \"-\",\n      state: parts[5] || \"-\",\n      postcode: parts[6] || \"-\",\n      country: parts[7] || \"-\"\n    };\n  };\n  const bill = parseAddress(billAddressRaw);\n  const remit = parseAddress(remitAddressRaw);\n  const renderAddress = (title, addr) => /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-column\"\n  }, /*#__PURE__*/React.createElement(\"h4\", {\n    className: \"address-title\"\n  }, title), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, \"Address Line 1\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, addr.address_line_1)), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, \"Address Line 2\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, addr.address_line_2)), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, \"City\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, addr.city)), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, \"State\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, addr.state)), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, \"Postcode\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, addr.postcode)), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-row\"\n  }, /*#__PURE__*/React.createElement(\"span\", {\n    className: \"label\"\n  }, \"Country\"), /*#__PURE__*/React.createElement(\"span\", {\n    className: \"value\"\n  }, addr.country)));\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"address-container\"\n  }, renderAddress(\"Bill to Address\", bill), renderAddress(\"Remittance Address\", remit));\n}\nappsmith.onReady(() => {\n  const rootElement = document.getElementById(\"root\");\n  if (rootElement) {\n    const root = ReactDOM.createRoot(rootElement);\n    root.render(/*#__PURE__*/React.createElement(App, null));\n  } else {\n    console.error(\"❌ Root element not found in widget\");\n  }\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body {\n    font-family: \"Inter\", \"Segoe UI\", Arial, sans-serif;\n    background: #f8f9fb;\n    margin: 0;\n  }\n\n  .address-container {\n    display: flex;\n    gap: 40px;\n    background: #fff;\n    border-radius: 8px;\n    padding: 20px 24px;\n    box-shadow: 0 2px 6px rgba(0,0,0,0.06);\n    animation: slideDown 0.5s ease;\n  }\n\n  .address-column {\n    flex: 1;\n  }\n\n  .address-title {\n    color: #002050;\n    font-weight: 700;\n    font-size: 15px;\n    margin-bottom: 10px;\n  }\n\n  .address-row {\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    padding: 6px 12px;\n    border-radius: 4px;\n    animation: fadeIn 0.4s ease;\n  }\n\n  /* Alternate row background */\n  .address-row:nth-child(odd) {\n    background: #ffffff; /* light gray */\n  }\n  .address-row:nth-child(even) {\n    background: #f5f5f5; /* white */\n  }\n\n  .label {\n    color: #222;\n    font-weight: 500;\n  }\n\n  .value {\n    font-weight: 700;\n    color: #0a0a0a;\n  }\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0/client\";\n\nfunction App() {\n  const modelData = appsmith?.model?.data?.[0] || {};\n  const billAddressRaw = modelData.bill_to_address || \"\";\n  const remitAddressRaw = modelData.remittance_address || \"\";\n\n  const parseAddress = (addressString) => {\n    if (!addressString) return {};\n    const clean = addressString.replace(/[()\"]/g, \"\");\n    const parts = clean.split(\",\").map((p) => p.trim());\n\t\tconsole.log(parts)\n    return {\n      address_line_1: parts[0] || \"-\",\n      address_line_2: parts[1] || \"-\",\n      city: parts[4] || \"-\",\n      state: parts[5] || \"-\",\n      postcode: parts[6] || \"-\",\n      country: parts[7] || \"-\",\n    };\n  };\n\n  const bill = parseAddress(billAddressRaw);\n  const remit = parseAddress(remitAddressRaw);\n\n  const renderAddress = (title, addr) => (\n    <div className=\"address-column\">\n      <h4 className=\"address-title\">{title}</h4>\n      <div className=\"address-row\">\n        <span className=\"label\">Address Line 1</span>\n        <span className=\"value\">{addr.address_line_1}</span>\n      </div>\n      <div className=\"address-row\">\n        <span className=\"label\">Address Line 2</span>\n        <span className=\"value\">{addr.address_line_2}</span>\n      </div>\n      <div className=\"address-row\">\n        <span className=\"label\">City</span>\n        <span className=\"value\">{addr.city}</span>\n      </div>\n      <div className=\"address-row\">\n        <span className=\"label\">State</span>\n        <span className=\"value\">{addr.state}</span>\n      </div>\n      <div className=\"address-row\">\n        <span className=\"label\">Postcode</span>\n        <span className=\"value\">{addr.postcode}</span>\n      </div>\n      <div className=\"address-row\">\n        <span className=\"label\">Country</span>\n        <span className=\"value\">{addr.country}</span>\n      </div>\n    </div>\n  );\n\n  return (\n    <div className=\"address-container\">\n      {renderAddress(\"Bill to Address\", bill)}\n      {renderAddress(\"Remittance Address\", remit)}\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  const rootElement = document.getElementById(\"root\");\n  if (rootElement) {\n    const root = ReactDOM.createRoot(rootElement);\n    root.render(<App />);\n  } else {\n    console.error(\"❌ Root element not found in widget\");\n  }\n});"
+  },
+  "version": 1,
+  "widgetId": "pm2a79pphy",
+  "widgetName": "Custom4"
+}

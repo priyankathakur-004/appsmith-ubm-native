@@ -1,0 +1,88 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "transparent",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 104,
+  "boxShadow": "none",
+  "children": [
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 820,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "qj9b7olbf7",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 3300,
+      "mobileBottomRow": 3300,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 960,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "k8g22hewuq",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "rightColumn": 960,
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "jjbvwcw1in",
+      "widgetName": "ECRightCanvas"
+    }
+  ],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "backgroundColor"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "start",
+  "isCanvas": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "4id5or7i61",
+  "leftColumn": 29,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 140,
+  "mobileLeftColumn": 34,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 11,
+  "needsErrorInfo": false,
+  "originalBottomRow": 104,
+  "originalTopRow": 22,
+  "parentColumnSpace": 15,
+  "parentId": "ck1dopp8ku",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "topRow": 22,
+  "type": "CONTAINER_WIDGET",
+  "version": 1,
+  "widgetId": "k8g22hewuq",
+  "widgetName": "ECRightContainer"
+}

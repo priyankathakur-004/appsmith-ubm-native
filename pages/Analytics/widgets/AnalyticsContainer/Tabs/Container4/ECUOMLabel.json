@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 11,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "3z9jrhaktv",
+  "leftColumn": 37,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 51,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 15,
+  "parentId": "tx9w0ehpff",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 44,
+  "shouldTruncate": false,
+  "text": "<b>Select UOM:</b>",
+  "textAlign": "RIGHT",
+  "textColor": "#e2e8f0",
+  "topRow": 7,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "sttyw3rley",
+  "widgetName": "ECUOMLabel"
+}

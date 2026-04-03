@@ -1,0 +1,61 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "disableLink": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "text"
+    },
+    {
+      "key": "backgroundColor"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ngtctiwzgn",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 17,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "originalBottomRow": 42,
+  "originalTopRow": 38,
+  "overflow": "NONE",
+  "parentColumnSpace": 5.107421875,
+  "parentId": "6tehx85711",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "<div style=\"margin: 10px;display:flex;color:#fff; cursor:pointer;\" ><span style=\"width: fit-content;\n    white-space: nowrap;\"  onClick=\"{{ navigateTo('Customers') }}\">Customers › </span>\n<span style=\"color:#fff;\"> {{ JSON.parse(appsmith.URL.queryParams.rowData).Description }}</span>\n</div>",
+  "textAlign": "LEFT",
+  "textColor": "#ffffffff",
+  "topRow": 0,
+  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "b7awzace1p",
+  "widgetName": "customerName"
+}

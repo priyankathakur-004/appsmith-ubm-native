@@ -1,0 +1,33 @@
+WITH latest_details AS (
+	SELECT DISTINCT ON (bill_change_log_header_id)
+	d.*
+	FROM bill_management_v2.bill_change_log_details d
+	ORDER BY bill_change_log_header_id, id DESC
+),
+single_bill_item AS (
+	SELECT DISTINCT ON (abli.bill_id)
+	bi.*,
+	abli.bill_id
+	FROM bill_management_v2.analytics_billing_line_items abli
+	JOIN bill_management_v2.bill_items bi 
+	ON bi.id = abli.bill_item_id
+	ORDER BY abli.bill_id, bi.id DESC
+)
+SELECT 
+    ld.*,
+    bclh.created_at AS created_at,
+    bclh.comment,
+    bi.commodity AS utility_type,
+    bi.meter_serial AS meter_id,
+    bi.account_code AS service_account_id,
+    bi.rate_code AS rate_plan,
+    CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name') AS user_name
+FROM bill_management_v2.bill_change_log_header bclh
+LEFT JOIN latest_details ld 
+    ON ld.bill_change_log_header_id = bclh.id
+LEFT JOIN single_bill_item bi 
+    ON bi.bill_id = bclh.bill_meta_id
+LEFT JOIN bill_management_v2.users u 
+    ON u.id = bclh.user_id
+WHERE bclh.bill_meta_id = {{ appsmith.URL.queryParams.bill_id }}
+ORDER BY bclh.created_at ASC;

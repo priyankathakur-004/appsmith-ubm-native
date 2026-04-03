@@ -1,0 +1,8 @@
+SELECT DISTINCT
+    attribute_value
+FROM bill_management_v2.custom_location_attributes
+WHERE customer_id = {{CustomerSelect.selectedOptionValue}}
+AND attribute_name = '{{LocationAttrSelect.selectedOptionValue}}'
+AND attribute_value IS NOT NULL
+AND btrim(attribute_value) <> ''
+ORDER BY attribute_value;

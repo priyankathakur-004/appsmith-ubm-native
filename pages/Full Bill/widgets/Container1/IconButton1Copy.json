@@ -1,0 +1,54 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "SECONDARY",
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "iconName": "chevron-right",
+  "isDisabled": "{{getBillSummary.data[0].bill_id == appsmith.URL.queryParams.bill_id}}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "3xv6n3z9zz",
+  "leftColumn": 61,
+  "minWidth": 50,
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 56,
+  "mobileRightColumn": 60,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "onClick": "{{navigateTo('Full Bill', {\n  bill_id: getBillSummary.data[0].bill_id\n}, 'SAME_WINDOW').then(() => {\n  RunQueries.hardReload();\n});}}",
+  "parentColumnSpace": 16.5888671875,
+  "parentId": "l94p0vszdd",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "tooltip": "Next Bill",
+  "topRow": 0,
+  "type": "ICON_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "w7oc5n7vip",
+  "widgetName": "IconButton1Copy"
+}

@@ -1,0 +1,42 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 34,
+  "boxShadow": "none",
+  "defaultMarkers": "{{OverTheYearsHelper.getMapMarkers()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultMarkers"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "enablePickLocation": false,
+  "enableSearch": false,
+  "isClickedMarkerCentered": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "74k8ygzrza",
+  "leftColumn": 14,
+  "mapCenter": {
+    "lat": 39.8283,
+    "long": -98.5795
+  },
+  "mobileBottomRow": 300,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "2kp102fzza",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 32,
+  "topRow": 0,
+  "type": "MAP_WIDGET",
+  "version": 1,
+  "widgetId": "ptmkjuwc19",
+  "widgetName": "OTYMap",
+  "zoomLevel": 3.5
+}

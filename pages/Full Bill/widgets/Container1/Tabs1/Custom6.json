@@ -1,0 +1,67 @@
+{
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 105,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{ data: getActivityHistory.data\n}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "jz5x8mhezg",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 30,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 17,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "parentColumnSpace": 5.091209411621094,
+  "parentId": "mmm5yq0hrv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "srcDoc": {
+    "css": "@charset \"UTF-8\";\nbody {\n  margin: 0px;\n}\n\n.log-container {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow-y: auto;\n  font-family: system-ui, sans-serif;\n  background: #fff;\n  border-radius: var(--appsmith-theme-borderRadius);\n  box-shadow: var(--appsmith-theme-boxShadow);\n  padding: 20px;\n  box-sizing: border-box;\n}\n\n/* Centered date header with lines */\n.date-separator {\n  text-align: center;\n  font-weight: 600;\n  color: #999;\n  font-size: 13px;\n  margin: 18px 0 8px;\n  position: relative;\n}\n\n.date-separator::before,\n.date-separator::after {\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  width: 40%;\n  height: 1px;\n  background: #e0e0e0;\n}\n\n.date-separator::before {\n  left: 0;\n}\n\n.date-separator::after {\n  right: 0;\n}\n\n/* Each log entry */\n.log-entry {\n  display: flex;\n  flex-direction: column;\n  padding: 10px 12px;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: background-color 0.2s ease;\n}\n\n/* ✅ Hover background */\n.log-entry:hover {\n  background-color: #E2F0FF;\n}\n\n.log-datetime {\n  font-size: 12px;\n  color: #666;\n  line-height: 1.5;\n}\n\n.log-user {\n  font-weight: 700;\n  font-size: 13px;\n  color: #0F1C3F;\n  line-height: 1.5;\n}\n\n.log-message {\n  font-size: 13px;\n  color: #222;\n  line-height: 1.5;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nimport dayjs from \"https://esm.sh/dayjs@1.11.10\";\nfunction App() {\n  // Pull dynamic logs from Appsmith model or query\n  const logs = appsmith.model.data || [];\n\n  // Group by date\n  const groupedLogs = logs.reduce((acc, log) => {\n    const date = dayjs(log.created_at).format(\"MM/DD/YYYY\");\n    if (!acc[date]) acc[date] = [];\n    acc[date].push(log);\n    return acc;\n  }, {});\n\n  // Sort ascending (oldest first)\n  const dates = Object.keys(groupedLogs).sort((a, b) => new Date(a) - new Date(b));\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-container\"\n  }, dates.map(date => /*#__PURE__*/React.createElement(\"div\", {\n    key: date,\n    className: \"date-group\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"date-separator\"\n  }, date), groupedLogs[date].map((log, i) => /*#__PURE__*/React.createElement(\"div\", {\n    key: i,\n    className: \"log-entry\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-datetime\"\n  }, dayjs(log.created_at).format(\"MM/DD/YYYY hh:mm A\")), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-user\"\n  }, log.user_name), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-message\"\n  }, log.activity_text))))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body {\n\tmargin:0px\n}\n.log-container {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow-y: auto;\n  font-family: system-ui, sans-serif;\n  background: #fff;\n  border-radius: var(--appsmith-theme-borderRadius);\n  box-shadow: var(--appsmith-theme-boxShadow);\n  padding: 20px;\n  box-sizing: border-box;\n}\n\n/* Centered date header with lines */\n.date-separator {\n  text-align: center;\n  font-weight: 600;\n  color: #999;\n  font-size: 13px;\n  margin: 18px 0 8px;\n  position: relative;\n}\n\n.date-separator::before,\n.date-separator::after {\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  width: 40%;\n  height: 1px;\n  background: #e0e0e0;\n}\n\n.date-separator::before {\n  left: 0;\n}\n\n.date-separator::after {\n  right: 0;\n}\n\n/* Each log entry */\n.log-entry {\n  display: flex;\n  flex-direction: column;\n  padding: 10px 12px;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: background-color 0.2s ease;\n}\n\n/* ✅ Hover background */\n.log-entry:hover {\n  background-color: #E2F0FF;\n}\n\n.log-datetime {\n  font-size: 12px;\n  color: #666;\n\tline-height: 1.5;\n}\n\n.log-user {\n  font-weight: 700;\n  font-size: 13px;\n  color: #0F1C3F;\n\tline-height: 1.5;\n}\n\n.log-message {\n  font-size: 13px;\n  color: #222;\n  line-height: 1.5;\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nimport dayjs from \"https://esm.sh/dayjs@1.11.10\";\n\nfunction App() {\n  // Pull dynamic logs from Appsmith model or query\n  const logs = appsmith.model.data || [];\n\n  // Group by date\n  const groupedLogs = logs.reduce((acc, log) => {\n    const date = dayjs(log.created_at).format(\"MM/DD/YYYY\");\n    if (!acc[date]) acc[date] = [];\n    acc[date].push(log);\n    return acc;\n  }, {});\n\n  // Sort ascending (oldest first)\n  const dates = Object.keys(groupedLogs).sort(\n    (a, b) => new Date(a) - new Date(b)\n  );\n\n  return (\n    <div className=\"log-container\">\n      {dates.map((date) => (\n        <div key={date} className=\"date-group\">\n          <div className=\"date-separator\">{date}</div>\n          {groupedLogs[date].map((log, i) => (\n            <div key={i} className=\"log-entry\">\n              <div className=\"log-datetime\">\n                {dayjs(log.created_at).format(\"MM/DD/YYYY hh:mm A\")}\n              </div>\n              <div className=\"log-user\">{log.user_name}</div>\n              <div className=\"log-message\">{log.activity_text}</div>\n            </div>\n          ))}\n        </div>\n      ))}\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "ne95keq3n9",
+  "widgetName": "Custom6"
+}

@@ -1,0 +1,41 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [],
+  "dynamicTriggerPathList": [],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "m5glnclvk6",
+  "leftColumn": 56,
+  "menuColor": "#ffffff",
+  "menuItems": {
+    "menuItemykjojm7avo": {
+      "id": "menuItemykjojm7avo",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "widgetId": "tey2xm1fvc"
+    }
+  },
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "ukzzqnbbtt",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 61,
+  "topRow": 1,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "tjczin8p55",
+  "widgetName": "OTYConsumptionMenuCopyCopy"
+}

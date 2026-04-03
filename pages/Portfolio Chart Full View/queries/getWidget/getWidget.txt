@@ -1,0 +1,1 @@
+SELECT * FROM bill_management_v2."widgets" WHERE id ={{ appsmith.URL.queryParams.id }}

@@ -1,0 +1,16 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_5e9c1a2b-f1d2-403c-b751-3b924df7a751",
+  "id": "Portfolio View_WidgetRunner",
+  "unpublishedCollection": {
+    "name": "WidgetRunner",
+    "pageId": "Portfolio View",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "QUERY_MAP",
+        "value": "{\n  \"Highest Cost Locations\": \"HighestCostLocations\",\n  \"Charges by Vendor\": \"ChargesByVendor\",\n  \"Costs by Utility Type\": \"CostsbyUtilityType\",\n  \"Costs by Charge Type\": \"CostsbyChargeType\",\n  \"Monthly Cost by Location\": \"MonthlyCostbyLocation\",\n  \"Highest Unit Cost Locations\": \"HighestUnitCostLocations\",\n  \"Highest Consumption Locations\": \"HighestConsumptionLocations\",\n  \"Monthly Consumption by Location\": \"MonthlyConsumptionbyLocation\"\n}"
+      }
+    ]
+  }
+}

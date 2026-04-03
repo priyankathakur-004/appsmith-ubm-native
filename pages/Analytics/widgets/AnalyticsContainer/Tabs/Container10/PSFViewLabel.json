@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "6idvmiftz2",
+  "leftColumn": 1,
+  "mobileBottomRow": 10,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 10,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "8zp9m19sqi",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 13,
+  "shouldTruncate": false,
+  "text": "Select to View:",
+  "textAlign": "LEFT",
+  "textColor": "#e2e8f0",
+  "topRow": 3,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "nhbnous35j",
+  "widgetName": "PSFViewLabel"
+}

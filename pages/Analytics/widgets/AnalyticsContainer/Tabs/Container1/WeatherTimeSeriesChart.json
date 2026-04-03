@@ -1,0 +1,41 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "#1e293b",
+  "borderColor": "#334155",
+  "borderRadius": "0px",
+  "bottomRow": 49,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => (  \n  (() => {\n    const config = WeatherHelper.getTimeSeriesConfig();\n    return typeof config === \"string\"\n      ? JSON.parse(config)\n      : JSON.parse(JSON.stringify(config));\n  })()\n))(WeatherTimeSeriesChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cht_timeseries",
+  "leftColumn": 0,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 22,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 20,
+  "originalBottomRow": 62,
+  "originalTopRow": 13,
+  "parentColumnSpace": 15,
+  "parentId": "olv0s73vwl",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 4,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "jhe1tz1d04",
+  "widgetName": "WeatherTimeSeriesChart"
+}

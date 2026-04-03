@@ -1,0 +1,20 @@
+SELECT
+  COALESCE(
+    NULLIF(btrim(cvpn.pretty_name), ''),
+    NULLIF(btrim(pvn.pretty_name), ''),
+    amf.vendor_code
+  ) AS vendor_name,
+  SUM(amf.total_charges) AS charges
+FROM bill_management_v2.analytics_monthly_feed amf
+LEFT JOIN bill_management_v2.providers_pretty_name pvn
+  ON pvn.code = amf.vendor_code
+LEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn
+  ON cvpn.customer_id = amf.customer_id
+ AND cvpn.vendor_id = pvn.vendor_id
+WHERE amf.customer_id = {{this.params.customer_id}}  AND amf.total_charges > 0
+	{{ this.params.utility_type ? `AND utility_type = '${this.params.utility_type}'` : '' }}
+	{{ this.params.date_start && this.params.date_end ? `AND amf.time_period BETWEEN '${this.params.date_start}' AND '${this.params.date_end}'` : '' }}
+	{{ this.params.location_ids && this.params.location_ids.length ? `AND amf.location_id IN (${this.params.location_ids.join(',')})` : '' }}
+	
+GROUP BY vendor_name
+ORDER BY charges DESC;

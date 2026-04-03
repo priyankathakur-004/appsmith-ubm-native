@@ -1,0 +1,71 @@
+{
+  "backgroundColor": "#FFFFFF",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 136,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{\n  data: getBills.data,\n  total: getBillsTotalCount.data[0]?.total_rows,\n}\n}}\n",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onPaginate"
+    }
+  ],
+  "events": [
+    "onPaginate"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "n7dhu9thvv",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 58,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 35,
+  "mobileTopRow": 28,
+  "needsErrorInfo": false,
+  "onPaginate": "{{getBills.run({\n  pageNo: pageNo,\n  pageSize: pageSize\n}).then(() => {\n  storeValue('serverData', '{{\\n{rows: getBills.data,\\n       total: getBillsTotalCount.data[0]?.total_rows,\\n}');\n});}}",
+  "originalBottomRow": 136,
+  "originalTopRow": 25,
+  "parentColumnSpace": 16.765625,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": ".ag-theme-alpine .ag-header-cell-menu-button {\n  opacity: 1 !important;\n  width: 20px !important;\n  height: 20px !important;\n  display: flex !important;\n  align-items: center;\n  justify-content: center;\n}\n\n.ag-theme-alpine .ag-icon-menu {\n  font-size: 16px !important;\n  opacity: 1 !important;\n  visibility: visible !important;\n}\n\n/* Make menu dropdown visible */\n.ag-menu,\n.ag-menu-option,\n.ag-tooltip {\n  z-index: 999999 !important;\n}",
+    "html": "<html lang=\"en\"> \n\t<head> <!-- Includes all JS & CSS for the JavaScript Data Grid --> \n<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n\n\n\t</head> \n\t<body> <!-- Your Data Grid container --> \n\t  <div id=\"myGrid\"></div> \n\t</body> \n</html>",
+    "js": "// =========================================================\n// 🔹 SAFELY Normalize Appsmith Data\n// =========================================================\nfunction normalizeData(model) {\n  if (!model || !Array.isArray(model.data)) return [];\n  return model.data;\n}\n\n// =========================================================\n// 🔹 Generate Dynamic Column Definitions\n// =========================================================\nfunction generateColumns(data) {\n  if (!Array.isArray(data) || data.length === 0) return [];\n  return Object.keys(data[0]).map(key => ({\n    headerName: key.replace(/_/g, \" \").replace(/\\b\\w/g, c => c.toUpperCase()),\n    field: key\n  }));\n}\nlet gridApi = null;\nlet gridOptions = null;\n\n// =========================================================\n// 🔹 RENDER GRID (Supports Pagination)\n// =========================================================\nfunction renderGrid(model) {\n  const rowData = normalizeData(model);\n  const columnDefs = generateColumns(rowData);\n  console.log(\"[AG] Rendering grid with rows:\", rowData.length);\n  gridOptions = {\n    columnDefs,\n    rowData,\n    // 🔥 ENABLE PAGINATION\n    pagination: true,\n    paginationPageSize: 50,\n    // Default page size\n    paginationPageSizeSelector: true,\n    // shows dropdown inside grid\n\n    defaultColDef: {\n      sortable: true,\n      resizable: true,\n      filter: true,\n      enableRowGroup: true,\n      editable: false,\n      menuTabs: [\"filterMenuTab\"]\n    },\n    animateRows: true,\n    domLayout: \"autoHeight\",\n    popupParent: document.body,\n    onGridReady: params => {\n      gridApi = params.api;\n      console.log(\"[AG] Grid Ready - Pagination Active\");\n    }\n  };\n  const gridDiv = document.querySelector(\"#myGrid\");\n  gridDiv.innerHTML = \"\"; // Clear old grid instance\n\n  gridApi = agGrid.createGrid(gridDiv, gridOptions);\n}\n\n// =========================================================\n// 🔹 Allow Changing Page Size Dynamically\n// =========================================================\nfunction updatePageSize(size) {\n  if (gridApi) {\n    console.log(\"[AG] Changing page size to:\", size);\n    gridApi.paginationSetPageSize(Number(size));\n  }\n}\n\n// Example dropdown usage:\n// <select onchange=\"updatePageSize(this.value)\">\n//   <option value=\"20\">20</option>\n//   <option value=\"50\" selected>50</option>\n//   <option value=\"100\">100</option>\n// </select>\n\n// =========================================================\n// 🔹 APPSSMITH LIFECYCLE INITIALIZATION\n// =========================================================\nappsmith.onReady(() => {\n  console.log(\"[Appsmith] App Ready → Initial Grid Render\");\n  renderGrid(appsmith.model);\n  appsmith.onModelChange(newModel => {\n    console.log(\"[Appsmith] Model Updated → Re-render Grid\");\n    renderGrid(newModel);\n  });\n});\n\n// =========================================================\n// 🔹 ADDITIONAL OPTIONAL HELPERS\n// =========================================================\nfunction createRow(index) {\n  return {\n    id: \"D\" + (1000 + index),\n    value: Math.floor(Math.random() * 1000)\n  };\n}\nfunction cbFloatingRows() {\n  const show = document.getElementById(\"floating-rows\").checked;\n  if (show) {\n    gridApi.setGridOption(\"pinnedTopRowData\", [createRow(999), createRow(998)]);\n    gridApi.setGridOption(\"pinnedBottomRowData\", [createRow(997), createRow(996)]);\n  } else {\n    gridApi.setGridOption(\"pinnedTopRowData\", undefined);\n    gridApi.setGridOption(\"pinnedBottomRowData\", undefined);\n  }\n}\nfunction setAutoHeight() {\n  gridApi.setGridOption(\"domLayout\", \"autoHeight\");\n  document.querySelector(\"#myGrid\").style.height = \"\";\n}\nfunction setFixedHeight() {\n  gridApi.setGridOption(\"domLayout\", \"normal\");\n  document.querySelector(\"#myGrid\").style.height = \"400px\";\n}"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 25,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": ".ag-theme-alpine .ag-header-cell-menu-button {\n    opacity: 1 !important;\n    width: 20px !important;\n    height: 20px !important;\n    display: flex !important;\n    align-items: center;\n    justify-content: center;\n  }\n\n  .ag-theme-alpine .ag-icon-menu {\n    font-size: 16px !important;\n    opacity: 1 !important;\n    visibility: visible !important;\n  }\n\n  /* Make menu dropdown visible */\n  .ag-menu,\n  .ag-menu-option,\n  .ag-tooltip {\n    z-index: 999999 !important;\n  }",
+    "html": "<html lang=\"en\"> \n\t<head> <!-- Includes all JS & CSS for the JavaScript Data Grid --> \n<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n\n\n\t</head> \n\t<body> <!-- Your Data Grid container --> \n\t  <div id=\"myGrid\"></div> \n\t</body> \n</html>",
+    "js": "// =========================================================\n// 🔹 SAFELY Normalize Appsmith Data\n// =========================================================\nfunction normalizeData(model) {\n  if (!model || !Array.isArray(model.data)) return [];\n  return model.data;\n}\n\n// =========================================================\n// 🔹 Generate Dynamic Column Definitions\n// =========================================================\nfunction generateColumns(data) {\n  if (!Array.isArray(data) || data.length === 0) return [];\n\n  return Object.keys(data[0]).map((key) => ({\n    headerName: key\n      .replace(/_/g, \" \")\n      .replace(/\\b\\w/g, (c) => c.toUpperCase()),\n    field: key,\n  }));\n}\n\nlet gridApi = null;\nlet gridOptions = null;\n\n// =========================================================\n// 🔹 RENDER GRID (Supports Pagination)\n// =========================================================\nfunction renderGrid(model) {\n  const rowData = normalizeData(model);\n  const columnDefs = generateColumns(rowData);\n\n  console.log(\"[AG] Rendering grid with rows:\", rowData.length);\n\n  gridOptions = {\n    columnDefs,\n    rowData,\n\n    // 🔥 ENABLE PAGINATION\n    pagination: true,\n    paginationPageSize: 50,          // Default page size\n    paginationPageSizeSelector: true, // shows dropdown inside grid\n\n    defaultColDef: {\n      sortable: true,\n      resizable: true,\n      filter: true,\n      enableRowGroup: true,\n      editable: false,\n      menuTabs: [\"filterMenuTab\"],\n    },\n\n    animateRows: true,\n    domLayout: \"autoHeight\",\n    popupParent: document.body,\n\n    onGridReady: (params) => {\n      gridApi = params.api;\n      console.log(\"[AG] Grid Ready - Pagination Active\");\n    },\n  };\n\n  const gridDiv = document.querySelector(\"#myGrid\");\n  gridDiv.innerHTML = \"\"; // Clear old grid instance\n\n  gridApi = agGrid.createGrid(gridDiv, gridOptions);\n}\n\n// =========================================================\n// 🔹 Allow Changing Page Size Dynamically\n// =========================================================\nfunction updatePageSize(size) {\n  if (gridApi) {\n    console.log(\"[AG] Changing page size to:\", size);\n    gridApi.paginationSetPageSize(Number(size));\n  }\n}\n\n// Example dropdown usage:\n// <select onchange=\"updatePageSize(this.value)\">\n//   <option value=\"20\">20</option>\n//   <option value=\"50\" selected>50</option>\n//   <option value=\"100\">100</option>\n// </select>\n\n\n\n// =========================================================\n// 🔹 APPSSMITH LIFECYCLE INITIALIZATION\n// =========================================================\nappsmith.onReady(() => {\n  console.log(\"[Appsmith] App Ready → Initial Grid Render\");\n  renderGrid(appsmith.model);\n\n  appsmith.onModelChange((newModel) => {\n    console.log(\"[Appsmith] Model Updated → Re-render Grid\");\n    renderGrid(newModel);\n  });\n});\n\n// =========================================================\n// 🔹 ADDITIONAL OPTIONAL HELPERS\n// =========================================================\nfunction createRow(index) {\n  return {\n    id: \"D\" + (1000 + index),\n    value: Math.floor(Math.random() * 1000),\n  };\n}\n\nfunction cbFloatingRows() {\n  const show = document.getElementById(\"floating-rows\").checked;\n\n  if (show) {\n    gridApi.setGridOption(\"pinnedTopRowData\", [\n      createRow(999),\n      createRow(998),\n    ]);\n    gridApi.setGridOption(\"pinnedBottomRowData\", [\n      createRow(997),\n      createRow(996),\n    ]);\n  } else {\n    gridApi.setGridOption(\"pinnedTopRowData\", undefined);\n    gridApi.setGridOption(\"pinnedBottomRowData\", undefined);\n  }\n}\n\nfunction setAutoHeight() {\n  gridApi.setGridOption(\"domLayout\", \"autoHeight\");\n  document.querySelector(\"#myGrid\").style.height = \"\";\n}\n\nfunction setFixedHeight() {\n  gridApi.setGridOption(\"domLayout\", \"normal\");\n  document.querySelector(\"#myGrid\").style.height = \"400px\";\n}\n"
+  },
+  "version": 1,
+  "widgetId": "0prwns8opa",
+  "widgetName": "Custom1"
+}

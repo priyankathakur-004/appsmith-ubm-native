@@ -1,0 +1,12 @@
+SELECT
+    ah.created_at,
+    ah.bill_meta_id,
+    ah.text AS activity_text,
+    u.email AS user_email,
+    CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name') AS user_name
+FROM bill_management_v2.activity_history ah
+LEFT JOIN bill_management_v2.users u 
+    ON u.id = ah.user_id 
+WHERE ah.bill_meta_id = {{ appsmith.URL.queryParams.bill_id }}
+ORDER BY ah.created_at
+LIMIT 10

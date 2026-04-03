@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 47,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "wkkg4ta6dn",
+  "leftColumn": 5,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 3,
+  "mobileRightColumn": 55,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "2ew6f8lze2",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 58,
+  "shouldTruncate": false,
+  "text": "{{OverTheYearsHelper.getConsumptionTitle()}}",
+  "textAlign": "CENTER",
+  "textColor": "#e2e8f0",
+  "topRow": 44,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "zjtbfsz84r",
+  "widgetName": "OTYConsumptionTitle"
+}

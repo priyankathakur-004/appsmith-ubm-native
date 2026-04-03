@@ -1,0 +1,5 @@
+SELECT DISTINCT building_type
+FROM bill_management_v2.location_detail
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue }}
+  AND building_type IS NOT NULL
+ORDER BY building_type;

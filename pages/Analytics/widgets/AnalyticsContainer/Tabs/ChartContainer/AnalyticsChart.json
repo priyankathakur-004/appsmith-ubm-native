@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 329,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => (  RankLocationHelper.getChartConfig()\n))(AnalyticsChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "customEChartConfig"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cht_analytics",
+  "leftColumn": 0,
+  "mobileBottomRow": 105,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 8,
+  "parentColumnSpace": 15,
+  "parentId": "xzbz0p88pf",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 9,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "mc4h83rx8q",
+  "widgetName": "AnalyticsChart"
+}

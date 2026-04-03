@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 80,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => ( \nEnergyConsumptionHelper.getUtilityPieConfig()\n))(ECUtilityPieChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "qtz8gyowhn",
+  "leftColumn": 0,
+  "mobileBottomRow": 330,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 173,
+  "parentColumnSpace": 15,
+  "parentId": "jjbvwcw1in",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 45,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "7sxw6ofn1i",
+  "widgetName": "ECUtilityPieChart"
+}

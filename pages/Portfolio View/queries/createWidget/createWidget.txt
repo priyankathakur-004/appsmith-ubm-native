@@ -1,0 +1,9 @@
+INSERT INTO widgets (customer_id, user_id, name, type, payload, sort_order)
+VALUES (
+    {{ CustomerSelect.selectedOptionValue }} ,
+    166377,
+    {{input_chart_name.text}},
+    {{select_chart_type.selectedOptionValue}},
+    {{input_payload.text}},
+    {{js_widgetLogic.getNextSortOrder()}}
+);

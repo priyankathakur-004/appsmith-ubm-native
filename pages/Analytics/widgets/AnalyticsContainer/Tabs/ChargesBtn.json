@@ -1,0 +1,48 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.activeView || 'Charges') === 'Charges' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.activeView || 'Charges') === 'Charges' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "btn_charges",
+  "leftColumn": 13,
+  "minWidth": 80,
+  "mobileBottomRow": 19,
+  "mobileLeftColumn": 13,
+  "mobileRightColumn": 19,
+  "mobileTopRow": 16,
+  "onClick": "{{FilterActions.setView('Charges')}}",
+  "parentColumnSpace": 15,
+  "parentId": "9amqshcg87",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 19,
+  "text": "Charges",
+  "textColor": "{{(appsmith.store.activeView || 'Charges') === 'Charges' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 1,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "9ks99a04jz",
+  "widgetName": "ChargesBtn"
+}

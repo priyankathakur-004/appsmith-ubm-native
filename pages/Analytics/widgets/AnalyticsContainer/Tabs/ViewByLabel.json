@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "txt_viewby",
+  "leftColumn": 1,
+  "mobileBottomRow": 19,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 12,
+  "mobileTopRow": 16,
+  "parentColumnSpace": 15,
+  "parentId": "9amqshcg87",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 12,
+  "text": "Select to View by:",
+  "textAlign": "LEFT",
+  "textColor": "#94a3b8",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "l738cbv25v",
+  "widgetName": "ViewByLabel"
+}

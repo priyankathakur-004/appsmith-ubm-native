@@ -1,0 +1,6 @@
+SELECT 
+    COUNT(DISTINCT bi.account_code) AS total_accounts
+FROM bill_management_v2.bill_items bi
+LEFT JOIN bill_management_v2.analytics_billing_line_items abli 
+    ON abli.bill_item_id = bi.id
+WHERE abli.bill_id = {{ appsmith.URL.queryParams.bill_id }};
