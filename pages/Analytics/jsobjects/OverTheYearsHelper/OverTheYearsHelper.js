@@ -437,6 +437,40 @@ export default {
 	},
 
 	/* ===============================
+	   CHART CLICK HANDLERS
+	=============================== */
+
+	onChargesChartClick() {
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const monthIdx = months.indexOf(OTYChargesChart.selectedDataPoint?.x) + 1;
+		const year = Number(OTYChargesChart.selectedDataPoint?.seriesTitle);
+		storeValue('otyClickedMonth', monthIdx || null);
+		storeValue('otyClickedYear', year || null);
+		storeValue('otyClickedChart', 'charges');
+		showModal(showChart.name);
+	},
+
+	onConsumptionChartClick() {
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const monthIdx = months.indexOf(OTYConsumptionChart.selectedDataPoint?.x) + 1;
+		const year = Number(OTYConsumptionChart.selectedDataPoint?.seriesTitle);
+		storeValue('otyClickedMonth', monthIdx || null);
+		storeValue('otyClickedYear', year || null);
+		storeValue('otyClickedChart', 'consumption');
+		showModal(showChart.name);
+	},
+
+	onUnitCostChartClick() {
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const monthIdx = months.indexOf(OTYUnitCostChart.selectedDataPoint?.x) + 1;
+		const year = Number(OTYUnitCostChart.selectedDataPoint?.seriesTitle);
+		storeValue('otyClickedMonth', monthIdx || null);
+		storeValue('otyClickedYear', year || null);
+		storeValue('otyClickedChart', 'unitCost');
+		showModal(showChart.name);
+	},
+
+	/* ===============================
 	   DEFAULTS
 	=============================== */
 

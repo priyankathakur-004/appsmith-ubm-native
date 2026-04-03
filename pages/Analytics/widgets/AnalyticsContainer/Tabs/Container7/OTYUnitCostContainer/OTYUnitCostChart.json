@@ -18,7 +18,7 @@
       "key": "onDataPointClick"
     }
   ],
-  "onDataPointClick": "{{\nconst months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst monthIdx = months.indexOf(OTYUnitCostChart.selectedDataPoint?.x) + 1;\nconst year = Number(OTYUnitCostChart.selectedDataPoint?.seriesTitle);\nstoreValue('otyClickedMonth', monthIdx || null);\nstoreValue('otyClickedYear', year || null);\nstoreValue('otyClickedChart', 'unitCost');\nshowModal(showChart.name);\n}}",
+  "onDataPointClick": "{{OverTheYearsHelper.onUnitCostChartClick()}}",
   "isLoading": false,
   "isVisible": true,
   "key": "27a1zsogrd",

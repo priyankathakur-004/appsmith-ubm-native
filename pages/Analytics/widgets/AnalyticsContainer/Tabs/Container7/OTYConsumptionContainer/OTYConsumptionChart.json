@@ -18,7 +18,7 @@
       "key": "onDataPointClick"
     }
   ],
-  "onDataPointClick": "{{\nconst months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\nconst monthIdx = months.indexOf(OTYConsumptionChart.selectedDataPoint?.x) + 1;\nconst year = Number(OTYConsumptionChart.selectedDataPoint?.seriesTitle);\nstoreValue('otyClickedMonth', monthIdx || null);\nstoreValue('otyClickedYear', year || null);\nstoreValue('otyClickedChart', 'consumption');\nshowModal(showChart.name);\n}}",
+  "onDataPointClick": "{{OverTheYearsHelper.onConsumptionChartClick()}}",
   "isLoading": false,
   "isVisible": true,
   "key": "bpjaeniiag",
