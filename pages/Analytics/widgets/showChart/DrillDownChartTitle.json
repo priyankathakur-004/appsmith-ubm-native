@@ -40,7 +40,7 @@
   "shouldTruncate": false,
   "text": "{{OverTheYearsHelper.getDrillDownTitle()}}",
   "textAlign": "LEFT",
-  "textColor": "#231F20",
+  "textColor": "#E2E8F0",
   "topRow": 1,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

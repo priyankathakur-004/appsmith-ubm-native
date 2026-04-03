@@ -333,39 +333,46 @@ export default {
 			.sort((a, b) => b.value - a.value)
 			.slice(0, 15);
 
-		const labels = { charges: "Charges ($)", consumption: "Consumption (CCF)", unitCost: "Unit Cost ($/CCF)" };
-		const valueLabel = labels[chartType] || "Value";
+		const isCharges = chartType === "charges";
+		const isConsumption = chartType === "consumption";
 
-		const formatter = chartType === "charges"
-			? (v) => '$' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0))
-			: chartType === "consumption"
-				? (v) => (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0))
-				: (v) => '$' + v.toFixed(2);
+		const formatValue = (v) => {
+			if (isCharges) return '$' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0));
+			if (isConsumption) return (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0));
+			return '$' + v.toFixed(2);
+		};
 
 		return {
+			backgroundColor: "#1E293B",
+
 			tooltip: {
 				trigger: "axis",
 				axisPointer: { type: "shadow" },
-				formatter: (params) => {
-					const p = params[0];
-					return '<b>' + p.name + '</b><br/>' + valueLabel + ': ' + formatter(p.value);
-				}
+				backgroundColor: "#0F172A",
+				textStyle: { color: "#E2E8F0" }
 			},
 			grid: { left: 120, right: 60, top: 10, bottom: 30 },
 			xAxis: {
 				type: "value",
-				axisLabel: { formatter: (v) => formatter(v) }
+				axisLabel: {
+					color: "#CBD5E1",
+					formatter: (v) => formatValue(v)
+				},
+				splitLine: { lineStyle: { color: "#334155", type: "dashed" } }
 			},
 			yAxis: {
 				type: "category",
 				data: sorted.map(d => d.loc).reverse(),
-				axisLabel: { fontSize: 11 }
+				axisLabel: { fontSize: 11, color: "#CBD5E1" }
 			},
 			series: [{
 				type: "bar",
 				data: sorted.map(d => d.value).reverse(),
 				itemStyle: { color: "#3B82F6" },
-				barMaxWidth: 30
+				barMaxWidth: 30,
+				label: {
+					show: false
+				}
 			}]
 		};
 	},
