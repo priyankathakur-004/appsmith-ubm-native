@@ -39,10 +39,10 @@
   ],
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "backgroundColor"
     },
     {
-      "key": "backgroundColor"
+      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -52,7 +52,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "e264ilgbu5",
-  "leftColumn": 56,
+  "leftColumn": 51,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,

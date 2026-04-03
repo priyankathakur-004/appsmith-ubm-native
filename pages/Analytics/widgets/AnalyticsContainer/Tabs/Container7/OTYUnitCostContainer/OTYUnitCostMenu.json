@@ -3,7 +3,11 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 54,
   "boxShadow": "none",
-  "dynamicBindingPathList": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
   "dynamicPropertyPathList": [
     {
       "key": "menuItems.menuItem_uc_export.onClick"

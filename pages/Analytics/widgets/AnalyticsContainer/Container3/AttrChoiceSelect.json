@@ -10,10 +10,10 @@
       "key": "sourceData"
     },
     {
-      "key": "borderRadius"
+      "key": "isDisabled"
     },
     {
-      "key": "isDisabled"
+      "key": "borderRadius"
     }
   ],
   "dynamicPropertyPathList": [

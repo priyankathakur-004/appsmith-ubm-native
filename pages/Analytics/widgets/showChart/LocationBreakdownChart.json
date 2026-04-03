@@ -83,12 +83,6 @@
     },
     {
       "key": "boxShadow"
-    },
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "fontFamily"
     }
   ],
   "flexVerticalAlignment": "start",

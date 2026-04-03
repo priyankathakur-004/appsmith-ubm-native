@@ -7,9 +7,6 @@
   "buttonVariant": "TERTIARY",
   "dynamicBindingPathList": [
     {
-      "key": "buttonColor"
-    },
-    {
       "key": "borderRadius"
     }
   ],

@@ -39,10 +39,10 @@
   ],
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "backgroundColor"
     },
     {
-      "key": "backgroundColor"
+      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",

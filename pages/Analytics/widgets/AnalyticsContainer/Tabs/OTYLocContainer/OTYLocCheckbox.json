@@ -8,19 +8,16 @@
   "defaultModel": "{{ {\ndata: OverTheYearsHelper.getFilterOptions(),\nselected: OverTheYearsHelper.getFilterOptions().map(o => o.value),\nheader: OverTheYearsHelper.getFilterHeader()\n}\n}}",
   "dynamicBindingPathList": [
     {
-      "key": "theme"
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
     },
     {
       "key": "borderRadius"
     },
     {
       "key": "boxShadow"
-    },
-    {
-      "key": "defaultModel"
-    },
-    {
-      "key": "backgroundColor"
     }
   ],
   "dynamicHeight": "FIXED",
