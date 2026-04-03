@@ -111,7 +111,7 @@ export default {
 			const lat = Number(r.latitude);
 			const lng = Number(r.longitude);
 
-			if (!isNaN(lat) && !isNaN(lng) && !markers[loc]) {
+			if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0 && !markers[loc]) {
 				markers[loc] = {
 					lat,
 					long: lng,
@@ -122,6 +122,40 @@ export default {
 		});
 
 		return Object.values(markers);
+	},
+
+	getMapCenter() {
+		const markers = this.getMapMarkers();
+		if (!markers.length) return { lat: 39.8283, long: -98.5795 };
+
+		const lats = markers.map(m => m.lat);
+		const lngs = markers.map(m => m.long);
+
+		return {
+			lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+			long: (Math.min(...lngs) + Math.max(...lngs)) / 2
+		};
+	},
+
+	getMapZoom() {
+		const markers = this.getMapMarkers();
+		if (markers.length <= 1) return 10;
+
+		const lats = markers.map(m => m.lat);
+		const lngs = markers.map(m => m.long);
+
+		const latDiff = Math.max(...lats) - Math.min(...lats);
+		const lngDiff = Math.max(...lngs) - Math.min(...lngs);
+		const maxDiff = Math.max(latDiff, lngDiff);
+
+		if (maxDiff > 40) return 3;
+		if (maxDiff > 20) return 4;
+		if (maxDiff > 10) return 5;
+		if (maxDiff > 5) return 6;
+		if (maxDiff > 2) return 7;
+		if (maxDiff > 1) return 9;
+		if (maxDiff > 0.5) return 10;
+		return 12;
 	},
 
 	getYearlyMonthlyData() {

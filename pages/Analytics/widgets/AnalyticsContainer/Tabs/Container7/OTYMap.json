@@ -10,6 +10,12 @@
     },
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "mapCenter"
+    },
+    {
+      "key": "zoomLevel"
     }
   ],
   "dynamicTriggerPathList": [
@@ -25,10 +31,7 @@
   "isVisible": true,
   "key": "74k8ygzrza",
   "leftColumn": 14,
-  "mapCenter": {
-    "lat": 39.8283,
-    "long": -98.5795
-  },
+  "mapCenter": "{{OverTheYearsHelper.getMapCenter()}}",
   "mobileBottomRow": 300,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
@@ -43,5 +46,5 @@
   "version": 1,
   "widgetId": "ptmkjuwc19",
   "widgetName": "OTYMap",
-  "zoomLevel": 3.5
+  "zoomLevel": "{{OverTheYearsHelper.getMapZoom()}}"
 }
