@@ -5,10 +5,10 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
-      "key": "fontFamily"
+      "key": "text"
     },
     {
-      "key": "text"
+      "key": "fontFamily"
     }
   ],
   "dynamicTriggerPathList": [],

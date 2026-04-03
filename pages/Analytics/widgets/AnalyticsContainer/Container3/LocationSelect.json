@@ -7,10 +7,10 @@
   "defaultOptionValue": "All",
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "sourceData"
     },
     {
-      "key": "sourceData"
+      "key": "borderRadius"
     }
   ],
   "dynamicPropertyPathList": [

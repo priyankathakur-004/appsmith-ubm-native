@@ -9,9 +9,6 @@
   "dynamicBindingPathList": [
     {
       "key": "buttonVariant"
-    },
-    {
-      "key": "textColor"
     }
   ],
   "dynamicPropertyPathList": [],

@@ -12,14 +12,88 @@ export default {
 			.map(loc => ({ label: loc, value: loc }));
 	},
 
-	getSelectedLocations() {
-		const locs = appsmith.store.otySelectedLocation;
+	getServiceAccountOptions() {
+		const raw = fetch_analytics_data.data || [];
+		const saSet = new Set();
 
-		if (Array.isArray(locs) && locs.length) {
-			return locs.map(l => l.trim());
+		raw.forEach(r => {
+			const loc = (r.location_description || "Unknown").trim();
+			const sa = (r.service_account || "").trim();
+			if (sa) {
+				saSet.add(loc + ", " + sa);
+			}
+		});
+
+		return Array.from(saSet)
+			.sort()
+			.map(item => ({ label: item, value: item }));
+	},
+
+	getMeterOptions() {
+		const raw = fetch_analytics_data.data || [];
+		const meterSet = new Set();
+
+		raw.forEach(r => {
+			const loc = (r.location_description || "Unknown").trim();
+			const sa = (r.service_account || "").trim();
+			const meter = (r.meter || "").trim();
+			if (sa && meter) {
+				meterSet.add(loc + ", " + sa + ", " + meter);
+			}
+		});
+
+		return Array.from(meterSet)
+			.sort()
+			.map(item => ({ label: item, value: item }));
+	},
+
+	getFilterOptions() {
+		const view = this.getViewBy();
+		if (view === "ServiceAccount") return this.getServiceAccountOptions();
+		if (view === "Meter") return this.getMeterOptions();
+		return this.getLocationOptions();
+	},
+
+	getFilterHeader() {
+		const view = this.getViewBy();
+		if (view === "ServiceAccount") return "Location, Service Acct";
+		if (view === "Meter") return "Location, Service Acct, Meter";
+		return "Location";
+	},
+
+	getSelectedLocations() {
+		const sel = appsmith.store.otySelectedLocation;
+
+		if (Array.isArray(sel) && sel.length) {
+			return sel.map(l => l.trim());
 		}
 
-		return this.getLocationOptions().map(o => o.value);
+		if (typeof sel === 'string' && sel) {
+			return [sel.trim()];
+		}
+
+		return this.getFilterOptions().map(o => o.value);
+	},
+
+	_matchesSelection(r) {
+		const view = this.getViewBy();
+		const selected = this.getSelectedLocations();
+		const loc = (r.location_description || "Unknown").trim();
+
+		if (view === "ServiceAccount") {
+			const sa = (r.service_account || "").trim();
+			const key = loc + ", " + sa;
+			return selected.some(s => s === key);
+		}
+
+		if (view === "Meter") {
+			const sa = (r.service_account || "").trim();
+			const meter = (r.meter || "").trim();
+			const key = loc + ", " + sa + ", " + meter;
+			return selected.some(s => s === key);
+		}
+
+		return selected.some(l => l === loc);
 	},
 
 	getViewBy() {
@@ -28,14 +102,12 @@ export default {
 
 	getMapMarkers() {
 		const raw = fetch_analytics_data.data || [];
-		const selectedLocs = this.getSelectedLocations();
 		const markers = {};
 
 		raw.forEach(r => {
+			if (!this._matchesSelection(r)) return;
+
 			const loc = (r.location_description || "Unknown").trim();
-
-			if (!selectedLocs.some(l => l === loc)) return;
-
 			const lat = Number(r.latitude);
 			const lng = Number(r.longitude);
 
@@ -54,14 +126,12 @@ export default {
 
 	getYearlyMonthlyData() {
 		const raw = fetch_analytics_data.data || [];
-		const selectedLocs = this.getSelectedLocations();
 		const result = {};
 
 		const MIN_CONSUMPTION = 0; // remove noisy data
 
 		raw.forEach(r => {
-			const loc = (r.location_description || "Unknown").trim();
-			if (!selectedLocs.some(l => l === loc)) return;
+			if (!this._matchesSelection(r)) return;
 
 			const dateStr = r.time_period || '';
 			if (!dateStr) return;
@@ -224,7 +294,6 @@ export default {
 
 	getLocationBreakdownConfig() {
 		const raw = fetch_analytics_data.data || [];
-		const selectedLocs = this.getSelectedLocations();
 		const clickedMonth = appsmith.store.otyClickedMonth;
 		const clickedYear = appsmith.store.otyClickedYear;
 		const chartType = appsmith.store.otyClickedChart || "charges";
@@ -232,8 +301,8 @@ export default {
 		const byLoc = {};
 
 		raw.forEach(r => {
+			if (!this._matchesSelection(r)) return;
 			const loc = (r.location_description || "Unknown").trim();
-			if (!selectedLocs.some(l => l === loc)) return;
 
 			const dateStr = r.time_period || '';
 			if (!dateStr) return;
@@ -264,39 +333,39 @@ export default {
 			.sort((a, b) => b.value - a.value)
 			.slice(0, 15);
 
-		const labels = { charges: "Charges ($)", consumption: "Consumption (CCF)", unitCost: "Unit Cost ($/CCF)" };
-		const valueLabel = labels[chartType] || "Value";
-
-		const formatter = chartType === "charges"
-			? (v) => '$' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0))
-			: chartType === "consumption"
-				? (v) => (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0))
-				: (v) => '$' + v.toFixed(2);
+		const isCharges = chartType === "charges";
+		const isConsumption = chartType === "consumption";
 
 		return {
+			backgroundColor: "#1E293B",
+
 			tooltip: {
 				trigger: "axis",
 				axisPointer: { type: "shadow" },
-				formatter: (params) => {
-					const p = params[0];
-					return '<b>' + p.name + '</b><br/>' + valueLabel + ': ' + formatter(p.value);
-				}
+				backgroundColor: "#0F172A",
+				textStyle: { color: "#E2E8F0" }
 			},
 			grid: { left: 120, right: 60, top: 10, bottom: 30 },
 			xAxis: {
 				type: "value",
-				axisLabel: { formatter: (v) => formatter(v) }
+				axisLabel: {
+					color: "#CBD5E1",
+				},
+				splitLine: { lineStyle: { color: "#334155", type: "dashed" } }
 			},
 			yAxis: {
 				type: "category",
 				data: sorted.map(d => d.loc).reverse(),
-				axisLabel: { fontSize: 11 }
+				axisLabel: { fontSize: 11, color: "#CBD5E1" }
 			},
 			series: [{
 				type: "bar",
 				data: sorted.map(d => d.value).reverse(),
 				itemStyle: { color: "#3B82F6" },
-				barMaxWidth: 30
+				barMaxWidth: 30,
+				label: {
+					show: false
+				}
 			}]
 		};
 	},
@@ -365,6 +434,40 @@ export default {
 			{ Attribute: "Demand (kW)", Value: totalDemand.toLocaleString(undefined, { maximumFractionDigits: 0 }) },
 			{ Attribute: "Square Feet", Value: sqft.toLocaleString(undefined, { maximumFractionDigits: 0 }) }
 		];
+	},
+
+	/* ===============================
+	   CHART CLICK HANDLERS
+	=============================== */
+
+	onChargesChartClick() {
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const monthIdx = months.indexOf(OTYChargesChart.selectedDataPoint?.x) + 1;
+		const year = Number(OTYChargesChart.selectedDataPoint?.seriesTitle);
+		storeValue('otyClickedMonth', monthIdx || null);
+		storeValue('otyClickedYear', year || null);
+		storeValue('otyClickedChart', 'charges');
+		showModal(showChart.name);
+	},
+
+	onConsumptionChartClick() {
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const monthIdx = months.indexOf(OTYConsumptionChart.selectedDataPoint?.x) + 1;
+		const year = Number(OTYConsumptionChart.selectedDataPoint?.seriesTitle);
+		storeValue('otyClickedMonth', monthIdx || null);
+		storeValue('otyClickedYear', year || null);
+		storeValue('otyClickedChart', 'consumption');
+		showModal(showChart.name);
+	},
+
+	onUnitCostChartClick() {
+		const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const monthIdx = months.indexOf(OTYUnitCostChart.selectedDataPoint?.x) + 1;
+		const year = Number(OTYUnitCostChart.selectedDataPoint?.seriesTitle);
+		storeValue('otyClickedMonth', monthIdx || null);
+		storeValue('otyClickedYear', year || null);
+		storeValue('otyClickedChart', 'unitCost');
+		showModal(showChart.name);
 	},
 
 	/* ===============================

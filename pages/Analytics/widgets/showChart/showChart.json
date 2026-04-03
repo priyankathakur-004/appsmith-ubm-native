@@ -76,6 +76,7 @@
   "rightColumn": 64,
   "shouldScrollContents": true,
   "topRow": -2,
+  "backgroundColor": "#1E293B",
   "type": "MODAL_WIDGET",
   "version": 2,
   "widgetId": "olofmhabk0",

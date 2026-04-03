@@ -377,6 +377,9 @@
     },
     {
       "key": "borderColor"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",

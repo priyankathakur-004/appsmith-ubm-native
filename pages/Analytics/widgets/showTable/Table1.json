@@ -56,31 +56,22 @@
   "delimiter": ",",
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "boxShadow"
-    },
-    {
       "key": "tableData"
     },
     {
-      "key": "primaryColumns.MonthYear.computedValue"
+      "key": "primaryColumns.Site_14_Selected_UOM.computedValue"
     },
     {
       "key": "primaryColumns.Site_12_Consumption.computedValue"
     },
     {
-      "key": "primaryColumns.Site_12_Selected_UOM.computedValue"
+      "key": "primaryColumns.MonthYear.computedValue"
+    },
+    {
+      "key": "primaryColumns.Site_9_Consumption.computedValue"
     },
     {
       "key": "primaryColumns.Site_14_Consumption.computedValue"
-    },
-    {
-      "key": "primaryColumns.Site_14_Selected_UOM.computedValue"
     },
     {
       "key": "primaryColumns.Site_35_Consumption.computedValue"
@@ -89,10 +80,19 @@
       "key": "primaryColumns.Site_35_Selected_UOM.computedValue"
     },
     {
-      "key": "primaryColumns.Site_9_Consumption.computedValue"
+      "key": "primaryColumns.Site_12_Selected_UOM.computedValue"
     },
     {
       "key": "primaryColumns.Site_9_Selected_UOM.computedValue"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
     }
   ],
   "dynamicPropertyPathList": [

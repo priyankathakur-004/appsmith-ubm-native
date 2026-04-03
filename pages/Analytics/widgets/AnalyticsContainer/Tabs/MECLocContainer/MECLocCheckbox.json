@@ -8,19 +8,16 @@
   "defaultModel": "{{ {\ndata: MonthlyEnergyHelper.getLocationOptions(),\nselected: MonthlyEnergyHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
     {
-      "key": "theme"
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
     },
     {
       "key": "borderRadius"
     },
     {
       "key": "boxShadow"
-    },
-    {
-      "key": "defaultModel"
-    },
-    {
-      "key": "backgroundColor"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
