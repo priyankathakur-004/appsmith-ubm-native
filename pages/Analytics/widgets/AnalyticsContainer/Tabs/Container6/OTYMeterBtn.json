@@ -33,7 +33,7 @@
   "mobileLeftColumn": 33,
   "mobileRightColumn": 41,
   "mobileTopRow": 1,
-  "onClick": "{{storeValue('otyViewBy', 'Meter')}}",
+  "onClick": "{{removeValue('otySelectedLocation'); storeValue('otyViewBy', 'Meter')}}",
   "parentColumnSpace": 15,
   "parentId": "2hr1qryg50",
   "parentRowSpace": 10,
