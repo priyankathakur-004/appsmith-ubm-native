@@ -336,12 +336,6 @@ export default {
 		const isCharges = chartType === "charges";
 		const isConsumption = chartType === "consumption";
 
-		const formatValue = (v) => {
-			if (isCharges) return '$' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0));
-			if (isConsumption) return (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v.toFixed(0));
-			return '$' + v.toFixed(2);
-		};
-
 		return {
 			backgroundColor: "#1E293B",
 
@@ -356,7 +350,6 @@ export default {
 				type: "value",
 				axisLabel: {
 					color: "#CBD5E1",
-					formatter: (v) => formatValue(v)
 				},
 				splitLine: { lineStyle: { color: "#334155", type: "dashed" } }
 			},
