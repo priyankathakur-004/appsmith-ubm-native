@@ -11,6 +11,8 @@ SELECT
     l.state,
     l.city,
     l.square_feet,
+    l.latitude,
+    l.longitude,
 
     CASE 
         WHEN m.bill_type = 'Supply Only' 
