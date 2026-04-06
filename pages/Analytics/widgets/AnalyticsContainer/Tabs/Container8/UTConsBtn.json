@@ -30,7 +30,7 @@
   "mobileLeftColumn": 13,
   "mobileRightColumn": 23,
   "mobileTopRow": 1,
-  "onClick": "{{storeValue('utViewBy', 'Consumption')}}",
+  "onClick": "{{storeValue('utViewBy', 'Consumption'); storeValue('utExpandedPath', []);}}",
   "parentColumnSpace": 15,
   "parentId": "gjxt97bixr",
   "parentRowSpace": 10,

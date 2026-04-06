@@ -13,7 +13,12 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
+  "onDataPointClick": "{{UtilityTreeHelper.handleNodeClick()}}",
   "isLoading": false,
   "isVisible": true,
   "key": "fgwun0siyq",

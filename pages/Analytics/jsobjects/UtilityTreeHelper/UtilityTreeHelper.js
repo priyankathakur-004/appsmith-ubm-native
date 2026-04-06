@@ -13,6 +13,10 @@ export default {
 		return uom ? 'Consumption (' + uom + ')' : 'Consumption';
 	},
 
+	getExpandedPath() {
+		return appsmith.store.utExpandedPath || [];
+	},
+
 	buildTreeData() {
 		const raw = fetch_utility_tree_data.data || [];
 		const viewBy = this.getViewBy();
@@ -60,7 +64,52 @@ export default {
 		};
 
 		finalize(root);
+
+		// Accordion: prune the tree to only keep children along the expanded path.
+		// Siblings of the selected node at each depth stay visible (so the user
+		// can switch), but their own children are dropped so columns to the right
+		// only show the currently drilled path.
+		const expandedPath = this.getExpandedPath();
+		const pruneToPath = (node, depth) => {
+			if (!node.children || !node.children.length) return;
+			const selectedName = expandedPath[depth];
+			if (!selectedName) {
+				// Nothing selected at this depth — drop grandchildren entirely.
+				node.children.forEach(c => { delete c.children; });
+				return;
+			}
+			node.children.forEach(child => {
+				if (child.name === selectedName) {
+					pruneToPath(child, depth + 1);
+				} else {
+					delete child.children;
+				}
+			});
+		};
+		pruneToPath(root, 0);
+
 		return root;
+	},
+
+	handleNodeClick() {
+		const dp = UTTreeChart.selectedDataPoint;
+		if (!dp || !dp.name || dp.depth == null || dp.depth === 0) return;
+		const depth = dp.depth; // 1..6
+		const current = appsmith.store.utExpandedPath || [];
+		// If clicking the same node that's already selected at this depth, collapse it.
+		const sameNode = current[depth - 1] === dp.name;
+		let next;
+		if (sameNode) {
+			next = current.slice(0, depth - 1);
+		} else {
+			next = current.slice(0, depth - 1);
+			next[depth - 1] = dp.name;
+		}
+		storeValue('utExpandedPath', next);
+	},
+
+	resetExpansion() {
+		storeValue('utExpandedPath', []);
 	},
 
 	formatValue(v) {
@@ -144,17 +193,38 @@ export default {
 		};
 		assignStyles(treeData, 0);
 
-		// Attach the column name to every node based on depth so the rich
-		// label can render it inline. This avoids the header-alignment problem
-		// entirely — each node carries its own column label.
-		const tagDepthName = (node) => {
-			node.depthName = headers[node.depth] || '';
-			(node.children || []).forEach(tagDepthName);
-		};
-		tagDepthName(treeData);
+		// Static column headers at top of chart. Positions are computed from the
+		// tree's left margin + layerPadding so they line up with node columns.
+		// Depth 0 is the root (no header). Headers span depth 1..6.
+		const CHART_LEFT = 80;
+		const LAYER_PADDING = 240;
+		const graphicElements = [];
+		for (let i = 1; i < headers.length; i++) {
+			graphicElements.push({
+				type: 'text',
+				left: CHART_LEFT + i * LAYER_PADDING - FIXED_WIDTH / 2,
+				top: 12,
+				style: {
+					text: headers[i],
+					fontSize: 13,
+					fontWeight: 'bold',
+					fill: HEADER_COLOR,
+					textDecoration: 'underline'
+				}
+			});
+		}
+		// Thin separator line under the headers
+		graphicElements.push({
+			type: 'line',
+			left: CHART_LEFT - 20,
+			top: 38,
+			shape: { x1: 0, y1: 0, x2: CHART_LEFT + headers.length * LAYER_PADDING, y2: 0 },
+			style: { stroke: SEPARATOR_COLOR, lineWidth: 1 }
+		});
 
 		return {
 			backgroundColor: BG_COLOR,
+			graphic: graphicElements,
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: '#0F172A',
@@ -171,14 +241,14 @@ export default {
 				type: 'tree',
 				data: [treeData],
 				orient: 'LR',
-				top: 40,
+				top: 60,
 				bottom: 40,
-				left: 70,
-				right: 180,
-				layerPadding: 220,
-				nodePadding: 60,
-				initialTreeDepth: 1,
-				expandAndCollapse: true,
+				left: CHART_LEFT,
+				right: 200,
+				layerPadding: LAYER_PADDING,
+				nodePadding: 80,
+				initialTreeDepth: -1,
+				expandAndCollapse: false,
 				roam: 'move',
 				edgeShape: 'polyline',
 				edgeForkPosition: '50%',
@@ -200,22 +270,17 @@ export default {
 					}
 				},
 				label: {
-					position: 'top',
-					verticalAlign: 'bottom',
+					position: 'bottom',
+					verticalAlign: 'top',
 					distance: 6,
-					align: 'center',
+					align: 'left',
+					offset: [-FIXED_WIDTH / 2, 0],
 					rich: {
-						col: {
-							fontSize: 11,
-							fontWeight: 'bold',
-							color: HEADER_COLOR,
-							padding: [0, 0, 2, 0]
-						},
 						name: {
 							fontSize: 12,
 							fontWeight: 'bold',
 							color: LABEL_NAME_COLOR,
-							padding: [0, 0, 1, 0]
+							padding: [0, 0, 2, 0]
 						},
 						val: {
 							fontSize: 11,
@@ -224,28 +289,22 @@ export default {
 					},
 					formatter: function(params) {
 						const d = params.data;
-						const col = d.depthName ? '{col|' + d.depthName.toUpperCase() + '}\n' : '';
-						return col + '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
+						return '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
 					}
 				},
 				leaves: {
 					label: {
-						position: 'top',
-						verticalAlign: 'bottom',
+						position: 'bottom',
+						verticalAlign: 'top',
 						distance: 6,
-						align: 'center',
+						align: 'left',
+						offset: [-FIXED_WIDTH / 2, 0],
 						rich: {
-							col: {
-								fontSize: 11,
-								fontWeight: 'bold',
-								color: HEADER_COLOR,
-								padding: [0, 0, 2, 0]
-							},
 							name: {
 								fontSize: 12,
 								fontWeight: 'bold',
 								color: LABEL_NAME_COLOR,
-								padding: [0, 0, 1, 0]
+								padding: [0, 0, 2, 0]
 							},
 							val: {
 								fontSize: 11,
@@ -254,8 +313,7 @@ export default {
 						},
 						formatter: function(params) {
 							const d = params.data;
-							const col = d.depthName ? '{col|' + d.depthName.toUpperCase() + '}\n' : '';
-							return col + '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
+							return '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
 						}
 					}
 				}
