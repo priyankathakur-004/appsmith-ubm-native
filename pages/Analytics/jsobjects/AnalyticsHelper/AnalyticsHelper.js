@@ -32,6 +32,10 @@ export default {
 							data = MonthlyEnergyHelper.getMonthlyTable();
 				}
 
+				if (Tabs.selectedTab === 'Utility Tree') {
+						data = UtilityTreeHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();

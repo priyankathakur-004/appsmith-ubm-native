@@ -132,6 +132,70 @@ export default {
 		storeValue('utExpandedPath', []);
 	},
 
+	getTableData() {
+		const raw = fetch_utility_tree_data.data || [];
+		const isCharges = this.getViewBy() === 'Charges';
+
+		// Group by the full 6-level hierarchy so each row represents a unique
+		// meter × service account × location × vendor × bill type × utility type.
+		const map = {};
+		raw.forEach(r => {
+			const key = [
+				r.utility_type || 'Unknown',
+				r.bill_type || 'Unknown',
+				r.vendor_name || 'Unknown',
+				r.location_description || 'Unknown',
+				r.service_account || 'Unknown',
+				r.meter || 'Unknown'
+			].join('||');
+
+			if (!map[key]) {
+				map[key] = {
+					utility_type: r.utility_type || 'Unknown',
+					bill_type: r.bill_type || 'Unknown',
+					vendor: r.vendor_name || 'Unknown',
+					location: r.location_description || 'Unknown',
+					service_account: r.service_account || 'Unknown',
+					meter: r.meter || 'Unknown',
+					consumption: 0,
+					uom: r.total_consumption_uom || '',
+					charges: 0
+				};
+			}
+			map[key].consumption += Number(r.consumption) || 0;
+			map[key].charges += Number(r.total_charges) || 0;
+		});
+
+		const rows = Object.values(map);
+
+		// Return columns appropriate for the current view
+		if (isCharges) {
+			return rows
+				.map(r => ({
+					'Utility Type': r.utility_type,
+					'Bill Type': r.bill_type,
+					'Vendor': r.vendor,
+					'Location': r.location,
+					'Service Account': r.service_account,
+					'Meter': r.meter,
+					'Charges ($)': r.charges
+				}))
+				.sort((a, b) => b['Charges ($)'] - a['Charges ($)']);
+		}
+		return rows
+			.map(r => ({
+				'Utility Type': r.utility_type,
+				'Bill Type': r.bill_type,
+				'Vendor': r.vendor,
+				'Location': r.location,
+				'Service Account': r.service_account,
+				'Meter': r.meter,
+				'Consumption': r.consumption,
+				'UOM': r.uom
+			}))
+			.sort((a, b) => b['Consumption'] - a['Consumption']);
+	},
+
 	formatValue(v) {
 		const isCharges = this.getViewBy() === 'Charges';
 		const prefix = isCharges ? '$' : '';
