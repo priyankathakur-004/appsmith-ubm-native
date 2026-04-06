@@ -172,17 +172,12 @@ export default {
 		const FIXED_WIDTH = 150;
 		const BAR_HEIGHT = 20;
 
-		// Self-contained value formatter (no `this` — closures die in serialization)
+		// Full-precision value formatter. Charges → USD with 2 decimals,
+		// Consumption → rounded integer with thousand separators.
 		const formatVal = function(v) {
 			if (isCharges) {
-				if (v >= 1000000000) return '$' + (v / 1000000000).toFixed(2) + 'B';
-				if (v >= 1000000) return '$' + (v / 1000000).toFixed(2) + 'M';
-				if (v >= 1000) return '$' + (v / 1000).toFixed(1) + 'K';
 				return '$' + (v || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 			}
-			if (v >= 1000000000) return (v / 1000000000).toFixed(2) + 'B';
-			if (v >= 1000000) return (v / 1000000).toFixed(2) + 'M';
-			if (v >= 1000) return (v / 1000).toFixed(1) + 'K';
 			return Math.round(v || 0).toLocaleString();
 		};
 
@@ -431,7 +426,7 @@ export default {
 						},
 						formatter: function(params) {
 							const d = params.data;
-							if (!d || d.depth == null || d.depth === 0) return '';
+							if (!d || d.depth == null) return '';
 							return '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
 						}
 					},
