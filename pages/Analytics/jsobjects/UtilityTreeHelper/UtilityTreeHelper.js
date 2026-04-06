@@ -108,6 +108,7 @@ export default {
 		for (const c of candidates) {
 			if (name == null && typeof c.name === 'string') name = c.name;
 			if (depth == null && typeof c.depth === 'number') depth = c.depth;
+			if (depth == null && Array.isArray(c.value) && typeof c.value[0] === 'number') depth = c.value[0];
 			if (depth == null && typeof c.x === 'number' && Number.isInteger(c.x)) depth = c.x;
 		}
 		// Last-ditch fallback: dp.x is depth (graph series in cartesian2d)
@@ -245,9 +246,10 @@ export default {
 					graphNodes.push({
 						id: id,
 						name: entry.node.name,
-						x: depth,
-						y: y,
-						value: val,
+						// For graph series on cartesian2d, the position is the first two
+						// items of `value`. We stash the numeric metric separately.
+						value: [depth, y],
+						metric: val,
 						depth: depth,
 						formattedValue: formatVal(val),
 						pctOfDepth: ((val / (maxByDepth[depth] || 1)) * 100).toFixed(1),
