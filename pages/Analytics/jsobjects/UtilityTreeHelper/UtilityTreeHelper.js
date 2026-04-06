@@ -102,12 +102,29 @@ export default {
 		const FIXED_WIDTH = 160;
 		const BAR_HEIGHT = 22;
 
+		// Precompute formatted value so we don't need a `this` reference inside
+		// ECharts formatters (Appsmith serializes the config and loses closures).
+		const formatVal = function(v) {
+			if (isCharges) {
+				if (v >= 1000000000) return '$' + (v / 1000000000).toFixed(2) + 'B';
+				if (v >= 1000000) return '$' + (v / 1000000).toFixed(2) + 'M';
+				if (v >= 1000) return '$' + (v / 1000).toFixed(1) + 'K';
+				return '$' + (v || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			}
+			if (v >= 1000000000) return (v / 1000000000).toFixed(2) + 'B';
+			if (v >= 1000000) return (v / 1000000).toFixed(2) + 'M';
+			if (v >= 1000) return (v / 1000).toFixed(1) + 'K';
+			return Math.round(v || 0).toLocaleString();
+		};
+
 		const assignStyles = (node, depth) => {
 			const val = node.value || 0;
 			const maxVal = maxByDepth[depth] || 1;
 			const fillRatio = Math.min(0.998, Math.max(0.02, val / maxVal));
 
 			node.depth = depth;
+			node.formattedValue = formatVal(val);
+			node.pctOfDepth = ((val / maxVal) * 100).toFixed(1);
 			node.symbolSize = [FIXED_WIDTH, BAR_HEIGHT];
 			node.itemStyle = {
 				color: {
@@ -156,8 +173,6 @@ export default {
 			style: { stroke: SEPARATOR_COLOR, lineWidth: 1 }
 		});
 
-		const self = this;
-
 		return {
 			backgroundColor: BG_COLOR,
 			graphic: graphicElements,
@@ -169,10 +184,8 @@ export default {
 				textStyle: { color: LABEL_NAME_COLOR, fontSize: 13 },
 				formatter: function(params) {
 					const d = params.data;
-					const max = maxByDepth[d.depth] || treeData.value || 1;
-					const pct = ((d.value / max) * 100).toFixed(1);
 					return '<b>' + d.name + '</b><br/>' +
-						self.formatValue(d.value || 0) + ' (' + pct + '%)';
+						(d.formattedValue || '') + ' (' + (d.pctOfDepth || '0') + '%)';
 				}
 			},
 			series: [{
@@ -226,7 +239,7 @@ export default {
 					},
 					formatter: function(params) {
 						const d = params.data;
-						return '{name|' + d.name + '}\n{val|' + self.formatValue(d.value || 0) + '}';
+						return '{name|' + d.name + '}\n{val|' + (d.formattedValue || '') + '}';
 					}
 				},
 				leaves: {
@@ -239,12 +252,12 @@ export default {
 							name: {
 								fontSize: 12,
 								fontWeight: 'bold',
-								color: '#0f172a',
+								color: LABEL_NAME_COLOR,
 								padding: [0, 2, 2, 0]
 							},
 							val: {
 								fontSize: 11,
-								color: '#475569'
+								color: LABEL_VAL_COLOR
 							}
 						},
 						formatter: function(params) {
