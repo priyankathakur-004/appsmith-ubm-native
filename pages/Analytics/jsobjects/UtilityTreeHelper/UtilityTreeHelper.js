@@ -352,7 +352,7 @@ export default {
 		// reliable way to keep headers aligned with columns across any chart size.
 		const headerNodes = [];
 		const maxSiblingsHalf = (maxSiblings * Y_STEP) / 2;
-		const headerY = maxSiblingsHalf + Y_STEP * 1.4; // sits above the tallest column
+		const headerY = maxSiblingsHalf + Y_STEP * 0.55; // sits just above the tallest column
 		for (let d = 1; d <= MAX_DEPTH; d++) {
 			headerNodes.push({
 				value: [d, headerY],
@@ -360,8 +360,8 @@ export default {
 			});
 		}
 
-		// Compute y-axis range so the tallest column fits with padding for headers
-		const yHalfRange = Math.max(maxSiblingsHalf + Y_STEP * 2.2, 6);
+		// Compute y-axis range — just enough to fit the tallest column + the header row
+		const yHalfRange = maxSiblingsHalf + Y_STEP * 0.85;
 
 		return {
 			backgroundColor: BG_COLOR,
@@ -382,8 +382,8 @@ export default {
 			grid: {
 				left: 40,
 				right: 40,
-				top: 50,
-				bottom: 30,
+				top: 10,
+				bottom: 10,
 				containLabel: false
 			},
 			xAxis: {
@@ -426,7 +426,7 @@ export default {
 						symbol: 'none',
 						lineStyle: { color: SEPARATOR_COLOR, type: 'solid', width: 1 },
 						data: [
-							{ yAxis: headerY - 0.9 }
+							{ yAxis: headerY - Y_STEP * 0.3 }
 						],
 						label: { show: false }
 					},
