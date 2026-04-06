@@ -83,7 +83,7 @@ export default {
 		const TRACK_COLOR = '#0F172A';
 		const BORDER_COLOR = '#475569';
 		const BG_COLOR = '#1E293B';
-		const HEADER_COLOR = '#cbd5e1';
+		const HEADER_COLOR = '#94a3b8';
 		const SEPARATOR_COLOR = '#334155';
 		const LABEL_NAME_COLOR = '#e2e8f0';
 		const LABEL_VAL_COLOR = '#94a3b8';
@@ -144,38 +144,17 @@ export default {
 		};
 		assignStyles(treeData, 0);
 
-		// Column headers across the top
-		const headerXPercent = [3, 13, 26, 39, 52, 65, 78];
-		const graphicElements = [];
-
-		headers.forEach((text, i) => {
-			if (!text) return;
-			graphicElements.push({
-				type: 'text',
-				left: headerXPercent[i] + '%',
-				top: 8,
-				style: {
-					text: text,
-					fontSize: 13,
-					fontWeight: 'bold',
-					fill: HEADER_COLOR,
-					textDecoration: 'underline'
-				}
-			});
-		});
-
-		// Separator line below headers
-		graphicElements.push({
-			type: 'line',
-			left: '3%',
-			top: 32,
-			shape: { x1: 0, y1: 0, x2: 1600, y2: 0 },
-			style: { stroke: SEPARATOR_COLOR, lineWidth: 1 }
-		});
+		// Attach the column name to every node based on depth so the rich
+		// label can render it inline. This avoids the header-alignment problem
+		// entirely — each node carries its own column label.
+		const tagDepthName = (node) => {
+			node.depthName = headers[node.depth] || '';
+			(node.children || []).forEach(tagDepthName);
+		};
+		tagDepthName(treeData);
 
 		return {
 			backgroundColor: BG_COLOR,
-			graphic: graphicElements,
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: '#0F172A',
@@ -192,13 +171,13 @@ export default {
 				type: 'tree',
 				data: [treeData],
 				orient: 'LR',
-				top: 50,
-				bottom: 30,
-				left: 60,
-				right: 160,
-				layerPadding: 180,
-				nodePadding: 42,
-				initialTreeDepth: 6,
+				top: 40,
+				bottom: 40,
+				left: 70,
+				right: 180,
+				layerPadding: 220,
+				nodePadding: 60,
+				initialTreeDepth: 1,
 				expandAndCollapse: true,
 				roam: 'move',
 				edgeShape: 'polyline',
@@ -221,16 +200,22 @@ export default {
 					}
 				},
 				label: {
-					position: 'bottom',
-					verticalAlign: 'top',
-					distance: 5,
-					align: 'left',
+					position: 'top',
+					verticalAlign: 'bottom',
+					distance: 6,
+					align: 'center',
 					rich: {
+						col: {
+							fontSize: 11,
+							fontWeight: 'bold',
+							color: HEADER_COLOR,
+							padding: [0, 0, 2, 0]
+						},
 						name: {
 							fontSize: 12,
 							fontWeight: 'bold',
 							color: LABEL_NAME_COLOR,
-							padding: [0, 0, 2, 0]
+							padding: [0, 0, 1, 0]
 						},
 						val: {
 							fontSize: 11,
@@ -239,21 +224,28 @@ export default {
 					},
 					formatter: function(params) {
 						const d = params.data;
-						return '{name|' + d.name + '}\n{val|' + (d.formattedValue || '') + '}';
+						const col = d.depthName ? '{col|' + d.depthName.toUpperCase() + '}\n' : '';
+						return col + '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
 					}
 				},
 				leaves: {
 					label: {
-						position: 'bottom',
-						verticalAlign: 'top',
-						distance: 5,
-						align: 'left',
+						position: 'top',
+						verticalAlign: 'bottom',
+						distance: 6,
+						align: 'center',
 						rich: {
+							col: {
+								fontSize: 11,
+								fontWeight: 'bold',
+								color: HEADER_COLOR,
+								padding: [0, 0, 2, 0]
+							},
 							name: {
 								fontSize: 12,
 								fontWeight: 'bold',
 								color: LABEL_NAME_COLOR,
-								padding: [0, 2, 2, 0]
+								padding: [0, 0, 1, 0]
 							},
 							val: {
 								fontSize: 11,
@@ -262,7 +254,8 @@ export default {
 						},
 						formatter: function(params) {
 							const d = params.data;
-							return '{name|' + d.name + '}\n{val|' + self.formatValue(d.value || 0) + '}';
+							const col = d.depthName ? '{col|' + d.depthName.toUpperCase() + '}\n' : '';
+							return col + '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
 						}
 					}
 				}
