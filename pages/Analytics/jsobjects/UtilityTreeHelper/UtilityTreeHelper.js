@@ -233,7 +233,7 @@ export default {
 		};
 		walkMax(treeData, 0);
 
-		const FIXED_WIDTH = 150;
+		const FIXED_WIDTH = 120;
 		const BAR_HEIGHT = 20;
 
 		// Full-precision value formatter. Charges → USD with 2 decimals,
@@ -351,8 +351,12 @@ export default {
 		// scatter series in the SAME cartesian coord system. This is the only
 		// reliable way to keep headers aligned with columns across any chart size.
 		const headerNodes = [];
-		const maxSiblingsHalf = (maxSiblings * Y_STEP) / 2;
-		const headerY = maxSiblingsHalf + Y_STEP * 0.55; // sits just above the tallest column
+		// The topmost bar of any column sits at (maxSiblings - 1) / 2 * Y_STEP,
+		// because siblings are distributed around y = 0. Position the header row
+		// just above that, NOT above maxSiblings * Y_STEP / 2 (which leaves a
+		// visible half-step gap between the header and the top bar).
+		const topmostY = ((maxSiblings - 1) / 2) * Y_STEP;
+		const headerY = topmostY + Y_STEP * 0.35;
 		for (let d = 1; d <= MAX_DEPTH; d++) {
 			headerNodes.push({
 				value: [d, headerY],
@@ -360,8 +364,8 @@ export default {
 			});
 		}
 
-		// Compute y-axis range — just enough to fit the tallest column + the header row
-		const yHalfRange = maxSiblingsHalf + Y_STEP * 0.85;
+		// Compute y-axis range — tight to [bottom-most bar, header row + a bit]
+		const yHalfRange = topmostY + Y_STEP * 0.55;
 
 		return {
 			backgroundColor: BG_COLOR,
@@ -390,7 +394,7 @@ export default {
 				type: 'value',
 				show: false,
 				min: -0.3,
-				max: MAX_DEPTH + 0.7,
+				max: MAX_DEPTH + 0.2,
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -426,7 +430,7 @@ export default {
 						symbol: 'none',
 						lineStyle: { color: SEPARATOR_COLOR, type: 'solid', width: 1 },
 						data: [
-							{ yAxis: headerY - Y_STEP * 0.3 }
+							{ yAxis: headerY - Y_STEP * 0.18 }
 						],
 						label: { show: false }
 					},
@@ -484,7 +488,7 @@ export default {
 								padding: [0, 0, 2, 0]
 							},
 							val: {
-								fontSize: 11,
+								fontSize: 10,
 								color: LABEL_VAL_COLOR
 							}
 						},
