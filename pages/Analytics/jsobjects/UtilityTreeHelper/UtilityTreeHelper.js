@@ -92,18 +92,37 @@ export default {
 	},
 
 	handleNodeClick() {
-		const dp = UTTreeChart.selectedDataPoint;
-		if (!dp || !dp.name || dp.depth == null || dp.depth === 0) return;
-		const depth = dp.depth; // 1..6
+		// Appsmith normalizes CUSTOM_ECHART click payloads differently across
+		// series types, so inspect every possible location the clicked node's
+		// data might live.
+		const dp = UTTreeChart.selectedDataPoint || {};
+		const candidates = [
+			dp,
+			dp.data,
+			dp.rawEventData,
+			dp.rawEventData && dp.rawEventData.data
+		].filter(Boolean);
+
+		let name = null;
+		let depth = null;
+		for (const c of candidates) {
+			if (name == null && typeof c.name === 'string') name = c.name;
+			if (depth == null && typeof c.depth === 'number') depth = c.depth;
+			if (depth == null && typeof c.x === 'number' && Number.isInteger(c.x)) depth = c.x;
+		}
+		// Last-ditch fallback: dp.x is depth (graph series in cartesian2d)
+		if (depth == null && typeof dp.x === 'number' && Number.isInteger(dp.x)) depth = dp.x;
+
+		if (!name || depth == null || depth === 0) return;
+
 		const current = appsmith.store.utExpandedPath || [];
-		// If clicking the same node that's already selected at this depth, collapse it.
-		const sameNode = current[depth - 1] === dp.name;
+		const sameNode = current[depth - 1] === name;
 		let next;
 		if (sameNode) {
 			next = current.slice(0, depth - 1);
 		} else {
 			next = current.slice(0, depth - 1);
-			next[depth - 1] = dp.name;
+			next[depth - 1] = name;
 		}
 		storeValue('utExpandedPath', next);
 	},
@@ -132,27 +151,27 @@ export default {
 		const TRACK_COLOR = '#0F172A';
 		const BORDER_COLOR = '#475569';
 		const BG_COLOR = '#1E293B';
-		const HEADER_COLOR = '#94a3b8';
+		const HEADER_COLOR = '#cbd5e1';
 		const SEPARATOR_COLOR = '#334155';
 		const LABEL_NAME_COLOR = '#e2e8f0';
 		const LABEL_VAL_COLOR = '#94a3b8';
 		const EDGE_COLOR = '#475569';
 
 		const headers = ['', 'Utility Type', 'Bill Type', 'Vendor', 'Location', 'Service Account', 'Meter'];
+		const MAX_DEPTH = 6;
 
-		// Max value at each depth for fill ratio
+		// Max value at each depth — used for the fill-bar ratio
 		const maxByDepth = {};
-		const walk = (node, depth) => {
+		const walkMax = (node, depth) => {
 			maxByDepth[depth] = Math.max(maxByDepth[depth] || 0, node.value || 0);
-			(node.children || []).forEach(c => walk(c, depth + 1));
+			(node.children || []).forEach(c => walkMax(c, depth + 1));
 		};
-		walk(treeData, 0);
+		walkMax(treeData, 0);
 
-		const FIXED_WIDTH = 160;
-		const BAR_HEIGHT = 22;
+		const FIXED_WIDTH = 150;
+		const BAR_HEIGHT = 20;
 
-		// Precompute formatted value so we don't need a `this` reference inside
-		// ECharts formatters (Appsmith serializes the config and loses closures).
+		// Self-contained value formatter (no `this` — closures die in serialization)
 		const formatVal = function(v) {
 			if (isCharges) {
 				if (v >= 1000000000) return '$' + (v / 1000000000).toFixed(2) + 'B';
@@ -166,16 +185,10 @@ export default {
 			return Math.round(v || 0).toLocaleString();
 		};
 
-		const assignStyles = (node, depth) => {
-			const val = node.value || 0;
+		const makeItemStyle = (val, depth) => {
 			const maxVal = maxByDepth[depth] || 1;
 			const fillRatio = Math.min(0.998, Math.max(0.02, val / maxVal));
-
-			node.depth = depth;
-			node.formattedValue = formatVal(val);
-			node.pctOfDepth = ((val / maxVal) * 100).toFixed(1);
-			node.symbolSize = [FIXED_WIDTH, BAR_HEIGHT];
-			node.itemStyle = {
+			return {
 				color: {
 					type: 'linear',
 					x: 0, y: 0, x2: 1, y2: 0,
@@ -189,42 +202,86 @@ export default {
 				borderColor: BORDER_COLOR,
 				borderWidth: 0.5
 			};
-			(node.children || []).forEach(c => assignStyles(c, depth + 1));
 		};
-		assignStyles(treeData, 0);
 
-		// Static column headers at top of chart. Positions are computed from the
-		// tree's left margin + layerPadding so they line up with node columns.
-		// Depth 0 is the root (no header). Headers span depth 1..6.
-		const CHART_LEFT = 80;
-		const LAYER_PADDING = 240;
-		const graphicElements = [];
-		for (let i = 1; i < headers.length; i++) {
-			graphicElements.push({
-				type: 'text',
-				left: CHART_LEFT + i * LAYER_PADDING - FIXED_WIDTH / 2,
-				top: 12,
-				style: {
-					text: headers[i],
-					fontSize: 13,
-					fontWeight: 'bold',
-					fill: HEADER_COLOR,
-					textDecoration: 'underline'
-				}
+		// Flatten the pruned tree into a graph (nodes + links) with explicit
+		// cartesian positions. x = depth, y = vertical stacking index.
+		// Each column's siblings are stacked centered around y=0 so the chart
+		// stays visually balanced regardless of how many items are in each column.
+		const graphNodes = [];
+		const graphLinks = [];
+		const nodeIdByRef = new Map();
+		let idCounter = 0;
+
+		// Bucket nodes by depth so we can stack siblings column-by-column
+		const byDepth = {};
+		const collect = (node, parent) => {
+			const d = node.depth || 0;
+			if (!byDepth[d]) byDepth[d] = [];
+			byDepth[d].push({ node: node, parent: parent });
+			(node.children || []).forEach(c => collect(c, node));
+		};
+		collect(treeData, null);
+
+		// Global max sibling count drives yAxis range
+		let maxSiblings = 1;
+		Object.keys(byDepth).forEach(k => {
+			maxSiblings = Math.max(maxSiblings, byDepth[k].length);
+		});
+		const Y_STEP = 1;
+
+		Object.keys(byDepth)
+			.map(Number)
+			.sort((a, b) => a - b)
+			.forEach(depth => {
+				const list = byDepth[depth];
+				const total = list.length;
+				// Center siblings around y = 0 (cartesian), visually centered in the chart
+				list.forEach((entry, i) => {
+					const id = 'n' + (idCounter++);
+					nodeIdByRef.set(entry.node, id);
+					const y = ((total - 1) / 2 - i) * Y_STEP;
+					const val = entry.node.value || 0;
+					graphNodes.push({
+						id: id,
+						name: entry.node.name,
+						x: depth,
+						y: y,
+						value: val,
+						depth: depth,
+						formattedValue: formatVal(val),
+						pctOfDepth: ((val / (maxByDepth[depth] || 1)) * 100).toFixed(1),
+						symbolSize: [FIXED_WIDTH, BAR_HEIGHT],
+						itemStyle: depth === 0
+							? { color: FILL_COLOR, borderColor: BORDER_COLOR, borderWidth: 0.5 }
+							: makeItemStyle(val, depth)
+					});
+					if (entry.parent) {
+						graphLinks.push({
+							source: nodeIdByRef.get(entry.parent),
+							target: id
+						});
+					}
+				});
+			});
+
+		// Header nodes — one per column (depth 1..MAX_DEPTH), rendered as a second
+		// scatter series in the SAME cartesian coord system. This is the only
+		// reliable way to keep headers aligned with columns across any chart size.
+		const headerNodes = [];
+		const headerY = (maxSiblings / 2) + 1.2; // sits above the tallest column
+		for (let d = 1; d <= MAX_DEPTH; d++) {
+			headerNodes.push({
+				value: [d, headerY],
+				name: headers[d]
 			});
 		}
-		// Thin separator line under the headers
-		graphicElements.push({
-			type: 'line',
-			left: CHART_LEFT - 20,
-			top: 38,
-			shape: { x1: 0, y1: 0, x2: CHART_LEFT + headers.length * LAYER_PADDING, y2: 0 },
-			style: { stroke: SEPARATOR_COLOR, lineWidth: 1 }
-		});
+
+		// Compute y-axis range so the tallest column fits with padding for headers
+		const yHalfRange = Math.max(maxSiblings / 2 + 2, 4);
 
 		return {
 			backgroundColor: BG_COLOR,
-			graphic: graphicElements,
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: '#0F172A',
@@ -232,72 +289,92 @@ export default {
 				borderWidth: 1,
 				textStyle: { color: LABEL_NAME_COLOR, fontSize: 13 },
 				formatter: function(params) {
+					if (params.seriesType !== 'graph') return '';
 					const d = params.data;
-					return '<b>' + d.name + '</b><br/>' +
+					if (!d || d.depth == null) return '';
+					return '<b>' + (d.name || '') + '</b><br/>' +
 						(d.formattedValue || '') + ' (' + (d.pctOfDepth || '0') + '%)';
 				}
 			},
-			series: [{
-				type: 'tree',
-				data: [treeData],
-				orient: 'LR',
-				top: 60,
-				bottom: 40,
-				left: CHART_LEFT,
-				right: 200,
-				layerPadding: LAYER_PADDING,
-				nodePadding: 80,
-				initialTreeDepth: -1,
-				expandAndCollapse: false,
-				roam: 'move',
-				edgeShape: 'polyline',
-				edgeForkPosition: '50%',
-				lineStyle: {
-					color: EDGE_COLOR,
-					width: 1.2
-				},
-				symbol: 'rect',
-				symbolSize: [FIXED_WIDTH, BAR_HEIGHT],
-				emphasis: {
-					focus: 'ancestor',
-					itemStyle: {
-						borderColor: '#2563eb',
-						borderWidth: 1.5
+			grid: {
+				left: 40,
+				right: 40,
+				top: 50,
+				bottom: 30,
+				containLabel: false
+			},
+			xAxis: {
+				type: 'value',
+				show: false,
+				min: -0.3,
+				max: MAX_DEPTH + 0.7,
+				splitLine: { show: false }
+			},
+			yAxis: {
+				type: 'value',
+				show: false,
+				min: -yHalfRange,
+				max: yHalfRange,
+				splitLine: { show: false }
+			},
+			series: [
+				{
+					// Column headers row
+					type: 'scatter',
+					coordinateSystem: 'cartesian2d',
+					symbolSize: 0,
+					silent: true,
+					data: headerNodes,
+					label: {
+						show: true,
+						position: 'inside',
+						fontSize: 13,
+						fontWeight: 'bold',
+						color: HEADER_COLOR,
+						formatter: function(p) { return p.name; }
 					},
-					lineStyle: {
-						color: '#2563eb',
-						width: 2
-					}
+					markLine: {
+						silent: true,
+						symbol: 'none',
+						lineStyle: { color: SEPARATOR_COLOR, type: 'solid', width: 1 },
+						data: [
+							{ yAxis: headerY - 0.6 }
+						],
+						label: { show: false }
+					},
+					z: 5
 				},
-				label: {
-					position: 'bottom',
-					verticalAlign: 'top',
-					distance: 6,
-					align: 'left',
-					offset: [-FIXED_WIDTH / 2, 0],
-					rich: {
-						name: {
-							fontSize: 12,
-							fontWeight: 'bold',
-							color: LABEL_NAME_COLOR,
-							padding: [0, 0, 2, 0]
+				{
+					type: 'graph',
+					coordinateSystem: 'cartesian2d',
+					layout: 'none',
+					symbol: 'rect',
+					symbolSize: [FIXED_WIDTH, BAR_HEIGHT],
+					data: graphNodes,
+					links: graphLinks,
+					edgeSymbol: ['none', 'none'],
+					lineStyle: {
+						color: EDGE_COLOR,
+						width: 1,
+						curveness: 0
+					},
+					emphasis: {
+						focus: 'adjacency',
+						itemStyle: {
+							borderColor: '#60a5fa',
+							borderWidth: 2
 						},
-						val: {
-							fontSize: 11,
-							color: LABEL_VAL_COLOR
+						lineStyle: {
+							color: '#60a5fa',
+							width: 2
 						}
 					},
-					formatter: function(params) {
-						const d = params.data;
-						return '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
-					}
-				},
-				leaves: {
 					label: {
+						show: true,
 						position: 'bottom',
 						verticalAlign: 'top',
-						distance: 6,
 						align: 'left',
+						distance: 6,
 						offset: [-FIXED_WIDTH / 2, 0],
 						rich: {
 							name: {
@@ -313,11 +390,13 @@ export default {
 						},
 						formatter: function(params) {
 							const d = params.data;
+							if (!d || d.depth == null || d.depth === 0) return '';
 							return '{name|' + (d.name || '') + '}\n{val|' + (d.formattedValue || '') + '}';
 						}
-					}
+					},
+					z: 10
 				}
-			}]
+			]
 		};
 	},
 
