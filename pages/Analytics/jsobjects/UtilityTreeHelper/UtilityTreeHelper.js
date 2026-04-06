@@ -229,7 +229,11 @@ export default {
 		Object.keys(byDepth).forEach(k => {
 			maxSiblings = Math.max(maxSiblings, byDepth[k].length);
 		});
-		const Y_STEP = 1;
+		// Spacing between siblings in data units. Larger = more gap between rows.
+		const Y_STEP = 1.6;
+		// How far from a node's center to pull the edge endpoint so lines meet
+		// the bar's side edges instead of passing through the center.
+		const EDGE_X_OFFSET = 0.36;
 
 		Object.keys(byDepth)
 			.map(Number)
@@ -267,11 +271,29 @@ export default {
 				});
 			});
 
+		// Build a node lookup so we can compute edge coordinates in data space.
+		const nodeById = {};
+		graphNodes.forEach(n => { nodeById[n.id] = n; });
+
+		// Edge lines — drawn as a separate `lines` series so endpoints can be
+		// offset to the left/right edges of each bar instead of the center.
+		const edgeLines = graphLinks.map(link => {
+			const src = nodeById[link.source];
+			const tgt = nodeById[link.target];
+			return {
+				coords: [
+					[src.value[0] + EDGE_X_OFFSET, src.value[1]],
+					[tgt.value[0] - EDGE_X_OFFSET, tgt.value[1]]
+				]
+			};
+		});
+
 		// Header nodes — one per column (depth 1..MAX_DEPTH), rendered as a second
 		// scatter series in the SAME cartesian coord system. This is the only
 		// reliable way to keep headers aligned with columns across any chart size.
 		const headerNodes = [];
-		const headerY = (maxSiblings / 2) + 1.2; // sits above the tallest column
+		const maxSiblingsHalf = (maxSiblings * Y_STEP) / 2;
+		const headerY = maxSiblingsHalf + Y_STEP * 1.4; // sits above the tallest column
 		for (let d = 1; d <= MAX_DEPTH; d++) {
 			headerNodes.push({
 				value: [d, headerY],
@@ -280,7 +302,7 @@ export default {
 		}
 
 		// Compute y-axis range so the tallest column fits with padding for headers
-		const yHalfRange = Math.max(maxSiblings / 2 + 2, 4);
+		const yHalfRange = Math.max(maxSiblingsHalf + Y_STEP * 2.2, 6);
 
 		return {
 			backgroundColor: BG_COLOR,
@@ -335,16 +357,36 @@ export default {
 						color: HEADER_COLOR,
 						formatter: function(p) { return p.name; }
 					},
+					emphasis: { disabled: true },
+					blur: {
+						label: { opacity: 1 },
+						itemStyle: { opacity: 1 }
+					},
 					markLine: {
 						silent: true,
 						symbol: 'none',
 						lineStyle: { color: SEPARATOR_COLOR, type: 'solid', width: 1 },
 						data: [
-							{ yAxis: headerY - 0.6 }
+							{ yAxis: headerY - 0.9 }
 						],
 						label: { show: false }
 					},
 					z: 5
+				},
+				{
+					// Edge lines (drawn beneath the bar nodes)
+					type: 'lines',
+					coordinateSystem: 'cartesian2d',
+					polyline: false,
+					silent: true,
+					data: edgeLines,
+					lineStyle: {
+						color: EDGE_COLOR,
+						width: 1,
+						opacity: 0.9
+					},
+					effect: { show: false },
+					z: 2
 				},
 				{
 					type: 'graph',
@@ -353,23 +395,20 @@ export default {
 					symbol: 'rect',
 					symbolSize: [FIXED_WIDTH, BAR_HEIGHT],
 					data: graphNodes,
-					links: graphLinks,
+					links: [],
 					edgeSymbol: ['none', 'none'],
-					lineStyle: {
-						color: EDGE_COLOR,
-						width: 1,
-						curveness: 0
-					},
 					emphasis: {
-						focus: 'adjacency',
+						disabled: false,
+						scale: false,
+						focus: 'none',
 						itemStyle: {
 							borderColor: '#60a5fa',
 							borderWidth: 2
-						},
-						lineStyle: {
-							color: '#60a5fa',
-							width: 2
 						}
+					},
+					blur: {
+						itemStyle: { opacity: 1 },
+						label: { opacity: 1 }
 					},
 					label: {
 						show: true,
