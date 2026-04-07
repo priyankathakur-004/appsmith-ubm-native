@@ -60,7 +60,12 @@ export default {
 			var b = by[my];
 			b.consumption           += parseFloat(r.consumption) || 0;
 			b.total_consumption     += parseFloat(r.total_consumption) || 0;
-			b.total_gen_consumption += parseFloat(r.total_gen_consumption) || 0;
+			// Generation Consumption mirrors the Power BI report, which shows the
+			// MAX gen_consumption across rows for the period (not the sum). With
+			// SUM, sub-meters get double-counted; MAX picks the largest meter's
+			// reading and matches the Power BI numbers exactly.
+			var gen = parseFloat(r.total_gen_consumption) || 0;
+			if (gen > b.total_gen_consumption) b.total_gen_consumption = gen;
 			b.total_charges         += parseFloat(r.total_charges) || 0;
 
 			var amfKey = (r.location_id || '') + '|' + my + '|' + (r.utility_type || '');
