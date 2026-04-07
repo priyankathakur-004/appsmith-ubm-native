@@ -36,6 +36,10 @@ export default {
 						data = UtilityTreeHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Location Details') {
+						data = LocationDetailsHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();
