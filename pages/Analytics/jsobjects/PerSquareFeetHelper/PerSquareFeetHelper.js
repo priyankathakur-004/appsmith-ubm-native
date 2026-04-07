@@ -34,10 +34,12 @@ export default {
 	},
 
 	getSelectedLocations() {
-		var widget = PSFLocCheckbox;
-		if (widget && widget.selectedValues && widget.selectedValues.length > 0) {
-			return widget.selectedValues;
-		}
+		// PSFLocCheckbox is a single-select custom widget. It exposes the
+		// currently picked value at `PSFLocCheckbox.model.selectedValue`. When
+		// nothing is picked (null), fall back to "all locations" so the chart
+		// keeps rendering everything by default.
+		var picked = (PSFLocCheckbox && PSFLocCheckbox.model && PSFLocCheckbox.model.selectedValue) || null;
+		if (picked) return [picked];
 		return this.getLocationOptions().map(function(o) { return o.value; });
 	},
 
@@ -133,6 +135,54 @@ export default {
 		return { years: sortedYears, locations: locations };
 	},
 
+	// Build the dataZoom array for both chart modes. We render two sliders:
+	//  - x-axis slider (bottom) for zooming the value range
+	//  - y-axis slider (right) for scrolling the locations list. With many sites
+	//    (50+), we need this so each row keeps a usable height instead of being
+	//    crushed into a 2px sliver. `inside` zoom on the y-axis lets the user
+	//    scroll with the mouse wheel as well.
+	_buildDataZoom(locationCount) {
+		// Show ~12 locations at a time; adjust if there are fewer total.
+		var visible = Math.min(12, locationCount || 1);
+		var endPct = locationCount > 0 ? (visible / locationCount) * 100 : 100;
+		return [
+			{
+				type: 'slider',
+				xAxisIndex: 0,
+				bottom: 5,
+				height: 18,
+				borderColor: '#334155',
+				backgroundColor: '#0f172a',
+				fillerColor: 'rgba(59,130,246,0.15)',
+				handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
+				textStyle: { color: '#94a3b8' }
+			},
+			{
+				type: 'slider',
+				yAxisIndex: 0,
+				right: 8,
+				width: 14,
+				start: 0,
+				end: endPct,
+				borderColor: '#334155',
+				backgroundColor: '#0f172a',
+				fillerColor: 'rgba(59,130,246,0.18)',
+				handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
+				textStyle: { color: '#94a3b8' },
+				showDetail: false
+			},
+			{
+				type: 'inside',
+				yAxisIndex: 0,
+				start: 0,
+				end: endPct,
+				zoomOnMouseWheel: false,
+				moveOnMouseWheel: true,
+				moveOnMouseMove: false
+			}
+		];
+	},
+
 	getChartConfig() {
 		var byLocYear = this.getPerSqftData();
 		var view = this.getViewBy();
@@ -145,6 +195,7 @@ export default {
 
 		var tooltipFmt = this._tooltipFormatter(view);
 		var xFmt = this._xAxisFormatter(view);
+		var dataZoom = this._buildDataZoom(locations.length);
 
 		// ---- Scatter view ----
 		if (chartType === 'scatter') {
@@ -173,11 +224,11 @@ export default {
 					}
 				},
 				legend: {
-					right: 10, top: 10,
+					right: 40, top: 10,
 					textStyle: { color: '#e2e8f0', fontSize: 12 },
 					icon: 'circle', itemWidth: 10, itemHeight: 10
 				},
-				grid: { left: 130, right: 50, top: 40, bottom: 50 },
+				grid: { left: 130, right: 60, top: 40, bottom: 50 },
 				xAxis: {
 					type: 'value',
 					axisLabel: { color: '#94a3b8', formatter: xFmt },
@@ -191,20 +242,22 @@ export default {
 					axisLabel: { color: '#e2e8f0', width: 110, overflow: 'truncate', fontSize: 12 },
 					axisLine: { lineStyle: { color: '#334155' } }
 				},
-				dataZoom: [
-					{ type: 'slider', xAxisIndex: 0, bottom: 5, height: 18, borderColor: '#334155', backgroundColor: '#0f172a', fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: '#e2e8f0', borderColor: '#64748b' }, textStyle: { color: '#94a3b8' } }
-				],
+				dataZoom: dataZoom,
 				series: scatterSeries
 			};
 		}
 
 		// ---- Bar view (default) ----
+		// Larger bar widths + small gap so each location row has visible thickness
+		// for every year. The y-axis dataZoom keeps the visible window small
+		// enough that bars don't get crushed regardless of total location count.
 		var barSeries = sortedYears.map(function(year) {
 			return {
 				name: year,
 				type: 'bar',
-				barMaxWidth: 12,
-				barGap: '20%',
+				barMaxWidth: 10,
+				barGap: '10%',
+				barCategoryGap: '35%',
 				itemStyle: { color: self._yearColor(year), borderRadius: [0, 3, 3, 0] },
 				data: locations.map(function(loc) {
 					var d = (byLocYear[loc] || {})[year];
@@ -224,14 +277,14 @@ export default {
 				valueFormatter: tooltipFmt
 			},
 			legend: {
-				right: 10,
+				right: 40,
 				top: 10,
 				textStyle: { color: '#e2e8f0', fontSize: 12 },
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
 			},
-			grid: { left: 130, right: 50, top: 40, bottom: 50 },
+			grid: { left: 130, right: 60, top: 40, bottom: 50 },
 			xAxis: {
 				type: 'value',
 				axisLabel: { color: '#94a3b8', formatter: xFmt },
@@ -245,9 +298,7 @@ export default {
 				axisLabel: { color: '#e2e8f0', width: 110, overflow: 'truncate', fontSize: 12 },
 				axisLine: { lineStyle: { color: '#334155' } }
 			},
-			dataZoom: [
-				{ type: 'slider', xAxisIndex: 0, bottom: 5, height: 18, borderColor: '#334155', backgroundColor: '#0f172a', fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: '#e2e8f0', borderColor: '#64748b' }, textStyle: { color: '#94a3b8' } }
-			],
+			dataZoom: dataZoom,
 			series: barSeries
 		};
 	},
