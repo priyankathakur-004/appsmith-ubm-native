@@ -29,6 +29,14 @@ export default {
 	_groupByMonth() {
 		var raw = fetch_analytics_data.data || [];
 		var by = {};
+		// The breakdown columns (total_charges_customer/commodity/...) come from a
+		// LATERAL join on analytics_monthly_feed keyed on (customer, location,
+		// month, utility). When the base m table has multiple rows per that key
+		// (e.g. one per bill_type or meter), the LATERAL returns the same SUM for
+		// each row, so we must only count the breakdown once per
+		// (location_id, month, utility_type). The "raw" m-row totals
+		// (consumption, total_charges) are still summed per row.
+		var seenAmfKey = {};
 		raw.forEach(function(r) {
 			var date = r.time_period || r.bill_start_date || r.read_date || '';
 			var my = (date || '').substring(0, 7);
@@ -54,13 +62,18 @@ export default {
 			b.total_consumption     += parseFloat(r.total_consumption) || 0;
 			b.total_gen_consumption += parseFloat(r.total_gen_consumption) || 0;
 			b.total_charges         += parseFloat(r.total_charges) || 0;
-			b.customer              += parseFloat(r.total_charges_customer) || 0;
-			b.commodity             += parseFloat(r.total_charges_commodity) || 0;
-			b.generation            += parseFloat(r.total_charges_generation) || 0;
-			b.other                 += parseFloat(r.total_charges_other) || 0;
-			b.taxes                 += parseFloat(r.total_charges_taxes) || 0;
-			b.demand                += parseFloat(r.total_charges_demand) || 0;
-			b.consumption_charges   += parseFloat(r.total_charges_consumption) || 0;
+
+			var amfKey = (r.location_id || '') + '|' + my + '|' + (r.utility_type || '');
+			if (!seenAmfKey[amfKey]) {
+				seenAmfKey[amfKey] = true;
+				b.customer            += parseFloat(r.total_charges_customer) || 0;
+				b.commodity           += parseFloat(r.total_charges_commodity) || 0;
+				b.generation          += parseFloat(r.total_charges_generation) || 0;
+				b.other               += parseFloat(r.total_charges_other) || 0;
+				b.taxes               += parseFloat(r.total_charges_taxes) || 0;
+				b.demand              += parseFloat(r.total_charges_demand) || 0;
+				b.consumption_charges += parseFloat(r.total_charges_consumption) || 0;
+			}
 		});
 		return Object.keys(by).sort().map(function(k) { return by[k]; });
 	},

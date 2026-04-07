@@ -49,7 +49,7 @@ LEFT JOIN LATERAL (
     FROM bill_management_v2.analytics_monthly_feed a
     WHERE a.customer_id = m.customer_id
       AND a.location_id = m.location_id
-      AND a.time_period = m.time_period
+      AND DATE_TRUNC('month', a.time_period) = DATE_TRUNC('month', m.time_period)
       AND a.utility_type = m.utility_type
 ) amf ON TRUE
 
