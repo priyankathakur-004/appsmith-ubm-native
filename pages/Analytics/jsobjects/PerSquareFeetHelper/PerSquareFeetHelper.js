@@ -102,15 +102,6 @@ export default {
 		return function(v) { return v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v; };
 	},
 
-	_tooltipFormatter(view) {
-		var isCharges = (view === 'ChargesPerSqft' || view === 'EUI');
-		return function(v) {
-			if (v == null) return '';
-			if (isCharges) return '$' + Number(v).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-			return Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
-		};
-	},
-
 	_getSortedYearsAndLocations(byLocYear, view) {
 		var self = this;
 		var allYears = new Set();
@@ -135,12 +126,15 @@ export default {
 		return { years: sortedYears, locations: locations };
 	},
 
-	// Build the dataZoom array for both chart modes. We render two sliders:
+	// Build the dataZoom array. We render:
 	//  - x-axis slider (bottom) for zooming the value range
-	//  - y-axis slider (right) for scrolling the locations list. With many sites
-	//    (50+), we need this so each row keeps a usable height instead of being
-	//    crushed into a 2px sliver. `inside` zoom on the y-axis lets the user
-	//    scroll with the mouse wheel as well.
+	//  - y-axis slider (right) for dragging the locations list
+	//  - y-axis `inside` zoom for mouse-wheel scrolling over the chart body
+	//
+	// The inside zoom previously caused a hover-freeze, but the actual culprit
+	// turned out to be ECharts' default tooltip <div> capturing pointer events
+	// (fixed via `extraCssText: pointer-events: none` on the bar tooltip). With
+	// that fix in place the inside zoom is safe to use again.
 	_buildDataZoom(locationCount) {
 		// Show ~12 locations at a time; adjust if there are fewer total.
 		var visible = Math.min(12, locationCount || 1);
@@ -178,7 +172,8 @@ export default {
 				end: endPct,
 				zoomOnMouseWheel: false,
 				moveOnMouseWheel: true,
-				moveOnMouseMove: false
+				moveOnMouseMove: false,
+				throttle: 50
 			}
 		];
 	},
@@ -193,9 +188,19 @@ export default {
 		var sortedYears = sl.years;
 		var locations = sl.locations;
 
-		var tooltipFmt = this._tooltipFormatter(view);
 		var xFmt = this._xAxisFormatter(view);
 		var dataZoom = this._buildDataZoom(locations.length);
+
+		// Appsmith's CUSTOM_ECHART runs formatter functions in a sandboxed
+		// scope with no access to outer closures or `appsmith.*`. Precompute
+		// the display string on each data point and have formatters read
+		// `p.data.label` (works for both bar and scatter).
+		var isCharges = (view === 'ChargesPerSqft' || view === 'EUI');
+		var formatNum = function(num) {
+			if (num == null || num === 0) return '';
+			if (isCharges) return '$' + Number(num).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			return Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
+		};
 
 		// ---- Scatter view ----
 		if (chartType === 'scatter') {
@@ -207,7 +212,9 @@ export default {
 					itemStyle: { color: self._yearColor(year) },
 					data: locations.map(function(loc) {
 						var d = (byLocYear[loc] || {})[year];
-						return d ? [Number(self.getValue(d, view).toFixed(2)), loc] : null;
+						if (!d) return null;
+						var num = Number(self.getValue(d, view).toFixed(2));
+						return { value: [num, loc], label: formatNum(num) };
 					}).filter(Boolean)
 				};
 			});
@@ -216,11 +223,16 @@ export default {
 				backgroundColor: '#1E293B',
 				tooltip: {
 					trigger: 'item',
+					confine: true,
+					enterable: false,
+					extraCssText: 'pointer-events: none;',
 					backgroundColor: '#0f172a',
 					borderColor: '#334155',
 					textStyle: { color: '#e2e8f0' },
 					formatter: function(p) {
-						return '<b>' + p.seriesName + '</b><br/>' + p.data[1] + ': ' + tooltipFmt(p.data[0]);
+						var loc = (p && p.value && p.value[1]) || '';
+						var label = (p && p.data && p.data.label) || '';
+						return '<b>' + p.seriesName + '</b><br/>' + loc + ': ' + label;
 					}
 				},
 				legend: {
@@ -259,9 +271,24 @@ export default {
 				barGap: '10%',
 				barCategoryGap: '35%',
 				itemStyle: { color: self._yearColor(year), borderRadius: [0, 3, 3, 0] },
+				// Show the precomputed value at the end of the bar on hover.
+				emphasis: {
+					focus: 'series',
+					label: {
+						show: true,
+						position: 'right',
+						color: '#e2e8f0',
+						fontSize: 11,
+						fontWeight: 'bold',
+						formatter: function(p) {
+							return (p && p.data && p.data.label) || '';
+						}
+					}
+				},
 				data: locations.map(function(loc) {
 					var d = (byLocYear[loc] || {})[year];
-					return d ? Number(self.getValue(d, view).toFixed(2)) : 0;
+					var v = d ? Number(self.getValue(d, view).toFixed(2)) : 0;
+					return { value: v, label: formatNum(v) };
 				})
 			};
 		});
@@ -271,10 +298,25 @@ export default {
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
+				// `pointer-events: none` keeps the tooltip <div> from stealing
+				// mouse/wheel events from the chart canvas — without this the
+				// inside dataZoom locks up after the first hover.
+				confine: true,
+				enterable: false,
+				extraCssText: 'pointer-events: none;',
 				backgroundColor: '#0f172a',
 				borderColor: '#334155',
 				textStyle: { color: '#e2e8f0' },
-				valueFormatter: tooltipFmt
+				formatter: function(params) {
+					if (!params || !params.length) return '';
+					var lines = ['<b>' + (params[0].axisValueLabel || params[0].name || '') + '</b>'];
+					params.forEach(function(p) {
+						var label = (p && p.data && p.data.label) || '';
+						if (!label) return;
+						lines.push(p.marker + p.seriesName + ': ' + label);
+					});
+					return lines.join('<br/>');
+				}
 			},
 			legend: {
 				right: 40,
