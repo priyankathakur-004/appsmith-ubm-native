@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "68f08f3128a92f6fcd2cb504_e695ed43-528b-4011-87e4-a8198922a11a",
-  "id": "Analytics_LocationDetailsHelper.getScatterData",
+  "gitSyncId": "69d5f6d5000dff6240198312_82336e3c-0e86-40c8-8d16-2211a67783ab",
+  "id": "Analytics_LocationDetailsHelper.getTOUConsumptionTypesConfig",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "LocationDetailsHelper.getScatterData",
-    "name": "getScatterData",
+    "fullyQualifiedName": "LocationDetailsHelper.getTOUConsumptionTypesConfig",
+    "name": "getTOUConsumptionTypesConfig",
     "pageId": "Analytics",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false
