@@ -43,9 +43,51 @@ export default {
 		return this.getLocationOptions().map(function(o) { return o.value; });
 	},
 
-	// Aggregate raw rows into { location: { year: { charges, consumption, sqft } } }.
-	// charges/consumption are summed across all bills for that (loc, year);
-	// sqft is taken from the row (sites have a fixed sqft so any row works).
+	// Standard kBtu conversion factors (EPA Portfolio Manager values), keyed by
+	// (utility_type, uom). We key on utility too because units like CCF / GAL
+	// can mean different things for water vs gas vs fuel oil and we must not
+	// count water/sewer volumes as energy.
+	_kBtuFactor(utilityType, uom) {
+		if (!uom) return 0;
+		var ut = String(utilityType || '').toUpperCase().replace(/[\s_-]/g, '');
+		var u = String(uom).toUpperCase().trim();
+
+		// Electricity: only KWH counts as energy.
+		if (ut === 'ELECTRIC' || ut === 'ELECTRICITY') {
+			if (u === 'KWH') return 3.412;
+			if (u === 'MWH') return 3412;
+			return 0;
+		}
+		// Natural gas.
+		if (ut === 'NATURALGAS' || ut === 'GAS') {
+			if (u === 'THERM' || u === 'THERMS') return 100;
+			if (u === 'CCF') return 102.6;       // ~1026 BTU/cf heating value
+			if (u === 'MCF') return 1026;
+			if (u === 'MMBTU' || u === 'MB' || u === 'MBTU') return 1000;
+			return 0;
+		}
+		// Fuel oil.
+		if (ut.indexOf('FUELOIL') === 0 || ut === 'OIL') {
+			if (u === 'GAL' || u === 'GALLONS') return 138.5;
+			return 0;
+		}
+		// District steam.
+		if (ut === 'STEAM') {
+			if (u === 'LB' || u === 'LBS') return 1.194;
+			if (u === 'MLB' || u === 'KLB') return 1194;
+			return 0;
+		}
+		// Anything else (WATER, SEWER, TRASH, etc.) is non-energy.
+		return 0;
+	},
+
+	// Aggregate raw rows into:
+	//   { location: { year: { charges, consumption, consumptionByKey, sqft } } }
+	// `consumption` is the raw sum across all bills (used by ConsPerSqft, which
+	// mirrors Power BI's mixed-UOM total). `consumptionByKey` keeps each
+	// (utility_type|uom) bucket separate so EUI can apply the correct kBtu
+	// factor and skip water/sewer.
+	// `sqft` comes from the row (sites have a fixed sqft so any row works).
 	getPerSqftData() {
 		var raw = fetch_analytics_data.data || [];
 		var selectedLocs = this.getSelectedLocations();
@@ -63,10 +105,19 @@ export default {
 			if (!year) return;
 
 			if (!byLocYear[loc]) byLocYear[loc] = {};
-			if (!byLocYear[loc][year]) byLocYear[loc][year] = { charges: 0, consumption: 0, sqft: sqft };
+			if (!byLocYear[loc][year]) byLocYear[loc][year] = { charges: 0, consumption: 0, consumptionByKey: {}, sqft: sqft };
 
-			byLocYear[loc][year].charges += parseFloat(r.total_charges) || 0;
-			byLocYear[loc][year].consumption += parseFloat(r.consumption) || 0;
+			var bucket = byLocYear[loc][year];
+			var cons = parseFloat(r.consumption) || 0;
+			var ut = (r.utility_type || '').toString().toUpperCase().replace(/[\s_-]/g, '');
+			var uom = (r.total_consumption_uom || '').toString().toUpperCase().trim();
+
+			bucket.charges += parseFloat(r.total_charges) || 0;
+			bucket.consumption += cons;
+			if (ut && uom) {
+				var key = ut + '|' + uom;
+				bucket.consumptionByKey[key] = (bucket.consumptionByKey[key] || 0) + cons;
+			}
 		});
 
 		return byLocYear;
@@ -75,9 +126,18 @@ export default {
 	getValue(d, view) {
 		if (!d || !d.sqft || d.sqft <= 0) return 0;
 		if (view === 'ConsPerSqft') return d.consumption / d.sqft;
-		// EUI ≈ kBtu/sqft. With charges as a proxy this is `($/sqft) × 3.412`.
-		// (Real EUI requires a fuel-type-aware kBtu conversion of consumption.)
-		if (view === 'EUI') return (d.charges / d.sqft) * 3.412;
+		if (view === 'EUI') {
+			// Sum (consumption × kBtu factor) across every (utility, uom)
+			// bucket and divide by sqft. Non-energy buckets (WATER, SEWER,
+			// TRASH, etc.) return factor 0 and drop out automatically.
+			var totalKBtu = 0;
+			var byKey = d.consumptionByKey || {};
+			for (var key in byKey) {
+				var parts = key.split('|');
+				totalKBtu += byKey[key] * this._kBtuFactor(parts[0], parts[1]);
+			}
+			return totalKBtu / d.sqft;
+		}
 		return d.charges / d.sqft;
 	},
 
