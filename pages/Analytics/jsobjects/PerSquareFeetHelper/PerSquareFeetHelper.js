@@ -43,61 +43,41 @@ export default {
 		return this.getLocationOptions().map(function(o) { return o.value; });
 	},
 
-	// Standard kBtu conversion factors (EPA Portfolio Manager values), keyed by
-	// (utility_type, uom). We key on utility too because units like CCF / GAL
-	// can mean different things for water vs gas vs fuel oil and we must not
-	// count water/sewer volumes as energy.
-	_kBtuFactor(utilityType, uom) {
-		if (!uom) return 0;
+	// BTU conversion factors per utility. Power BI uses the simpler 100,000
+	// BTU/CCF (1 therm equivalent) rather than the heating-value-corrected
+	// 102,800, so we match that to keep PSF EUI consistent with PBI.
+	// NOTE: this differs from MonthlyEnergyHelper which uses 102800. If those
+	// numbers ever need to match PBI too, update both maps in lockstep.
+	_btuFactor(utilityType) {
+		var map = {
+			ELECTRIC:   3412,
+			NATURALGAS: 100000,
+			OIL2:       138500,
+			STEAM:      1000,
+			WATER:      0,
+			SEWER:      0
+		};
 		var ut = String(utilityType || '').toUpperCase().replace(/[\s_-]/g, '');
-		var u = String(uom).toUpperCase().trim();
-
-		// Electricity: only KWH counts as energy.
-		if (ut === 'ELECTRIC' || ut === 'ELECTRICITY') {
-			if (u === 'KWH') return 3.412;
-			if (u === 'MWH') return 3412;
-			return 0;
-		}
-		// Natural gas.
-		if (ut === 'NATURALGAS' || ut === 'GAS') {
-			if (u === 'THERM' || u === 'THERMS') return 100;
-			if (u === 'CCF') return 102.6;       // ~1026 BTU/cf heating value
-			if (u === 'MCF') return 1026;
-			if (u === 'MMBTU' || u === 'MB' || u === 'MBTU') return 1000;
-			return 0;
-		}
-		// Fuel oil.
-		if (ut.indexOf('FUELOIL') === 0 || ut === 'OIL') {
-			if (u === 'GAL' || u === 'GALLONS') return 138.5;
-			return 0;
-		}
-		// District steam.
-		if (ut === 'STEAM') {
-			if (u === 'LB' || u === 'LBS') return 1.194;
-			if (u === 'MLB' || u === 'KLB') return 1194;
-			return 0;
-		}
-		// Anything else (WATER, SEWER, TRASH, etc.) is non-energy.
-		return 0;
+		return map[ut] || 0;
 	},
 
 	// Aggregate raw rows into:
-	//   { location: { year: { charges, consumption, consumptionByKey, sqft } } }
+	//   { location: { year: { charges, consumption, cons, sqft, sqftSum } } }
 	//
-	// IMPORTANT: most utility accounts produce TWO bill rows per month — one
-	// from the distribution company and one from the supply company. Both
-	// rows carry the SAME kWh/therm reading (it's the same physical meter),
-	// so summing across all rows double-counts consumption. Power BI's EUI
-	// mirrors this by using `total_consumption`, which is null on Supply Only
-	// rows. We replicate that here by only counting volume on rows where
-	// bill_type !== 'Supply Only'. Charges, however, are additive across both
-	// bills (you actually pay both), so charges keep summing every row.
+	// IMPORTANT — matching Power BI's denominator:
+	// In Power BI the source table has `square_feet` denormalized onto every
+	// bill row, and the EUI measure is `SUM(kBtu) / SUM(square_feet)`. Because
+	// sqft is repeated on every row, the denominator effectively becomes
+	// `sqft × row_count`. We replicate that here by summing sqft per row into
+	// `sqftSum` and dividing by it in `getValue`. `sqft` is still kept as the
+	// single per-site value for ConsPerSqft and ChargesPerSqft, which use the
+	// classic single-sqft denominator.
 	//
-	// `consumption` is the raw sum (used by ConsPerSqft to mirror Power BI's
-	// mixed-UOM total). `consumptionByKey` keeps each (utility_type|uom)
-	// bucket separate so EUI can apply the correct kBtu factor and skip
-	// water/sewer.
+	// `consumption` is the raw mixed-UOM sum used by ConsPerSqft.
+	// `cons` is the per-row energy total in mmBTU, same arithmetic as
+	// MonthlyEnergyHelper.getMonthlyData:  (consumption × factor) / 1e6.
 	getPerSqftData() {
+		var self = this;
 		var raw = fetch_analytics_data.data || [];
 		var selectedLocs = this.getSelectedLocations();
 		var byLocYear = {};
@@ -114,24 +94,18 @@ export default {
 			if (!year) return;
 
 			if (!byLocYear[loc]) byLocYear[loc] = {};
-			if (!byLocYear[loc][year]) byLocYear[loc][year] = { charges: 0, consumption: 0, consumptionByKey: {}, sqft: sqft };
+			if (!byLocYear[loc][year]) byLocYear[loc][year] = { charges: 0, consumption: 0, cons: 0, sqft: sqft, sqftSum: 0 };
 
 			var bucket = byLocYear[loc][year];
-			var billType = (r.bill_type || '').toString().trim();
-			var isSupplyOnly = billType.toLowerCase() === 'supply only';
-			// Use total_consumption (the meter reading on the distribution
-			// row), not the CASE-based `consumption` which doubles the volume
-			// by also pulling generation kWh from supply rows.
-			var cons = isSupplyOnly ? 0 : (parseFloat(r.total_consumption) || 0);
-			var ut = (r.utility_type || '').toString().toUpperCase().replace(/[\s_-]/g, '');
-			var uom = (r.total_consumption_uom || '').toString().toUpperCase().trim();
+			var rawCons = parseFloat(r.consumption) || 0;
+			var f = self._btuFactor(r.utility_type);
 
 			bucket.charges += parseFloat(r.total_charges) || 0;
-			bucket.consumption += cons;
-			if (cons && ut && uom) {
-				var key = ut + '|' + uom;
-				bucket.consumptionByKey[key] = (bucket.consumptionByKey[key] || 0) + cons;
-			}
+			bucket.consumption += rawCons;
+			// mmBTU, same arithmetic as MonthlyEnergyHelper.getMonthlyData.
+			bucket.cons += (rawCons * f) / 1000000;
+			// Sum sqft per row to mirror Power BI's SUM(square_feet).
+			bucket.sqftSum += sqft;
 		});
 
 		return byLocYear;
@@ -141,16 +115,14 @@ export default {
 		if (!d || !d.sqft || d.sqft <= 0) return 0;
 		if (view === 'ConsPerSqft') return d.consumption / d.sqft;
 		if (view === 'EUI') {
-			// Sum (consumption × kBtu factor) across every (utility, uom)
-			// bucket and divide by sqft. Non-energy buckets (WATER, SEWER,
-			// TRASH, etc.) return factor 0 and drop out automatically.
-			var totalKBtu = 0;
-			var byKey = d.consumptionByKey || {};
-			for (var key in byKey) {
-				var parts = key.split('|');
-				totalKBtu += byKey[key] * this._kBtuFactor(parts[0], parts[1]);
-			}
-			return totalKBtu / d.sqft;
+			// Match Power BI: SUM(kBtu) / SUM(square_feet).
+			//   d.cons is mmBTU, ×1000 → kBTU.
+			// Skip "unknown sqft" sites (sentinel value of 1) — PBI excludes
+			// them from EUI because dividing by 1 produces nonsense values
+			// that drown out everything else. The other two views still keep
+			// these sites since they were correct before.
+			if (d.sqft <= 1 || !d.sqftSum) return 0;
+			return (d.cons * 1000) / d.sqftSum;
 		}
 		return d.charges / d.sqft;
 	},
@@ -269,10 +241,14 @@ export default {
 		// scope with no access to outer closures or `appsmith.*`. Precompute
 		// the display string on each data point and have formatters read
 		// `p.data.label` (works for both bar and scatter).
-		var isCharges = (view === 'ChargesPerSqft' || view === 'EUI');
+		var isMoney = (view === 'ChargesPerSqft');
+		// ConsPerSqft is shown rounded to whole numbers (matches Power BI).
+		// EUI keeps 2 decimals (e.g. 33.15). ChargesPerSqft is currency.
+		var isWhole = (view === 'ConsPerSqft');
 		var formatNum = function(num) {
 			if (num == null || num === 0) return '';
-			if (isCharges) return '$' + Number(num).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			if (isMoney) return '$' + Number(num).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+			if (isWhole) return Math.round(Number(num)).toLocaleString();
 			return Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 		};
 
@@ -429,11 +405,16 @@ export default {
 		var years = sl.years;
 		var locations = sl.locations;
 
+		// ConsPerSqft is rounded to whole numbers in the table (matches Power
+		// BI). The other views keep two decimals.
+		var roundWhole = (view === 'ConsPerSqft');
 		return locations.map(function(loc) {
 			var row = { 'Location': loc };
 			years.forEach(function(year) {
 				var d = (byLocYear[loc] || {})[year];
-				row[year] = d ? Number(self.getValue(d, view).toFixed(2)) : 0;
+				if (!d) { row[year] = 0; return; }
+				var v = self.getValue(d, view);
+				row[year] = roundWhole ? Math.round(v) : Number(v.toFixed(2));
 			});
 			return row;
 		});
