@@ -83,11 +83,20 @@ export default {
 
 	// Aggregate raw rows into:
 	//   { location: { year: { charges, consumption, consumptionByKey, sqft } } }
-	// `consumption` is the raw sum across all bills (used by ConsPerSqft, which
-	// mirrors Power BI's mixed-UOM total). `consumptionByKey` keeps each
-	// (utility_type|uom) bucket separate so EUI can apply the correct kBtu
-	// factor and skip water/sewer.
-	// `sqft` comes from the row (sites have a fixed sqft so any row works).
+	//
+	// IMPORTANT: most utility accounts produce TWO bill rows per month — one
+	// from the distribution company and one from the supply company. Both
+	// rows carry the SAME kWh/therm reading (it's the same physical meter),
+	// so summing across all rows double-counts consumption. Power BI's EUI
+	// mirrors this by using `total_consumption`, which is null on Supply Only
+	// rows. We replicate that here by only counting volume on rows where
+	// bill_type !== 'Supply Only'. Charges, however, are additive across both
+	// bills (you actually pay both), so charges keep summing every row.
+	//
+	// `consumption` is the raw sum (used by ConsPerSqft to mirror Power BI's
+	// mixed-UOM total). `consumptionByKey` keeps each (utility_type|uom)
+	// bucket separate so EUI can apply the correct kBtu factor and skip
+	// water/sewer.
 	getPerSqftData() {
 		var raw = fetch_analytics_data.data || [];
 		var selectedLocs = this.getSelectedLocations();
@@ -108,13 +117,18 @@ export default {
 			if (!byLocYear[loc][year]) byLocYear[loc][year] = { charges: 0, consumption: 0, consumptionByKey: {}, sqft: sqft };
 
 			var bucket = byLocYear[loc][year];
-			var cons = parseFloat(r.consumption) || 0;
+			var billType = (r.bill_type || '').toString().trim();
+			var isSupplyOnly = billType.toLowerCase() === 'supply only';
+			// Use total_consumption (the meter reading on the distribution
+			// row), not the CASE-based `consumption` which doubles the volume
+			// by also pulling generation kWh from supply rows.
+			var cons = isSupplyOnly ? 0 : (parseFloat(r.total_consumption) || 0);
 			var ut = (r.utility_type || '').toString().toUpperCase().replace(/[\s_-]/g, '');
 			var uom = (r.total_consumption_uom || '').toString().toUpperCase().trim();
 
 			bucket.charges += parseFloat(r.total_charges) || 0;
 			bucket.consumption += cons;
-			if (ut && uom) {
+			if (cons && ut && uom) {
 				var key = ut + '|' + uom;
 				bucket.consumptionByKey[key] = (bucket.consumptionByKey[key] || 0) + cons;
 			}
