@@ -14,20 +14,44 @@ SELECT
     l.latitude,
     l.longitude,
 
-    CASE 
-        WHEN m.bill_type = 'Supply Only' 
-        THEN m.total_gen_consumption 
-        ELSE m.total_consumption 
+    CASE
+        WHEN m.bill_type = 'Supply Only'
+        THEN m.total_gen_consumption
+        ELSE m.total_consumption
     END AS consumption,
+    COALESCE(m.total_consumption, 0) AS total_consumption,
+    COALESCE(m.total_gen_consumption, 0) AS total_gen_consumption,
     m.total_consumption_uom,
     m.total_charges,
+    COALESCE(amf.total_charges_customer, 0)    AS total_charges_customer,
+    COALESCE(amf.total_charges_commodity, 0)   AS total_charges_commodity,
+    COALESCE(amf.total_charges_generation, 0)  AS total_charges_generation,
+    COALESCE(amf.total_charges_other, 0)       AS total_charges_other,
+    COALESCE(amf.total_charges_taxes, 0)       AS total_charges_taxes,
+    COALESCE(amf.total_charges_demand, 0)      AS total_charges_demand,
+    COALESCE(amf.total_charges_consumption, 0) AS total_charges_consumption,
     m.total_cdd,
     m.total_hdd,
     m.total_dd
 
 FROM bill_management_v2.reports_customer_monthly_usage m
-INNER JOIN bill_management_v2.locations l 
+INNER JOIN bill_management_v2.locations l
     ON l.id = m.location_id
+LEFT JOIN LATERAL (
+    SELECT
+        SUM(COALESCE(a.total_charges_customer, 0))    AS total_charges_customer,
+        SUM(COALESCE(a.total_charges_commodity, 0))   AS total_charges_commodity,
+        SUM(COALESCE(a.total_charges_generation, 0))  AS total_charges_generation,
+        SUM(COALESCE(a.total_charges_other, 0))       AS total_charges_other,
+        SUM(COALESCE(a.total_charges_taxes, 0))       AS total_charges_taxes,
+        SUM(COALESCE(a.total_charges_demand, 0))      AS total_charges_demand,
+        SUM(COALESCE(a.total_charges_consumption, 0)) AS total_charges_consumption
+    FROM bill_management_v2.analytics_monthly_feed a
+    WHERE a.customer_id = m.customer_id
+      AND a.location_id = m.location_id
+      AND DATE_TRUNC('month', a.time_period) = DATE_TRUNC('month', m.time_period)
+      AND a.utility_type = m.utility_type
+) amf ON TRUE
 
 WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 

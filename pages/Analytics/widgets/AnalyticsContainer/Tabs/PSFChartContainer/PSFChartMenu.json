@@ -8,7 +8,22 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.menuItempsfexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItempsftable01.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.menuItempsfexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItempsftable01.onClick"
+    }
+  ],
   "iconAlign": "left",
   "iconName": "menu",
   "isLoading": false,
@@ -16,7 +31,27 @@
   "key": "1v29n68j0g",
   "leftColumn": 60,
   "menuColor": "#ffffff",
-  "menuItems": {},
+  "menuItems": {
+    "menuItempsfexport01": {
+      "id": "menuItempsfexport01",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'PSF_' + (appsmith.store.psfViewBy || 'ChargesPerSqft'));\ndownload(\n  [Object.keys(AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('per_square_feet_' + (appsmith.store.psfViewBy || 'ChargesPerSqft')) + '.csv',\n  'text/csv'\n);\n}}",
+      "widgetId": "psfexportbtn01"
+    },
+    "menuItempsftable01": {
+      "id": "menuItempsftable01",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'PSF_' + (appsmith.store.psfViewBy || 'ChargesPerSqft'));\nshowModal(showTable.name);\n}}",
+      "widgetId": "psftablebtn01"
+    }
+  },
+  "menuItemsSource": "STATIC",
   "menuVariant": "TERTIARY",
   "mobileBottomRow": 8,
   "mobileLeftColumn": 60,
