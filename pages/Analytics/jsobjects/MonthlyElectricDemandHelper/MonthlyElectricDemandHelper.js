@@ -295,26 +295,45 @@ export default {
 			};
 		});
 
+		// Tooltip formatter is view-aware. For LoadFactor view we show a
+		// minimal `<b>Apr 2025</b><br/>● Site 92    31.27` layout matching
+		// PBI. For all other views we keep the multi-metric layout.
+		var tooltipFormatter;
+		if (view === 'LoadFactor') {
+			tooltipFormatter = function(params) {
+				if (!params || !params.length) return '';
+				var header = (params[0] && (params[0].axisValueLabel || params[0].name)) || '';
+				var lines = ['<b>' + header + '</b>'];
+				params.forEach(function(p) {
+					var d = p && p.data;
+					if (!d || d.value == null || d.value <= 0) return;
+					lines.push(p.marker + d.loc + '&nbsp;&nbsp;&nbsp;&nbsp;' + Number(d.value).toFixed(2));
+				});
+				return lines.join('<br/>');
+			};
+		} else {
+			tooltipFormatter = function(params) {
+				if (!params || !params.length) return '';
+				var header = (params[0] && (params[0].axisValueLabel || params[0].name)) || '';
+				var lines = ['<b>' + header + '</b>'];
+				params.forEach(function(p) {
+					var d = p && p.data;
+					if (!d) return;
+					if ((d.demand || 0) <= 0 && (d.charges || 0) <= 0) return;
+					lines.push(p.marker + '<b>' + d.loc + '</b>');
+					lines.push('&nbsp;&nbsp;Demand (kW): ' + d.demand);
+					lines.push('&nbsp;&nbsp;Demand Charges: $' + Number(d.charges).toFixed(2));
+					lines.push('&nbsp;&nbsp;Demand Charges / kW: $' + Number(d.perKw).toFixed(2));
+				});
+				return lines.join('<br/>');
+			};
+		}
+
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: {
 				trigger: 'axis',
-				formatter: function(params) {
-					if (!params || !params.length) return '';
-					var header = (params[0] && (params[0].axisValueLabel || params[0].name)) || '';
-					var lines = ['<b>' + header + '</b>'];
-					params.forEach(function(p) {
-						var d = p && p.data;
-						if (!d) return;
-						// Skip series whose metrics are all zero for this month.
-						if ((d.demand || 0) <= 0 && (d.charges || 0) <= 0) return;
-						lines.push(p.marker + '<b>' + d.loc + '</b>');
-						lines.push('&nbsp;&nbsp;Demand (kW): ' + d.demand);
-						lines.push('&nbsp;&nbsp;Demand Charges: $' + Number(d.charges).toFixed(2));
-						lines.push('&nbsp;&nbsp;Demand Charges / kW: $' + Number(d.perKw).toFixed(2));
-					});
-					return lines.join('<br/>');
-				}
+				formatter: tooltipFormatter
 			},
 			legend: {
 				type: 'scroll',
@@ -335,6 +354,7 @@ export default {
 			},
 			series: series
 		};
+		
 	},
 
 	_getChartConfigFull() {
