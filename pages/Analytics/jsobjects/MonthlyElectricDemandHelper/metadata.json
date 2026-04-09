@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_med00helper-0001-4001-8001-medhelper0001",
+  "id": "Analytics_MonthlyElectricDemandHelper",
+  "unpublishedCollection": {
+    "name": "MonthlyElectricDemandHelper",
+    "pageId": "Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

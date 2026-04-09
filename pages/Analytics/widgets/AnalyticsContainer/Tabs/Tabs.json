@@ -368,6 +368,51 @@
       "version": 1,
       "widgetId": "i1dd5rvtpp",
       "widgetName": "Canvas17"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1140,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "medkey0001a",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 720,
+      "minWidth": 450,
+      "mobileBottomRow": 721,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabmedab12345",
+      "tabName": "Monthly Electric Demand",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "medcanvas0001",
+      "widgetName": "Canvas20"
     }
   ],
   "defaultTab": "Rank of Locations",
@@ -471,6 +516,13 @@
       "isVisible": true,
       "label": "Per Square Feet",
       "widgetId": "i1dd5rvtpp"
+    },
+    "tabmedab12345": {
+      "id": "tabmedab12345",
+      "index": 8,
+      "isVisible": true,
+      "label": "Monthly Electric Demand",
+      "widgetId": "medcanvas0001"
     }
   },
   "topRow": 25,

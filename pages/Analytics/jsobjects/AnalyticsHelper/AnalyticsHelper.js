@@ -44,6 +44,10 @@ export default {
 						data = PerSquareFeetHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Monthly Electric Demand') {
+						data = MonthlyElectricDemandHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();
