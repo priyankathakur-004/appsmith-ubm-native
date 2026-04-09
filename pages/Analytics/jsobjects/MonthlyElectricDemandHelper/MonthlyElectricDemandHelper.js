@@ -214,11 +214,25 @@ export default {
 		return (months[m] || '') + ' ' + y;
 	},
 
-	// Stable color per location (cycles through palette).
+	// Stable color per location. Bright Tailwind-400 hues chosen to pop on
+	// the dark slate background; adjacent palette entries are spaced around
+	// the color wheel so neighboring series stay visually distinct.
 	_locationColor(idx) {
 		var palette = [
-			'#3b82f6','#1e40af','#84cc16','#0f766e','#22c55e','#065f46','#0ea5e9',
-			'#94a3b8','#06b6d4','#fbcfe8','#67e8f9','#475569','#f87171','#fbbf24'
+			'#60a5fa', // sky blue
+			'#34d399', // emerald / mint
+			'#f472b6', // hot pink
+			'#fbbf24', // amber
+			'#a78bfa', // lavender
+			'#22d3ee', // electric cyan
+			'#fb923c', // orange
+			'#4ade80', // fresh green
+			'#f87171', // coral
+			'#c084fc', // light purple
+			'#facc15', // bright yellow
+			'#2dd4bf', // teal
+			'#818cf8', // indigo
+			'#fda4af'  // rose
 		];
 		return palette[idx % palette.length];
 	},
