@@ -134,11 +134,18 @@ export default {
 
 	// Sorted list of all month keys present across all locations.
 	_getAllMonths(byLocMonth) {
-		var set = new Set();
-		Object.values(byLocMonth).forEach(function(months) {
-			Object.keys(months).forEach(function(m) { set.add(m); });
+		var monthSet = {};
+		Object.keys(byLocMonth).forEach(function(loc) {
+			Object.keys(byLocMonth[loc] || {}).forEach(function(m) { monthSet[m] = true; });
 		});
-		return Array.from(set).sort();
+		return Object.keys(monthSet).sort();
+	},
+
+	_xAxisFormatter(view) {
+		if (view === 'DemandCharges' || view === 'ChargesPerKw') {
+			return function(v) { return '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v); };
+		}
+		return function(v) { return v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v; };
 	},
 
 	getChartConfig() {
@@ -161,11 +168,10 @@ export default {
 			return Number(num).toLocaleString(undefined, { maximumFractionDigits: 2 });
 		};
 
-		var xAxisFormatter = isMoney
-			? function(v) { return '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v); }
-			: function(v) { return v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000).toFixed(0) + 'K' : v; };
+		var xAxisFormatter = this._xAxisFormatter(view);
 
 		var seriesType = (chartType === 'line') ? 'line' : 'scatter';
+		var yAxisLabel = this.getYAxisLabel();
 
 		var series = locations.map(function(loc, idx) {
 			var color = self._locationColor(idx);
@@ -239,7 +245,7 @@ export default {
 			},
 			yAxis: {
 				type: 'value',
-				name: this.getYAxisLabel(),
+				name: yAxisLabel,
 				nameLocation: 'middle',
 				nameGap: 55,
 				nameTextStyle: { color: '#e2e8f0' },
