@@ -42,50 +42,88 @@ export default {
 		return this.getLocationOptions().map(function(o) { return o.value; });
 	},
 
-	// Join fetch_demand_loadfactor (has demand + load_factor) with
-	// fetch_analytics_data (has total_charges_demand) on
-	// (location_id, time_period). We hard-filter to ELECTRIC because this
-	// page is "Monthly Electric Demand" — Power BI does the same. We do the
-	// join in JS rather than touching the SQL so other tabs that share
-	// fetch_demand_loadfactor are unaffected.
+	// FULL OUTER JOIN of fetch_demand_loadfactor (demand, load_factor) and
+	// fetch_analytics_data (total_charges_demand) on (location, month).
+	// Hard-filtered to ELECTRIC since this page is "Monthly Electric Demand".
+	//
+	// IMPORTANT: fetch_analytics_data may have multiple rows per
+	// (location, month, utility) — one per bill — but each row's
+	// `total_charges_demand` is the SUM across all those bills (broadcast by
+	// the LATERAL join in the SQL). So we use last-write-wins, NOT sum.
 	_getJoinedRows() {
 		var demandRaw = (fetch_demand_loadfactor && fetch_demand_loadfactor.data) || [];
 		var analyticsRaw = (fetch_analytics_data && fetch_analytics_data.data) || [];
 
-		// Index analytics rows by `${location_id}|${time_period}` for ELECTRIC only.
-		var chargesByKey = {};
-		analyticsRaw.forEach(function(r) {
-			var ut = String(r.utility_type || '').toUpperCase();
-			if (ut !== 'ELECTRIC') return;
-			var key = r.location_id + '|' + (r.time_period || '').substring(0, 10);
-			chargesByKey[key] = parseFloat(r.total_charges_demand) || 0;
-		});
+		var byKey = {};
+		function ensure(key, locDesc, tp) {
+			if (!byKey[key]) {
+				byKey[key] = {
+					location_description: locDesc,
+					time_period: tp,
+					demand: 0,
+					hasDemand: false,
+					load_factor: null,
+					demand_charges: 0,
+					charges_bill_count: 0
+				};
+			}
+			return byKey[key];
+		}
 
-		var out = [];
+		// Demand side
 		demandRaw.forEach(function(r) {
 			var ut = String(r.utility_type || '').toUpperCase();
 			if (ut !== 'ELECTRIC') return;
 			var tp = (r.time_period || '').substring(0, 10);
 			if (!tp) return;
-			var key = r.location_id + '|' + tp;
-			out.push({
-				location_id: r.location_id,
-				location_description: r.location_description || 'Unknown',
-				time_period: tp,
-				demand: parseFloat(r.demand) || 0,
-				load_factor: r.load_factor == null ? null : parseFloat(r.load_factor),
-				demand_charges: chargesByKey[key] || 0
-			});
+			var loc = r.location_description || 'Unknown';
+			var key = loc + '|' + tp;
+			var entry = ensure(key, loc, tp);
+			entry.demand += parseFloat(r.demand) || 0;
+			entry.hasDemand = true;
+			if (r.load_factor != null && !isNaN(parseFloat(r.load_factor))) {
+				entry.load_factor = (entry.load_factor || 0) + parseFloat(r.load_factor);
+			}
 		});
-		return out;
+
+		// Charges side — last-write-wins for the value (SQL already broadcasts
+		// SUM() to every row), but we COUNT bill rows because Power BI's
+		// $/kW measure double-counts for locations with multiple bills per
+		// month (see comment in getTableData).
+		analyticsRaw.forEach(function(r) {
+			var ut = String(r.utility_type || '').toUpperCase();
+			if (ut !== 'ELECTRIC') return;
+			var tp = (r.time_period || '').substring(0, 10);
+			if (!tp) return;
+			var loc = r.location_description || 'Unknown';
+			var key = loc + '|' + tp;
+			var entry = ensure(key, loc, tp);
+			entry.demand_charges = parseFloat(r.total_charges_demand) || 0;
+			entry.charges_bill_count += 1;
+		});
+
+		return Object.keys(byKey).map(function(k) { return byKey[k]; });
+	},
+
+	// "YYYY-MM" → integer for distance comparisons.
+	_monthIndex(mk) {
+		var p = mk.split('-');
+		return parseInt(p[0], 10) * 12 + parseInt(p[1], 10);
 	},
 
 	// Aggregate joined rows into:
-	//   { location: { monthYearKey: { demand, demandCharges, loadFactorSum, loadFactorCount } } }
+	//   { location: { monthYearKey: { demand, demandCharges, loadFactorSum, loadFactorCount, hasDemand } } }
 	// monthYearKey is "YYYY-MM" so it sorts naturally.
+	//
+	// After bucketing, fills missing-demand months from the NEAREST month in
+	// the same location that has a demand value. This matches Power BI's
+	// drillthrough behavior — e.g., Site 100 charges exist in Jan/Feb 2025
+	// but demand_loadfactor only has Site 100 in Mar 2025; PBI shows demand
+	// 222 for Jan/Feb/Mar by broadcasting Mar's value to its neighbors.
 	getMonthlyData() {
 		var rows = this._getJoinedRows();
 		var selectedLocs = this.getSelectedLocations();
+		var self = this;
 		var byLocMonth = {};
 
 		rows.forEach(function(r) {
@@ -94,15 +132,45 @@ export default {
 			if (!mk) return;
 			var loc = r.location_description;
 			if (!byLocMonth[loc]) byLocMonth[loc] = {};
-			if (!byLocMonth[loc][mk]) byLocMonth[loc][mk] = { demand: 0, demandCharges: 0, loadFactorSum: 0, loadFactorCount: 0 };
+			if (!byLocMonth[loc][mk]) byLocMonth[loc][mk] = { demand: 0, demandCharges: 0, chargesBillCount: 0, loadFactorSum: 0, loadFactorCount: 0, hasDemand: false };
 			var b = byLocMonth[loc][mk];
 			b.demand += r.demand;
 			b.demandCharges += r.demand_charges;
+			b.chargesBillCount += r.charges_bill_count || 0;
+			if (r.hasDemand) b.hasDemand = true;
 			if (r.load_factor != null && !isNaN(r.load_factor)) {
 				b.loadFactorSum += r.load_factor;
 				b.loadFactorCount += 1;
 			}
 		});
+
+		// Nearest-month fill: for every location, walk its rows and copy
+		// demand from the nearest month (same location) that has a real
+		// demand reading. Same treatment for load factor.
+		Object.keys(byLocMonth).forEach(function(loc) {
+			var monthsForLoc = byLocMonth[loc];
+			var monthsWithDemand = Object.keys(monthsForLoc).filter(function(mk) {
+				return monthsForLoc[mk].hasDemand;
+			});
+			if (monthsWithDemand.length === 0) return;
+
+			Object.keys(monthsForLoc).forEach(function(mk) {
+				var entry = monthsForLoc[mk];
+				if (entry.hasDemand) return;
+				var idx = self._monthIndex(mk);
+				var bestKey = monthsWithDemand[0];
+				var bestDist = Math.abs(self._monthIndex(bestKey) - idx);
+				for (var i = 1; i < monthsWithDemand.length; i++) {
+					var d = Math.abs(self._monthIndex(monthsWithDemand[i]) - idx);
+					if (d < bestDist) { bestKey = monthsWithDemand[i]; bestDist = d; }
+				}
+				var src = monthsForLoc[bestKey];
+				entry.demand = src.demand;
+				entry.loadFactorSum = src.loadFactorSum;
+				entry.loadFactorCount = src.loadFactorCount;
+			});
+		});
+
 		return byLocMonth;
 	},
 
@@ -200,6 +268,7 @@ export default {
 			return s;
 		});
 
+		
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: {
@@ -254,25 +323,59 @@ export default {
 				splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }
 			},
 			series: series
+
+			
 		};
 	},
 
-	// Drill-through table — one row per Location, one column per MonthYear.
+	// Drill-through table — one row per MonthYear, with three sub-columns per
+	// Location: Demand (kW), Demand Charges, Demand Charges / kW. Matches the
+	// Power BI drillthrough shown to the user. The table is view-independent
+	// (shows all metrics at once regardless of which "Select to View" button
+	// is active).
 	getTableData() {
 		var byLocMonth = this.getMonthlyData();
-		var view = this.getViewBy();
 		var self = this;
 		var months = this._getAllMonths(byLocMonth);
-		var locations = Object.keys(byLocMonth).sort();
 
-		return locations.map(function(loc) {
-			var row = { 'Location': loc };
-			months.forEach(function(mk) {
-				var d = (byLocMonth[loc] || {})[mk];
-				var v = d ? self.getValue(d, view) : null;
-				row[self._formatMonthYear(mk)] = (v == null) ? 0 : Number(Number(v).toFixed(2));
+		// Drop locations whose demand AND demandCharges are zero for every
+		// month — they'd just produce empty columns.
+		var locations = Object.keys(byLocMonth).filter(function(loc) {
+			var monthsForLoc = byLocMonth[loc] || {};
+			return Object.keys(monthsForLoc).some(function(mk) {
+				var d = monthsForLoc[mk];
+				return d && (d.demand > 0 || d.demandCharges > 0);
 			});
+		}).sort();
+
+		var rows = months.map(function(mk) {
+			var row = { 'MonthYear': self._formatMonthYear(mk) };
+			var hasAnyValue = false;
+			locations.forEach(function(loc) {
+				var d = (byLocMonth[loc] || {})[mk];
+				var demand = d ? d.demand : 0;
+				var charges = d ? d.demandCharges : 0;
+				// Match Power BI's $/kW measure: SUM(charges_demand) / MAX(demand).
+				// Because the SQL LATERAL join broadcasts the same charges value
+				// to every bill row, "SUM" effectively multiplies by the number
+				// of bill rows (which we tracked in charges_bill_count). The
+				// Charges column itself shows the un-multiplied value to match
+				// PBI's column display.
+				var billCount = (d && d.chargesBillCount > 0) ? d.chargesBillCount : 1;
+				var perKw = (d && d.demand > 0) ? ((d.demandCharges * billCount) / d.demand) : 0;
+				if (demand > 0 || charges > 0) hasAnyValue = true;
+				row[loc + ' Demand (kW)'] = Number(demand.toFixed(2));
+				row[loc + ' Demand Charges'] = Number(charges.toFixed(2));
+				row[loc + ' Demand Charges / kW'] = Number(perKw.toFixed(2));
+			});
+			row.__hasAnyValue = hasAnyValue;
 			return row;
+		});
+
+		// Drop month rows where every visible location has zero values.
+		return rows.filter(function(r) { return r.__hasAnyValue; }).map(function(r) {
+			delete r.__hasAnyValue;
+			return r;
 		});
 	},
 
