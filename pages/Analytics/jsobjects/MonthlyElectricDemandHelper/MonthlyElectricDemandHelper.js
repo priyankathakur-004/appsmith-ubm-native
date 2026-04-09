@@ -132,7 +132,7 @@ export default {
 			if (!mk) return;
 			var loc = r.location_description;
 			if (!byLocMonth[loc]) byLocMonth[loc] = {};
-			if (!byLocMonth[loc][mk]) byLocMonth[loc][mk] = { demand: 0, demandCharges: 0, chargesBillCount: 0, loadFactorSum: 0, loadFactorCount: 0, hasDemand: false };
+			if (!byLocMonth[loc][mk]) byLocMonth[loc][mk] = { demand: 0, demandCharges: 0, chargesBillCount: 0, loadFactorSum: 0, loadFactorCount: 0, hasDemand: false, hasLoadFactor: false };
 			var b = byLocMonth[loc][mk];
 			b.demand += r.demand;
 			b.demandCharges += r.demand_charges;
@@ -141,6 +141,7 @@ export default {
 			if (r.load_factor != null && !isNaN(r.load_factor)) {
 				b.loadFactorSum += r.load_factor;
 				b.loadFactorCount += 1;
+				b.hasLoadFactor = true;
 			}
 		});
 
@@ -166,8 +167,8 @@ export default {
 				}
 				var src = monthsForLoc[bestKey];
 				entry.demand = src.demand;
-				entry.loadFactorSum = src.loadFactorSum;
-				entry.loadFactorCount = src.loadFactorCount;
+				// Do NOT copy load factor across months — PBI shows load
+				// factor only for months that have a real reading.
 			});
 		});
 
@@ -177,8 +178,30 @@ export default {
 	getValue(d, view) {
 		if (!d) return null;
 		if (view === 'DemandCharges') return d.demandCharges;
-		if (view === 'ChargesPerKw') return d.demand > 0 ? d.demandCharges / d.demand : 0;
-		if (view === 'LoadFactor') return d.loadFactorCount > 0 ? d.loadFactorSum / d.loadFactorCount : null;
+		if (view === 'ChargesPerKw') {
+			// PBI's $/kW measure = SUM(charges) / MAX(demand) and SUM iterates
+			// over bill rows so the broadcast charges value is multiplied by
+			// chargesBillCount.
+			var billCount = d.chargesBillCount > 0 ? d.chargesBillCount : 1;
+			return d.demand > 0 ? (d.demandCharges * billCount) / d.demand : 0;
+		}
+		if (view === 'LoadFactor') {
+			// Load factor is a percentage (0..100). The SQL SUMs load_factor
+			// across bill_blocks, so when a bill has multiple blocks the
+			// stored value can exceed 100. PBI normalizes by dividing by the
+			// smallest integer that brings it back under 100 — i.e. the
+			// number of blocks that summed into it. We don't have that count
+			// directly but can derive it as `ceil(lf / 100)`. Examples:
+			//   Site 100 Mar 2025: 164.30 / 2 = 82.15
+			//   Site 99 Jun 2025:  114.15 / 2 = 57.07
+			//   Site 99 Mar 2025:   54.60 / 1 = 54.60 (no divide needed)
+			// Only return a value if there's real load_factor data for this
+			// (loc, month) — never use the nearest-month-filled value, which
+			// PBI doesn't do for load factor.
+			if (!d.hasLoadFactor || d.loadFactorSum == null || d.loadFactorSum === 0) return null;
+			var divisor = Math.max(1, Math.ceil(d.loadFactorSum / 100));
+			return d.loadFactorSum / divisor;
+		}
 		return d.demand; // 'Demand'
 	},
 
@@ -222,9 +245,123 @@ export default {
 		var chartType = this.getChartType();
 		var self = this;
 
-		var months = this._getAllMonths(byLocMonth);
+		// Drop locations whose currently-selected view value is zero/null for
+		// every month — they'd just clutter the legend with empty series.
+		var locations = Object.keys(byLocMonth).filter(function(loc) {
+			var monthsForLoc = byLocMonth[loc] || {};
+			return Object.keys(monthsForLoc).some(function(mk) {
+				var v = self.getValue(monthsForLoc[mk], view);
+				return v != null && v > 0;
+			});
+		}).sort();
+
+		// Drop months that have no non-zero value across the visible
+		// locations, so the x-axis doesn't include empty trailing months.
+		var months = this._getAllMonths(byLocMonth).filter(function(mk) {
+			return locations.some(function(loc) {
+				var v = self.getValue((byLocMonth[loc] || {})[mk], view);
+				return v != null && v > 0;
+			});
+		});
 		var monthLabels = months.map(function(m) { return self._formatMonthYear(m); });
-		var locations = Object.keys(byLocMonth).sort();
+
+		var seriesType = (chartType === 'line') ? 'line' : 'scatter';
+		// Each data point embeds all three metrics so the tooltip formatter
+		// (which runs in Appsmith's sandboxed scope and can't see outer
+		// closures) can read them directly from `p.data`.
+		var series = locations.map(function(loc, idx) {
+			var color = self._locationColor(idx);
+			var data = months.map(function(mk) {
+				var d = (byLocMonth[loc] || {})[mk];
+				var demand = d ? d.demand : 0;
+				var charges = d ? d.demandCharges : 0;
+				var billCount = (d && d.chargesBillCount > 0) ? d.chargesBillCount : 1;
+				var perKw = (d && d.demand > 0) ? ((d.demandCharges * billCount) / d.demand) : 0;
+				var v = self.getValue(d, view);
+				var num = v == null ? 0 : Number(Number(v).toFixed(2));
+				return {
+					value: num,
+					loc: loc,
+					demand: Math.round(demand),
+					charges: Number(charges.toFixed(2)),
+					perKw: Number(perKw.toFixed(2))
+				};
+			});
+			return {
+				name: loc,
+				type: seriesType,
+				itemStyle: { color: color },
+				data: data
+			};
+		});
+
+		return {
+			backgroundColor: '#1E293B',
+			tooltip: {
+				trigger: 'axis',
+				formatter: function(params) {
+					if (!params || !params.length) return '';
+					var header = (params[0] && (params[0].axisValueLabel || params[0].name)) || '';
+					var lines = ['<b>' + header + '</b>'];
+					params.forEach(function(p) {
+						var d = p && p.data;
+						if (!d) return;
+						// Skip series whose metrics are all zero for this month.
+						if ((d.demand || 0) <= 0 && (d.charges || 0) <= 0) return;
+						lines.push(p.marker + '<b>' + d.loc + '</b>');
+						lines.push('&nbsp;&nbsp;Demand (kW): ' + d.demand);
+						lines.push('&nbsp;&nbsp;Demand Charges: $' + Number(d.charges).toFixed(2));
+						lines.push('&nbsp;&nbsp;Demand Charges / kW: $' + Number(d.perKw).toFixed(2));
+					});
+					return lines.join('<br/>');
+				}
+			},
+			legend: {
+				type: 'scroll',
+				orient: 'vertical',
+				right: 10,
+				top: 'middle',
+				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				icon: 'circle',
+				itemWidth: 10,
+				itemHeight: 10
+			},
+			grid: { left: 80, right: 140, top: 40, bottom: 60 },
+			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: '#94a3b8' } },
+			yAxis: {
+				type: 'value',
+				axisLabel: { color: '#94a3b8' },
+				splitLine: { lineStyle: { color: '#475569', type: 'dashed' } }
+			},
+			series: series
+		};
+	},
+
+	_getChartConfigFull() {
+		var byLocMonth = this.getMonthlyData();
+		var view = this.getViewBy();
+		var chartType = this.getChartType();
+		var self = this;
+
+		// Drop locations whose currently-selected view value is zero/null for
+		// every month — they'd just clutter the legend with empty series.
+		var locations = Object.keys(byLocMonth).filter(function(loc) {
+			var monthsForLoc = byLocMonth[loc] || {};
+			return Object.keys(monthsForLoc).some(function(mk) {
+				var v = self.getValue(monthsForLoc[mk], view);
+				return v != null && v > 0;
+			});
+		}).sort();
+
+		// Drop months that have no non-zero value across the visible
+		// locations, so the x-axis doesn't include empty trailing months.
+		var months = this._getAllMonths(byLocMonth).filter(function(mk) {
+			return locations.some(function(loc) {
+				var v = self.getValue((byLocMonth[loc] || {})[mk], view);
+				return v != null && v > 0;
+			});
+		});
+		var monthLabels = months.map(function(m) { return self._formatMonthYear(m); });
 
 		var isMoney = (view === 'DemandCharges' || view === 'ChargesPerKw');
 		var isPct = (view === 'LoadFactor');
@@ -328,12 +465,17 @@ export default {
 		};
 	},
 
-	// Drill-through table — one row per MonthYear, with three sub-columns per
-	// Location: Demand (kW), Demand Charges, Demand Charges / kW. Matches the
-	// Power BI drillthrough shown to the user. The table is view-independent
-	// (shows all metrics at once regardless of which "Select to View" button
-	// is active).
+	// Drill-through table — view-aware. For Demand / DemandCharges / ChargesPerKw
+	// it shows one row per MonthYear with three sub-columns per location
+	// (Demand kW / Demand Charges / Demand Charges / kW). For LoadFactor it
+	// shows one column per location with the load factor %, mirroring PBI.
 	getTableData() {
+		var view = this.getViewBy();
+		if (view === 'LoadFactor') return this._getLoadFactorTable();
+		return this._getDemandTable();
+	},
+
+	_getDemandTable() {
 		var byLocMonth = this.getMonthlyData();
 		var self = this;
 		var months = this._getAllMonths(byLocMonth);
@@ -364,7 +506,7 @@ export default {
 				var billCount = (d && d.chargesBillCount > 0) ? d.chargesBillCount : 1;
 				var perKw = (d && d.demand > 0) ? ((d.demandCharges * billCount) / d.demand) : 0;
 				if (demand > 0 || charges > 0) hasAnyValue = true;
-				row[loc + ' Demand (kW)'] = Number(demand.toFixed(2));
+				row[loc + ' Demand (kW)'] = Math.round(demand);
 				row[loc + ' Demand Charges'] = Number(charges.toFixed(2));
 				row[loc + ' Demand Charges / kW'] = Number(perKw.toFixed(2));
 			});
@@ -373,6 +515,39 @@ export default {
 		});
 
 		// Drop month rows where every visible location has zero values.
+		return rows.filter(function(r) { return r.__hasAnyValue; }).map(function(r) {
+			delete r.__hasAnyValue;
+			return r;
+		});
+	},
+
+	_getLoadFactorTable() {
+		var byLocMonth = this.getMonthlyData();
+		var self = this;
+		var months = this._getAllMonths(byLocMonth);
+
+		// Drop locations whose load factor is zero/null for every month.
+		var locations = Object.keys(byLocMonth).filter(function(loc) {
+			var monthsForLoc = byLocMonth[loc] || {};
+			return Object.keys(monthsForLoc).some(function(mk) {
+				var v = self.getValue(monthsForLoc[mk], 'LoadFactor');
+				return v != null && v > 0;
+			});
+		}).sort();
+
+		var rows = months.map(function(mk) {
+			var row = { 'MonthYear': self._formatMonthYear(mk) };
+			var hasAnyValue = false;
+			locations.forEach(function(loc) {
+				var d = (byLocMonth[loc] || {})[mk];
+				var v = self.getValue(d, 'LoadFactor');
+				if (v != null && v > 0) hasAnyValue = true;
+				row[loc] = (v == null) ? 0 : Number(v.toFixed(2));
+			});
+			row.__hasAnyValue = hasAnyValue;
+			return row;
+		});
+
 		return rows.filter(function(r) { return r.__hasAnyValue; }).map(function(r) {
 			delete r.__hasAnyValue;
 			return r;
