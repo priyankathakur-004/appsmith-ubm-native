@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.medViewBy || 'Demand') === 'ChargesPerKw' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.medViewBy || 'Demand') === 'ChargesPerKw' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "medbtncpkkey1",
+  "leftColumn": 34,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 27,
+  "mobileRightColumn": 35,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('medViewBy', 'ChargesPerKw')}}",
+  "parentColumnSpace": 15,
+  "parentId": "medtbcanv001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 47,
+  "text": "Charges / kW",
+  "textColor": "{{(appsmith.store.medViewBy || 'Demand') === 'ChargesPerKw' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 3,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "medbtncpk001",
+  "widgetName": "MEDChargesPerKwBtn"
+}

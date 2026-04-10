@@ -37,7 +37,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "responsiveBehavior": "hug",
-  "rightColumn": 27,
+  "rightColumn": 29,
   "text": "Consumption",
   "textColor": "{{appsmith.store.activeView === 'Consumption' ? '#ffffff' : '#2563eb'}}",
   "topRow": 1,

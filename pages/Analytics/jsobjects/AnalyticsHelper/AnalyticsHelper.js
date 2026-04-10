@@ -44,6 +44,14 @@ export default {
 						data = PerSquareFeetHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Monthly Electric Demand') {
+						data = MonthlyElectricDemandHelper.getTableData();
+				}
+
+				if (Tabs.selectedTab === 'Unit Cost') {
+						data = UnitCostHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();
@@ -103,7 +111,7 @@ export default {
 		},
 
 		setDefaults() {
-			if (Tabs.selectedTab === 'Weather Sensitivity') {
+			if (Tabs.selectedTab === 'Weather Sensitivity' || Tabs.selectedTab === 'Monthly Electric Demand' || Tabs.selectedTab === 'Unit Cost') {
 				 UtilityTypeSelect.setSelectedOption("ELECTRIC");
 			}
 			removeValue('mecSelectedLocation');
