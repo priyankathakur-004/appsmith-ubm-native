@@ -413,6 +413,51 @@
       "version": 1,
       "widgetId": "medcanvas0001",
       "widgetName": "Canvas20"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1140,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "uckey0001a",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 720,
+      "minWidth": 450,
+      "mobileBottomRow": 721,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabunitcost001",
+      "tabName": "Unit Cost",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "uccanvas0001",
+      "widgetName": "Canvas21"
     }
   ],
   "defaultTab": "Rank of Locations",
@@ -523,6 +568,13 @@
       "isVisible": true,
       "label": "Monthly Electric Demand",
       "widgetId": "medcanvas0001"
+    },
+    "tabunitcost001": {
+      "id": "tabunitcost001",
+      "index": 9,
+      "isVisible": true,
+      "label": "Unit Cost",
+      "widgetId": "uccanvas0001"
     }
   },
   "topRow": 25,

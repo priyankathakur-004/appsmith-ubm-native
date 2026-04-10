@@ -48,6 +48,10 @@ export default {
 						data = MonthlyElectricDemandHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Unit Cost') {
+						data = UnitCostHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();
