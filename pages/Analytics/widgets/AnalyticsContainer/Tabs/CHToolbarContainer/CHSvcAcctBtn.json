@@ -40,7 +40,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "responsiveBehavior": "hug",
-  "rightColumn": 28,
+  "rightColumn": 31,
   "text": "Service Account",
   "textColor": "{{(appsmith.store.chViewBy || 'Location') === 'Service Account' ? '#ffffff' : '#2563eb'}}",
   "topRow": 3,
