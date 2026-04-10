@@ -21,7 +21,7 @@ export default {
 		var loc = r.location_description || 'Unknown';
 		if (view === 'Service Account') return loc + ', ' + (r.service_account || '');
 		if (view === 'Meter') return loc + ', ' + (r.service_account || '') + ', ' + (r.meter || '');
-		if (view === 'Vendor') return r.vendor_name || r.vendor_code || 'Unknown';
+		if (view === 'Vendor') return r.vendor_name || 'Unknown';
 		return loc; // Location
 	},
 

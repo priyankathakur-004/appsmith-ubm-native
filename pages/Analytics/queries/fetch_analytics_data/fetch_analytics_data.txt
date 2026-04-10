@@ -6,6 +6,7 @@ SELECT
     m.location_id,
     m.client_account as service_account,
     m.meter_serial as meter,
+    m.vendor_name,
     m.location_description,
     l.address,
     l.state,
