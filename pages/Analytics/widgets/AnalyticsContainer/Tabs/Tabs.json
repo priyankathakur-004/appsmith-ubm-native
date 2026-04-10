@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 143,
+  "bottomRow": 100,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 710,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -56,7 +56,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1030,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -101,7 +101,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1020,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -281,7 +281,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 810,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -326,7 +326,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1120,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -371,7 +371,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1120,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -416,7 +416,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1090,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -494,7 +494,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{AnalyticsHelper.setDefaults();}}",
-  "originalBottomRow": 145,
+  "originalBottomRow": 100,
   "originalTopRow": 25,
   "parentColumnSpace": 16.453125,
   "parentId": "b8l49xalbh",
@@ -520,6 +520,13 @@
       "label": "Monthly Energy Consumption",
       "widgetId": "jta8d1riq2"
     },
+    "tabmedab12345": {
+      "id": "tabmedab12345",
+      "index": 8,
+      "isVisible": true,
+      "label": "Monthly Electric Demand",
+      "widgetId": "medcanvas0001"
+    },
     "tabs2n862hy0g": {
       "id": "tabs2n862hy0g",
       "index": 2,
@@ -533,6 +540,13 @@
       "isVisible": true,
       "label": "Location Details",
       "widgetId": "uknl3yqu8w"
+    },
+    "tabunitcost001": {
+      "id": "tabunitcost001",
+      "index": 9,
+      "isVisible": true,
+      "label": "Unit Cost",
+      "widgetId": "uccanvas0001"
     },
     "tabvm35spudlf": {
       "id": "tabvm35spudlf",
@@ -561,20 +575,6 @@
       "isVisible": true,
       "label": "Per Square Feet",
       "widgetId": "i1dd5rvtpp"
-    },
-    "tabmedab12345": {
-      "id": "tabmedab12345",
-      "index": 8,
-      "isVisible": true,
-      "label": "Monthly Electric Demand",
-      "widgetId": "medcanvas0001"
-    },
-    "tabunitcost001": {
-      "id": "tabunitcost001",
-      "index": 9,
-      "isVisible": true,
-      "label": "Unit Cost",
-      "widgetId": "uccanvas0001"
     }
   },
   "topRow": 25,

@@ -4,11 +4,11 @@
   "borderColor": "transparent",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 110,
+  "bottomRow": 109,
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 930,
+      "bottomRow": 980,
       "boxShadow": "none",
       "canExtend": false,
       "dynamicBindingPathList": [],
@@ -38,8 +38,12 @@
     }
   ],
   "dynamicBindingPathList": [
-    { "key": "backgroundColor" },
-    { "key": "borderRadius" }
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],
@@ -57,8 +61,8 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 6,
   "needsErrorInfo": false,
-  "originalBottomRow": 110,
-  "originalTopRow": 17,
+  "originalBottomRow": 109,
+  "originalTopRow": 11,
   "parentColumnSpace": 15,
   "parentId": "uccanvas0001",
   "parentRowSpace": 10,
@@ -66,7 +70,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 64,
   "shouldScrollContents": true,
-  "topRow": 17,
+  "topRow": 11,
   "type": "CONTAINER_WIDGET",
   "version": 1,
   "widgetId": "ucloccont001",

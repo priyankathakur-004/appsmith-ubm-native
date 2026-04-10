@@ -1,10 +1,12 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 5,
+  "bottomRow": 8,
   "boxShadow": "none",
   "dynamicBindingPathList": [
-    { "key": "fontFamily" }
+    {
+      "key": "fontFamily"
+    }
   ],
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
@@ -22,12 +24,12 @@
   "parentId": "uctbcanv001",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 13,
+  "rightColumn": 11,
   "shouldTruncate": false,
   "text": "Select to View by:",
   "textAlign": "LEFT",
   "textColor": "#e2e8f0",
-  "topRow": 1,
+  "topRow": 2,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "ucviewlbl001",

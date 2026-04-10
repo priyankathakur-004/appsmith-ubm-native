@@ -40,7 +40,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "responsiveBehavior": "hug",
-  "rightColumn": 30,
+  "rightColumn": 34,
   "text": "Demand Charges",
   "textColor": "{{(appsmith.store.medViewBy || 'Demand') === 'DemandCharges' ? '#ffffff' : '#2563eb'}}",
   "topRow": 3,

@@ -43,7 +43,7 @@
   "mobileTopRow": 145,
   "needsErrorInfo": false,
   "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 181,
+  "originalBottomRow": 4,
   "originalTopRow": 0,
   "parentColumnSpace": 16.734375,
   "parentId": "medloccanv001",
