@@ -111,7 +111,7 @@ export default {
 		},
 
 		setDefaults() {
-			if (Tabs.selectedTab === 'Weather Sensitivity') {
+			if (Tabs.selectedTab === 'Weather Sensitivity' || Tabs.selectedTab === 'Monthly Electric Demand' || Tabs.selectedTab === 'Unit Cost') {
 				 UtilityTypeSelect.setSelectedOption("ELECTRIC");
 			}
 			removeValue('mecSelectedLocation');
