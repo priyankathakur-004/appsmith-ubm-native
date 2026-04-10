@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.menuItemchexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemchtable01.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.menuItemchexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemchtable01.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "chmnukey1",
+  "leftColumn": 60,
+  "menuColor": "#ffffff",
+  "menuItems": {
+    "menuItemchexport01": {
+      "id": "menuItemchexport01",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'CH_' + (appsmith.store.chViewBy || 'Location'));\ndownload(\n  [Object.keys(AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\\\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('charges_' + (appsmith.store.chViewBy || 'Location')) + '.csv',\n  'text/csv'\n);\n}}",
+      "widgetId": "chexportbtn01"
+    },
+    "menuItemchtable01": {
+      "id": "menuItemchtable01",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'CH_' + (appsmith.store.chViewBy || 'Location'));\nshowModal(showTable.name);\n}}",
+      "widgetId": "chtablebtn01"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "chchcanv0001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 1,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "chchmnu0001",
+  "widgetName": "CHChartMenu"
+}

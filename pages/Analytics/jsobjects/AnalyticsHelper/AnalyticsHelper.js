@@ -52,6 +52,10 @@ export default {
 						data = UnitCostHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Charges') {
+						data = ChargesHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();
