@@ -4,7 +4,11 @@ export default {
 	},
 
 	getChartTitle() {
-		return this.getViewBy();
+		var view = this.getViewBy();
+		if (view === 'Service Account') return 'Location, Service Account';
+		if (view === 'Meter') return 'Location, Service Account, Meter';
+		if (view === 'Vendor') return 'Vendor';
+		return 'Location';
 	},
 
 	getYAxisLabel() {
@@ -75,7 +79,7 @@ export default {
 		Object.keys(byKeyMonth).forEach(function(k) {
 			Object.keys(byKeyMonth[k]).forEach(function(mk) {
 				var b = byKeyMonth[k][mk];
-				b.unitCost = b.consumption !== 0 ? b.charges / b.consumption : null;
+				b.unitCost = b.consumption !== 0 ? b.charges / b.consumption : 0;
 			});
 		});
 
@@ -112,33 +116,21 @@ export default {
 		var byKM = this.getMonthlyData();
 		var self = this;
 
-		// Drop groups that have no value at all
-		var keys = Object.keys(byKM).filter(function(k) {
-			return Object.keys(byKM[k]).some(function(mk) {
-				return byKM[k][mk].unitCost != null;
-			});
-		}).sort();
+		var keys = Object.keys(byKM).sort();
 
-		// Drop months with no group reporting a value
-		var months = this._getAllMonths(byKM).filter(function(mk) {
-			return keys.some(function(k) { return byKM[k][mk] && byKM[k][mk].unitCost != null; });
-		});
+		var months = this._getAllMonths(byKM);
 		var monthLabels = months.map(function(m) { return self._formatMonthYear(m); });
 
 		var series = keys.map(function(k, i) {
 			var color = self._color(i);
 			var data = months.map(function(mk) {
 				var b = byKM[k][mk];
-				if (!b || b.unitCost == null) return null;
+				if (!b) return 0;
 				return Number(b.unitCost.toFixed(3));
 			});
 			return {
 				name: k,
 				type: 'line',
-				connectNulls: false,
-				symbol: 'circle',
-				symbolSize: 6,
-				lineStyle: { color: color, width: 2 },
 				itemStyle: { color: color },
 				data: data
 			};
@@ -147,24 +139,7 @@ export default {
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: {
-				trigger: 'axis',
-				backgroundColor: '#0f172a',
-				borderColor: '#334155',
-				textStyle: { color: '#e2e8f0' },
-				formatter: function(params) {
-					if (!params || !params.length) return '';
-					var header = params[0].axisValueLabel || params[0].name || '';
-					var lines = ['<b>' + header + '</b>'];
-					params.forEach(function(p) {
-						if (p.value == null) return;
-						var v = Number(p.value);
-						var disp = v < 0
-							? '($' + Math.abs(v).toFixed(3) + ')'
-							: '$' + v.toFixed(3);
-						lines.push(p.marker + p.seriesName + '&nbsp;&nbsp;' + disp);
-					});
-					return lines.join('<br/>');
-				}
+				trigger: 'axis'
 			},
 			legend: {
 				type: 'scroll',
@@ -180,29 +155,12 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				name: 'MonthYear',
-				nameLocation: 'middle',
-				nameGap: 35,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8', rotate: 35 },
-				axisLine: { lineStyle: { color: '#334155' } }
+				axisLabel: { color: '#94a3b8' }
 			},
 			yAxis: {
 				type: 'value',
-				name: 'Unit Cost',
-				nameLocation: 'middle',
-				nameGap: 55,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: {
-					color: '#94a3b8',
-					formatter: function(v) {
-						return v < 0
-							? '($' + Math.abs(v).toFixed(1) + ')'
-							: '$' + Number(v).toFixed(1);
-					}
-				},
-				axisLine: { lineStyle: { color: '#334155' } },
-				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
+				axisLabel: { color: '#94a3b8' },
+				splitLine: { lineStyle: { color: '#334155' } }
 			},
 			series: series
 		};
@@ -213,18 +171,20 @@ export default {
 	getTableData() {
 		var byKM = this.getMonthlyData();
 		var self = this;
-		var keys = Object.keys(byKM).filter(function(k) {
-			return Object.keys(byKM[k]).some(function(mk) {
-				return byKM[k][mk].unitCost != null;
-			});
-		}).sort();
+		var keys = Object.keys(byKM).sort();
 		var months = this._getAllMonths(byKM);
 
 		return months.map(function(mk) {
 			var row = { 'MonthYear': self._formatMonthYear(mk) };
 			keys.forEach(function(k) {
 				var b = byKM[k][mk];
-				row[k] = (!b || b.unitCost == null) ? null : Number(b.unitCost.toFixed(3));
+				if (!b) { row[k] = ''; return; }
+				var v = b.unitCost;
+				if (v < 0) {
+					row[k] = '($' + Math.abs(v).toFixed(3) + ')';
+				} else {
+					row[k] = '$' + v.toFixed(3);
+				}
 			});
 			return row;
 		});
