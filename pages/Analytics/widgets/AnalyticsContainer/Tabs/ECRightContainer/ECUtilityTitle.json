@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 44,
+  "bottomRow": 47,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -32,7 +32,7 @@
   "text": "Equivalent Energy Consumption ({{EnergyConsumptionHelper.getUOMLabel()}})",
   "textAlign": "CENTER",
   "textColor": "#e2e8f0",
-  "topRow": 40,
+  "topRow": 43,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "7r46c6clvd",

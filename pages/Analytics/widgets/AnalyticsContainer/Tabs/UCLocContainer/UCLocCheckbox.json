@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 16,
+  "bottomRow": 4,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: UnitCostHelper.getGroupOptions(),\nselected: UnitCostHelper.getGroupOptions().map(o => o.value),\nheader: UnitCostHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [

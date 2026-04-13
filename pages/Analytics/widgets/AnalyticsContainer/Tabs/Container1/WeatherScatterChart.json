@@ -3,7 +3,7 @@
   "backgroundColor": "#1e293b",
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 98,
+  "bottomRow": 100,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{WeatherHelper.getScatterConfig()}}",

@@ -48,7 +48,7 @@
   "needsErrorInfo": false,
   "onResetClick": "{{removeValue('mecSelectedLocation'); showAlert('Successfully reset!!', '');}}",
   "onSelectChange": "{{MECLocCheckbox.model.selectedValue ? storeValue('mecSelectedLocation', MECLocCheckbox.model.selectedValue) : removeValue('mecSelectedLocation');}}",
-  "originalBottomRow": 191,
+  "originalBottomRow": 25,
   "originalTopRow": 9,
   "parentColumnSpace": 16.734375,
   "parentId": "op4pghclvd",
