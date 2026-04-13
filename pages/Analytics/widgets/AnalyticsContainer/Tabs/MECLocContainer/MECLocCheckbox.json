@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 25,
+  "bottomRow": 190,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: MonthlyEnergyHelper.getLocationOptions(),\nselected: MonthlyEnergyHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
