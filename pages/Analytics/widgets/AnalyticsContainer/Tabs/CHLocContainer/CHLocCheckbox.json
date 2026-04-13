@@ -1,0 +1,70 @@
+{
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 118,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ {\ndata: ChargesHelper.getGroupOptions(),\nselected: ChargesHelper.getGroupOptions().map(o => o.value),\nheader: ChargesHelper.getViewBy()\n}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "chlocchkkey1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 175,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 19,
+  "mobileTopRow": 145,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "originalBottomRow": 117,
+  "originalTopRow": 0,
+  "parentColumnSpace": 16.734375,
+  "parentId": "chloccanv001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "html, body {\n  overflow: hidden !important;\n  margin: 0;\n  padding: 0;\n}\n\n.app {\n  width: 100%;\n  font-family: system-ui;\n  background: #1E293B;\n  border-radius: 6px;\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n}\n\n.header {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 8px 10px;\n  color: white;\n  border-bottom: 2px solid #64748b;\n  font-weight: 600;\n  width: 100%;\n  box-sizing: border-box;\n}\n\n.sortIcon {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 20px;\n  flex-shrink: 0;\n}\n\n.list {\n  width: 100%;\n  overflow: visible;\n}\n\n.row {\n  padding: 7px 10px;\n  cursor: pointer;\n  color: white;\n  font-size: 14px;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.row:nth-child(odd) {\n  background: #243447;\n}\n\n.row:nth-child(even) {\n  background: #1E293B;\n}\n\n.row:hover {\n  background: #334155;\n}\n\n.selected {\n  background: #86efac !important;\n  color: black;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App() {\n  const [model, setModel] = React.useState(appsmith.model || {});\n  React.useEffect(() => {\n    const unsub = appsmith.onModelChange((newModel) => {\n      setModel({...newModel});\n    });\n    return () => { if (unsub) unsub(); };\n  }, []);\n  const options = model.data || [];\n  const header = model.header || \"Filter\";\n  const [selected, setSelected] = React.useState(null);\n  const [ascending, setAscending] = React.useState(true);\n  React.useEffect(() => {\n    setSelected(null);\n    appsmith.updateModel({ selectedValue: null });\n  }, [header]);\n  const sortedOptions = React.useMemo(() => {\n    return [...options].sort((a, b) => {\n      if (ascending) return a.label.localeCompare(b.label);\n      return b.label.localeCompare(a.label);\n    });\n  }, [options, ascending]);\n  const toggleValue = value => {\n    let newValue = selected === value ? null : value;\n    setSelected(newValue);\n    appsmith.updateModel({ selectedValue: newValue });\n    appsmith.triggerEvent(\"onSelectChange\");\n  };\n  const toggleSort = () => {\n    setAscending(!ascending);\n  };\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"app\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"header\"\n  }, /*#__PURE__*/React.createElement(\"div\", null, header), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"sortIcon\",\n    onClick: toggleSort\n  }, ascending ? \"▲\" : \"▼\")), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"list\"\n  }, sortedOptions.map((opt, i) => /*#__PURE__*/React.createElement(\"div\", {\n    key: i,\n    className: \"row \" + (selected === opt.value ? \"selected\" : \"\"),\n    onClick: () => toggleValue(opt.value)\n  }, opt.label))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html, body {\n  overflow: hidden !important;\n  margin: 0;\n  padding: 0;\n}\n.app {\n  width: 100%;\n  font-family: system-ui;\n  background: #1E293B;\n  border-radius: 6px;\n  display: flex;\n  flex-direction: column;\n  box-sizing: border-box;\n}\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nfunction App() {\n  const [model, setModel] = React.useState(appsmith.model || {});\n  React.useEffect(() => {\n    const unsub = appsmith.onModelChange((newModel) => {\n      setModel({...newModel});\n    });\n    return () => { if (unsub) unsub(); };\n  }, []);\n  const options = model.data || [];\n  const header = model.header || \"Filter\";\n  const [selected, setSelected] = React.useState(null);\n  const [ascending, setAscending] = React.useState(true);\n  React.useEffect(() => {\n    setSelected(null);\n    appsmith.updateModel({ selectedValue: null });\n  }, [header]);\n  const sortedOptions = React.useMemo(() => {\n    return [...options].sort((a,b)=>{\n      if(ascending) return a.label.localeCompare(b.label);\n      return b.label.localeCompare(a.label);\n    });\n  },[options,ascending]);\n  const toggleValue = (value) => {\n    let newValue = selected === value ? null : value;\n    setSelected(newValue);\n    appsmith.updateModel({ selectedValue: newValue });\n    appsmith.triggerEvent(\"onSelectChange\");\n  };\n  const toggleSort = () => setAscending(!ascending);\n  return (\n    <div className=\"app\">\n      <div className=\"header\">\n        <div>{header}</div>\n        <div className=\"sortIcon\" onClick={toggleSort}>{ascending ? \"▲\" : \"▼\"}</div>\n      </div>\n      <div className=\"list\">\n        {sortedOptions.map((opt,i)=>(\n          <div key={i} className={\"row \" + (selected===opt.value ? \"selected\":\"\")} onClick={()=>toggleValue(opt.value)}>\n            {opt.label}\n          </div>\n        ))}\n      </div>\n    </div>\n  );\n}\n\nappsmith.onReady(()=>{\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "chlocchk001",
+  "widgetName": "CHLocCheckbox"
+}
