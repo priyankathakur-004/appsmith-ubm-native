@@ -171,7 +171,52 @@ getLocationChartConfig() {
         value: Number(this._computeValue(d, view).toFixed(2))
     })).sort((a, b) => b.value - a.value);
 
-    return this._buildBarChart(rows, this._getXLabel(view, uom), "15%", 110);
+    const chart = this._buildBarChart(rows, this._getXLabel(view, uom), "15%", 110);
+
+    const locationCount = rows.length;
+    const maxVisible = 12;
+    const endPct = locationCount > 0 ? Math.min(maxVisible, locationCount) / locationCount * 100 : 100;
+
+    chart.grid.bottom = "12%";
+    chart.dataZoom = [
+        {
+            type: "slider",
+            xAxisIndex: 0,
+            bottom: 5,
+            height: 18,
+            borderColor: "#334155",
+            backgroundColor: "#0f172a",
+            fillerColor: "rgba(59,130,246,0.15)",
+            handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
+            textStyle: { color: "#94a3b8" }
+        },
+        {
+            type: "slider",
+            yAxisIndex: 0,
+            right: 8,
+            width: 14,
+            start: 0,
+            end: endPct,
+            borderColor: "#334155",
+            backgroundColor: "#0f172a",
+            fillerColor: "rgba(59,130,246,0.18)",
+            handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
+            textStyle: { color: "#94a3b8" },
+            showDetail: false
+        },
+        {
+            type: "inside",
+            yAxisIndex: 0,
+            start: 0,
+            end: endPct,
+            zoomOnMouseWheel: false,
+            moveOnMouseWheel: true,
+            moveOnMouseMove: false,
+            throttle: 50
+        }
+    ];
+
+    return chart;
 },
 
 /* ===============================
@@ -213,7 +258,9 @@ getUtilityPieConfig() {
         STEAM: "#F59E0B", WATER: "#06B6D4"
     };
 
-    const rows = Object.entries(map).map(([n, v]) => ({ name: n, value: Number(v.toFixed(2)) }));
+    const allRows = Object.entries(map).map(([n, v]) => ({ name: n, value: Number(v.toFixed(2)) }));
+    const total = allRows.reduce((s, r) => s + r.value, 0);
+    const rows = allRows.filter(r => total > 0 ? (r.value / total) * 100 > 0 : r.value > 0);
 
     return {
         backgroundColor: "#1E293B",
@@ -221,13 +268,13 @@ getUtilityPieConfig() {
         legend: { top: "3%", left: "center", textStyle: { color: "#E2E8F0" } },
         series: [{
             type: "pie",
-            radius: ["50%", "70%"],
-            center: ["50%", "50%"],
+            radius: ["30%", "45%"],
+            center: ["50%", "55%"],
             label: {
                 color: "#E2E8F0",
-                formatter: p => p.value.toFixed(2) + "M (" + p.percent.toFixed(1) + "%)"
+                formatter: p => p.name + "\n" + p.value.toFixed(2) + "M (" + p.percent.toFixed(1) + "%)"
             },
-            labelLine: { lineStyle: { color: "#64748B" } },
+            labelLine: { length: 15, length2: 20, lineStyle: { color: "#64748B" } },
             data: rows,
             color: rows.map(r => colors[r.name] || "#94A3B8")
         }]

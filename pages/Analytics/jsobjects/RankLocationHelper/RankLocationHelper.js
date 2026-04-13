@@ -87,6 +87,10 @@ export default {
 					(b[1][key] || 0) - (a[1][key] || 0)
 				);
 
+				const locationCount = sorted.length;
+				const maxVisible = 12;
+				const endPct = locationCount > 0 ? Math.min(maxVisible, locationCount) / locationCount * 100 : 100;
+
 				return {
 
 						backgroundColor: "#1E293B",
@@ -102,9 +106,47 @@ export default {
 								left: "5%",
 								right: "5%",
 							  top: "0%",
-								bottom: "8%",
+								bottom: "12%",
 								containLabel: true
 						},
+
+						dataZoom: [
+								{
+										type: "slider",
+										xAxisIndex: 0,
+										bottom: 5,
+										height: 18,
+										borderColor: "#334155",
+										backgroundColor: "#0f172a",
+										fillerColor: "rgba(59,130,246,0.15)",
+										handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
+										textStyle: { color: "#94a3b8" }
+								},
+								{
+										type: "slider",
+										yAxisIndex: 0,
+										right: 8,
+										width: 14,
+										start: 0,
+										end: endPct,
+										borderColor: "#334155",
+										backgroundColor: "#0f172a",
+										fillerColor: "rgba(59,130,246,0.18)",
+										handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
+										textStyle: { color: "#94a3b8" },
+										showDetail: false
+								},
+								{
+										type: "inside",
+										yAxisIndex: 0,
+										start: 0,
+										end: endPct,
+										zoomOnMouseWheel: false,
+										moveOnMouseWheel: true,
+										moveOnMouseMove: false,
+										throttle: 50
+								}
+						],
 
 						xAxis: {
 								type: "value",
