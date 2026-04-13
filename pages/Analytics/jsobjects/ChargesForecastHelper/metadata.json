@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_e1000000-0000-4000-8000-000000000000",
+  "id": "Analytics_ChargesForecastHelper",
+  "unpublishedCollection": {
+    "name": "ChargesForecastHelper",
+    "pageId": "Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}
