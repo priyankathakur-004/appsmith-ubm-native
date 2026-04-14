@@ -259,18 +259,21 @@ export default {
 		});
 		var years = Object.keys(yearSet).sort().reverse();
 
+		// Use trailing thin space on year keys to prevent V8 numeric key reordering
+		var yrKeys = years.map(function(yr) { return yr + '\u2009'; });
+
 		var rows = monthNames.map(function(mName, mIdx) {
 			var mo = (mIdx + 1 < 10 ? '0' : '') + (mIdx + 1);
 			var row = { 'Month/Year': mName };
 			var total = 0;
-			years.forEach(function(yr) {
+			years.forEach(function(yr, yi) {
 				var mk = yr + '-' + mo;
 				var v = byMonth[mk] || 0;
 				if (v !== 0) {
 					total += v;
-					row[yr] = self._fmtDollar(v);
+					row[yrKeys[yi]] = self._fmtDollar(v);
 				} else {
-					row[yr] = '';
+					row[yrKeys[yi]] = '';
 				}
 			});
 			row['Total'] = total !== 0 ? self._fmtDollar(total) : '';
@@ -279,13 +282,13 @@ export default {
 
 		var totalRow = { 'Month/Year': 'Total' };
 		var grandTotal = 0;
-		years.forEach(function(yr) {
+		years.forEach(function(yr, yi) {
 			var yrTotal = 0;
 			Object.keys(byMonth).forEach(function(mk) {
 				if (mk.substring(0, 4) === yr) yrTotal += byMonth[mk];
 			});
 			grandTotal += yrTotal;
-			totalRow[yr] = self._fmtDollar(yrTotal);
+			totalRow[yrKeys[yi]] = self._fmtDollar(yrTotal);
 		});
 		totalRow['Total'] = self._fmtDollar(grandTotal);
 		rows.push(totalRow);

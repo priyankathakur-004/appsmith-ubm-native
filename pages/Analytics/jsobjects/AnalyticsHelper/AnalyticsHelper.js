@@ -71,6 +71,11 @@ export default {
 							data = OverTheYearsHelper.getUnitCostTable();
 				}
 
+				/* Store column order from first row keys */
+				if (data.length > 0) {
+					storeValue('tableColumnOrder', Object.keys(data[0]));
+				}
+
 				/* Auto format numbers */
 				return data.map(row => {
 						const r = {};
