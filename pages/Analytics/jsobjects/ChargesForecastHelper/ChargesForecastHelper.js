@@ -45,11 +45,12 @@ export default {
 	// Table for yearly totals
 	getYearlyTableData() {
 		var byYear = this.getYearlyData();
+		var self = this;
 		var years = Object.keys(byYear).sort().reverse();
 		return years.map(function(y) {
 			return {
 				'Year': y,
-				'Total Charges': Number(byYear[y].toFixed(2))
+				'Total Charges': self._fmtDollar(byYear[y])
 			};
 		});
 	},
@@ -79,26 +80,24 @@ export default {
 		return (months[parseInt(p[1], 10) - 1] || '') + ' ' + p[0];
 	},
 
-	// Simple linear regression forecast
-	_forecast(months, values, numForecast) {
-		var n = values.length;
-		if (n < 2) return [];
-		var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-		for (var i = 0; i < n; i++) {
-			sumX += i;
-			sumY += values[i];
-			sumXY += i * values[i];
-			sumX2 += i * i;
-		}
-		var slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-		var intercept = (sumY - slope * sumX) / n;
-
-		var result = [];
-		for (var j = 0; j < numForecast; j++) {
-			var idx = n + j;
-			result.push(Number((intercept + slope * idx).toFixed(2)));
-		}
-		return result;
+	// Seasonal naive forecast — look 11 months back to match PBI behavior.
+	// If no data exists for that month, cycle through available months.
+	_seasonalForecast(byMonth, months, futureKeys) {
+		return futureKeys.map(function(fk) {
+			var p = fk.split('-');
+			var yr = parseInt(p[0], 10);
+			var mo = parseInt(p[1], 10);
+			// 11 months back
+			var prevMo = mo - 11;
+			var prevYr = yr;
+			while (prevMo < 1) { prevMo += 12; prevYr -= 1; }
+			var prevKey = prevYr + '-' + (prevMo < 10 ? '0' + prevMo : '' + prevMo);
+			var v = byMonth[prevKey];
+			if (v != null) return Number(v.toFixed(2));
+			// Fallback: cycle through sorted months
+			var idx = futureKeys.indexOf(fk) % months.length;
+			return Number((byMonth[months[idx]] || 0).toFixed(2));
+		});
 	},
 
 	// Generate future month keys
@@ -123,34 +122,63 @@ export default {
 		var values = months.map(function(mk) { return Number(byMonth[mk].toFixed(2)); });
 		var labels = months.map(function(m) { return self._formatMonthYear(m); });
 
-		// Forecast 6 months
-		var numForecast = 6;
-		var forecastValues = this._forecast(months, values, numForecast);
+		// Forecast 12 months using seasonal naive (11-month lookback)
+		var numForecast = 12;
 		var futureKeys = months.length > 0 ? this._futureMonths(months[months.length - 1], numForecast) : [];
+		var forecastValues = this._seasonalForecast(byMonth, months, futureKeys);
 		var futureLabels = futureKeys.map(function(m) { return self._formatMonthYear(m); });
 
 		var allLabels = labels.concat(futureLabels);
 
-		// Actual series — fill forecast period with 0
-		var actualData = values.concat(forecastValues.map(function() { return 0; }));
+		// Actual series — real values for historical, 0 for forecast months
+		var actualData = [];
+		var i;
+		for (i = 0; i < values.length; i++) { actualData.push(values[i]); }
+		for (i = 0; i < numForecast; i++) { actualData.push(0); }
 
-		// Forecast series — 0 for historical, then forecast values
-		// Connect from last actual point
-		var forecastData = values.map(function() { return 0; });
+		// Forecast series — 0 for historical (except last actual = bridge), then forecast
+		var forecastData = [];
+		for (i = 0; i < values.length - 1; i++) { forecastData.push(0); }
 		if (values.length > 0) {
-			forecastData[forecastData.length - 1] = values[values.length - 1];
+			forecastData.push(values[values.length - 1]);
 		}
-		forecastData = forecastData.concat(forecastValues);
+		for (i = 0; i < forecastValues.length; i++) { forecastData.push(forecastValues[i]); }
+
+		// Upper/Lower bound series — same values as forecast (PBI shows identical bounds)
+		var upperData = forecastData.slice();
+		var lowerData = forecastData.slice();
 
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: { trigger: 'axis' },
 			legend: {
-				data: ['Charges', 'Forecast'],
+				data: ['Charges', 'Charges Forecast'],
 				textStyle: { color: '#e2e8f0' },
 				top: 5
 			},
-			grid: { left: 70, right: 30, top: 40, bottom: 60 },
+			grid: { left: 80, right: 30, top: 40, bottom: 80 },
+			dataZoom: [
+				{
+					type: 'slider',
+					xAxisIndex: 0,
+					bottom: 10,
+					height: 20,
+					borderColor: '#334155',
+					backgroundColor: '#0f172a',
+					fillerColor: 'rgba(59,130,246,0.15)',
+					textStyle: { color: '#94a3b8' }
+				},
+				{
+					type: 'slider',
+					yAxisIndex: 0,
+					right: 5,
+					width: 20,
+					borderColor: '#334155',
+					backgroundColor: '#0f172a',
+					fillerColor: 'rgba(59,130,246,0.15)',
+					textStyle: { color: '#94a3b8' }
+				}
+			],
 			xAxis: {
 				type: 'category',
 				data: allLabels,
@@ -160,7 +188,7 @@ export default {
 				type: 'value',
 				name: 'Charges',
 				nameLocation: 'middle',
-				nameGap: 55,
+				nameGap: 65,
 				nameTextStyle: { color: '#e2e8f0' },
 				axisLabel: { color: '#94a3b8' },
 				splitLine: { lineStyle: { color: '#334155' } }
@@ -173,14 +201,37 @@ export default {
 					data: actualData
 				},
 				{
-					name: 'Forecast',
+					name: 'Charges Forecast',
 					type: 'line',
-					itemStyle: { color: '#94a3b8' },
-					lineStyle: { type: 'dashed' },
+					itemStyle: { color: '#333333' },
+					lineStyle: { type: 'dashed', color: '#94a3b8' },
 					data: forecastData
+				},
+				{
+					name: 'Upper bound',
+					type: 'line',
+					itemStyle: { color: '#334155' },
+					lineStyle: { width: 0 },
+					data: upperData,
+					showSymbol: false
+				},
+				{
+					name: 'Lower bound',
+					type: 'line',
+					itemStyle: { color: '#334155' },
+					lineStyle: { width: 0 },
+					data: lowerData,
+					showSymbol: false
 				}
 			]
 		};
+	},
+
+	_fmtDollar(v) {
+		var parts = Math.abs(v).toFixed(2).split('.');
+		var intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		var formatted = '$' + intPart + '.' + parts[1];
+		return v < 0 ? '(' + formatted + ')' : formatted;
 	},
 
 	// Monthly charges table (Calendar Month, Charges)
@@ -191,7 +242,7 @@ export default {
 		return months.map(function(mk) {
 			return {
 				'Calendar Month': self._formatMonthFull(mk),
-				'Charges': '$' + Number(byMonth[mk].toFixed(2)).toLocaleString()
+				'Charges': self._fmtDollar(byMonth[mk])
 			};
 		});
 	},
@@ -199,9 +250,9 @@ export default {
 	// Pivot table — rows = month names (Jan..Dec), columns = years, values = charges
 	getTableData() {
 		var byMonth = this.getMonthlyData();
+		var self = this;
 		var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-		// Collect all years
 		var yearSet = {};
 		Object.keys(byMonth).forEach(function(mk) {
 			yearSet[mk.substring(0, 4)] = true;
@@ -217,20 +268,15 @@ export default {
 				var v = byMonth[mk] || 0;
 				if (v !== 0) {
 					total += v;
-					row[yr] = '$' + Number(v.toFixed(2)).toLocaleString();
+					row[yr] = self._fmtDollar(v);
 				} else {
 					row[yr] = '';
 				}
 			});
-			if (total !== 0) {
-				row['Total'] = '$' + Number(total.toFixed(2)).toLocaleString();
-			} else {
-				row['Total'] = '';
-			}
+			row['Total'] = total !== 0 ? self._fmtDollar(total) : '';
 			return row;
 		});
 
-		// Add Total row
 		var totalRow = { 'Month/Year': 'Total' };
 		var grandTotal = 0;
 		years.forEach(function(yr) {
@@ -239,9 +285,9 @@ export default {
 				if (mk.substring(0, 4) === yr) yrTotal += byMonth[mk];
 			});
 			grandTotal += yrTotal;
-			totalRow[yr] = '$' + Number(yrTotal.toFixed(2)).toLocaleString();
+			totalRow[yr] = self._fmtDollar(yrTotal);
 		});
-		totalRow['Total'] = '$' + Number(grandTotal.toFixed(2)).toLocaleString();
+		totalRow['Total'] = self._fmtDollar(grandTotal);
 		rows.push(totalRow);
 
 		return rows;
