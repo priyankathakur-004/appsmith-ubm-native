@@ -22,6 +22,7 @@
       "name": "UBM_Database",
       "pluginId": "postgres-plugin"
     },
+    "dynamicBindingPathList": [],
     "name": "Query1",
     "pageId": "Analytics",
     "runBehaviour": "MANUAL",
