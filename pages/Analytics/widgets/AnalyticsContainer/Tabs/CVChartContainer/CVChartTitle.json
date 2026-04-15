@@ -4,8 +4,12 @@
   "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
-    { "key": "text" },
-    { "key": "fontFamily" }
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
   ],
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
@@ -23,10 +27,10 @@
   "parentId": "cvchcanv0001",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 55,
+  "rightColumn": 60,
   "shouldTruncate": false,
   "text": "{{ChargesVsConsumptionHelper.getChartTitle()}}",
-  "textAlign": "LEFT",
+  "textAlign": "CENTER",
   "textColor": "#e2e8f0",
   "topRow": 1,
   "type": "TEXT_WIDGET",

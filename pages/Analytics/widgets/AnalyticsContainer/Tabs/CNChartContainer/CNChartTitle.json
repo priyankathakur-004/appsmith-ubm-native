@@ -4,8 +4,12 @@
   "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
-    { "key": "text" },
-    { "key": "fontFamily" }
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
   ],
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
@@ -14,7 +18,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "cnttlkey1",
-  "leftColumn": 3,
+  "leftColumn": 1,
   "mobileBottomRow": 8,
   "mobileLeftColumn": 3,
   "mobileRightColumn": 55,
@@ -23,10 +27,10 @@
   "parentId": "cnchcanv0001",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 55,
+  "rightColumn": 61,
   "shouldTruncate": false,
   "text": "{{ConsumptionHelper.getChartTitle()}}",
-  "textAlign": "LEFT",
+  "textAlign": "CENTER",
   "textColor": "#e2e8f0",
   "topRow": 1,
   "type": "TEXT_WIDGET",

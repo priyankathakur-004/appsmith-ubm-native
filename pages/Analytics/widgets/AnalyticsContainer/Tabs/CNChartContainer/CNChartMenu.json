@@ -4,22 +4,32 @@
   "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
-    { "key": "borderRadius" }
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicPropertyPathList": [
-    { "key": "menuItems.menuItemcnexport01.onClick" },
-    { "key": "menuItems.menuItemcntable01.onClick" }
+    {
+      "key": "menuItems.menuItemcnexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemcntable01.onClick"
+    }
   ],
   "dynamicTriggerPathList": [
-    { "key": "menuItems.menuItemcnexport01.onClick" },
-    { "key": "menuItems.menuItemcntable01.onClick" }
+    {
+      "key": "menuItems.menuItemcnexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemcntable01.onClick"
+    }
   ],
   "iconAlign": "left",
   "iconName": "menu",
   "isLoading": false,
   "isVisible": true,
   "key": "cnmnukey1",
-  "leftColumn": 60,
+  "leftColumn": 61,
   "menuColor": "#ffffff",
   "menuItems": {
     "menuItemcnexport01": {

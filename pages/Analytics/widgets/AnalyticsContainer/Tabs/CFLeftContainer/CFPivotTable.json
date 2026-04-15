@@ -1,13 +1,14 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
-  "borderColor": "#E0DEDE",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 110,
+  "bottomRow": 95,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "cachedTableData": {},
   "canFreezeColumn": true,
+  "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
   "childStylesheet": {
     "button": {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
@@ -37,11 +38,14 @@
     "xn__2025_o76a",
     "Total"
   ],
-  "columnUpdatedAt": 1776230189871,
+  "columnUpdatedAt": 1776249457442,
   "columnWidthMap": {
-    "Month_Year": 124,
-    "_2026": 98
+    "Month_Year": 93,
+    "_2026": 98,
+    "xn__2025_o76a": 120,
+    "xn__2026_o76a": 102
   },
+  "compactMode": "SHORT",
   "customIsLoading": false,
   "customIsLoadingValue": "",
   "defaultPageSize": 0,
@@ -74,6 +78,27 @@
     },
     {
       "key": "primaryColumns.xn__2025_o76a.computedValue"
+    },
+    {
+      "key": "cellBackground"
+    },
+    {
+      "key": "primaryColumns.Total.cellBackground"
+    },
+    {
+      "key": "primaryColumns.Month_Year.cellBackground"
+    },
+    {
+      "key": "primaryColumns.xn__2026_o76a.cellBackground"
+    },
+    {
+      "key": "primaryColumns.xn__2025_o76a.cellBackground"
+    },
+    {
+      "key": "headerRowColor"
+    },
+    {
+      "key": "borderColor"
     }
   ],
   "dynamicPropertyPathList": [
@@ -85,15 +110,17 @@
   "enableClientSideSearch": true,
   "endOfData": false,
   "flexVerticalAlignment": "start",
+  "headerRowColor": "{{appsmith.theme.colors.primaryColor}}",
+  "headerTextColor": "#ffffff",
   "horizontalAlignment": "LEFT",
   "inlineEditingSaveOption": "ROW_LEVEL",
   "isLoading": false,
   "isSortable": true,
   "isVisible": true,
-  "isVisibleDownload": true,
+  "isVisibleDownload": false,
   "isVisibleFilters": false,
-  "isVisiblePagination": true,
-  "isVisibleSearch": true,
+  "isVisiblePagination": false,
+  "isVisibleSearch": false,
   "key": "bnicdqnlwb",
   "label": "Data",
   "leftColumn": 0,
@@ -111,6 +138,7 @@
       "alias": "Month/Year",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
+      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
       "columnType": "text",
       "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Month/Year\"])) : Month/Year })()}}",
       "currencyCode": "USD",
@@ -128,10 +156,11 @@
       "isEditable": false,
       "isSaveVisible": true,
       "isVisible": true,
-      "label": "Month/Year",
+      "label": "Month",
       "notation": "standard",
       "originalId": "Month/Year",
       "sticky": "",
+      "textColor": "#ffffff",
       "textSize": "0.875rem",
       "thousandSeparator": true,
       "validation": {},
@@ -142,6 +171,7 @@
       "alias": "Total",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
+      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
       "columnType": "text",
       "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Total\"])) : Total })()}}",
       "currencyCode": "USD",
@@ -162,7 +192,8 @@
       "label": "Total",
       "notation": "standard",
       "originalId": "Total",
-      "sticky": "",
+      "sticky": "right",
+      "textColor": "#ffffff",
       "textSize": "0.875rem",
       "thousandSeparator": true,
       "validation": {},
@@ -173,7 +204,7 @@
       "alias": "2025 ",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
+      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
       "columnType": "text",
       "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"2025 \"])) : 2025  })()}}",
       "currencyCode": "USD",
@@ -196,7 +227,7 @@
       "notation": "standard",
       "originalId": "2025 ",
       "sticky": "",
-      "textColor": "",
+      "textColor": "#ffffff",
       "textSize": "0.875rem",
       "thousandSeparator": true,
       "validation": {},
@@ -207,7 +238,7 @@
       "alias": "2026 ",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
+      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
       "columnType": "text",
       "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"2026 \"])) : 2026  })()}}",
       "currencyCode": "USD",
@@ -230,7 +261,7 @@
       "notation": "standard",
       "originalId": "2026 ",
       "sticky": "",
-      "textColor": "",
+      "textColor": "#ffffff",
       "textSize": "0.875rem",
       "thousandSeparator": true,
       "validation": {},
@@ -242,9 +273,11 @@
   "responsiveBehavior": "fill",
   "rightColumn": 64,
   "searchKey": "",
+  "showInlineEditingOptionDropdown": true,
   "tableData": "{{ChargesForecastHelper.getTableData()}}",
+  "textColor": "#ffffff",
   "textSize": "0.875rem",
-  "topRow": 50,
+  "topRow": 51,
   "totalRecordsCount": 0,
   "type": "TABLE_WIDGET_V2",
   "version": 2,
