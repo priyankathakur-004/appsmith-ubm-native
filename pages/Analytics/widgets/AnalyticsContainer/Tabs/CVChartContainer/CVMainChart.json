@@ -1,0 +1,31 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 77,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ChargesVsConsumptionHelper.getChartConfig()}}",
+  "dynamicBindingPathList": [
+    { "key": "customEChartConfig" },
+    { "key": "borderRadius" }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cvchartkey1",
+  "leftColumn": 0,
+  "mobileBottomRow": 330,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 5,
+  "parentColumnSpace": 15,
+  "parentId": "cvchcanv0001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 5,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "cvchrt0001",
+  "widgetName": "CVMainChart"
+}

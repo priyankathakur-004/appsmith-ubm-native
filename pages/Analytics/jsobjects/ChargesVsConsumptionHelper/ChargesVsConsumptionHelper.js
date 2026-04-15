@@ -1,0 +1,285 @@
+export default {
+	getViewBy() {
+		return appsmith.store.cvViewBy || 'Location';
+	},
+
+	getChartTitle() {
+		var view = this.getViewBy();
+		if (view === 'Service Account') return 'Location, Service Account';
+		if (view === 'Vendors') return 'Vendors';
+		return 'Location';
+	},
+
+	_rowKey(r, view) {
+		var loc = r.location_description || 'Unknown';
+		if (view === 'Service Account') return loc + ', ' + (r.service_account || '');
+		if (view === 'Vendors') return r.vendor_name || 'Unknown';
+		return loc;
+	},
+
+	getGroupOptions() {
+		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		var view = this.getViewBy();
+		var self = this;
+		var set = {};
+		data.forEach(function(r) {
+			var k = self._rowKey(r, view);
+			if (k != null && k !== '') set[k] = true;
+		});
+		return Object.keys(set).sort().map(function(k) { return { label: k, value: k }; });
+	},
+
+	getSelectedGroup() {
+		var picked = (typeof CVLocCheckbox !== 'undefined' && CVLocCheckbox && CVLocCheckbox.model && CVLocCheckbox.model.selectedValue) || null;
+		if (picked) return [picked];
+		return this.getGroupOptions().map(function(o) { return o.value; });
+	},
+
+	getVendorOptions() {
+		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		var set = {};
+		data.forEach(function(r) {
+			var v = r.vendor_name || 'Unknown';
+			set[v] = true;
+		});
+		var opts = Object.keys(set).sort().map(function(k) { return { label: k, value: k }; });
+		opts.unshift({ label: 'All', value: 'All' });
+		return opts;
+	},
+
+	_getAggregatedData() {
+		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		var view = this.getViewBy();
+		var selected = this.getSelectedGroup();
+		var self = this;
+		var sel = {};
+		selected.forEach(function(s) { sel[s] = true; });
+
+		var byKey = {};
+		data.forEach(function(r) {
+			var key = self._rowKey(r, view);
+			if (!sel[key]) return;
+			if (!byKey[key]) byKey[key] = { consumption: 0, charges: 0 };
+			byKey[key].consumption += parseFloat(r.consumption) || 0;
+			byKey[key].charges += parseFloat(r.total_charges) || 0;
+		});
+
+		return byKey;
+	},
+
+	_getMonthlyDetail() {
+		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		var view = this.getViewBy();
+		var selected = this.getSelectedGroup();
+		var self = this;
+		var sel = {};
+		selected.forEach(function(s) { sel[s] = true; });
+
+		var byKeyMonth = {};
+		data.forEach(function(r) {
+			var key = self._rowKey(r, view);
+			if (!sel[key]) return;
+			var mk = (r.time_period || '').substring(0, 7);
+			if (!mk) return;
+			if (!byKeyMonth[key]) byKeyMonth[key] = {};
+			if (!byKeyMonth[key][mk]) byKeyMonth[key][mk] = { consumption: 0, charges: 0 };
+			byKeyMonth[key][mk].consumption += parseFloat(r.consumption) || 0;
+			byKeyMonth[key][mk].charges += parseFloat(r.total_charges) || 0;
+		});
+
+		return byKeyMonth;
+	},
+
+	_formatMonthYear(mk) {
+		var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		var p = mk.split('-');
+		return (months[parseInt(p[1], 10) - 1] || '') + ' ' + p[0];
+	},
+
+	_color(idx) {
+		var palette = [
+			'#60a5fa','#34d399','#f472b6','#fbbf24','#a78bfa','#22d3ee',
+			'#fb923c','#4ade80','#f87171','#c084fc','#facc15','#2dd4bf',
+			'#818cf8','#fda4af'
+		];
+		return palette[idx % palette.length];
+	},
+
+	_linearRegression(points) {
+		var n = points.length;
+		if (n < 2) return null;
+		var sx = 0, sy = 0, sxy = 0, sx2 = 0;
+		points.forEach(function(p) {
+			sx += p[0];
+			sy += p[1];
+			sxy += p[0] * p[1];
+			sx2 += p[0] * p[0];
+		});
+		var denom = n * sx2 - sx * sx;
+		if (denom === 0) return null;
+		var slope = (n * sxy - sx * sy) / denom;
+		var intercept = (sy - slope * sx) / n;
+		return { slope: slope, intercept: intercept };
+	},
+
+	getChartConfig() {
+		var byKey = this._getAggregatedData();
+		var self = this;
+		var keys = Object.keys(byKey).sort();
+
+		var allPoints = [];
+		var series = keys.map(function(k, i) {
+			var d = byKey[k];
+			var x = Number(d.consumption.toFixed(2));
+			var y = Number(d.charges.toFixed(2));
+			allPoints.push([x, y]);
+			return {
+				name: k,
+				type: 'scatter',
+				symbolSize: 10,
+				itemStyle: { color: self._color(i) },
+				data: [[x, y]]
+			};
+		});
+
+		var reg = this._linearRegression(allPoints);
+		if (reg && allPoints.length >= 2) {
+			var xs = allPoints.map(function(p) { return p[0]; });
+			var minX = Math.min.apply(null, xs);
+			var maxX = Math.max.apply(null, xs);
+			var y1 = reg.slope * minX + reg.intercept;
+			var y2 = reg.slope * maxX + reg.intercept;
+			series.push({
+				name: 'Trend',
+				type: 'line',
+				showSymbol: false,
+				lineStyle: { type: 'dashed', color: '#64748b', width: 2 },
+				itemStyle: { color: '#64748b' },
+				data: [[minX, Number(y1.toFixed(2))], [maxX, Number(y2.toFixed(2))]],
+				z: 0
+			});
+		}
+
+		return {
+			backgroundColor: '#1E293B',
+			tooltip: {
+				trigger: 'item',
+				formatter: function(p) {
+					if (p.seriesName === 'Trend') return '';
+					return p.seriesName + '<br/>Consumption: ' + Number(p.value[0]).toLocaleString() + ' KWH<br/>Charges: $' + Number(p.value[1]).toLocaleString();
+				}
+			},
+			legend: {
+				type: 'scroll',
+				orient: 'vertical',
+				right: 10,
+				top: 'middle',
+				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				icon: 'circle',
+				itemWidth: 10,
+				itemHeight: 10,
+				data: keys
+			},
+			grid: { left: 70, right: 200, top: 40, bottom: 80 },
+			xAxis: {
+				type: 'value',
+				name: 'Consumption (KWH)',
+				nameLocation: 'middle',
+				nameGap: 40,
+				nameTextStyle: { color: '#e2e8f0' },
+				axisLabel: {
+					color: '#94a3b8',
+					formatter: function(v) {
+						if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+						if (v >= 1000) return (v / 1000).toFixed(0) + 'K';
+						return v;
+					}
+				},
+				splitLine: { lineStyle: { color: '#334155' } }
+			},
+			yAxis: {
+				type: 'value',
+				name: 'Charges ($)',
+				nameLocation: 'middle',
+				nameGap: 55,
+				nameTextStyle: { color: '#e2e8f0' },
+				axisLabel: {
+					color: '#94a3b8',
+					formatter: function(v) {
+						if (v >= 1000) return '$' + (v / 1000).toFixed(0) + 'K';
+						return '$' + v;
+					}
+				},
+				splitLine: { lineStyle: { color: '#334155' } }
+			},
+			dataZoom: [
+				{
+					type: 'slider',
+					xAxisIndex: 0,
+					bottom: 5,
+					height: 18,
+					borderColor: '#334155',
+					backgroundColor: '#0f172a',
+					fillerColor: 'rgba(59,130,246,0.15)',
+					handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
+					textStyle: { color: '#94a3b8' }
+				},
+				{
+					type: 'slider',
+					yAxisIndex: 0,
+					left: 5,
+					width: 14,
+					borderColor: '#334155',
+					backgroundColor: '#0f172a',
+					fillerColor: 'rgba(59,130,246,0.18)',
+					handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
+					textStyle: { color: '#94a3b8' },
+					showDetail: false
+				},
+				{
+					type: 'inside',
+					xAxisIndex: 0,
+					zoomOnMouseWheel: true,
+					moveOnMouseWheel: false,
+					throttle: 50
+				},
+				{
+					type: 'inside',
+					yAxisIndex: 0,
+					zoomOnMouseWheel: true,
+					moveOnMouseWheel: false,
+					throttle: 50
+				}
+			],
+			series: series
+		};
+	},
+
+	getTableData() {
+		var byKM = this._getMonthlyDetail();
+		var self = this;
+		var keys = Object.keys(byKM).sort();
+		var view = this.getViewBy();
+		var label = view === 'Service Account' ? 'Location, Service Acct' : view === 'Vendors' ? 'Vendor' : 'Location';
+
+		var rows = [];
+		keys.forEach(function(k) {
+			var months = Object.keys(byKM[k]).sort().reverse();
+			months.forEach(function(mk) {
+				var d = byKM[k][mk];
+				var row = {};
+				row[label] = k;
+				row['Month'] = self._formatMonthYear(mk);
+				row['Consumption'] = Number(d.consumption.toFixed(2));
+				row['Charges'] = Number(d.charges.toFixed(2));
+				rows.push(row);
+			});
+		});
+
+		return rows;
+	},
+
+	setDefaults() {
+		if (!appsmith.store.cvViewBy) storeValue('cvViewBy', 'Location');
+	}
+}
