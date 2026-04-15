@@ -92,20 +92,26 @@ export default {
 		var months = this._getAllMonths(byKM);
 		var monthLabels = months.map(function(m) { return self._formatMonthYear(m); });
 
-		var series = keys.map(function(k, i) {
+		var series = [];
+		keys.forEach(function(k, i) {
 			var color = self._color(i);
-			var data = months.map(function(mk) {
+			var data = [];
+			months.forEach(function(mk, idx) {
 				var b = byKM[k][mk];
-				if (!b) return 0;
-				return Number(b.charges.toFixed(2));
+				if (!b) return;
+				var v = Number(b.charges.toFixed(2));
+				if (v === 0) return;
+				data.push([idx, v]);
 			});
-			return {
+			if (data.length === 0) return;
+			series.push({
 				name: k,
 				type: 'line',
 				itemStyle: { color: color },
 				data: data
-			};
+			});
 		});
+		keys = series.map(function(s) { return s.name; });
 
 		return {
 			backgroundColor: '#1E293B',
