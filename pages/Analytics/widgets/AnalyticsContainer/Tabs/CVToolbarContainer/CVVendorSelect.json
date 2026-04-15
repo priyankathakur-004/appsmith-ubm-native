@@ -1,56 +1,54 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowClear": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 7,
   "boxShadow": "none",
-  "defaultOptionValue": "All",
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
-    {
-      "key": "sourceData"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "isVisible"
-    }
+    { "key": "accentColor" },
+    { "key": "borderRadius" },
+    { "key": "options" },
+    { "key": "isVisible" }
   ],
-  "dynamicPropertyPathList": [
-    {
-      "key": "sourceData"
-    }
-  ],
+  "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [
-    {
-      "key": "onOptionChange"
-    }
+    { "key": "onOptionChange" }
   ],
+  "expandAll": false,
+  "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
+  "isRequired": false,
   "isVisible": "{{(appsmith.store.cvViewBy || 'Location') === 'Location'}}",
   "key": "cvvndselkey1",
+  "labelAlignment": "left",
   "labelPosition": "Left",
   "labelStyle": "BOLD",
   "labelText": "Vendor:",
   "labelTextColor": "#ffffff",
-  "labelWidth": "4",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 4,
   "leftColumn": 47,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "mobileBottomRow": 8,
-  "mobileLeftColumn": 52,
+  "mobileLeftColumn": 47,
   "mobileRightColumn": 64,
   "mobileTopRow": 2,
-  "onOptionChange": "{{storeValue('cvVendor', CVVendorSelect.selectedOptionValue)}}",
-  "optionLabel": "label",
-  "optionValue": "value",
+  "mode": "SHOW_ALL",
+  "needsErrorInfo": false,
+  "onOptionChange": "{{storeValue('cvVendor', CVVendorSelect.selectedOptionValueArr)}}",
+  "options": "{{ChargesVsConsumptionHelper.getVendorOptions()}}",
   "parentColumnSpace": 15,
   "parentId": "cvtbcanv001",
   "parentRowSpace": 10,
+  "placeholderText": "All",
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "sourceData": "{{ChargesVsConsumptionHelper.getVendorOptions()}}",
   "topRow": 3,
-  "type": "SELECT_WIDGET",
+  "type": "MULTI_SELECT_TREE_WIDGET",
   "version": 1,
   "widgetId": "cvvndsel001",
   "widgetName": "CVVendorSelect"

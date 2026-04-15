@@ -42,23 +42,25 @@ export default {
 			var v = r.vendor_name || 'Unknown';
 			set[v] = true;
 		});
-		var opts = Object.keys(set).sort().map(function(k) { return { label: k, value: k }; });
-		opts.unshift({ label: 'All', value: 'All' });
-		return opts;
+		return Object.keys(set).sort().map(function(k) { return { label: k, value: k }; });
 	},
 
-	getSelectedVendor() {
-		return appsmith.store.cvVendor || 'All';
+	getSelectedVendors() {
+		var v = appsmith.store.cvVendor;
+		if (!v || !Array.isArray(v) || v.length === 0) return null;
+		return v;
 	},
 
 	_filteredData() {
 		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		var view = this.getViewBy();
 		if (view === 'Location') {
-			var vendor = this.getSelectedVendor();
-			if (vendor && vendor !== 'All') {
+			var vendors = this.getSelectedVendors();
+			if (vendors) {
+				var vSet = {};
+				vendors.forEach(function(v) { vSet[v] = true; });
 				data = data.filter(function(r) {
-					return (r.vendor_name || 'Unknown') === vendor;
+					return vSet[r.vendor_name || 'Unknown'];
 				});
 			}
 		}
@@ -172,30 +174,19 @@ export default {
 				var x = Number(d.consumption.toFixed(2));
 				var y = Number(d.charges.toFixed(2));
 				allPoints.push([x, y]);
-				var tip = '<table style="border-collapse:collapse">'
-					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Month Year</td><td style="padding:2px 8px">' + self._formatMonthYear(mk) + '</td></tr>'
-					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">' + label + '</td><td style="padding:2px 8px">' + k + '</td></tr>'
-					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Consumption</td><td style="padding:2px 8px">' + self._fmtCons(x) + '</td></tr>'
-					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Charges</td><td style="padding:2px 8px">' + self._fmtNum(y) + '</td></tr>'
-					+ '</table>';
-				return { value: [x, y], tip: tip };
+				var tip = 'Month Year   ' + self._formatMonthYear(mk)
+					+ '\n' + label + '   ' + k
+					+ '\nConsumption   ' + self._fmtCons(x)
+					+ '\nCharges   ' + self._fmtNum(y);
+				return { value: [x, y], name: tip };
 			});
 			return {
 				name: k,
 				type: 'scatter',
 				symbolSize: 10,
 				itemStyle: { color: color },
-				data: pts,
-				tooltip: { formatter: '{b}' }
+				data: pts
 			};
-		});
-
-		/* build pre-formatted tooltip into data name field */
-		series.forEach(function(s) {
-			if (s.type !== 'scatter') return;
-			s.data = s.data.map(function(pt) {
-				return { value: pt.value, name: pt.tip };
-			});
 		});
 
 		var reg = this._linearRegression(allPoints);
@@ -217,33 +208,17 @@ export default {
 			});
 		}
 
-		/* pre-compute axis label map */
-		var allX = allPoints.map(function(p) { return p[0]; });
-		var allY = allPoints.map(function(p) { return p[1]; });
-		var maxX2 = allX.length > 0 ? Math.max.apply(null, allX) : 0;
-		var maxY2 = allY.length > 0 ? Math.max.apply(null, allY) : 0;
-
-		var xLabels = {};
-		var xStep = maxX2 > 1000000 ? 200000 : maxX2 > 100000 ? 50000 : 10000;
-		for (var xi = 0; xi <= maxX2 * 1.2; xi += xStep) {
-			xLabels[xi] = self._fmtAxisK(xi);
-		}
-
-		var yLabels = {};
-		var yStep = maxY2 > 100000 ? 50000 : maxY2 > 10000 ? 10000 : 1000;
-		for (var yi = 0; yi <= maxY2 * 1.2; yi += yStep) {
-			yLabels[yi] = '$' + self._fmtAxisK(yi);
-		}
-
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: {
 				trigger: 'item',
+				formatter: '{b}',
 				backgroundColor: '#ffffff',
 				textStyle: { color: '#1e293b', fontSize: 13 },
 				borderColor: '#e2e8f0',
 				borderWidth: 1,
-				confine: true
+				confine: true,
+				extraCssText: 'white-space:pre; font-family:system-ui; line-height:1.8; padding:10px 14px;'
 			},
 			legend: {
 				type: 'scroll',
