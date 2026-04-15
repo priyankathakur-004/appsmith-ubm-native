@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 4,
+  "bottomRow": 117,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: UnitCostHelper.getGroupOptions(),\nselected: UnitCostHelper.getGroupOptions().map(o => o.value),\nheader: UnitCostHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
@@ -43,7 +43,7 @@
   "mobileTopRow": 145,
   "needsErrorInfo": false,
   "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 16,
+  "originalBottomRow": 4,
   "originalTopRow": 0,
   "parentColumnSpace": 16.734375,
   "parentId": "ucloccanv001",

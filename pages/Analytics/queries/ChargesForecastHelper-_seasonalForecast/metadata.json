@@ -1,12 +1,22 @@
 {
-  "gitSyncId": "68f08f3128a92f6fcd2cb504_e1000001-0000-4000-8000-000000000007",
-  "id": "Analytics_ChargesForecastHelper._forecast",
+  "gitSyncId": "69dddd4741c39c4da998e274_17dbf935-faa4-46b7-a64e-e6c5d78b7005",
+  "id": "Analytics_ChargesForecastHelper._seasonalForecast",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
     "actionConfiguration": {
       "encodeParamsToggle": true,
-      "jsArguments": [{"name": "months"}, {"name": "values"}, {"name": "numForecast"}],
+      "jsArguments": [
+        {
+          "name": "byMonth"
+        },
+        {
+          "name": "months"
+        },
+        {
+          "name": "futureKeys"
+        }
+      ],
       "paginationType": "NONE",
       "timeoutInMillisecond": 10000
     },
@@ -18,10 +28,12 @@
       "pluginId": "js-plugin"
     },
     "dynamicBindingPathList": [
-      { "key": "body" }
+      {
+        "key": "body"
+      }
     ],
-    "fullyQualifiedName": "ChargesForecastHelper._forecast",
-    "name": "_forecast",
+    "fullyQualifiedName": "ChargesForecastHelper._seasonalForecast",
+    "name": "_seasonalForecast",
     "pageId": "Analytics",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

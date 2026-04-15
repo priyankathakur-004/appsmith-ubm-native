@@ -584,7 +584,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{AnalyticsHelper.setDefaults();}}",
-  "originalBottomRow": 144,
+  "originalBottomRow": 143,
   "originalTopRow": 25,
   "parentColumnSpace": 16.453125,
   "parentId": "b8l49xalbh",
