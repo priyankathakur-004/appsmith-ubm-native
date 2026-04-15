@@ -169,17 +169,20 @@ export default {
 		var series = keys.map(function(k, i) {
 			var color = self._color(i);
 			var months = Object.keys(byKM[k]).sort();
-			var pts = months.map(function(mk) {
+			var pts = [];
+			months.forEach(function(mk) {
 				var d = byKM[k][mk];
 				var x = Number(d.consumption.toFixed(2));
 				var y = Number(d.charges.toFixed(2));
+				if (x === 0 && y === 0) return;
 				allPoints.push([x, y]);
 				var tip = 'Month Year   ' + self._formatMonthYear(mk)
 					+ '\n' + label + '   ' + k
 					+ '\nConsumption   ' + self._fmtCons(x)
 					+ '\nCharges   ' + self._fmtNum(y);
-				return { value: [x, y], name: tip };
+				pts.push({ value: [x, y], name: tip });
 			});
+			if (pts.length === 0) return null;
 			return {
 				name: k,
 				type: 'scatter',
@@ -188,6 +191,9 @@ export default {
 				data: pts
 			};
 		});
+
+		series = series.filter(function(s) { return s !== null; });
+		keys = series.map(function(s) { return s.name; });
 
 		var reg = this._linearRegression(allPoints);
 		if (reg && allPoints.length >= 2) {
