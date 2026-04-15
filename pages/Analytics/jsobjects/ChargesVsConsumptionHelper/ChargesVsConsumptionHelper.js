@@ -18,7 +18,7 @@ export default {
 	},
 
 	getGroupOptions() {
-		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		var data = this._filteredData();
 		var view = this.getViewBy();
 		var self = this;
 		var set = {};
@@ -47,28 +47,26 @@ export default {
 		return opts;
 	},
 
-	_getAggregatedData() {
+	getSelectedVendor() {
+		return appsmith.store.cvVendor || 'All';
+	},
+
+	_filteredData() {
 		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		var view = this.getViewBy();
-		var selected = this.getSelectedGroup();
-		var self = this;
-		var sel = {};
-		selected.forEach(function(s) { sel[s] = true; });
-
-		var byKey = {};
-		data.forEach(function(r) {
-			var key = self._rowKey(r, view);
-			if (!sel[key]) return;
-			if (!byKey[key]) byKey[key] = { consumption: 0, charges: 0 };
-			byKey[key].consumption += parseFloat(r.consumption) || 0;
-			byKey[key].charges += parseFloat(r.total_charges) || 0;
-		});
-
-		return byKey;
+		if (view === 'Location') {
+			var vendor = this.getSelectedVendor();
+			if (vendor && vendor !== 'All') {
+				data = data.filter(function(r) {
+					return (r.vendor_name || 'Unknown') === vendor;
+				});
+			}
+		}
+		return data;
 	},
 
 	_getMonthlyDetail() {
-		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		var data = this._filteredData();
 		var view = this.getViewBy();
 		var selected = this.getSelectedGroup();
 		var self = this;
@@ -123,22 +121,34 @@ export default {
 	},
 
 	getChartConfig() {
-		var byKey = this._getAggregatedData();
+		var byKM = this._getMonthlyDetail();
 		var self = this;
-		var keys = Object.keys(byKey).sort();
+		var view = this.getViewBy();
+		var label = view === 'Service Account' ? 'Location, Service Acct' : view === 'Vendors' ? 'Vendor' : 'Location';
 
+		var keys = Object.keys(byKM).sort();
 		var allPoints = [];
+
 		var series = keys.map(function(k, i) {
-			var d = byKey[k];
-			var x = Number(d.consumption.toFixed(2));
-			var y = Number(d.charges.toFixed(2));
-			allPoints.push([x, y]);
+			var color = self._color(i);
+			var months = Object.keys(byKM[k]).sort();
+			var pts = months.map(function(mk) {
+				var d = byKM[k][mk];
+				var x = Number(d.consumption.toFixed(2));
+				var y = Number(d.charges.toFixed(2));
+				allPoints.push([x, y]);
+				return {
+					value: [x, y],
+					monthYear: self._formatMonthYear(mk),
+					groupName: k
+				};
+			});
 			return {
 				name: k,
 				type: 'scatter',
 				symbolSize: 10,
-				itemStyle: { color: self._color(i) },
-				data: [[x, y]]
+				itemStyle: { color: color },
+				data: pts
 			};
 		});
 
@@ -164,9 +174,27 @@ export default {
 			backgroundColor: '#1E293B',
 			tooltip: {
 				trigger: 'item',
+				backgroundColor: '#ffffff',
+				textStyle: { color: '#1e293b' },
+				borderColor: '#e2e8f0',
+				borderWidth: 1,
 				formatter: function(p) {
 					if (p.seriesName === 'Trend') return '';
-					return p.seriesName + '<br/>Consumption: ' + Number(p.value[0]).toLocaleString() + ' KWH<br/>Charges: $' + Number(p.value[1]).toLocaleString();
+					var my = p.data.monthYear || '';
+					var gn = p.data.groupName || p.seriesName;
+					var cons = Number(p.value[0]).toLocaleString();
+					var chg = Number(p.value[1]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+					if (Number(p.value[1]) < 0) {
+						chg = '($' + Math.abs(Number(p.value[1])).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ')';
+					} else {
+						chg = '$' + chg;
+					}
+					return '<table style="border-collapse:collapse">'
+						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Month Year</td><td style="padding:2px 8px">' + my + '</td></tr>'
+						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">' + label + '</td><td style="padding:2px 8px">' + gn + '</td></tr>'
+						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Consumption</td><td style="padding:2px 8px">' + cons + '</td></tr>'
+						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Charges</td><td style="padding:2px 8px">' + chg + '</td></tr>'
+						+ '</table>';
 				}
 			},
 			legend: {
@@ -195,7 +223,7 @@ export default {
 						return v;
 					}
 				},
-				splitLine: { lineStyle: { color: '#334155' } }
+				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.3)', type: 'dotted' } }
 			},
 			yAxis: {
 				type: 'value',
@@ -210,7 +238,7 @@ export default {
 						return '$' + v;
 					}
 				},
-				splitLine: { lineStyle: { color: '#334155' } }
+				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.3)', type: 'dotted' } }
 			},
 			dataZoom: [
 				{

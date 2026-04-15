@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "68f08f3128a92f6fcd2cb504_cv__getAggregatedData",
-  "id": "Analytics_ChargesVsConsumptionHelper._getAggregatedData",
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_cv_getSelectedVendor",
+  "id": "Analytics_ChargesVsConsumptionHelper.getSelectedVendor",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -20,8 +20,8 @@
     "dynamicBindingPathList": [
       { "key": "body" }
     ],
-    "fullyQualifiedName": "ChargesVsConsumptionHelper._getAggregatedData",
-    "name": "_getAggregatedData",
+    "fullyQualifiedName": "ChargesVsConsumptionHelper.getSelectedVendor",
+    "name": "getSelectedVendor",
     "pageId": "Analytics",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

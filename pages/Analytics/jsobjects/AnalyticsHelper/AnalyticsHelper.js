@@ -126,6 +126,7 @@ export default {
 			removeValue('otySelectedLocation');
 			removeValue('cnViewBy');
 			removeValue('cvViewBy');
+			removeValue('cvVendor');
 		},
 
 		setDefaults() {
