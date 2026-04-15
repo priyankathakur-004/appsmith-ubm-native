@@ -8,7 +8,7 @@
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 1180,
+      "bottomRow": 1170,
       "boxShadow": "none",
       "canExtend": false,
       "dynamicBindingPathList": [],
@@ -38,8 +38,12 @@
     }
   ],
   "dynamicBindingPathList": [
-    { "key": "backgroundColor" },
-    { "key": "borderRadius" }
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],

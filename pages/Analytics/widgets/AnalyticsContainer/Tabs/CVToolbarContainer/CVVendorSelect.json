@@ -2,26 +2,40 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
+  "bottomRow": 7,
   "boxShadow": "none",
   "defaultOptionValue": "All",
   "dynamicBindingPathList": [
-    { "key": "sourceData" },
-    { "key": "borderRadius" },
-    { "key": "isVisible" }
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isVisible"
+    }
   ],
   "dynamicPropertyPathList": [
-    { "key": "sourceData" }
+    {
+      "key": "sourceData"
+    }
   ],
   "dynamicTriggerPathList": [
-    { "key": "onOptionChange" }
+    {
+      "key": "onOptionChange"
+    }
   ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{(appsmith.store.cvViewBy || 'Location') === 'Location'}}",
   "key": "cvvndselkey1",
-  "labelText": "",
-  "leftColumn": 52,
+  "labelPosition": "Left",
+  "labelStyle": "BOLD",
+  "labelText": "Vendor:",
+  "labelTextColor": "#ffffff",
+  "labelWidth": "4",
+  "leftColumn": 47,
   "mobileBottomRow": 8,
   "mobileLeftColumn": 52,
   "mobileRightColumn": 64,
@@ -35,7 +49,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 64,
   "sourceData": "{{ChargesVsConsumptionHelper.getVendorOptions()}}",
-  "topRow": 2,
+  "topRow": 3,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "cvvndsel001",

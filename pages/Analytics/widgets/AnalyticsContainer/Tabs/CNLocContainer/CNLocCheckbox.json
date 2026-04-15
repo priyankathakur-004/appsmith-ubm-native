@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 117,
+  "bottomRow": 4,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: ConsumptionHelper.getGroupOptions(),\nselected: ConsumptionHelper.getGroupOptions().map(o => o.value),\nheader: ConsumptionHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
@@ -43,7 +43,7 @@
   "mobileTopRow": 145,
   "needsErrorInfo": false,
   "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 117,
+  "originalBottomRow": 118,
   "originalTopRow": 0,
   "parentColumnSpace": 16.734375,
   "parentId": "cnloccanv001",
