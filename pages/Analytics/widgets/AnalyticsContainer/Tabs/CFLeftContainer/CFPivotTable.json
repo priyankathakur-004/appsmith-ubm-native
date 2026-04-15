@@ -35,10 +35,9 @@
     "Month_Year",
     "xn__2026_o76a",
     "xn__2025_o76a",
-    "Total",
-    "xn__2024_o76a"
+    "Total"
   ],
-  "columnUpdatedAt": 1776152992590,
+  "columnUpdatedAt": 1776230189871,
   "columnWidthMap": {
     "Month_Year": 124,
     "_2026": 98
@@ -75,9 +74,6 @@
     },
     {
       "key": "primaryColumns.xn__2025_o76a.computedValue"
-    },
-    {
-      "key": "primaryColumns.xn__2024_o76a.computedValue"
     }
   ],
   "dynamicPropertyPathList": [
@@ -167,40 +163,6 @@
       "notation": "standard",
       "originalId": "Total",
       "sticky": "",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    },
-    "xn__2024_o76a": {
-      "alias": "2024 ",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"2024 \"])) : 2024  })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "xn__2024_o76a",
-      "index": 4,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "2024 ",
-      "notation": "standard",
-      "originalId": "2024 ",
-      "sticky": "",
-      "textColor": "",
       "textSize": "0.875rem",
       "thousandSeparator": true,
       "validation": {},

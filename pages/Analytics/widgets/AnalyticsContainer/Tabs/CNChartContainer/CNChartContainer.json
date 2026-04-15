@@ -38,8 +38,12 @@
     }
   ],
   "dynamicBindingPathList": [
-    { "key": "backgroundColor" },
-    { "key": "borderRadius" }
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],
@@ -50,14 +54,14 @@
   "key": "cnchcontkey1",
   "leftColumn": 0,
   "maxDynamicHeight": 9000,
-  "minDynamicHeight": 4,
+  "minDynamicHeight": 10,
   "minWidth": 450,
   "mobileBottomRow": 139,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 54,
   "mobileTopRow": 6,
   "needsErrorInfo": false,
-  "originalBottomRow": 109,
+  "originalBottomRow": 110,
   "originalTopRow": 11,
   "parentColumnSpace": 15,
   "parentId": "cncanvas0001",

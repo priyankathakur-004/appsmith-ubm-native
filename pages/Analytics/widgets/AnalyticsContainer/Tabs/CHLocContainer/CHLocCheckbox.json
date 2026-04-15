@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 220,
+  "bottomRow": 117,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: ChargesHelper.getGroupOptions(),\nselected: ChargesHelper.getGroupOptions().map(o => o.value),\nheader: ChargesHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
@@ -43,7 +43,7 @@
   "mobileTopRow": 145,
   "needsErrorInfo": false,
   "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 118,
+  "originalBottomRow": 220,
   "originalTopRow": 0,
   "parentColumnSpace": 16.734375,
   "parentId": "chloccanv001",

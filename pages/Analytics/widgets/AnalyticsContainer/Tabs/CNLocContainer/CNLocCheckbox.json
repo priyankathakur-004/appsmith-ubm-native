@@ -3,18 +3,28 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 118,
+  "bottomRow": 117,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: ConsumptionHelper.getGroupOptions(),\nselected: ConsumptionHelper.getGroupOptions().map(o => o.value),\nheader: ConsumptionHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
-    { "key": "defaultModel" },
-    { "key": "backgroundColor" },
-    { "key": "borderRadius" },
-    { "key": "boxShadow" }
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
   "dynamicTriggerPathList": [
-    { "key": "onResetClick" }
+    {
+      "key": "onResetClick"
+    }
   ],
   "events": [
     "onResetClick"
