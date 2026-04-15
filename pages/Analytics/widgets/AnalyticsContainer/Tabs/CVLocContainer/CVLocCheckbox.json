@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 117,
+  "bottomRow": 22,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: ChargesVsConsumptionHelper.getGroupOptions(),\nselected: ChargesVsConsumptionHelper.getGroupOptions().map(o => o.value),\nheader: ChargesVsConsumptionHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
