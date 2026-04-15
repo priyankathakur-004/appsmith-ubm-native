@@ -60,6 +60,10 @@ export default {
 						data = ChargesForecastHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Consumption') {
+						data = ConsumptionHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();
@@ -116,11 +120,15 @@ export default {
 			removeValue('mecSelectedLocation');
 			removeValue('ecSelectedLocation');
 			removeValue('otySelectedLocation');
+			removeValue('cnViewBy');
 		},
 
 		setDefaults() {
-			if (Tabs.selectedTab === 'Weather Sensitivity' || Tabs.selectedTab === 'Monthly Electric Demand' || Tabs.selectedTab === 'Unit Cost') {
+			if (Tabs.selectedTab === 'Weather Sensitivity' || Tabs.selectedTab === 'Monthly Electric Demand' || Tabs.selectedTab === 'Unit Cost' || Tabs.selectedTab === 'Consumption') {
 				 UtilityTypeSelect.setSelectedOption("ELECTRIC");
+			}
+			if (Tabs.selectedTab === 'Consumption') {
+				ConsumptionHelper.setDefaults();
 			}
 			removeValue('mecSelectedLocation');
 			removeValue('ecSelectedLocation');
