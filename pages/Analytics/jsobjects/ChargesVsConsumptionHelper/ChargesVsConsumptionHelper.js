@@ -120,6 +120,41 @@ export default {
 		return { slope: slope, intercept: intercept };
 	},
 
+	_fmtNum(v) {
+		var s = '';
+		var abs = Math.abs(v);
+		var parts = abs.toFixed(2).split('.');
+		var intPart = parts[0];
+		var dec = parts[1];
+		var groups = [];
+		while (intPart.length > 3) {
+			groups.unshift(intPart.slice(-3));
+			intPart = intPart.slice(0, -3);
+		}
+		groups.unshift(intPart);
+		s = groups.join(',') + '.' + dec;
+		if (v < 0) return '($' + s + ')';
+		return '$' + s;
+	},
+
+	_fmtCons(v) {
+		var abs = Math.abs(v);
+		var intPart = Math.round(abs).toString();
+		var groups = [];
+		while (intPart.length > 3) {
+			groups.unshift(intPart.slice(-3));
+			intPart = intPart.slice(0, -3);
+		}
+		groups.unshift(intPart);
+		return groups.join(',');
+	},
+
+	_fmtAxisK(v) {
+		if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
+		if (v >= 1000) return (v / 1000).toFixed(0) + 'K';
+		return '' + v;
+	},
+
 	getChartConfig() {
 		var byKM = this._getMonthlyDetail();
 		var self = this;
@@ -137,19 +172,30 @@ export default {
 				var x = Number(d.consumption.toFixed(2));
 				var y = Number(d.charges.toFixed(2));
 				allPoints.push([x, y]);
-				return {
-					value: [x, y],
-					monthYear: self._formatMonthYear(mk),
-					groupName: k
-				};
+				var tip = '<table style="border-collapse:collapse">'
+					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Month Year</td><td style="padding:2px 8px">' + self._formatMonthYear(mk) + '</td></tr>'
+					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">' + label + '</td><td style="padding:2px 8px">' + k + '</td></tr>'
+					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Consumption</td><td style="padding:2px 8px">' + self._fmtCons(x) + '</td></tr>'
+					+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Charges</td><td style="padding:2px 8px">' + self._fmtNum(y) + '</td></tr>'
+					+ '</table>';
+				return { value: [x, y], tip: tip };
 			});
 			return {
 				name: k,
 				type: 'scatter',
 				symbolSize: 10,
 				itemStyle: { color: color },
-				data: pts
+				data: pts,
+				tooltip: { formatter: '{b}' }
 			};
+		});
+
+		/* build pre-formatted tooltip into data name field */
+		series.forEach(function(s) {
+			if (s.type !== 'scatter') return;
+			s.data = s.data.map(function(pt) {
+				return { value: pt.value, name: pt.tip };
+			});
 		});
 
 		var reg = this._linearRegression(allPoints);
@@ -166,8 +212,27 @@ export default {
 				lineStyle: { type: 'dashed', color: '#64748b', width: 2 },
 				itemStyle: { color: '#64748b' },
 				data: [[minX, Number(y1.toFixed(2))], [maxX, Number(y2.toFixed(2))]],
+				tooltip: { show: false },
 				z: 0
 			});
+		}
+
+		/* pre-compute axis label map */
+		var allX = allPoints.map(function(p) { return p[0]; });
+		var allY = allPoints.map(function(p) { return p[1]; });
+		var maxX2 = allX.length > 0 ? Math.max.apply(null, allX) : 0;
+		var maxY2 = allY.length > 0 ? Math.max.apply(null, allY) : 0;
+
+		var xLabels = {};
+		var xStep = maxX2 > 1000000 ? 200000 : maxX2 > 100000 ? 50000 : 10000;
+		for (var xi = 0; xi <= maxX2 * 1.2; xi += xStep) {
+			xLabels[xi] = self._fmtAxisK(xi);
+		}
+
+		var yLabels = {};
+		var yStep = maxY2 > 100000 ? 50000 : maxY2 > 10000 ? 10000 : 1000;
+		for (var yi = 0; yi <= maxY2 * 1.2; yi += yStep) {
+			yLabels[yi] = '$' + self._fmtAxisK(yi);
 		}
 
 		return {
@@ -175,27 +240,10 @@ export default {
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: '#ffffff',
-				textStyle: { color: '#1e293b' },
+				textStyle: { color: '#1e293b', fontSize: 13 },
 				borderColor: '#e2e8f0',
 				borderWidth: 1,
-				formatter: function(p) {
-					if (p.seriesName === 'Trend') return '';
-					var my = p.data.monthYear || '';
-					var gn = p.data.groupName || p.seriesName;
-					var cons = Number(p.value[0]).toLocaleString();
-					var chg = Number(p.value[1]).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-					if (Number(p.value[1]) < 0) {
-						chg = '($' + Math.abs(Number(p.value[1])).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ')';
-					} else {
-						chg = '$' + chg;
-					}
-					return '<table style="border-collapse:collapse">'
-						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Month Year</td><td style="padding:2px 8px">' + my + '</td></tr>'
-						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">' + label + '</td><td style="padding:2px 8px">' + gn + '</td></tr>'
-						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Consumption</td><td style="padding:2px 8px">' + cons + '</td></tr>'
-						+ '<tr><td style="text-align:right;padding:2px 8px;font-weight:600">Charges</td><td style="padding:2px 8px">' + chg + '</td></tr>'
-						+ '</table>';
-				}
+				confine: true
 			},
 			legend: {
 				type: 'scroll',
@@ -215,15 +263,8 @@ export default {
 				nameLocation: 'middle',
 				nameGap: 40,
 				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: {
-					color: '#94a3b8',
-					formatter: function(v) {
-						if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
-						if (v >= 1000) return (v / 1000).toFixed(0) + 'K';
-						return v;
-					}
-				},
-				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.3)', type: 'dotted' } }
+				axisLabel: { color: '#94a3b8' },
+				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.25)', type: [2, 4], width: 1 } }
 			},
 			yAxis: {
 				type: 'value',
@@ -231,14 +272,8 @@ export default {
 				nameLocation: 'middle',
 				nameGap: 55,
 				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: {
-					color: '#94a3b8',
-					formatter: function(v) {
-						if (v >= 1000) return '$' + (v / 1000).toFixed(0) + 'K';
-						return '$' + v;
-					}
-				},
-				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.3)', type: 'dotted' } }
+				axisLabel: { color: '#94a3b8' },
+				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.25)', type: [2, 4], width: 1 } }
 			},
 			dataZoom: [
 				{
