@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 140,
+  "bottomRow": 143,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1110,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -56,7 +56,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1110,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -101,7 +101,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1110,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -281,7 +281,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1110,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -326,7 +326,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1120,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -371,7 +371,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1120,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -416,7 +416,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1110,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -461,7 +461,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1110,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -503,6 +503,51 @@
       "version": 1,
       "widgetId": "chcanvas0001",
       "widgetName": "Canvas22"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1140,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "cfkey0001a",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 720,
+      "minWidth": 450,
+      "mobileBottomRow": 721,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabchforecast001",
+      "tabName": "Charges Forecast",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "cfcanvas0001",
+      "widgetName": "Canvas23"
     }
   ],
   "defaultTab": "Rank of Locations",
@@ -539,7 +584,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{AnalyticsHelper.setDefaults();}}",
-  "originalBottomRow": 140,
+  "originalBottomRow": 143,
   "originalTopRow": 25,
   "parentColumnSpace": 16.453125,
   "parentId": "b8l49xalbh",
@@ -564,6 +609,13 @@
       "isVisible": true,
       "label": "Charges",
       "widgetId": "chcanvas0001"
+    },
+    "tabchforecast001": {
+      "id": "tabchforecast001",
+      "index": 11,
+      "isVisible": true,
+      "label": "Charges Forecast",
+      "widgetId": "cfcanvas0001"
     },
     "tablq3g17x77s": {
       "id": "tablq3g17x77s",

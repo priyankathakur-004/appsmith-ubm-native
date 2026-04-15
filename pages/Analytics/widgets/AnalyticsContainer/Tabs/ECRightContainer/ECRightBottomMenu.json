@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 45,
+  "bottomRow": 47,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -63,7 +63,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "rightColumn": 63,
-  "topRow": 41,
+  "topRow": 43,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "md64bdftq9",

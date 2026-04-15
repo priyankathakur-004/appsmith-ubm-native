@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 4,
+  "bottomRow": 5,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -11,6 +11,7 @@
       "key": "fontFamily"
     }
   ],
+  "dynamicHeight": "AUTO_HEIGHT",
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
   "fontSize": "0.875rem",
@@ -19,15 +20,20 @@
   "isVisible": true,
   "key": "txt_info",
   "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "mobileBottomRow": 4,
   "mobileLeftColumn": 1,
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
+  "originalBottomRow": 4,
+  "originalTopRow": 1,
   "parentColumnSpace": 15,
   "parentId": "xzbz0p88pf",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 48,
+  "shouldScrollContents": true,
   "text": "{{RankLocationHelper.getInfoText()}}",
   "textAlign": "LEFT",
   "textColor": "#ac6c2f",

@@ -56,6 +56,10 @@ export default {
 						data = ChargesHelper.getTableData();
 				}
 
+				if (Tabs.selectedTab === 'Charges Forecast') {
+						data = ChargesForecastHelper.getTableData();
+				}
+
 				if (Tabs.selectedTab === 'Over the Years') {
 						if (appsmith.store.chartName === 'OTY_Charges')
 							data = OverTheYearsHelper.getChargesTable();

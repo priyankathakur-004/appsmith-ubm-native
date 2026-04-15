@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_cfr_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_cfr_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_cfr_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_cfr_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cfrmnuk1",
+  "leftColumn": 58,
+  "menuColor": "#ffffff",
+  "menuItems": {
+    "mi_cfr_exp": {
+      "id": "mi_cfr_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'CF_Monthly');\ndownload(\n  [Object.keys(ChargesForecastHelper.getMonthlyTableData()[0] || {}).join(',')]\n    .concat(ChargesForecastHelper.getMonthlyTableData().map(row => Object.values(row).join(',')))\n    .join('\\n'),\n  'charges_monthly_forecast.csv', 'text/csv'\n);\n}}",
+      "widgetId": "cfr_exp01"
+    },
+    "mi_cfr_tbl": {
+      "id": "mi_cfr_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'CF_Monthly');\nshowModal(showTable.name);\n}}",
+      "widgetId": "cfr_tbl01"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 58,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "parentColumnSpace": 15,
+  "parentId": "cfrcanv0001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 1,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "cfrmnu0001",
+  "widgetName": "CFRightMenu"
+}

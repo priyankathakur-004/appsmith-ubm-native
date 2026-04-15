@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
+  "bottomRow": 9,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -23,6 +23,8 @@
   "mobileLeftColumn": 1,
   "mobileRightColumn": 64,
   "mobileTopRow": 4,
+  "originalBottomRow": 8,
+  "originalTopRow": 4,
   "parentColumnSpace": 15,
   "parentId": "xzbz0p88pf",
   "parentRowSpace": 10,
@@ -31,7 +33,7 @@
   "text": "{{RankLocationHelper.getChartTitle()}}",
   "textAlign": "CENTER",
   "textColor": "#ffffff",
-  "topRow": 4,
+  "topRow": 5,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "q01pdtzkq5",
