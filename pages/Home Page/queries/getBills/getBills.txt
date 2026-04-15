@@ -34,7 +34,7 @@ LEFT JOIN bill_management_v2.analytics_bills_items abi
     ON br.id = abi.bill_record_id
 LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac
     ON abi.bill_id = btac.bill_id
-WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue }}
+WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue || 76013}}
 {{ FilterUtils.generateSqlWhereClause(this.params.filters) }}
 LIMIT {{ this.params.pageSize ? this.params.pageSize : 1000}}
 OFFSET {{ (this.params.pageNo - 1) * this.params.pageSize }};
