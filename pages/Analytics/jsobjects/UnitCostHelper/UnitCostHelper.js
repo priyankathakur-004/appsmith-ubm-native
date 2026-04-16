@@ -121,47 +121,89 @@ export default {
 		var months = this._getAllMonths(byKM);
 		var monthLabels = months.map(function(m) { return self._formatMonthYear(m); });
 
-		var series = keys.map(function(k, i) {
+		var series = [];
+		keys.forEach(function(k, i) {
 			var color = self._color(i);
-			var data = months.map(function(mk) {
+			var data = [];
+			months.forEach(function(mk, idx) {
 				var b = byKM[k][mk];
-				if (!b) return 0;
-				return Number(b.unitCost.toFixed(3));
+				if (!b) return;
+				var v = Number(b.unitCost.toFixed(3));
+				if (v === 0) return;
+				data.push([idx, v]);
 			});
-			return {
+			if (data.length === 0) return;
+			series.push({
 				name: k,
 				type: 'line',
 				itemStyle: { color: color },
 				data: data
-			};
+			});
 		});
+		keys = series.map(function(s) { return s.name; });
 
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: {
-				trigger: 'axis'
+				trigger: 'axis',
+				backgroundColor: '#0F172A',
+				borderColor: '#334155',
+				textStyle: { color: '#E2E8F0' }
 			},
 			legend: {
 				type: 'scroll',
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				textStyle: { color: '#E2E8F0', fontSize: 11 },
+				pageTextStyle: { color: '#94A3B8' },
+				pageIconColor: '#94A3B8',
+				pageIconInactiveColor: '#334155',
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
 			},
-			grid: { left: 70, right: 200, top: 40, bottom: 60 },
+			grid: { left: 80, right: 160, top: 20, bottom: 60 },
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: '#94a3b8' }
+				axisLabel: { color: '#CBD5E1', fontSize: 11 },
+				axisLine: { lineStyle: { color: '#475569' } },
+				splitLine: { show: false }
 			},
 			yAxis: {
 				type: 'value',
-				axisLabel: { color: '#94a3b8' },
-				splitLine: { lineStyle: { color: '#334155' } }
+				name: 'Unit Cost',
+				nameLocation: 'middle',
+				nameGap: 55,
+				nameTextStyle: { color: '#CBD5E1', fontSize: 12 },
+				axisLabel: { color: '#CBD5E1' },
+				axisLine: { lineStyle: { color: '#475569' } },
+				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
 			},
+			dataZoom: [
+				{
+					type: 'slider',
+					yAxisIndex: 0,
+					left: 5,
+					width: 14,
+					start: 0,
+					end: 100,
+					borderColor: '#334155',
+					backgroundColor: '#0f172a',
+					fillerColor: 'rgba(59,130,246,0.18)',
+					handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
+					textStyle: { color: '#94a3b8' },
+					showDetail: false
+				},
+				{
+					type: 'inside',
+					yAxisIndex: 0,
+					zoomOnMouseWheel: true,
+					moveOnMouseWheel: false,
+					throttle: 50
+				}
+			],
 			series: series
 		};
 	},

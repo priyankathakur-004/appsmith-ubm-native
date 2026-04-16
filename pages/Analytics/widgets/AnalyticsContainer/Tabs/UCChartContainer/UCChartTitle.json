@@ -26,7 +26,7 @@
   "rightColumn": 55,
   "shouldTruncate": false,
   "text": "{{UnitCostHelper.getChartTitle()}}",
-  "textAlign": "LEFT",
+  "textAlign": "CENTER",
   "textColor": "#e2e8f0",
   "topRow": 1,
   "type": "TEXT_WIDGET",

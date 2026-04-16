@@ -249,15 +249,14 @@ export default {
 		var self = this;
 		var months = groups.map(function(g) { return self.getMonthYearLabel(g.my + '-01'); });
 
-		// Charge-type order + colors loosely mirror the Power BI swatches.
 		var stacks = [
-			{ key: 'customer',            name: 'Customer Charges',    color: '#3b82f6' },
-			{ key: 'commodity',           name: 'Commodity Charges',   color: '#1e3a8a' },
-			{ key: 'generation',          name: 'Generation Charges',  color: '#84cc16' },
-			{ key: 'other',               name: 'Other Charges',       color: '#1e293b' },
-			{ key: 'taxes',               name: 'Taxes',               color: '#16a34a' },
-			{ key: 'demand',              name: 'Demand Charges',      color: '#0f172a' },
-			{ key: 'consumption_charges', name: 'Consumption Charges', color: '#172554' }
+			{ key: 'customer',            name: 'Customer Charges',    color: '#60a5fa' },
+			{ key: 'commodity',           name: 'Commodity Charges',   color: '#818cf8' },
+			{ key: 'generation',          name: 'Generation Charges',  color: '#a3e635' },
+			{ key: 'other',               name: 'Other Charges',       color: '#fbbf24' },
+			{ key: 'taxes',               name: 'Taxes',               color: '#34d399' },
+			{ key: 'demand',              name: 'Demand Charges',      color: '#f472b6' },
+			{ key: 'consumption_charges', name: 'Consumption Charges', color: '#22d3ee' }
 		];
 
 		var series = stacks.map(function(s) {
@@ -279,8 +278,8 @@ export default {
 			yAxisIndex: 0,
 			symbol: 'circle',
 			symbolSize: 6,
-			lineStyle: { color: '#cbd5e1', width: 2 },
-			itemStyle: { color: '#cbd5e1' },
+			lineStyle: { color: '#fb923c', width: 2 },
+			itemStyle: { color: '#fb923c' },
 			data: groups.map(function(g) { return Math.round((g.total_charges || 0) * 100) / 100; }),
 			z: 5
 		});
@@ -349,14 +348,14 @@ export default {
 				name: 'Total Consumption',
 				type: 'bar',
 				barMaxWidth: 60,
-				itemStyle: { color: '#3b82f6' },
+				itemStyle: { color: '#60a5fa' },
 				data: groups.map(function(g) { return Math.round((g.total_consumption || 0) * 100) / 100; })
 			},
 			{
 				name: 'Generation Consumption',
 				type: 'bar',
 				barMaxWidth: 60,
-				itemStyle: { color: '#84cc16' },
+				itemStyle: { color: '#a3e635' },
 				data: groups.map(function(g) { return Math.round((g.total_gen_consumption || 0) * 100) / 100; })
 			}
 		];
@@ -425,11 +424,11 @@ export default {
 		var zeros = groups.map(function() { return 0; });
 
 		var peaks = [
-			{ name: 'Mid-peak Consumption Charges',     color: '#3b82f6' },
-			{ name: 'Off-peak Consumption Charges',     color: '#1e3a8a' },
-			{ name: 'On-Peak Consumption Charges',      color: '#84cc16' },
-			{ name: 'Shoulder-Peak Consumption Charges',color: '#1e293b' },
-			{ name: 'Super-Peak Consumption Charges',   color: '#16a34a' }
+			{ name: 'Mid-peak Consumption Charges',     color: '#60a5fa' },
+			{ name: 'Off-peak Consumption Charges',     color: '#818cf8' },
+			{ name: 'On-Peak Consumption Charges',      color: '#a3e635' },
+			{ name: 'Shoulder-Peak Consumption Charges',color: '#fbbf24' },
+			{ name: 'Super-Peak Consumption Charges',   color: '#34d399' }
 		];
 
 		var series = peaks.map(function(p) {
@@ -449,8 +448,8 @@ export default {
 			type: 'line',
 			symbol: 'circle',
 			symbolSize: 6,
-			lineStyle: { color: '#14532d', width: 3 },
-			itemStyle: { color: '#14532d' },
+			lineStyle: { color: '#f472b6', width: 3 },
+			itemStyle: { color: '#f472b6' },
 			data: groups.map(function(g) { return Math.round((g.consumption_charges || 0) * 100) / 100; })
 		});
 
@@ -516,11 +515,11 @@ export default {
 		var zeros = groups.map(function() { return 0; });
 
 		var peaks = [
-			{ name: 'Shoulder-Peak Consumption', color: '#3b82f6' },
-			{ name: 'Super-Peak Consumption',    color: '#1e3a8a' },
-			{ name: 'Super-Offpeak Consumption', color: '#84cc16' },
-			{ name: 'Off-Peak Consumption',      color: '#1e293b' },
-			{ name: 'On-Peak Consumption',       color: '#16a34a' }
+			{ name: 'Shoulder-Peak Consumption', color: '#60a5fa' },
+			{ name: 'Super-Peak Consumption',    color: '#818cf8' },
+			{ name: 'Super-Offpeak Consumption', color: '#a3e635' },
+			{ name: 'Off-Peak Consumption',      color: '#fbbf24' },
+			{ name: 'On-Peak Consumption',       color: '#34d399' }
 		];
 
 		var series = peaks.map(function(p) {
@@ -540,8 +539,8 @@ export default {
 			type: 'line',
 			symbol: 'circle',
 			symbolSize: 6,
-			lineStyle: { color: '#14532d', width: 3 },
-			itemStyle: { color: '#14532d' },
+			lineStyle: { color: '#f472b6', width: 3 },
+			itemStyle: { color: '#f472b6' },
 			data: groups.map(function(g) { return Math.round((g.total_consumption || 0) * 100) / 100; })
 		});
 

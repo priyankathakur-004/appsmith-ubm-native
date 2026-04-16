@@ -160,20 +160,25 @@ export default {
 		const colors = ['#3366CC','#22AA66','#DD8844','#555555','#8B5CF6','#EC4899','#06B6D4','#84CC16','#F97316','#6366F1','#14B8A6','#E11D48','#A855F7','#0EA5E9','#D946EF'];
 
 		const locations = Object.keys(byLocMonth).sort();
-		const series = locations.map((loc, idx) => {
-			const data = sortedMonths.map(m => {
+		const series = [];
+		locations.forEach((loc, idx) => {
+			const data = [];
+			sortedMonths.forEach((m, mi) => {
 				const d = (byLocMonth[loc] || {})[m];
-				if (!d) return 0;
-				return Number(this._computeValue(d, view).toFixed(2));
+				if (!d) return;
+				const v = Number(this._computeValue(d, view).toFixed(2));
+				if (v === 0) return;
+				data.push([mi, v]);
 			});
-			return {
+			if (data.length === 0) return;
+			series.push({
 				name: loc,
 				type: chartType,
 				data: data,
 				symbolSize: chartType === 'scatter' ? 10 : 6,
 				itemStyle: { color: colors[idx % colors.length] },
 				lineStyle: chartType === 'line' ? { width: 2 } : undefined
-			};
+			});
 		});
 
 		const yLabel = this._getYLabel(view, uomLabel);
