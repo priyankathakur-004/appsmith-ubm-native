@@ -18,7 +18,7 @@ export default {
 	},
 
 	getGroupOptions() {
-		var data = this._filteredData();
+		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		var view = this.getViewBy();
 		var self = this;
 		var set = {};
@@ -32,7 +32,7 @@ export default {
 	getSelectedGroup() {
 		var picked = (typeof CVLocCheckbox !== 'undefined' && CVLocCheckbox && CVLocCheckbox.model && CVLocCheckbox.model.selectedValue) || null;
 		if (picked) return [picked];
-		return this.getGroupOptions().map(function(o) { return o.value; });
+		return null;
 	},
 
 	getVendorOptions() {
@@ -46,47 +46,62 @@ export default {
 	},
 
 	getSelectedVendors() {
-		var v = appsmith.store.cvVendor;
-		if (!v || !Array.isArray(v) || v.length === 0) return null;
-		return v;
-	},
-
-	_filteredData() {
-		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		var view = this.getViewBy();
-		if (view === 'Location') {
-			var vendors = this.getSelectedVendors();
-			if (vendors) {
-				var vSet = {};
-				vendors.forEach(function(v) { vSet[v] = true; });
-				data = data.filter(function(r) {
-					return vSet[r.vendor_name || 'Unknown'];
-				});
-			}
+		if (view !== 'Location') return null;
+		var arr = null;
+		if (typeof CVVendorSelect !== 'undefined' && CVVendorSelect && CVVendorSelect.selectedOptionValueArr) {
+			arr = CVVendorSelect.selectedOptionValueArr;
 		}
-		return data;
+		if (!arr || !Array.isArray(arr) || arr.length === 0) return null;
+		return arr;
 	},
 
-	_getMonthlyDetail() {
-		var data = this._filteredData();
+	_getRawPoints() {
+		var data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		var view = this.getViewBy();
 		var selected = this.getSelectedGroup();
 		var self = this;
-		var sel = {};
-		selected.forEach(function(s) { sel[s] = true; });
+		var sel = null;
+		if (selected) {
+			sel = {};
+			selected.forEach(function(s) { sel[s] = true; });
+		}
 
-		var byKeyMonth = {};
+		/* vendor filter only for Location view */
+		var vendors = this.getSelectedVendors();
+		var vSet = null;
+		if (vendors) {
+			vSet = {};
+			vendors.forEach(function(v) { vSet[v] = true; });
+		}
+
+		var points = [];
 		data.forEach(function(r) {
+			if (vSet && !vSet[r.vendor_name || 'Unknown']) return;
 			var key = self._rowKey(r, view);
-			if (!sel[key]) return;
+			if (sel && !sel[key]) return;
 			var mk = (r.time_period || '').substring(0, 7);
 			if (!mk) return;
-			if (!byKeyMonth[key]) byKeyMonth[key] = {};
-			if (!byKeyMonth[key][mk]) byKeyMonth[key][mk] = { consumption: 0, charges: 0 };
-			byKeyMonth[key][mk].consumption += parseFloat(r.consumption) || 0;
-			byKeyMonth[key][mk].charges += parseFloat(r.total_charges) || 0;
+			points.push({
+				key: key,
+				mk: mk,
+				consumption: parseFloat(r.consumption) || 0,
+				charges: parseFloat(r.total_charges) || 0
+			});
 		});
 
+		return points;
+	},
+
+	_getMonthlyDetail() {
+		var raw = this._getRawPoints();
+		var byKeyMonth = {};
+		raw.forEach(function(p) {
+			if (!byKeyMonth[p.key]) byKeyMonth[p.key] = {};
+			if (!byKeyMonth[p.key][p.mk]) byKeyMonth[p.key][p.mk] = { consumption: 0, charges: 0 };
+			byKeyMonth[p.key][p.mk].consumption += p.consumption;
+			byKeyMonth[p.key][p.mk].charges += p.charges;
+		});
 		return byKeyMonth;
 	},
 
@@ -157,6 +172,11 @@ export default {
 		return '' + v;
 	},
 
+	_pickScale(maxVal) {
+		if (maxVal >= 800000) return { divisor: 1000000, suffix: 'M' };
+		return { divisor: 1000, suffix: 'K' };
+	},
+
 	getChartConfig() {
 		var byKM = this._getMonthlyDetail();
 		var self = this;
@@ -164,51 +184,66 @@ export default {
 		var label = view === 'Service Account' ? 'Location, Service Acct' : view === 'Vendors' ? 'Vendor' : 'Location';
 
 		var keys = Object.keys(byKM).sort();
-		var allPoints = [];
-
-		var series = keys.map(function(k, i) {
-			var color = self._color(i);
+		var rawPoints = [];
+		keys.forEach(function(k) {
 			var months = Object.keys(byKM[k]).sort();
-			var pts = [];
 			months.forEach(function(mk) {
 				var d = byKM[k][mk];
-				var x = Number(d.consumption.toFixed(2));
-				var y = Number(d.charges.toFixed(2));
-				if (x === 0 && y === 0) return;
-				allPoints.push([x, y]);
-				var tip = 'Month Year   ' + self._formatMonthYear(mk)
-					+ '\n' + label + '   ' + k
-					+ '\nConsumption   ' + self._fmtCons(x)
-					+ '\nCharges   ' + self._fmtNum(y);
-				pts.push({ value: [x, y], name: tip });
+				rawPoints.push({ x: Number(d.consumption.toFixed(2)), y: Number(d.charges.toFixed(2)), key: k, mk: mk });
 			});
-			if (pts.length === 0) return null;
-			return {
+		});
+
+		var maxX = 0;
+		var maxY = 0;
+		rawPoints.forEach(function(p) {
+			if (Math.abs(p.x) > maxX) maxX = Math.abs(p.x);
+			if (Math.abs(p.y) > maxY) maxY = Math.abs(p.y);
+		});
+
+		var xScale = this._pickScale(maxX);
+		var yScale = this._pickScale(maxY);
+
+		var allScaled = [];
+		var seriesMap = {};
+		rawPoints.forEach(function(p) {
+			var sx = Number((p.x / xScale.divisor).toFixed(4));
+			var sy = Number((p.y / yScale.divisor).toFixed(4));
+			allScaled.push([sx, sy]);
+			var tip = 'Month Year   ' + self._formatMonthYear(p.mk)
+				+ '\n' + label + '   ' + p.key
+				+ '\nConsumption   ' + self._fmtCons(p.x)
+				+ '\nCharges   ' + self._fmtNum(p.y);
+			if (!seriesMap[p.key]) seriesMap[p.key] = [];
+			seriesMap[p.key].push({ value: [sx, sy], name: tip });
+		});
+
+		var series = [];
+		keys.forEach(function(k, i) {
+			if (!seriesMap[k]) return;
+			series.push({
 				name: k,
 				type: 'scatter',
 				symbolSize: 10,
-				itemStyle: { color: color },
-				data: pts
-			};
+				itemStyle: { color: self._color(i) },
+				data: seriesMap[k]
+			});
 		});
-
-		series = series.filter(function(s) { return s !== null; });
 		keys = series.map(function(s) { return s.name; });
 
-		var reg = this._linearRegression(allPoints);
-		if (reg && allPoints.length >= 2) {
-			var xs = allPoints.map(function(p) { return p[0]; });
-			var minX = Math.min.apply(null, xs);
-			var maxX = Math.max.apply(null, xs);
-			var y1 = reg.slope * minX + reg.intercept;
-			var y2 = reg.slope * maxX + reg.intercept;
+		var reg = this._linearRegression(allScaled);
+		if (reg && allScaled.length >= 2) {
+			var xs = allScaled.map(function(p) { return p[0]; });
+			var minXs = Math.min.apply(null, xs);
+			var maxXs = Math.max.apply(null, xs);
+			var y1 = reg.slope * minXs + reg.intercept;
+			var y2 = reg.slope * maxXs + reg.intercept;
 			series.push({
 				name: 'Trend',
 				type: 'line',
 				showSymbol: false,
 				lineStyle: { type: 'dashed', color: '#64748b', width: 2 },
 				itemStyle: { color: '#64748b' },
-				data: [[minX, Number(y1.toFixed(2))], [maxX, Number(y2.toFixed(2))]],
+				data: [[minXs, Number(y1.toFixed(4))], [maxXs, Number(y2.toFixed(4))]],
 				tooltip: { show: false },
 				z: 0
 			});
@@ -244,7 +279,7 @@ export default {
 				nameLocation: 'middle',
 				nameGap: 40,
 				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8' },
+				axisLabel: { color: '#94a3b8', formatter: '{value}' + xScale.suffix },
 				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.25)', type: [2, 4], width: 1 } }
 			},
 			yAxis: {
@@ -253,7 +288,7 @@ export default {
 				nameLocation: 'middle',
 				nameGap: 55,
 				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8' },
+				axisLabel: { color: '#94a3b8', formatter: '${value}' + yScale.suffix },
 				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.25)', type: [2, 4], width: 1 } }
 			},
 			dataZoom: [
