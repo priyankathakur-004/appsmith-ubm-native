@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 55,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ovuttlkey1",
+  "leftColumn": 0,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 50,
+  "mobileTopRow": 51,
+  "parentColumnSpace": 15,
+  "parentId": "ovlcanv0001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 50,
+  "shouldTruncate": false,
+  "text": "Utility Summary",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 51,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "ovuttl0001",
+  "widgetName": "OVUtilityTitle"
+}
