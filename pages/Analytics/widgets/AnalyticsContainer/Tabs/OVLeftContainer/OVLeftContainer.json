@@ -4,11 +4,11 @@
   "borderColor": "transparent",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 115,
+  "bottomRow": 96,
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 1150,
+      "bottomRow": 960,
       "boxShadow": "none",
       "canExtend": false,
       "dynamicBindingPathList": [],
@@ -45,7 +45,7 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "start",
   "isCanvas": true,
@@ -61,8 +61,6 @@
   "mobileRightColumn": 32,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "originalBottomRow": 115,
-  "originalTopRow": 0,
   "parentColumnSpace": 15,
   "parentId": "ovcanvas0001",
   "parentRowSpace": 10,

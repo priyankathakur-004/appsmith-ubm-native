@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 53,
+  "bottomRow": 52,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -61,7 +61,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 49,
+  "topRow": 48,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "ovmapmnu0001",

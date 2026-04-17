@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 128,
+  "bottomRow": 127,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1200,
+      "bottomRow": 980,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -56,7 +56,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 990,
+      "bottomRow": 980,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -327,7 +327,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 990,
+      "bottomRow": 980,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -552,7 +552,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 990,
+      "bottomRow": 980,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -720,7 +720,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{AnalyticsHelper.setDefaults();}}",
-  "originalBottomRow": 140,
+  "originalBottomRow": 127,
   "originalTopRow": 25,
   "parentColumnSpace": 16.453125,
   "parentId": "b8l49xalbh",
@@ -731,13 +731,6 @@
   "shouldScrollContents": true,
   "shouldShowTabs": true,
   "tabsObj": {
-    "taboverview001": {
-      "id": "taboverview001",
-      "index": 0,
-      "isVisible": true,
-      "label": "Overview",
-      "widgetId": "ovcanvas0001"
-    },
     "tab1": {
       "id": "tab1",
       "index": 1,
@@ -787,6 +780,13 @@
       "isVisible": true,
       "label": "Monthly Electric Demand",
       "widgetId": "medcanvas0001"
+    },
+    "taboverview001": {
+      "id": "taboverview001",
+      "index": 0,
+      "isVisible": true,
+      "label": "Overview",
+      "widgetId": "ovcanvas0001"
     },
     "tabs2n862hy0g": {
       "id": "tabs2n862hy0g",

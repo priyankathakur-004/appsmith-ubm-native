@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 113,
+  "bottomRow": 94,
   "boxShadow": "none",
   "defaultMarkers": "{{OverviewHelper.getMapMarkers()}}",
   "dynamicBindingPathList": [
@@ -17,7 +17,6 @@
       "key": "onMarkerClick"
     }
   ],
-  "onMarkerClick": "{{\nstoreValue('otyClickedLocation', OVMap.selectedMarker?.title);\nshowModal(showLocationInfo.name);\n}}",
   "enablePickLocation": false,
   "enableSearch": false,
   "isClickedMarkerCentered": true,
@@ -30,12 +29,13 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 49,
+  "onMarkerClick": "{{\nstoreValue('otyClickedLocation', OVMap.selectedMarker?.title);\nshowModal(showLocationInfo.name);\n}}",
   "parentColumnSpace": 15,
   "parentId": "ovrcanv0001",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 49,
+  "topRow": 52,
   "type": "MAP_WIDGET",
   "version": 1,
   "widgetId": "ovmap0001",

@@ -222,8 +222,8 @@ export default {
 
 	getUtilitySummaryHtml() {
 		var tbl = this.getUtilityTable();
-		var thStyle = 'padding:8px 12px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;';
-		var tdStyle = 'padding:8px 12px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;';
+		var thStyle = 'padding:14px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;';
+		var tdStyle = 'padding:14px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;';
 		var header = '<tr style="background:#334155;">'
 			+ '<th style="' + thStyle + 'text-align:left;">Utility Type</th>'
 			+ '<th style="' + thStyle + 'text-align:right;">Charges</th>'

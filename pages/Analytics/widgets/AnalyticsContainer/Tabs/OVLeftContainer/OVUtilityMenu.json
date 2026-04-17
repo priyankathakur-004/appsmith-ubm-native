@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 55,
+  "bottomRow": 35,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -29,7 +29,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "ovutmnukey1",
-  "leftColumn": 60,
+  "leftColumn": 58,
   "menuColor": "#ffffff",
   "menuItems": {
     "menuItemovutexport": {
@@ -55,13 +55,15 @@
   "mobileLeftColumn": 60,
   "mobileRightColumn": 64,
   "mobileTopRow": 51,
+  "originalBottomRow": 32,
+  "originalTopRow": 28,
   "parentColumnSpace": 15,
   "parentId": "ovlcanv0001",
   "parentRowSpace": 10,
   "placement": "CENTER",
   "renderMode": "CANVAS",
-  "rightColumn": 64,
-  "topRow": 51,
+  "rightColumn": 63,
+  "topRow": 31,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "ovutmnu0001",
