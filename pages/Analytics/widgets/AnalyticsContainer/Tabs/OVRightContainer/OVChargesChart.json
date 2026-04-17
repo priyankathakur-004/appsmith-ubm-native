@@ -1,10 +1,10 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 135,
+  "bottomRow": 48,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{UtilityTreeHelper.getTreeChartConfig()}}",
+  "customEChartConfig": "{{OverviewHelper.getChargesOverYearsConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"
@@ -13,28 +13,23 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [
-    {
-      "key": "onDataPointClick"
-    }
-  ],
+  "dynamicTriggerPathList": [],
   "isLoading": false,
   "isVisible": true,
-  "key": "fgwun0siyq",
+  "key": "ovcychartkey1",
   "leftColumn": 0,
-  "mobileBottomRow": 330,
+  "mobileBottomRow": 48,
   "mobileLeftColumn": 0,
-  "mobileRightColumn": 64,
-  "mobileTopRow": 9,
-  "onDataPointClick": "{{UtilityTreeHelper.handleNodeClick()}}",
+  "mobileRightColumn": 33,
+  "mobileTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "u3ysd6l4t8",
+  "parentId": "ovrcanv0001",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 64,
-  "topRow": 10,
+  "rightColumn": 33,
+  "topRow": 4,
   "type": "CHART_WIDGET",
   "version": 1,
-  "widgetId": "wzentow3tj",
-  "widgetName": "UTTreeChart"
+  "widgetId": "ovcychart0001",
+  "widgetName": "OVChargesChart"
 }

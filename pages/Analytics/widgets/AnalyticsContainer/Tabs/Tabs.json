@@ -5,12 +5,58 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 128,
+  "bottomRow": 178,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 990,
+      "bottomRow": 1490,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "ovcanvaskey1",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "0cus04a0ok",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "taboverview001",
+      "tabName": "Overview",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "ovcanvas0001",
+      "widgetName": "Canvas30"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -56,7 +102,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1050,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -101,7 +147,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1060,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -146,7 +192,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -191,7 +237,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1140,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -236,7 +282,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1470,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -281,7 +327,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 990,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -326,7 +372,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1120,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -371,7 +417,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1120,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -416,7 +462,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1090,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -461,7 +507,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1090,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -506,7 +552,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 990,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -551,7 +597,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1090,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -596,7 +642,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1090,
+      "bottomRow": 1490,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -640,7 +686,7 @@
       "widgetName": "Canvas25"
     }
   ],
-  "defaultTab": "Rank of Locations",
+  "defaultTab": "Overview",
   "dynamicBindingPathList": [
     {
       "key": "backgroundColor"
@@ -674,7 +720,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{AnalyticsHelper.setDefaults();}}",
-  "originalBottomRow": 140,
+  "originalBottomRow": 127,
   "originalTopRow": 25,
   "parentColumnSpace": 16.453125,
   "parentId": "b8l49xalbh",
@@ -687,7 +733,7 @@
   "tabsObj": {
     "tab1": {
       "id": "tab1",
-      "index": 0,
+      "index": 1,
       "isVisible": true,
       "label": "Rank of Locations",
       "positioning": "vertical",
@@ -695,91 +741,98 @@
     },
     "tabcharges001": {
       "id": "tabcharges001",
-      "index": 10,
+      "index": 11,
       "isVisible": true,
       "label": "Charges",
       "widgetId": "chcanvas0001"
     },
     "tabchforecast001": {
       "id": "tabchforecast001",
-      "index": 11,
+      "index": 12,
       "isVisible": true,
       "label": "Charges Forecast",
       "widgetId": "cfcanvas0001"
     },
     "tabchvscons001": {
       "id": "tabchvscons001",
-      "index": 13,
+      "index": 14,
       "isVisible": true,
       "label": "Charges vs Consumption",
       "widgetId": "cvcanvas0001"
     },
     "tabconsumption001": {
       "id": "tabconsumption001",
-      "index": 12,
+      "index": 13,
       "isVisible": true,
       "label": "Consumption",
       "widgetId": "cncanvas0001"
     },
     "tablq3g17x77s": {
       "id": "tablq3g17x77s",
-      "index": 3,
+      "index": 4,
       "isVisible": true,
       "label": "Monthly Energy Consumption",
       "widgetId": "jta8d1riq2"
     },
     "tabmedab12345": {
       "id": "tabmedab12345",
-      "index": 8,
+      "index": 9,
       "isVisible": true,
       "label": "Monthly Electric Demand",
       "widgetId": "medcanvas0001"
     },
+    "taboverview001": {
+      "id": "taboverview001",
+      "index": 0,
+      "isVisible": true,
+      "label": "Overview",
+      "widgetId": "ovcanvas0001"
+    },
     "tabs2n862hy0g": {
       "id": "tabs2n862hy0g",
-      "index": 2,
+      "index": 3,
       "isVisible": true,
       "label": "Energy Consumption",
       "widgetId": "ck1dopp8ku"
     },
     "tabszk2y72wzh": {
       "id": "tabszk2y72wzh",
-      "index": 6,
+      "index": 7,
       "isVisible": true,
       "label": "Location Details",
       "widgetId": "uknl3yqu8w"
     },
     "tabunitcost001": {
       "id": "tabunitcost001",
-      "index": 9,
+      "index": 10,
       "isVisible": true,
       "label": "Unit Cost",
       "widgetId": "uccanvas0001"
     },
     "tabvm35spudlf": {
       "id": "tabvm35spudlf",
-      "index": 5,
+      "index": 6,
       "isVisible": true,
       "label": "Utility Tree",
       "widgetId": "13xc3a3tip"
     },
     "tabwjssfe2rkw": {
       "id": "tabwjssfe2rkw",
-      "index": 1,
+      "index": 2,
       "isVisible": true,
       "label": "Weather Sensitivity",
       "widgetId": "2dfhkpjwsx"
     },
     "tabx3afn5wcwl": {
       "id": "tabx3afn5wcwl",
-      "index": 4,
+      "index": 5,
       "isVisible": true,
       "label": "Over the Years",
       "widgetId": "9wuv2dzdu5"
     },
     "tabxh99tfcdko": {
       "id": "tabxh99tfcdko",
-      "index": 7,
+      "index": 8,
       "isVisible": true,
       "label": "Per Square Feet",
       "widgetId": "i1dd5rvtpp"

@@ -3,7 +3,7 @@
   "borderColor": "",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 117,
+  "bottomRow": 274,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ {\ndata: ChargesVsConsumptionHelper.getGroupOptions(),\nselected: ChargesVsConsumptionHelper.getGroupOptions().map(o => o.value),\nheader: ChargesVsConsumptionHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
@@ -43,7 +43,7 @@
   "mobileTopRow": 145,
   "needsErrorInfo": false,
   "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 22,
+  "originalBottomRow": 117,
   "originalTopRow": 0,
   "parentColumnSpace": 16.734375,
   "parentId": "cvloccanv001",

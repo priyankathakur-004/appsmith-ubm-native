@@ -264,7 +264,7 @@ export default {
 
 		var rows = monthNames.map(function(mName, mIdx) {
 			var mo = (mIdx + 1 < 10 ? '0' : '') + (mIdx + 1);
-			var row = { 'Month/Year': mName };
+			var row = { 'Month': mName };
 			var total = 0;
 			years.forEach(function(yr, yi) {
 				var mk = yr + '-' + mo;
@@ -280,7 +280,7 @@ export default {
 			return row;
 		});
 
-		var totalRow = { 'Month/Year': 'Total' };
+		var totalRow = { 'Month': 'Total' };
 		var grandTotal = 0;
 		years.forEach(function(yr, yi) {
 			var yrTotal = 0;
@@ -294,6 +294,28 @@ export default {
 		rows.push(totalRow);
 
 		return rows;
+	},
+
+	getPivotHtml() {
+		var tbl = this.getTableData();
+		if (!tbl || !tbl.length) return '';
+		var keys = Object.keys(tbl[0]);
+		var thStyle = 'padding:8px 12px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;';
+		var tdStyle = 'padding:8px 12px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;';
+		var header = '<tr style="background:#334155;">' + keys.map(function(k) {
+			var align = k === 'Month' ? 'left' : 'right';
+			return '<th style="' + thStyle + 'text-align:' + align + ';">' + k.trim() + '</th>';
+		}).join('') + '</tr>';
+		var rows = tbl.map(function(r, idx) {
+			var isTotal = r['Month'] === 'Total';
+			var rowStyle = isTotal ? 'background:#334155;font-weight:700;' : '';
+			return '<tr style="' + rowStyle + '">' + keys.map(function(k) {
+				var align = k === 'Month' ? 'left' : 'right';
+				var fw = isTotal ? 'font-weight:700;' : '';
+				return '<td style="' + tdStyle + 'text-align:' + align + ';' + fw + '">' + (r[k] || '') + '</td>';
+			}).join('') + '</tr>';
+		}).join('');
+		return '<table style="width:100%;border-collapse:collapse;background:#1E293B;">' + header + rows + '</table>';
 	},
 
 	setDefaults() {
