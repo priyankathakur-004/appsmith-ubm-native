@@ -6,6 +6,9 @@
   "borderWidth": "1",
   "bottomRow": 50,
   "boxShadow": "none",
+  "dynamicHeight": "AUTO_HEIGHT",
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "dynamicBindingPathList": [
     {
       "key": "text"

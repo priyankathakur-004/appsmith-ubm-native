@@ -6,6 +6,9 @@
   "borderWidth": "1",
   "bottomRow": 113,
   "boxShadow": "none",
+  "dynamicHeight": "AUTO_HEIGHT",
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "dynamicBindingPathList": [
     {
       "key": "text"
@@ -36,7 +39,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 64,
   "shouldTruncate": false,
-  "text": "{{(function() { var tbl = OverviewHelper.getUtilityTable(); var header = '<tr style=\"background:#334155;\"><th style=\"padding:8px 12px;text-align:left;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;\">Utility Type</th><th style=\"padding:8px 12px;text-align:right;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;\">Charges</th><th style=\"padding:8px 12px;text-align:right;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;\">Unit Cost</th><th style=\"padding:8px 12px;text-align:right;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;\">Unit</th></tr>'; var rows = tbl.map(function(r) { return '<tr><td style=\"padding:8px 12px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;\">' + r['Utility Type'] + '</td><td style=\"padding:8px 12px;text-align:right;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;\">' + r['Charges'] + '</td><td style=\"padding:8px 12px;text-align:right;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;\">' + r['Unit Cost'] + '</td><td style=\"padding:8px 12px;text-align:right;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;\">' + r['Unit'] + '</td></tr>'; }).join(''); return '<table style=\"width:100%;border-collapse:collapse;background:#1E293B;\">' + header + rows + '</table>'; })()}}",
+  "text": "{{OverviewHelper.getUtilitySummaryHtml()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 55,
