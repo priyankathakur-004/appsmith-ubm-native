@@ -1,287 +1,50 @@
 {
-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
-  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 95,
-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "cachedTableData": {},
-  "canFreezeColumn": true,
-  "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
-  "childStylesheet": {
-    "button": {
-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "boxShadow": "none",
-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
-    },
-    "editActions": {
-      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
-      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
-    },
-    "iconButton": {
-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "boxShadow": "none",
-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
-    },
-    "menuButton": {
-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "boxShadow": "none",
-      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
-    }
-  },
-  "columnOrder": [
-    "Month_Year",
-    "xn__2026_o76a",
-    "xn__2025_o76a",
-    "Total"
-  ],
-  "columnUpdatedAt": 1776249457442,
-  "columnWidthMap": {
-    "Month_Year": 93,
-    "_2026": 98,
-    "xn__2025_o76a": 120,
-    "xn__2026_o76a": 102
-  },
-  "compactMode": "SHORT",
-  "customIsLoading": false,
-  "customIsLoadingValue": "",
-  "defaultPageSize": 0,
-  "defaultSelectedRowIndex": 0,
-  "defaultSelectedRowIndices": [
-    0
-  ],
-  "delimiter": ",",
+  "boxShadow": "none",
+  "dynamicHeight": "AUTO_HEIGHT",
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "boxShadow"
-    },
-    {
-      "key": "tableData"
-    },
-    {
-      "key": "primaryColumns.Month_Year.computedValue"
-    },
-    {
-      "key": "primaryColumns.Total.computedValue"
-    },
-    {
-      "key": "primaryColumns.xn__2026_o76a.computedValue"
-    },
-    {
-      "key": "primaryColumns.xn__2025_o76a.computedValue"
-    },
-    {
-      "key": "cellBackground"
-    },
-    {
-      "key": "primaryColumns.Total.cellBackground"
-    },
-    {
-      "key": "primaryColumns.Month_Year.cellBackground"
-    },
-    {
-      "key": "primaryColumns.xn__2026_o76a.cellBackground"
-    },
-    {
-      "key": "primaryColumns.xn__2025_o76a.cellBackground"
-    },
-    {
-      "key": "headerRowColor"
-    },
-    {
-      "key": "borderColor"
     }
   ],
-  "dynamicPropertyPathList": [
-    {
-      "key": "tableData"
-    }
-  ],
+  "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
-  "enableClientSideSearch": true,
-  "endOfData": false,
-  "flexVerticalAlignment": "start",
-  "headerRowColor": "{{appsmith.theme.colors.primaryColor}}",
-  "headerTextColor": "#ffffff",
-  "horizontalAlignment": "LEFT",
-  "inlineEditingSaveOption": "ROW_LEVEL",
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
   "isLoading": false,
-  "isSortable": true,
   "isVisible": true,
-  "isVisibleDownload": false,
-  "isVisibleFilters": false,
-  "isVisiblePagination": false,
-  "isVisibleSearch": false,
   "key": "bnicdqnlwb",
-  "label": "Data",
   "leftColumn": 0,
-  "minWidth": 450,
   "mobileBottomRow": 84,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 22,
   "mobileTopRow": 56,
-  "needsErrorInfo": false,
   "parentColumnSpace": 8.7841796875,
   "parentId": "cflcanv0001",
   "parentRowSpace": 10,
-  "primaryColumns": {
-    "Month_Year": {
-      "alias": "Month/Year",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Month/Year\"])) : Month/Year })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "horizontalAlignment": "LEFT",
-      "id": "Month_Year",
-      "index": 0,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "Month",
-      "notation": "standard",
-      "originalId": "Month/Year",
-      "sticky": "",
-      "textColor": "#ffffff",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    },
-    "Total": {
-      "alias": "Total",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Total\"])) : Total })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "horizontalAlignment": "LEFT",
-      "id": "Total",
-      "index": 1,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "Total",
-      "notation": "standard",
-      "originalId": "Total",
-      "sticky": "right",
-      "textColor": "#ffffff",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    },
-    "xn__2025_o76a": {
-      "alias": "2025 ",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"2025 \"])) : 2025  })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "xn__2025_o76a",
-      "index": 3,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "2025 ",
-      "notation": "standard",
-      "originalId": "2025 ",
-      "sticky": "",
-      "textColor": "#ffffff",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    },
-    "xn__2026_o76a": {
-      "alias": "2026 ",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "{{appsmith.theme.colors.primaryColor}}",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = CFPivotTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"2026 \"])) : 2026  })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "xn__2026_o76a",
-      "index": 2,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "2026 ",
-      "notation": "standard",
-      "originalId": "2026 ",
-      "sticky": "",
-      "textColor": "#ffffff",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    }
-  },
   "renderMode": "CANVAS",
-  "responsiveBehavior": "fill",
   "rightColumn": 64,
-  "searchKey": "",
-  "showInlineEditingOptionDropdown": true,
-  "tableData": "{{ChargesForecastHelper.getTableData()}}",
-  "textColor": "#ffffff",
-  "textSize": "0.875rem",
+  "shouldTruncate": false,
+  "text": "{{ChargesForecastHelper.getPivotHtml()}}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
   "topRow": 51,
-  "totalRecordsCount": 0,
-  "type": "TABLE_WIDGET_V2",
-  "version": 2,
-  "verticalAlignment": "CENTER",
+  "type": "TEXT_WIDGET",
+  "version": 1,
   "widgetId": "oyr1y4vc4r",
   "widgetName": "CFPivotTable"
 }

@@ -296,6 +296,28 @@ export default {
 		return rows;
 	},
 
+	getPivotHtml() {
+		var tbl = this.getTableData();
+		if (!tbl || !tbl.length) return '';
+		var keys = Object.keys(tbl[0]);
+		var thStyle = 'padding:8px 12px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;';
+		var tdStyle = 'padding:8px 12px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;';
+		var header = '<tr style="background:#334155;">' + keys.map(function(k) {
+			var align = k === 'Month/Year' ? 'left' : 'right';
+			return '<th style="' + thStyle + 'text-align:' + align + ';">' + k.trim() + '</th>';
+		}).join('') + '</tr>';
+		var rows = tbl.map(function(r, idx) {
+			var isTotal = r['Month/Year'] === 'Total';
+			var rowStyle = isTotal ? 'background:#334155;font-weight:700;' : '';
+			return '<tr style="' + rowStyle + '">' + keys.map(function(k) {
+				var align = k === 'Month/Year' ? 'left' : 'right';
+				var fw = isTotal ? 'font-weight:700;' : '';
+				return '<td style="' + tdStyle + 'text-align:' + align + ';' + fw + '">' + (r[k] || '') + '</td>';
+			}).join('') + '</tr>';
+		}).join('');
+		return '<table style="width:100%;border-collapse:collapse;background:#1E293B;">' + header + rows + '</table>';
+	},
+
 	setDefaults() {
 		// No view state needed for this tab
 	}
