@@ -101,7 +101,7 @@ export default {
 				const data = this.getTableData();
 				if (!data || !data.length) return '<div style="padding:20px;color:#94A3B8;text-align:center;">No data available</div>';
 				const keys = Object.keys(data[0]);
-				const thStyle = 'padding:10px 14px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;white-space:nowrap;';
+				const thStyle = 'padding:10px 14px;color:#F1F5F9;font-size:13px;font-weight:700;border-bottom:2px solid #475569;white-space:nowrap;';
 				const tdStyle = 'padding:10px 14px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;';
 				const header = '<tr style="background:#334155;">' + keys.map(k => '<th style="' + thStyle + 'text-align:left;">' + k + '</th>').join('') + '</tr>';
 				const rows = data.map(r => '<tr>' + keys.map(k => '<td style="' + tdStyle + '">' + (r[k] != null ? r[k] : '') + '</td>').join('') + '</tr>').join('');
