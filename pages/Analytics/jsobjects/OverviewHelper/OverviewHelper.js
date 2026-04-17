@@ -255,15 +255,16 @@ export default {
 			byYM[month][year] += parseFloat(r.total_charges) || 0;
 		});
 		var years = Object.keys(yearsSet).sort().reverse();
+		var yrKeys = years.map(function(yr) { return yr + '\u2009'; });
 		var mNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		var rows = [];
 		for (var m = 1; m <= 12; m++) {
 			var row = { 'Month': mNames[m - 1] };
 			var hasData = false;
-			years.forEach(function(yr) {
+			years.forEach(function(yr, yi) {
 				var v = (byYM[m] && byYM[m][yr]) || 0;
-				if (v !== 0) { row[yr] = '$' + Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); hasData = true; }
-				else { row[yr] = ''; }
+				if (v !== 0) { row[yrKeys[yi]] = '$' + Math.abs(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); hasData = true; }
+				else { row[yrKeys[yi]] = ''; }
 			});
 			if (hasData) rows.push(row);
 		}

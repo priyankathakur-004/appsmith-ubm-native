@@ -1,226 +1,53 @@
 {
-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
-  "borderColor": "#E0DEDE",
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 77,
-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "cachedTableData": {},
-  "canFreezeColumn": true,
-  "childStylesheet": {
-    "button": {
-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "boxShadow": "none",
-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
-    },
-    "editActions": {
-      "discardBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "discardButtonColor": "{{appsmith.theme.colors.primaryColor}}",
-      "saveBorderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "saveButtonColor": "{{appsmith.theme.colors.primaryColor}}"
-    },
-    "iconButton": {
-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "boxShadow": "none",
-      "buttonColor": "{{appsmith.theme.colors.primaryColor}}"
-    },
-    "menuButton": {
-      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "boxShadow": "none",
-      "menuColor": "{{appsmith.theme.colors.primaryColor}}"
-    }
-  },
-  "columnOrder": [
-    "Location_Latitude__Location_Longitude",
-    "Charges_YTD",
-    "Location_Address"
-  ],
-  "columnUpdatedAt": 1776415728291,
-  "columnWidthMap": {
-    "month": 308
-  },
-  "customIsLoading": false,
-  "customIsLoadingValue": "",
-  "defaultPageSize": 0,
-  "defaultSelectedRowIndex": 0,
-  "defaultSelectedRowIndices": [
-    0
-  ],
-  "delimiter": ",",
+  "boxShadow": "none",
+  "dynamicHeight": "AUTO_HEIGHT",
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "dynamicBindingPathList": [
     {
-      "key": "tableData"
+      "key": "text"
     },
     {
-      "key": "columnOrder"
-    },
-    {
-      "key": "accentColor"
+      "key": "fontFamily"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "boxShadow"
-    },
-    {
-      "key": "primaryColumns.Location_Latitude__Location_Longitude.computedValue"
-    },
-    {
-      "key": "primaryColumns.Charges_YTD.computedValue"
-    },
-    {
-      "key": "primaryColumns.Location_Address.computedValue"
     }
   ],
-  "dynamicPropertyPathList": [
-    {
-      "key": "tableData"
-    }
-  ],
+  "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
-  "enableClientSideSearch": true,
-  "endOfData": false,
-  "flexVerticalAlignment": "start",
-  "horizontalAlignment": "LEFT",
-  "inlineEditingSaveOption": "ROW_LEVEL",
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
   "isLoading": false,
-  "isSortable": true,
   "isVisible": true,
-  "isVisibleDownload": true,
-  "isVisibleFilters": false,
-  "isVisiblePagination": true,
-  "isVisibleSearch": true,
   "key": "7w7x1rug2r",
-  "label": "Data",
   "leftColumn": 0,
-  "minWidth": 450,
   "mobileBottomRow": 37,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 19,
   "mobileTopRow": 9,
-  "needsErrorInfo": false,
   "originalBottomRow": 81,
   "originalTopRow": 11,
   "parentColumnSpace": 6.9375,
   "parentId": "b38gwocsx3",
   "parentRowSpace": 10,
-  "primaryColumns": {
-    "Charges_YTD": {
-      "alias": "Charges YTD",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = Table1.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Charges YTD\"])) : Charges YTD })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "Charges_YTD",
-      "index": 1,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "Charges YTD",
-      "notation": "standard",
-      "originalId": "Charges YTD",
-      "sticky": "",
-      "textColor": "",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    },
-    "Location_Address": {
-      "alias": "Location Address",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = Table1.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Location Address\"])) : Location Address })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "Location_Address",
-      "index": 2,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "Location Address",
-      "notation": "standard",
-      "originalId": "Location Address",
-      "sticky": "",
-      "textColor": "",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    },
-    "Location_Latitude__Location_Longitude": {
-      "alias": "Location Latitude, Location Longitude",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
-      "columnType": "text",
-      "computedValue": "{{(() => { const tableData = Table1.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"Location Latitude, Location Longitude\"])) : Location Latitude, Location Longitude })()}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "Location_Latitude__Location_Longitude",
-      "index": 0,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "Location Latitude, Location Longitude",
-      "notation": "standard",
-      "originalId": "Location Latitude, Location Longitude",
-      "sticky": "",
-      "textColor": "",
-      "textSize": "0.875rem",
-      "thousandSeparator": true,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 150
-    }
-  },
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 63,
-  "searchKey": "",
-  "tableData": "{{AnalyticsHelper.getTableData()}}",
-  "textSize": "0.875rem",
+  "shouldTruncate": false,
+  "text": "{{AnalyticsHelper.getTableHtml()}}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
   "topRow": 4,
-  "totalRecordsCount": 0,
-  "type": "TABLE_WIDGET_V2",
-  "version": 2,
-  "verticalAlignment": "CENTER",
+  "type": "TEXT_WIDGET",
+  "version": 1,
   "widgetId": "ipxc7i5pck",
   "widgetName": "Table1"
 }

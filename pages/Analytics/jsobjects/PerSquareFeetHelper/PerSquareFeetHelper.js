@@ -408,13 +408,14 @@ export default {
 		// ConsPerSqft is rounded to whole numbers in the table (matches Power
 		// BI). The other views keep two decimals.
 		var roundWhole = (view === 'ConsPerSqft');
+		var yrKeys = years.map(function(yr) { return yr + '\u2009'; });
 		return locations.map(function(loc) {
 			var row = { 'Location': loc };
-			years.forEach(function(year) {
+			years.forEach(function(year, yi) {
 				var d = (byLocYear[loc] || {})[year];
-				if (!d) { row[year] = 0; return; }
+				if (!d) { row[yrKeys[yi]] = 0; return; }
 				var v = self.getValue(d, view);
-				row[year] = roundWhole ? Math.round(v) : Number(v.toFixed(2));
+				row[yrKeys[yi]] = roundWhole ? Math.round(v) : Number(v.toFixed(2));
 			});
 			return row;
 		});
