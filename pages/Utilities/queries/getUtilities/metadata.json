@@ -5,12 +5,12 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT commodity as utility FROM bill_management_v2.\"bill_items\" WHERE customer_id = 76013;",
+      "body": "SELECT DISTINCT commodity AS utility\nFROM bill_management_v2.\"bill_items\"\nWHERE customer_id = {{ CustomerSelect.selectedOptionValue || appsmith.store.selectedCustomerId || 76013 }}\nORDER BY utility;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
         {
-          "value": true
+          "value": false
         }
       ],
       "timeoutInMillisecond": 10000
@@ -22,10 +22,14 @@
       "name": "UBM_Database",
       "pluginId": "postgres-plugin"
     },
-    "dynamicBindingPathList": [],
+    "dynamicBindingPathList": [
+      {
+        "key": "body"
+      }
+    ],
     "name": "getUtilities",
     "pageId": "Utilities",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }

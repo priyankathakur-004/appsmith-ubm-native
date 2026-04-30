@@ -1,1 +1,4 @@
-SELECT DISTINCT commodity as utility FROM bill_management_v2."bill_items" WHERE customer_id = 76013;
+SELECT DISTINCT commodity AS utility
+FROM bill_management_v2."bill_items"
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue || appsmith.store.selectedCustomerId || 76013 }}
+ORDER BY utility;
