@@ -72,6 +72,10 @@
     {
       "id": "Analytics",
       "isDefault": false
+    },
+    {
+      "id": "Utilities",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
