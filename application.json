@@ -76,6 +76,10 @@
     {
       "id": "Utilities",
       "isDefault": false
+    },
+    {
+      "id": "Constellation Explorer",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
