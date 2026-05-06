@@ -26,6 +26,7 @@
   "isRequired": false,
   "isVisible": "{{ UBMUtils.requiresDates() }}",
   "key": "ce_startdate",
+  "label": "Start date",
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
