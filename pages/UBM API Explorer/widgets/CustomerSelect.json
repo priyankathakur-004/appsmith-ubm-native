@@ -49,7 +49,7 @@
   "mobileRightColumn": 30,
   "mobileTopRow": 7,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ (async () => { try { await UBMUtils.loginFor(CustomerSelect.selectedOptionValue); showAlert('Logged in as ' + CustomerSelect.selectedOptionLabel, 'success'); } catch(e) { showAlert('Login failed: ' + e.message, 'error'); } })() }}",
+  "onOptionChange": "{{ (async () => { try { await UBMUtils.loginFor(CustomerSelect.selectedOptionValue); showAlert('Connected to ' + CustomerSelect.selectedOptionLabel + ' — pick an endpoint and click Run', 'success'); } catch(e) { showAlert('Login failed: ' + e.message, 'error'); } })() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 14,
