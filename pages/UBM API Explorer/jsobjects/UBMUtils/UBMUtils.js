@@ -105,6 +105,15 @@ export default {
 		return Boolean(UBMUtils.currentSpec().requiresDates);
 	},
 
+	statusText: () => {
+		const r = UBMUtils.rows() || [];
+		if (r.length === 0) return "No data loaded — click Run to fetch.";
+		const picked = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
+			? FieldsSelect.selectedOptionValues.length + " columns selected"
+			: "all returned columns shown";
+		return r.length.toLocaleString() + " rows loaded · " + picked;
+	},
+
 	rows: () => {
 		const spec = UBMUtils.currentSpec();
 		const map = {

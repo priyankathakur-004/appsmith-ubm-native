@@ -43,7 +43,7 @@
   "mobileTopRow": 50,
   "needsErrorInfo": false,
   "originalBottomRow": 130,
-  "originalTopRow": 34,
+  "originalTopRow": 38,
   "parentColumnSpace": 16,
   "parentId": "0",
   "parentRowSpace": 10,
@@ -55,7 +55,7 @@
     "js": "function pretty(k){return k.charAt(0).toUpperCase()+k.slice(1).replace(/([A-Z])/g,' $1').trim();}\nfunction columnsFor(rows, picked){\n  const fields = (Array.isArray(picked) && picked.length>0)\n    ? picked\n    : (rows[0] ? Object.keys(rows[0]) : []);\n  return fields.map(f => ({\n    headerName: pretty(f),\n    field: f,\n    sortable: true,\n    filter: true,\n    resizable: true,\n    valueFormatter: p => (p.value && typeof p.value === 'object') ? JSON.stringify(p.value) : p.value\n  }));\n}\nfunction normalize(model){\n  return Array.isArray(model && model.rows) ? model.rows : [];\n}\nlet gridApi = null;\nfunction render(model){\n  const rows = normalize(model);\n  const cols = columnsFor(rows, model && model.columns);\n  const div = document.getElementById('aggrid-root');\n  if(!div) return;\n  div.innerHTML = '';\n  const opts = {\n    columnDefs: cols,\n    rowData: rows,\n    defaultColDef: { sortable:true, filter:true, resizable:true, minWidth:120 },\n    animateRows: true,\n    pagination: true,\n    paginationPageSize: 100,\n    onGridReady: (e) => { gridApi = e.api; }\n  };\n  new agGrid.Grid(div, opts);\n}\nappsmith.onReady(() => {\n  render(appsmith.model);\n  appsmith.onModelChange(render);\n});"
   },
   "theme": "{{appsmith.theme}}",
-  "topRow": 34,
+  "topRow": 38,
   "type": "CUSTOM_WIDGET",
   "uncompiledSrcDoc": {
     "css": ".app {\n\theight: calc(var(--appsmith-ui-height) * 1px);\n\twidth: calc(var(--appsmith-ui-width) * 1px);\n\tborder-radius: var(--appsmith-theme-borderRadius);\n\tbox-shadow: var(--appsmith-theme-boxShadow);\n\tpadding: 12px;\n\tbox-sizing: border-box;\n\tfont-family: system-ui;\n}\n.ag-theme-alpine .ag-header { background: #fff !important; color: #222 !important; }\n.ag-theme-alpine .ag-row-selected { background: var(--appsmith-theme-primaryColor) !important; color: #fff !important; }\n.ag-theme-alpine { border-radius: var(--appsmith-theme-borderRadius); box-shadow: var(--appsmith-theme-boxShadow); }",
