@@ -169,6 +169,16 @@ export default {
 				showAlert("Start and end dates are required for this endpoint", "warning");
 				return;
 			}
+			const start = moment(StartDate.selectedDate);
+			const end = moment(EndDate.selectedDate);
+			if (end.isBefore(start)) {
+				showAlert("End date must be on or after the start date", "error");
+				return;
+			}
+			if (end.diff(start, "days") > 31) {
+				showAlert("Date range can't exceed 31 days (this endpoint is rate-limited)", "error");
+				return;
+			}
 		}
 		const queries = { getAccounts, getVendors, getBills, getMonthlyFeed, getBillErrors };
 		await queries[spec.query].run();

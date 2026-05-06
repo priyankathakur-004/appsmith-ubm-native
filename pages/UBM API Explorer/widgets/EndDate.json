@@ -10,21 +10,17 @@
   "datePickerType": "DATE_PICKER",
   "defaultDate": "",
   "dynamicBindingPathList": [
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "isVisible"
-    }
+    { "key": "accentColor" },
+    { "key": "borderRadius" },
+    { "key": "isVisible" },
+    { "key": "minDate" },
+    { "key": "maxDate" }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
-    {
-      "key": "isVisible"
-    }
+    { "key": "isVisible" },
+    { "key": "minDate" },
+    { "key": "maxDate" }
   ],
   "dynamicTriggerPathList": [],
   "firstDayOfWeek": "0",
@@ -43,9 +39,9 @@
   "labelTextSize": "1rem",
   "labelWidth": 5,
   "leftColumn": 16,
-  "maxDate": "2121-12-31T18:29:00.000Z",
+  "maxDate": "{{ StartDate.selectedDate ? moment(StartDate.selectedDate).add(31, 'days').toISOString() : '2121-12-31T18:29:00.000Z' }}",
   "maxDynamicHeight": 9000,
-  "minDate": "1920-12-31T18:30:00.000Z",
+  "minDate": "{{ StartDate.selectedDate ? moment(StartDate.selectedDate).toISOString() : '1920-12-31T18:30:00.000Z' }}",
   "minDynamicHeight": 4,
   "minWidth": 240,
   "mobileBottomRow": 30,
