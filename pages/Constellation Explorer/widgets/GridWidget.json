@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 86,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ ({ rows: UBMUtils.rows, columns: FieldsSelect.selectedOptionValues }) }}",
+  "defaultModel": "{{ ({ rows: UBMUtils.rows(), columns: FieldsSelect.selectedOptionValues }) }}",
   "dynamicBindingPathList": [
     { "key": "theme" },
     { "key": "borderRadius" },

@@ -1,8 +1,11 @@
 export default {
-	// ----- Endpoint catalog -----
+	// ----- Static config -----
+	customerOptions: [
+		{ label: "PPG Industries", value: "ppg" },
+		{ label: "Simon Property Group", value: "simon" }
+	],
+
 	// Each entry: {label, query, dataPath, fields, requiresDates, paginated}
-	// `fields` is the seed list shown in the multi-select. The user can add custom
-	// keys at runtime — the grid will surface every key present on rows anyway.
 	endpoints: {
 		accounts: {
 			label: "Accounts",
@@ -82,21 +85,28 @@ export default {
 		}
 	},
 
-	// ----- Computed convenience props -----
-	get endpointOptions() {
-		return Object.entries(this.endpoints).map(([k, v]) => ({ label: v.label, value: k }));
+	// ----- Methods (must be invoked with parens in bindings) -----
+	endpointOptions: () => {
+		const eps = UBMUtils.endpoints;
+		return Object.keys(eps).map(k => ({ label: eps[k].label, value: k }));
 	},
 
-	get currentSpec() {
-		const sel = EndpointSelect.selectedOptionValue || "accounts";
-		return this.endpoints[sel] || this.endpoints.accounts;
+	currentSpec: () => {
+		const sel = (typeof EndpointSelect !== "undefined" && EndpointSelect.selectedOptionValue) || "accounts";
+		return UBMUtils.endpoints[sel] || UBMUtils.endpoints.accounts;
 	},
 
-	get fieldOptions() {
-		return (this.currentSpec.fields || []).map(f => ({ label: f, value: f }));
+	fieldOptions: () => {
+		const fields = (UBMUtils.currentSpec().fields) || [];
+		return fields.map(f => ({ label: f, value: f }));
 	},
 
-	get rows() {
+	requiresDates: () => {
+		return Boolean(UBMUtils.currentSpec().requiresDates);
+	},
+
+	rows: () => {
+		const spec = UBMUtils.currentSpec();
 		const map = {
 			getAccounts: getAccounts.data,
 			getVendors: getVendors.data,
@@ -104,8 +114,7 @@ export default {
 			getMonthlyFeed: getMonthlyFeed.data,
 			getBillErrors: getBillErrors.data
 		};
-		const raw = map[this.currentSpec.query];
-		// Bills returns {data:[...]}; others {data:[...], pagination:{...}}.
+		const raw = map[spec.query];
 		if (!raw) return [];
 		if (Array.isArray(raw)) return raw;
 		if (Array.isArray(raw.data)) return raw.data;
@@ -116,7 +125,7 @@ export default {
 	tokenIsFresh: () => {
 		const t = appsmith.store.ubm_token;
 		const exp = appsmith.store.ubm_token_expires_at;
-		return Boolean(t && exp && Date.now() < exp - 30000); // 30s safety margin
+		return Boolean(t && exp && Date.now() < exp - 30000);
 	},
 
 	loginFor: async (customer) => {
@@ -132,33 +141,32 @@ export default {
 		return res.accessToken;
 	},
 
-	ensureTokenForSelectedCustomer: async function () {
+	ensureToken: async () => {
 		const customer = CustomerSelect.selectedOptionValue;
 		if (!customer) throw new Error("Pick a customer first");
 		const cached = appsmith.store.ubm_customer;
-		if (customer !== cached || !this.tokenIsFresh()) {
-			await this.loginFor(customer);
+		if (customer !== cached || !UBMUtils.tokenIsFresh()) {
+			await UBMUtils.loginFor(customer);
 		}
 		return appsmith.store.ubm_token;
 	},
 
 	// ----- Run / export -----
-	run: async function () {
-		await this.ensureTokenForSelectedCustomer();
-		const spec = this.currentSpec;
+	run: async () => {
+		await UBMUtils.ensureToken();
+		const spec = UBMUtils.currentSpec();
 		if (spec.requiresDates) {
 			if (!StartDate.selectedDate || !EndDate.selectedDate) {
 				showAlert("Start and end dates are required for this endpoint", "warning");
 				return;
 			}
 		}
-		const queryName = spec.query;
 		const queries = { getAccounts, getVendors, getBills, getMonthlyFeed, getBillErrors };
-		await queries[queryName].run();
+		await queries[spec.query].run();
 	},
 
-	exportCsv: function () {
-		const rows = this.rows;
+	exportCsv: () => {
+		const rows = UBMUtils.rows();
 		const fields = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
 			? FieldsSelect.selectedOptionValues
 			: (rows[0] ? Object.keys(rows[0]) : []);
@@ -177,11 +185,10 @@ export default {
 		const csv = header + "\n" + body;
 
 		const customer = CustomerSelect.selectedOptionLabel || "customer";
-		const endpoint = this.currentSpec.label.split(" ")[0].toLowerCase();
+		const endpoint = (UBMUtils.currentSpec().label || "data").split(" ")[0].toLowerCase();
 		const stamp = moment().format("YYYYMMDD-HHmmss");
 		const filename = `${customer.replace(/\s+/g, "_")}-${endpoint}-${stamp}.csv`;
 
-		// Trigger browser download
 		const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement("a");

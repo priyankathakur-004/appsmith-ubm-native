@@ -7,10 +7,13 @@
   "defaultOptionValue": "ppg",
   "dynamicBindingPathList": [
     { "key": "accentColor" },
-    { "key": "borderRadius" }
+    { "key": "borderRadius" },
+    { "key": "sourceData" }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicPropertyPathList": [],
+  "dynamicPropertyPathList": [
+    { "key": "sourceData" }
+  ],
   "dynamicTriggerPathList": [
     { "key": "onOptionChange" }
   ],
@@ -39,10 +42,6 @@
   "onOptionChange": "{{ (async () => { try { await UBMUtils.loginFor(CustomerSelect.selectedOptionValue); showAlert('Logged in as ' + CustomerSelect.selectedOptionLabel, 'success'); } catch(e) { showAlert('Login failed: ' + e.message, 'error'); } })() }}",
   "optionLabel": "label",
   "optionValue": "value",
-  "options": [
-    { "label": "PPG Industries", "value": "ppg" },
-    { "label": "Simon Property Group", "value": "simon" }
-  ],
   "originalBottomRow": 14,
   "originalTopRow": 6,
   "parentColumnSpace": 16,
@@ -53,6 +52,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 20,
   "serverSideFiltering": false,
+  "sourceData": "{{ UBMUtils.customerOptions }}",
   "topRow": 6,
   "type": "SELECT_WIDGET",
   "version": 1,

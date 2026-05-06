@@ -52,7 +52,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 40,
   "serverSideFiltering": false,
-  "sourceData": "{{ UBMUtils.endpointOptions }}",
+  "sourceData": "{{ UBMUtils.endpointOptions() }}",
   "topRow": 6,
   "type": "SELECT_WIDGET",
   "version": 1,
