@@ -89,16 +89,15 @@ export default {
 	// from = field on left endpoint, to = field on right endpoint.
 	joinGraph: {
 		bills: {
-			vendors: { from: "vendorCode", to: "vendorCode" },
+			vendors: { from: "providerId", to: "providerId" },
 			accounts: { from: "virtualAccountId", to: "virtualAccountId" },
-			billErrors: { from: "billId", to: "ubmId" }
+			billErrors: { from: "billId", to: "pearId" }
 		},
 		monthlyFeed: {
-			vendors: { from: "vendor", to: "vendorName" },
 			accounts: { from: "virtualAccountId", to: "virtualAccountId" }
 		},
 		accounts: {
-			vendors: { from: "vendorId", to: "pearVendorId" },
+			vendors: { from: "vendorId", to: "providerId" },
 			billErrors: { from: "billingId", to: "billingId" }
 		}
 	},
