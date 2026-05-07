@@ -96,6 +96,10 @@ export default {
 		monthlyFeed: {
 			vendors: { from: "vendor", to: "vendorName" },
 			accounts: { from: "virtualAccountId", to: "virtualAccountId" }
+		},
+		accounts: {
+			vendors: { from: "vendorId", to: "pearVendorId" },
+			billErrors: { from: "billingId", to: "billingId" }
 		}
 	},
 
