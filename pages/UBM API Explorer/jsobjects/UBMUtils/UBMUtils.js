@@ -197,7 +197,7 @@ export default {
 			lookupMaps[lk] = { join, map: m };
 		}
 
-		return primaryRows.map(p => {
+		const joined = primaryRows.map(p => {
 			const out = {};
 			for (const k in p) out[primary + "__" + k] = p[k];
 			for (const lk of lookups) {
@@ -205,11 +205,33 @@ export default {
 				if (!lm) continue;
 				const v = p[lm.join.from];
 				const ks = (v === undefined || v === null) ? "" : String(v).toLowerCase();
-				const matched = lm.map.get(ks) || {};
-				for (const k in matched) out[lk + "__" + k] = matched[k];
+				const matched = lm.map.get(ks);
+				if (matched) {
+					for (const k in matched) out[lk + "__" + k] = matched[k];
+				}
 			}
 			return out;
 		});
+
+		// Normalize: every row should expose the same key set so the grid auto-
+		// detects columns from rows[0] regardless of which row matched what.
+		// Seed from (a) actual joined data, (b) each endpoint's field catalog,
+		// and (c) one sample row per lookup endpoint so undocumented fields
+		// (e.g. vendors' "ERP Vendor ID") still surface.
+		const allKeys = new Set();
+		for (const r of joined) for (const k in r) allKeys.add(k);
+		for (const k of keys) {
+			const ep = UBMUtils.endpoints[k];
+			if (ep && ep.fields) for (const f of ep.fields) allKeys.add(k + "__" + f);
+		}
+		for (const lk of lookups) {
+			const sample = UBMUtils.endpointRawRows(lk)[0];
+			if (sample) for (const f in sample) allKeys.add(lk + "__" + f);
+		}
+		for (const r of joined) {
+			for (const k of allKeys) if (!(k in r)) r[k] = null;
+		}
+		return joined;
 	},
 
 	// ----- Status -----
