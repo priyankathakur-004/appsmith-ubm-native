@@ -53,7 +53,7 @@
     ],
     "name": "getMonthlyFeed",
     "pageId": "UBM API Explorer",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
