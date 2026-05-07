@@ -5,23 +5,16 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 34,
   "boxShadow": "none",
-  "defaultOptionValue": [],
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "sourceData"
-    }
+    { "key": "accentColor" },
+    { "key": "borderRadius" },
+    { "key": "sourceData" }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
-    {
-      "key": "sourceData"
-    }
+    { "key": "sourceData" },
+    { "key": "optionValue" }
   ],
   "dynamicTriggerPathList": [],
   "isDisabled": false,
@@ -61,7 +54,7 @@
   "sourceData": "{{ UBMUtils.fieldOptions() }}",
   "topRow": 26,
   "type": "MULTI_SELECT_WIDGET_V2",
-  "version": 2,
+  "version": 1,
   "widgetId": "ce0fields",
   "widgetName": "FieldsSelect"
 }
