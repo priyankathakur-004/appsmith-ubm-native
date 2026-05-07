@@ -1,34 +1,25 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": false,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 14,
   "boxShadow": "none",
-  "defaultOptionValue": "accounts",
+  "defaultOptionValue": ["accounts"],
   "dynamicBindingPathList": [
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "sourceData"
-    }
+    { "key": "accentColor" },
+    { "key": "borderRadius" },
+    { "key": "sourceData" }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
-    {
-      "key": "sourceData"
-    }
+    { "key": "sourceData" }
   ],
   "dynamicTriggerPathList": [
-    {
-      "key": "onOptionChange"
-    }
+    { "key": "onOptionChange" }
   ],
   "isDisabled": false,
-  "isFilterable": false,
+  "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
@@ -36,7 +27,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
-  "labelText": "Endpoint",
+  "labelText": "Endpoints (pick one or more — first one drives the rows)",
   "labelTextColor": "#ffffff",
   "labelTextSize": "1rem",
   "labelWidth": 5,
@@ -57,15 +48,15 @@
   "parentColumnSpace": 16,
   "parentId": "0",
   "parentRowSpace": 10,
-  "placeholderText": "Select endpoint",
+  "placeholderText": "Select one or more endpoints...",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 40,
   "serverSideFiltering": false,
   "sourceData": "{{ UBMUtils.endpointOptions() }}",
   "topRow": 6,
-  "type": "SELECT_WIDGET",
-  "version": 1,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 2,
   "widgetId": "ce0epsel",
   "widgetName": "EndpointSelect"
 }

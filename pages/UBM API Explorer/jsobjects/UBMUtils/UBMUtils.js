@@ -5,7 +5,6 @@ export default {
 		{ label: "Simon Property Group", value: "simon" }
 	],
 
-	// Each entry: {label, query, dataPath, fields, requiresDates, paginated}
 	endpoints: {
 		accounts: {
 			label: "Accounts",
@@ -34,7 +33,7 @@ export default {
 			paginated: true
 		},
 		bills: {
-			label: "Bills (date range required)",
+			label: "Bills",
 			query: "getBills",
 			fields: [
 				"billId", "billingId", "vendor", "vendorCode", "providerId",
@@ -59,7 +58,7 @@ export default {
 			paginated: false
 		},
 		monthlyFeed: {
-			label: "Monthly Feed (date range required)",
+			label: "Monthly Feed",
 			query: "getMonthlyFeed",
 			fields: [
 				"calendarMonth", "location", "number", "locationAddress", "locationZip",
@@ -85,37 +84,68 @@ export default {
 		}
 	},
 
-	// ----- Methods (must be invoked with parens in bindings) -----
+	// ----- Join graph -----
+	// Defines how endpoints can be joined. Reverse direction is auto-derived.
+	// from = field on left endpoint, to = field on right endpoint.
+	joinGraph: {
+		bills: {
+			vendors: { from: "vendorCode", to: "vendorCode" },
+			accounts: { from: "virtualAccountId", to: "virtualAccountId" },
+			billErrors: { from: "billId", to: "ubmId" }
+		},
+		monthlyFeed: {
+			vendors: { from: "vendor", to: "vendorName" },
+			accounts: { from: "virtualAccountId", to: "virtualAccountId" }
+		}
+	},
+
+	// ----- Selection helpers -----
 	endpointOptions: () => {
 		const eps = UBMUtils.endpoints;
 		return Object.keys(eps).map(k => ({ label: eps[k].label, value: k }));
 	},
 
-	currentSpec: () => {
-		const sel = (typeof EndpointSelect !== "undefined" && EndpointSelect.selectedOptionValue) || "accounts";
-		return UBMUtils.endpoints[sel] || UBMUtils.endpoints.accounts;
+	selectedKeys: () => {
+		const v = (typeof EndpointSelect !== "undefined") ? EndpointSelect.selectedOptionValues : null;
+		if (Array.isArray(v) && v.length > 0) return v;
+		return ["accounts"];
 	},
 
+	primaryKey: () => UBMUtils.selectedKeys()[0],
+
+	selectedSpecs: () => {
+		return UBMUtils.selectedKeys()
+			.map(k => UBMUtils.endpoints[k])
+			.filter(Boolean);
+	},
+
+	requiresDates: () => UBMUtils.selectedSpecs().some(s => s.requiresDates),
+	isPaginated: () => UBMUtils.selectedSpecs().some(s => s.paginated),
+
+	// ----- Field options -----
+	// Single endpoint → unprefixed (clean). Multi → prefixed "endpoint__field" with
+	// pretty label "Endpoint · field" so AG Grid columns are unambiguous.
 	fieldOptions: () => {
-		const fields = (UBMUtils.currentSpec().fields) || [];
-		return fields.map(f => ({ label: f, value: f }));
+		const keys = UBMUtils.selectedKeys();
+		if (keys.length === 1) {
+			const fields = (UBMUtils.endpoints[keys[0]] && UBMUtils.endpoints[keys[0]].fields) || [];
+			return fields.map(f => ({ label: f, value: f }));
+		}
+		const opts = [];
+		for (const k of keys) {
+			const ep = UBMUtils.endpoints[k];
+			if (!ep) continue;
+			for (const f of (ep.fields || [])) {
+				opts.push({ label: ep.label + " · " + f, value: k + "__" + f });
+			}
+		}
+		return opts;
 	},
 
-	requiresDates: () => {
-		return Boolean(UBMUtils.currentSpec().requiresDates);
-	},
-
-	statusText: () => {
-		const r = UBMUtils.rows() || [];
-		if (r.length === 0) return "No data loaded — click Run to fetch.";
-		const picked = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
-			? FieldsSelect.selectedOptionValues.length + " columns selected"
-			: "all returned columns shown";
-		return r.length.toLocaleString() + " rows loaded · " + picked;
-	},
-
-	rows: () => {
-		const spec = UBMUtils.currentSpec();
+	// ----- Row extraction -----
+	endpointRawRows: (key) => {
+		const ep = UBMUtils.endpoints[key];
+		if (!ep) return [];
 		const map = {
 			getAccounts: getAccounts.data,
 			getVendors: getVendors.data,
@@ -123,11 +153,72 @@ export default {
 			getMonthlyFeed: getMonthlyFeed.data,
 			getBillErrors: getBillErrors.data
 		};
-		const raw = map[spec.query];
+		const raw = map[ep.query];
 		if (!raw) return [];
 		if (Array.isArray(raw)) return raw;
 		if (Array.isArray(raw.data)) return raw.data;
 		return [];
+	},
+
+	findJoin: (a, b) => {
+		const direct = UBMUtils.joinGraph[a] && UBMUtils.joinGraph[a][b];
+		if (direct) return direct;
+		const reverse = UBMUtils.joinGraph[b] && UBMUtils.joinGraph[b][a];
+		if (reverse) return { from: reverse.to, to: reverse.from };
+		return null;
+	},
+
+	rows: () => {
+		const keys = UBMUtils.selectedKeys();
+		if (keys.length === 0) return [];
+		const primary = keys[0];
+		const primaryRows = UBMUtils.endpointRawRows(primary);
+
+		// Single endpoint: pass through unchanged (unprefixed keys).
+		if (keys.length === 1) return primaryRows;
+
+		// Multi endpoint: build lookup maps for each non-primary, then enrich.
+		const lookups = keys.slice(1);
+		const lookupMaps = {};
+		for (const lk of lookups) {
+			const join = UBMUtils.findJoin(primary, lk);
+			if (!join) continue; // Unsupported pair — silently skip; status/run() warns.
+			const rows = UBMUtils.endpointRawRows(lk);
+			const m = new Map();
+			for (const r of rows) {
+				const k = r[join.to];
+				if (k === undefined || k === null) continue;
+				const ks = String(k).toLowerCase();
+				if (!m.has(ks)) m.set(ks, r);
+			}
+			lookupMaps[lk] = { join, map: m };
+		}
+
+		return primaryRows.map(p => {
+			const out = {};
+			for (const k in p) out[primary + "__" + k] = p[k];
+			for (const lk of lookups) {
+				const lm = lookupMaps[lk];
+				if (!lm) continue;
+				const v = p[lm.join.from];
+				const ks = (v === undefined || v === null) ? "" : String(v).toLowerCase();
+				const matched = lm.map.get(ks) || {};
+				for (const k in matched) out[lk + "__" + k] = matched[k];
+			}
+			return out;
+		});
+	},
+
+	// ----- Status -----
+	statusText: () => {
+		const r = UBMUtils.rows() || [];
+		const keys = UBMUtils.selectedKeys();
+		if (r.length === 0) return "No data loaded — click Run to fetch.";
+		const picked = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
+			? FieldsSelect.selectedOptionValues.length + " columns selected"
+			: "all returned columns shown";
+		const epLabel = keys.length > 1 ? " (" + keys.join(" + ") + ")" : "";
+		return r.length.toLocaleString() + " rows" + epLabel + " · " + picked;
 	},
 
 	// ----- Auth -----
@@ -163,10 +254,17 @@ export default {
 	// ----- Run / export -----
 	run: async () => {
 		await UBMUtils.ensureToken();
-		const spec = UBMUtils.currentSpec();
-		if (spec.requiresDates) {
+		const keys = UBMUtils.selectedKeys();
+		const specs = UBMUtils.selectedSpecs();
+		if (specs.length === 0) {
+			showAlert("Pick at least one endpoint", "warning");
+			return;
+		}
+
+		// Date validation if any selected endpoint requires dates
+		if (UBMUtils.requiresDates()) {
 			if (!StartDate.selectedDate || !EndDate.selectedDate) {
-				showAlert("Start and end dates are required for this endpoint", "warning");
+				showAlert("Start and end dates are required for the selected endpoints", "warning");
 				return;
 			}
 			const start = moment(StartDate.selectedDate);
@@ -180,8 +278,19 @@ export default {
 				return;
 			}
 		}
+
+		// Warn about un-joinable lookups
+		if (keys.length > 1) {
+			const primary = keys[0];
+			const broken = keys.slice(1).filter(k => !UBMUtils.findJoin(primary, k));
+			if (broken.length > 0) {
+				showAlert("No join path from " + primary + " to: " + broken.join(", ") + " — those columns will be empty", "warning");
+			}
+		}
+
 		const queries = { getAccounts, getVendors, getBills, getMonthlyFeed, getBillErrors };
-		await queries[spec.query].run();
+		const promises = specs.map(spec => queries[spec.query].run());
+		await Promise.all(promises);
 	},
 
 	exportCsv: () => {
@@ -204,7 +313,8 @@ export default {
 		const csv = header + "\n" + body;
 
 		const customer = CustomerSelect.selectedOptionLabel || "customer";
-		const endpoint = (UBMUtils.currentSpec().label || "data").split(" ")[0].toLowerCase();
+		const eps = UBMUtils.selectedKeys();
+		const endpoint = eps.length === 1 ? eps[0] : eps.join("+");
 		const stamp = moment().format("YYYYMMDD-HHmmss");
 		const filename = `${customer.replace(/\s+/g, "_")}-${endpoint}-${stamp}.csv`;
 
