@@ -76,6 +76,10 @@
     {
       "id": "Utilities",
       "isDefault": false
+    },
+    {
+      "id": "UBM API Explorer",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
