@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rctariffscnt",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 30,
+  "mobileTopRow": 8,
+  "needsErrorInfo": false,
+  "originalBottomRow": 12,
+  "originalTopRow": 8,
+  "overflow": "NONE",
+  "parentColumnSpace": 30.21875,
+  "parentId": "rctariffscan1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 30,
+  "shouldTruncate": false,
+  "text": "{{ RateClassData.selectedTariffCount() > 0 ? `Tariffs selected: ${RateClassData.selectedTariffCount()} of ${RateClassData.tariffRows().length}` : `Tariffs total: ${RateClassData.tariffRows().length}` }}",
+  "textAlign": "LEFT",
+  "textColor": "#d4d4d8",
+  "topRow": 8,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "rctariffscnt1",
+  "widgetName": "Txt_RC_TariffCount"
+}

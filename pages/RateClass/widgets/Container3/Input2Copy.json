@@ -5,7 +5,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 51,
   "boxShadow": "none",
-  "defaultText": "0",
+  "defaultText": "100",
   "dynamicBindingPathList": [
     {
       "key": "accentColor"
@@ -54,5 +54,5 @@
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "7i055srcfq",
-  "widgetName": "Input2Copy"
+  "widgetName": "Inp_RC_demand"
 }

@@ -129,10 +129,13 @@ export default {
 	},
 
 	// ---- Step 3: selection + calculate ----
-	// The tariff table is multi-select. We mirror its selectedRows into the
-	// store so the Calculate button can act on a stable snapshot.
-	onTariffSelectionChange() {
-		const sel = (typeof Tbl_RC_tariffs !== "undefined") ? (Tbl_RC_tariffs.selectedRows || []) : [];
+	// Wired to the Tbl_RC_tariffs CUSTOM_WIDGET's onSelectionChanged event.
+	// The ag-grid widget posts an array of display rows (whatever tariffRows()
+	// emitted); we look the underlying tariff objects back up by masterTariffId
+	// because the calculate request needs the full Genability tariff payload,
+	// not the trimmed display row.
+	onAgGridSelection(rows) {
+		const sel = Array.isArray(rows) ? rows : [];
 		const tariffs = appsmith.store.rc_tariffs || [];
 		const byMtid = {};
 		for (const t of tariffs) byMtid[t.masterTariffId] = t;

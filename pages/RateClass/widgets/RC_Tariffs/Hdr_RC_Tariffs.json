@@ -1,0 +1,48 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 6,
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1.25rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rctariffshdr",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 6,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 30,
+  "mobileTopRow": 2,
+  "needsErrorInfo": false,
+  "originalBottomRow": 6,
+  "originalTopRow": 2,
+  "overflow": "NONE",
+  "parentColumnSpace": 30.21875,
+  "parentId": "rctariffscan1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 30,
+  "shouldTruncate": false,
+  "text": "Eligible Tariffs",
+  "textAlign": "LEFT",
+  "textColor": "#ffffff",
+  "topRow": 2,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "rctariffshdr1",
+  "widgetName": "Hdr_RC_Tariffs"
+}

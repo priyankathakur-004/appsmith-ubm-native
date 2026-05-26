@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rcresultscnt",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 30,
+  "mobileTopRow": 8,
+  "needsErrorInfo": false,
+  "originalBottomRow": 12,
+  "originalTopRow": 8,
+  "overflow": "NONE",
+  "parentColumnSpace": 30.21875,
+  "parentId": "rcresultscan1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 30,
+  "shouldTruncate": false,
+  "text": "{{ `Rate Plans total: ${RateClassData.calcResults().length}` }}",
+  "textAlign": "LEFT",
+  "textColor": "#d4d4d8",
+  "topRow": 8,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "rcresultscnt1",
+  "widgetName": "Txt_RC_RatePlanCount"
+}
