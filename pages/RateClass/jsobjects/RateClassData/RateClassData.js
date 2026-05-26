@@ -11,10 +11,13 @@ export default {
 			return [];
 		}
 		const res = await GetLses.run();
-		const arr = Array.isArray(res) ? res : ((res && res.results) || []);
+		// Genability returns { status, count, type, results: [...] }; some plugin
+		// versions unwrap it. Cover both shapes.
+		const arr = Array.isArray(res) ? res : ((res && (res.results || res.data)) || []);
 		await storeValue("rc_lses", arr);
-		await storeValue("rc_selected_tariffs", []);
-		await storeValue("rc_calc_results", []);
+		if (arr.length === 0) {
+			showAlert("No vendors found for that postcode", "warning");
+		}
 		return arr;
 	},
 
@@ -40,11 +43,12 @@ export default {
 			return [];
 		}
 		const res = await GetEligibleTariffs.run();
-		const all = Array.isArray(res) ? res : ((res && res.results) || []);
+		const all = Array.isArray(res) ? res : ((res && (res.results || res.data)) || []);
 		const filtered = RateClassData._applyUsageFilter(all);
 		await storeValue("rc_tariffs", filtered);
 		await storeValue("rc_selected_tariffs", []);
 		await storeValue("rc_calc_results", []);
+		await storeValue("rc_screen", 2);
 		return filtered;
 	},
 
@@ -185,7 +189,17 @@ export default {
 		const blocks = responses.map((r, i) => RateClassData._normalizeCalcResponse(r, picked[i]));
 		blocks.sort((a, b) => (a.adjustedTotalCost || 0) - (b.adjustedTotalCost || 0));
 		await storeValue("rc_calc_results", blocks);
+		await storeValue("rc_screen", 3);
 		return blocks;
+	},
+
+	// ---- Screen navigation ----
+	// Page boots with rc_screen unset → treated as screen 1.
+	// findEligibleTariffs() advances to 2, runCalculate() advances to 3,
+	// goBack() returns to the prior screen (clamped at 1).
+	goBack() {
+		const cur = Number(appsmith.store.rc_screen || 1);
+		return storeValue("rc_screen", Math.max(1, cur - 1));
 	},
 
 	_normalizeCalcResponse(res, tariff) {
@@ -232,5 +246,6 @@ export default {
 		await storeValue("rc_tariffs", []);
 		await storeValue("rc_selected_tariffs", []);
 		await storeValue("rc_calc_results", []);
+		await storeValue("rc_screen", 1);
 	}
 }

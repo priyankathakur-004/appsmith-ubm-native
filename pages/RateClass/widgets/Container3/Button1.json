@@ -20,7 +20,7 @@
     }
   ],
   "isDefaultClickDisabled": true,
-  "isDisabled": "{{ !Sel_RC_vendor.selectedOptionValue }}",
+  "isDisabled": "{{ !Inp_RC_zipCode.text || !Sel_RC_vendor.selectedOptionValue || !Inp_RC_consumption.text || !Inp_RC_demand.text }}",
   "isLoading": false,
   "onClick": "{{ RateClassData.findEligibleTariffs() }}",
   "isVisible": true,

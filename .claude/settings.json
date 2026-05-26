@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls /Users/kanavkapoor/Sites/appsmith-ubm-native/pages/Analytics/widgets/AnalyticsContainer/Tabs/CN*/)",
+      "Bash(python3 -c \"import json; json.load\\(open\\('pages/Utilities/queries/getUtilities/metadata.json'\\)\\); print\\('OK'\\)\")",
+      "WebFetch(domain:datahub-api.constellationnavigator.com)",
+      "Bash(python3 -)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:grep.app)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(python3 -c 'import json; json.load\\(open\\('\\\\''__TRACKED_VAR__'\\\\''\\)\\)')"
+    ],
+    "additionalDirectories": [
+      "/Users/kanavkapoor/.ssh"
+    ]
+  }
+}
