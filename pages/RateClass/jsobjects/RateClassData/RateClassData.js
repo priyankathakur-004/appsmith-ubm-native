@@ -46,7 +46,6 @@ export default {
 		const all = Array.isArray(res) ? res : ((res && (res.results || res.data)) || []);
 		const filtered = RateClassData._applyUsageFilter(all);
 		await storeValue("rc_tariffs", filtered);
-		await storeValue("rc_selected_tariffs", []);
 		await storeValue("rc_calc_results", []);
 		await storeValue("rc_screen", 2);
 		return filtered;
@@ -138,25 +137,30 @@ export default {
 	// emitted); we look the underlying tariff objects back up by masterTariffId
 	// because the calculate request needs the full Genability tariff payload,
 	// not the trimmed display row.
-	onAgGridSelection() {
-		// Custom widget publishes selection via appsmith.updateModel({ selectedRows: [...] });
-		// we read from the widget's model rather than relying on an event-payload variable
-		// (Appsmith's name for the triggerEvent payload varies by version — model is portable).
-		const sel = (typeof Tbl_RC_tariffs !== "undefined"
+	// Selection state lives on the custom widget's model (Tbl_RC_tariffs.model.selectedRows,
+	// set by appsmith.updateModel inside the ag-grid widget). We read directly from the model
+	// in selectedTariffCount() and in runCalculate() — no callback handler, no `rc_selected_tariffs`
+	// store mirror. Mirroring selection back into the store while the widget is also the source
+	// of truth creates a cyclic dependency in Appsmith's reactivity tracker.
+	_selectedDisplayRows() {
+		return (typeof Tbl_RC_tariffs !== "undefined"
 			&& Tbl_RC_tariffs.model
 			&& Array.isArray(Tbl_RC_tariffs.model.selectedRows))
 			? Tbl_RC_tariffs.model.selectedRows
 			: [];
+	},
+
+	_selectedFullTariffs() {
+		const sel = RateClassData._selectedDisplayRows();
+		if (!sel.length) return [];
 		const tariffs = appsmith.store.rc_tariffs || [];
 		const byMtid = {};
 		for (const t of tariffs) byMtid[t.masterTariffId] = t;
-		const picked = sel.map(r => byMtid[r.masterTariffId]).filter(Boolean);
-		return storeValue("rc_selected_tariffs", picked);
+		return sel.map(r => byMtid[r.masterTariffId]).filter(Boolean);
 	},
 
 	selectedTariffCount() {
-		const arr = appsmith.store.rc_selected_tariffs;
-		return Array.isArray(arr) ? arr.length : 0;
+		return RateClassData._selectedDisplayRows().length;
 	},
 
 	// Build the POST body for the calculate endpoint. Genability expects a
@@ -185,7 +189,7 @@ export default {
 	// per-tariff cost breakdown, rank by adjustedTotalCost ascending, and
 	// stash to store for the results screen to read.
 	async runCalculate() {
-		const picked = appsmith.store.rc_selected_tariffs || [];
+		const picked = RateClassData._selectedFullTariffs();
 		if (!picked.length) {
 			showAlert("Select at least one tariff first", "warning");
 			return [];
@@ -251,7 +255,6 @@ export default {
 	async resetAll() {
 		await storeValue("rc_lses", []);
 		await storeValue("rc_tariffs", []);
-		await storeValue("rc_selected_tariffs", []);
 		await storeValue("rc_calc_results", []);
 		await storeValue("rc_screen", 1);
 	}
