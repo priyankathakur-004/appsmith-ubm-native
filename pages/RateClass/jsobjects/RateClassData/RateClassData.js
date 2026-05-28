@@ -138,8 +138,15 @@ export default {
 	// emitted); we look the underlying tariff objects back up by masterTariffId
 	// because the calculate request needs the full Genability tariff payload,
 	// not the trimmed display row.
-	onAgGridSelection(rows) {
-		const sel = Array.isArray(rows) ? rows : [];
+	onAgGridSelection() {
+		// Custom widget publishes selection via appsmith.updateModel({ selectedRows: [...] });
+		// we read from the widget's model rather than relying on an event-payload variable
+		// (Appsmith's name for the triggerEvent payload varies by version — model is portable).
+		const sel = (typeof Tbl_RC_tariffs !== "undefined"
+			&& Tbl_RC_tariffs.model
+			&& Array.isArray(Tbl_RC_tariffs.model.selectedRows))
+			? Tbl_RC_tariffs.model.selectedRows
+			: [];
 		const tariffs = appsmith.store.rc_tariffs || [];
 		const byMtid = {};
 		for (const t of tariffs) byMtid[t.masterTariffId] = t;
