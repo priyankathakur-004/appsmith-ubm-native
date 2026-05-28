@@ -256,42 +256,77 @@ export default {
 		return storeValue("rc_screen", Math.max(1, cur - 1));
 	},
 
+	// Pull a numeric value from an item using a list of candidate field names.
+	// Returns null if none of the names yield a finite number — caller can decide
+	// whether to fall back to derived values (e.g. cost/qty for rate).
+	_pickNum(obj, keys) {
+		if (!obj) return null;
+		for (const k of keys) {
+			const v = obj[k];
+			if (v == null || v === "") continue;
+			const n = Number(v);
+			if (isFinite(n)) return n;
+		}
+		return null;
+	},
+	_pickStr(obj, keys) {
+		if (!obj) return "";
+		for (const k of keys) {
+			const v = obj[k];
+			if (v != null && v !== "") return String(v);
+		}
+		return "";
+	},
+
+	// Map Genability's quantityKey (a logical input key like "consumption" or
+	// "fixed") to a UI-friendly display unit. Real unit info (kWh, kW) is
+	// supposed to be in `quantityUnit` but Genability often omits it. We never
+	// show the quantityKey itself as a "unit" — it's not a unit, it's an input
+	// reference.
+	_displayUnitFor(quantityUnit, quantityKey) {
+		if (quantityUnit) return String(quantityUnit);
+		const key = String(quantityKey || "").toLowerCase();
+		if (key === "consumption") return "kWh";
+		if (key === "demand")      return "kW";
+		// fixed / customer / period-based charges have no unit
+		return "";
+	},
+
 	_normalizeCalcResponse(res, tariff) {
 		const result = (res && res.results && res.results[0]) || res || {};
 		const items = Array.isArray(result.items) ? result.items : [];
 
-		// Genability often splits a single visible charge across many sub-items
-		// (one per time-of-use band, one per tier, one per season). Group by
-		// chargeName so the display matches the consolidated UBM Native view.
-		// For each group: sum cost + quantity, compute an effective rate.
+		// Genability splits a single visible charge across sub-items (one per
+		// time-of-use band / tier / season). Group by name+quantityKey so charges
+		// with the same label but different billing bases (e.g. one fixed + one
+		// per-kWh component with the same name) stay separate. Without the
+		// quantityKey in the group key, qtys with different units get summed into
+		// a nonsense total like "1,001.00 fixed".
 		const groups = new Map();
 		for (const it of items) {
-			const name = it.chargeName || it.rateGroupName || it.name || "";
+			const name = RateClassData._pickStr(it, ["chargeName", "rateGroupName", "name"]);
 			if (!name) continue;
-			const cost = Number(it.itemCost != null ? it.itemCost : (it.cost != null ? it.cost : 0)) || 0;
-			const qty  = Number(it.quantity != null ? it.quantity : 0) || 0;
-			const unit = it.quantityUnit || "";
-			// Try several field names — Genability isn't fully consistent across
-			// charge types. Fall back to computing rate = cost / qty when no
-			// explicit rate is on the item.
-			let rate = (it.rate != null) ? Number(it.rate)
-				: (it.itemRate != null) ? Number(it.itemRate)
-				: (it.chargePeriodRate != null) ? Number(it.chargePeriodRate)
-				: (it.unitCost != null) ? Number(it.unitCost)
-				: NaN;
-			if (!isFinite(rate)) rate = (qty !== 0) ? (cost / qty) : 0;
+			const cost = RateClassData._pickNum(it, ["itemCost", "cost", "totalCost"]) ?? 0;
+			const qty  = RateClassData._pickNum(it, ["quantity", "itemQuantity", "qty", "quantityValue", "dataValue", "chargePeriodQuantity", "value"]) ?? 0;
+			const rawUnit = RateClassData._pickStr(it, ["quantityUnit", "unit", "uom"]);
+			const qtyKey  = RateClassData._pickStr(it, ["quantityKey", "chargePeriodKey"]);
+			const unit = RateClassData._displayUnitFor(rawUnit, qtyKey);
+			const rate = RateClassData._pickNum(it, ["rate", "itemRate", "chargePeriodRate", "unitCost", "rateValue"]);
 
-			const g = groups.get(name) || { name, qty: 0, qty_unit: unit, cost: 0, rateSum: 0, rateCount: 0 };
+			// Use name + the *logical* quantity basis as the group key so items
+			// billed on different bases never get summed together.
+			const groupKey = name + "|" + (qtyKey || unit || "");
+			const g = groups.get(groupKey) || { name, qty: 0, qty_unit: unit, cost: 0, rateSum: 0, rateCount: 0 };
 			g.qty += qty;
 			g.cost += cost;
-			if (isFinite(rate) && rate !== 0) { g.rateSum += rate; g.rateCount += 1; }
+			if (rate != null && rate !== 0) { g.rateSum += rate; g.rateCount += 1; }
 			if (!g.qty_unit && unit) g.qty_unit = unit;
-			groups.set(name, g);
+			groups.set(groupKey, g);
 		}
 
 		const lines = Array.from(groups.values()).map(g => {
-			// Use the group's effective rate: prefer cost / qty when qty is set,
-			// otherwise average the per-item rates.
+			// Effective rate: prefer cost/qty when qty is non-zero, else the average
+			// of per-item rates we observed, else 0.
 			let rate = 0;
 			if (g.qty !== 0) rate = g.cost / g.qty;
 			else if (g.rateCount > 0) rate = g.rateSum / g.rateCount;
@@ -304,6 +339,11 @@ export default {
 			};
 		});
 
+		// Debug: keep one raw item so we can inspect Genability's actual field
+		// names when qty/rate aren't extracting correctly. Inspect via
+		// `appsmith.store.rc_calc_results[0]._debugFirstItem` in the Appsmith debugger.
+		const debugFirstItem = items[0] || null;
+
 		return {
 			masterTariffId: tariff && tariff.masterTariffId,
 			tariffName: tariff && tariff.tariffName,
@@ -315,7 +355,8 @@ export default {
 			taxCost: Number(result.taxCost || 0),
 			nonBypassableCost: Number(result.nonBypassableCost || 0),
 			lines: lines,
-			error: res && res.__error ? res.__error : null
+			error: res && res.__error ? res.__error : null,
+			_debugFirstItem: debugFirstItem
 		};
 	},
 
