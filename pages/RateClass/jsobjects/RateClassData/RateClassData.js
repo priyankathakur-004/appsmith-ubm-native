@@ -195,7 +195,19 @@ export default {
 			return [];
 		}
 		const responses = await Promise.all(
-			picked.map(t => CalculateTariff.run({ tariff: t }).catch(e => ({ __error: String(e), tariff: t })))
+			picked.map(t => CalculateTariff.run({ tariff: t }).catch(e => {
+				// String(e) on Appsmith error objects renders as "[object Object]".
+				// Walk a few common paths to surface a useful message.
+				let msg = "";
+				if (e) {
+					if (typeof e === "string") msg = e;
+					else if (e.message) msg = e.message;
+					else if (e.responseMeta && e.responseMeta.error && e.responseMeta.error.message) msg = e.responseMeta.error.message;
+					else if (e.response && e.response.body) msg = (typeof e.response.body === "string" ? e.response.body : JSON.stringify(e.response.body));
+					else { try { msg = JSON.stringify(e); } catch (_) { msg = "Unknown error"; } }
+				}
+				return { __error: msg || "Unknown error", tariff: t };
+			}))
 		);
 		const blocks = responses.map((r, i) => RateClassData._normalizeCalcResponse(r, picked[i]));
 		blocks.sort((a, b) => (a.adjustedTotalCost || 0) - (b.adjustedTotalCost || 0));
