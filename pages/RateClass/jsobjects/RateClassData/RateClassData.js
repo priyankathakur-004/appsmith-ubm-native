@@ -185,30 +185,61 @@ export default {
 		};
 	},
 
-	// Run calculate for each selected tariff in parallel, normalise the
-	// per-tariff cost breakdown, rank by adjustedTotalCost ascending, and
-	// stash to store for the results screen to read.
+	// Genability API config. Same Basic token as the CalculateTariff query
+	// metadata — duplicating doesn't widen secret exposure.
+	_GENABILITY_BASE: "https://api.genability.com",
+	_GENABILITY_AUTH: "Basic ZjVjOGRlNmYtZTYyMi00ZTY3LTljNjctN2Y0MDg3ODFmMDQ5OmNkZTk1ZTQwLWYxNDUtNGQzNy05ZTdiLWNhYzFkY2M1ZmRkYw==",
+
+	// Run calculate for each selected tariff via direct fetch().
+	// We bypass the CalculateTariff REST query because Appsmith's body-binding
+	// evaluation fails for this query (returns "CalculateTariff failed to execute"
+	// before the HTTP request is sent — regardless of whether the body binding
+	// returns an object, a JSON string, or inline JSON). fetch() from this JSObject
+	// sidesteps the body-binding layer entirely.
 	async runCalculate() {
 		const picked = RateClassData._selectedFullTariffs();
 		if (!picked.length) {
 			showAlert("Select at least one tariff first", "warning");
 			return [];
 		}
-		const responses = await Promise.all(
-			picked.map(t => CalculateTariff.run({ tariff: t }).catch(e => {
-				// String(e) on Appsmith error objects renders as "[object Object]".
-				// Walk a few common paths to surface a useful message.
-				let msg = "";
-				if (e) {
-					if (typeof e === "string") msg = e;
-					else if (e.message) msg = e.message;
-					else if (e.responseMeta && e.responseMeta.error && e.responseMeta.error.message) msg = e.responseMeta.error.message;
-					else if (e.response && e.response.body) msg = (typeof e.response.body === "string" ? e.response.body : JSON.stringify(e.response.body));
-					else { try { msg = JSON.stringify(e); } catch (_) { msg = "Unknown error"; } }
+
+		const kwh = Number((typeof Inp_RC_consumption !== "undefined" ? Inp_RC_consumption.text : 0) || 0);
+		const kw  = Number((typeof Inp_RC_demand !== "undefined" ? Inp_RC_demand.text : 0) || 0);
+		const from = moment().startOf("month").format("YYYY-MM-DDTHH:mm:ss");
+		const to   = moment().endOf("month").format("YYYY-MM-DDTHH:mm:ss");
+		// Genability's /rest/public/calculate/{mtid} expects `tariffInputs`, not
+		// `propertyInputs`. Same payload shape per entry (keyName, dates, unit, dataValue).
+		const tariffInputs = [
+			{ keyName: "consumption", fromDateTime: from, toDateTime: to, unit: "kWh", dataValue: String(kwh) }
+		];
+		if (kw > 0) {
+			tariffInputs.push({ keyName: "demand", fromDateTime: from, toDateTime: to, unit: "kW", dataValue: String(kw) });
+		}
+		const bodyStr = JSON.stringify({ fromDateTime: from, toDateTime: to, tariffInputs });
+
+		const responses = await Promise.all(picked.map(async t => {
+			try {
+				const res = await fetch(`${RateClassData._GENABILITY_BASE}/rest/public/calculate/${t.masterTariffId}`, {
+					method: "POST",
+					headers: {
+						"Authorization": RateClassData._GENABILITY_AUTH,
+						"Content-Type": "application/json",
+						"Accept": "application/json"
+					},
+					body: bodyStr
+				});
+				let data;
+				try { data = await res.json(); } catch (_) { data = null; }
+				if (!res.ok) {
+					const errMsg = data ? JSON.stringify(data).slice(0, 400) : `HTTP ${res.status}`;
+					return { __error: `HTTP ${res.status}: ${errMsg}`, tariff: t };
 				}
-				return { __error: msg || "Unknown error", tariff: t };
-			}))
-		);
+				return data;
+			} catch (e) {
+				return { __error: (e && e.message) ? e.message : "Network error", tariff: t };
+			}
+		}));
+
 		const blocks = responses.map((r, i) => RateClassData._normalizeCalcResponse(r, picked[i]));
 		blocks.sort((a, b) => (a.adjustedTotalCost || 0) - (b.adjustedTotalCost || 0));
 		await storeValue("rc_calc_results", blocks);
@@ -228,13 +259,51 @@ export default {
 	_normalizeCalcResponse(res, tariff) {
 		const result = (res && res.results && res.results[0]) || res || {};
 		const items = Array.isArray(result.items) ? result.items : [];
-		const lines = items.map(it => ({
-			name: it.chargeName || it.rateGroupName || it.name || "",
-			qty: it.quantity != null ? it.quantity : (it.quantityUnit || ""),
-			qty_unit: it.quantityUnit || "",
-			rate: it.rate != null ? it.rate : (it.itemRate != null ? it.itemRate : 0),
-			cost: it.itemCost != null ? it.itemCost : (it.cost != null ? it.cost : 0)
-		}));
+
+		// Genability often splits a single visible charge across many sub-items
+		// (one per time-of-use band, one per tier, one per season). Group by
+		// chargeName so the display matches the consolidated UBM Native view.
+		// For each group: sum cost + quantity, compute an effective rate.
+		const groups = new Map();
+		for (const it of items) {
+			const name = it.chargeName || it.rateGroupName || it.name || "";
+			if (!name) continue;
+			const cost = Number(it.itemCost != null ? it.itemCost : (it.cost != null ? it.cost : 0)) || 0;
+			const qty  = Number(it.quantity != null ? it.quantity : 0) || 0;
+			const unit = it.quantityUnit || "";
+			// Try several field names — Genability isn't fully consistent across
+			// charge types. Fall back to computing rate = cost / qty when no
+			// explicit rate is on the item.
+			let rate = (it.rate != null) ? Number(it.rate)
+				: (it.itemRate != null) ? Number(it.itemRate)
+				: (it.chargePeriodRate != null) ? Number(it.chargePeriodRate)
+				: (it.unitCost != null) ? Number(it.unitCost)
+				: NaN;
+			if (!isFinite(rate)) rate = (qty !== 0) ? (cost / qty) : 0;
+
+			const g = groups.get(name) || { name, qty: 0, qty_unit: unit, cost: 0, rateSum: 0, rateCount: 0 };
+			g.qty += qty;
+			g.cost += cost;
+			if (isFinite(rate) && rate !== 0) { g.rateSum += rate; g.rateCount += 1; }
+			if (!g.qty_unit && unit) g.qty_unit = unit;
+			groups.set(name, g);
+		}
+
+		const lines = Array.from(groups.values()).map(g => {
+			// Use the group's effective rate: prefer cost / qty when qty is set,
+			// otherwise average the per-item rates.
+			let rate = 0;
+			if (g.qty !== 0) rate = g.cost / g.qty;
+			else if (g.rateCount > 0) rate = g.rateSum / g.rateCount;
+			return {
+				name: g.name,
+				qty: g.qty,
+				qty_unit: g.qty_unit,
+				rate: rate,
+				cost: g.cost
+			};
+		});
+
 		return {
 			masterTariffId: tariff && tariff.masterTariffId,
 			tariffName: tariff && tariff.tariffName,
