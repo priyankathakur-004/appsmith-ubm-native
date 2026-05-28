@@ -3,7 +3,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 21,
   "boxShadow": "none",
-  "buttonColor": "#3b82f6",
+  "buttonColor": "#86efac",
   "buttonVariant": "SECONDARY",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
@@ -42,7 +42,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 21,
   "text": "Search",
-  "topRow": 14,
+  "topRow": 16,
   "type": "BUTTON_WIDGET",
   "version": 1,
   "widgetId": "rcsearchven1",

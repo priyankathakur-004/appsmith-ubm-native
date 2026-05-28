@@ -30,18 +30,6 @@
         {
           "key": "zipCode",
           "value": "{{Inp_RC_zipCode.text}}"
-        },
-        {
-          "key": "country",
-          "value": "USA"
-        },
-        {
-          "key": "serviceTypes",
-          "value": "ELECTRICITY"
-        },
-        {
-          "key": "pageCount",
-          "value": "50"
         }
       ],
       "timeoutInMillisecond": 15000
@@ -54,6 +42,9 @@
       "pluginId": "restapi-plugin"
     },
     "dynamicBindingPathList": [
+      {
+        "key": "path"
+      },
       {
         "key": "queryParameters[0].value"
       }
