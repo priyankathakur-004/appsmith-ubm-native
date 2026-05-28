@@ -7,16 +7,22 @@
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ ({ rows: RateClassData.tariffRows() }) }}",
   "dynamicBindingPathList": [
-    { "key": "theme" },
-    { "key": "borderRadius" },
-    { "key": "boxShadow" },
-    { "key": "defaultModel" },
-    { "key": "onSelectionChanged" }
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [
-    { "key": "onSelectionChanged" }
+    {
+      "key": "onSelectionChanged"
+    }
   ],
   "events": [
     "onSelectionChanged"
@@ -25,7 +31,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "rctariffsgrid",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "mobileBottomRow": 90,

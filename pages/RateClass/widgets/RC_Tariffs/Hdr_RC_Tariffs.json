@@ -5,9 +5,6 @@
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
-    },
-    {
-      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -18,7 +15,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "rctariffshdr",
-  "leftColumn": 6,
+  "leftColumn": 2,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
@@ -37,7 +34,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 30,
   "shouldTruncate": false,
-  "text": "Eligible Tariffs",
+  "text": "Rate Class",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
   "topRow": 2,

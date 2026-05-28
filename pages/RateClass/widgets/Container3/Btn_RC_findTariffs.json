@@ -8,10 +8,10 @@
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "isDisabled"
     },
     {
-      "key": "isDisabled"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [
@@ -22,7 +22,6 @@
   "isDefaultClickDisabled": true,
   "isDisabled": "{{ !Inp_RC_zipCode.text || !Sel_RC_vendor.selectedOptionValue || !Inp_RC_consumption.text || !Inp_RC_demand.text }}",
   "isLoading": false,
-  "onClick": "{{ RateClassData.findEligibleTariffs() }}",
   "isVisible": true,
   "key": "5rg9kipc53",
   "leftColumn": 1,
@@ -32,6 +31,7 @@
   "mobileRightColumn": 17,
   "mobileTopRow": 55,
   "needsErrorInfo": false,
+  "onClick": "{{ RateClassData.findEligibleTariffs() }}",
   "parentColumnSpace": 13.83349609375,
   "parentId": "lwrrpklsjz",
   "parentRowSpace": 10,

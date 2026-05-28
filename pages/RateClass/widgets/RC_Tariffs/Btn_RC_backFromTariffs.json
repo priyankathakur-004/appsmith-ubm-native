@@ -3,14 +3,18 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 6,
   "boxShadow": "none",
-  "buttonColor": "transparent",
+  "buttonColor": "#ffffff",
   "buttonVariant": "TERTIARY",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
-    { "key": "borderRadius" }
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicTriggerPathList": [
-    { "key": "onClick" }
+    {
+      "key": "onClick"
+    }
   ],
   "iconAlign": "left",
   "iconName": "arrow-left",
@@ -19,7 +23,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "rctariffsback",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "minWidth": 40,
   "mobileBottomRow": 6,
   "mobileLeftColumn": 1,
@@ -35,7 +39,7 @@
   "renderMode": "CANVAS",
   "resetFormOnClick": false,
   "responsiveBehavior": "hug",
-  "rightColumn": 5,
+  "rightColumn": 2,
   "text": "",
   "topRow": 2,
   "type": "BUTTON_WIDGET",

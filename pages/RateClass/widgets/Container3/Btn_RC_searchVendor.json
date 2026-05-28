@@ -7,11 +7,17 @@
   "buttonVariant": "SECONDARY",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
-    { "key": "borderRadius" },
-    { "key": "isDisabled" }
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicTriggerPathList": [
-    { "key": "onClick" }
+    {
+      "key": "onClick"
+    }
   ],
   "isDefaultClickDisabled": true,
   "isDisabled": "{{ !Inp_RC_zipCode.text || Inp_RC_zipCode.text.length < 3 }}",

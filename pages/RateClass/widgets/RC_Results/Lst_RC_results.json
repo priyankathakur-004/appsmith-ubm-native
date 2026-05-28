@@ -7,9 +7,12 @@
   "boxShadow": "none",
   "defaultModel": "{{ ({ blocks: RateClassData.calcResults() }) }}",
   "dynamicBindingPathList": [
-    { "key": "theme" },
-    { "key": "borderRadius" },
-    { "key": "defaultModel" }
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
@@ -19,7 +22,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "rcresultscards",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "mobileBottomRow": 180,

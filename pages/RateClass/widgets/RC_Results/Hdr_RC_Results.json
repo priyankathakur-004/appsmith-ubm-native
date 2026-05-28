@@ -5,9 +5,6 @@
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
-    },
-    {
-      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -18,7 +15,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "rcresultshdr",
-  "leftColumn": 6,
+  "leftColumn": 2,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,

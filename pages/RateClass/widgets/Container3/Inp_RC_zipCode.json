@@ -1,33 +1,38 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
+  "autoFocus": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 29,
+  "bottomRow": 21,
   "boxShadow": "none",
-  "defaultOptionValue": "",
+  "defaultText": "",
   "dynamicBindingPathList": [
     {
       "key": "accentColor"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "sourceData"
     }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onSubmit"
+    }
+  ],
+  "iconAlign": "right",
+  "iconName": "search",
+  "inputType": "TEXT",
   "isDisabled": false,
-  "isFilterable": true,
   "isLoading": false,
-  "isRequired": false,
+  "isRequired": true,
   "isVisible": true,
-  "key": "gw26m57q51",
+  "key": "751lx5k8oq",
+  "label": "Postcode",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelText": "Vendor",
+  "labelStyle": "",
   "labelTextColor": "#f4f4f5",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
@@ -35,25 +40,24 @@
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
-  "mobileBottomRow": 30,
+  "mobileBottomRow": 21,
   "mobileLeftColumn": 1,
-  "mobileRightColumn": 21,
-  "mobileTopRow": 23,
+  "mobileRightColumn": 17,
+  "mobileTopRow": 14,
   "needsErrorInfo": false,
-  "optionLabel": "label",
-  "optionValue": "value",
+  "onSubmit": "{{ RateClassData.searchVendors() }}",
   "parentColumnSpace": 13.83349609375,
   "parentId": "lwrrpklsjz",
   "parentRowSpace": 10,
-  "placeholderText": "Search for a postcode first",
+  "placeholderText": "Enter Postcode",
   "renderMode": "CANVAS",
+  "resetOnSubmit": true,
   "responsiveBehavior": "fill",
-  "rightColumn": 21,
-  "serverSideFiltering": false,
-  "sourceData": "{{ RateClassData.vendorOptions() }}",
-  "topRow": 22,
-  "type": "SELECT_WIDGET",
-  "version": 1,
-  "widgetId": "ygybnt8uus",
-  "widgetName": "Sel_RC_vendor"
+  "rightColumn": 17,
+  "showStepArrows": false,
+  "topRow": 14,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "a23d31yf75",
+  "widgetName": "Inp_RC_zipCode"
 }

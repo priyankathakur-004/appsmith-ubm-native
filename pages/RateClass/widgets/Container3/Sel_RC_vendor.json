@@ -1,14 +1,13 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
-  "autoFocus": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 21,
+  "bottomRow": 29,
   "boxShadow": "none",
-  "defaultText": "",
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
+      "key": "sourceData"
     },
     {
       "key": "borderRadius"
@@ -16,24 +15,16 @@
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
-  "dynamicTriggerPathList": [
-    {
-      "key": "onSubmit"
-    }
-  ],
-  "iconAlign": "right",
-  "iconName": "search",
-  "inputType": "TEXT",
+  "dynamicTriggerPathList": [],
   "isDisabled": false,
+  "isFilterable": true,
   "isLoading": false,
-  "isRequired": true,
+  "isRequired": false,
   "isVisible": true,
-  "key": "751lx5k8oq",
-  "label": "Postcode",
-  "onSubmit": "{{ RateClassData.searchVendors() }}",
+  "key": "gw26m57q51",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelStyle": "",
+  "labelText": "Vendor",
   "labelTextColor": "#f4f4f5",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
@@ -41,23 +32,25 @@
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
-  "mobileBottomRow": 21,
+  "mobileBottomRow": 30,
   "mobileLeftColumn": 1,
-  "mobileRightColumn": 17,
-  "mobileTopRow": 14,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 23,
   "needsErrorInfo": false,
+  "optionLabel": "label",
+  "optionValue": "value",
   "parentColumnSpace": 13.83349609375,
   "parentId": "lwrrpklsjz",
   "parentRowSpace": 10,
-  "placeholderText": "Enter Postcode",
+  "placeholderText": "Search for a postcode first",
   "renderMode": "CANVAS",
-  "resetOnSubmit": true,
   "responsiveBehavior": "fill",
-  "rightColumn": 17,
-  "showStepArrows": false,
-  "topRow": 14,
-  "type": "INPUT_WIDGET_V2",
-  "version": 2,
-  "widgetId": "a23d31yf75",
-  "widgetName": "Inp_RC_zipCode"
+  "rightColumn": 21,
+  "serverSideFiltering": false,
+  "sourceData": "{{ RateClassData.vendorOptions() }}",
+  "topRow": 22,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "ygybnt8uus",
+  "widgetName": "Sel_RC_vendor"
 }
