@@ -5,6 +5,16 @@
     "name": "RateClassData",
     "pageId": "RateClass",
     "pluginId": "js-plugin",
-    "pluginType": "JS"
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "_GENABILITY_BASE",
+        "value": "\"https://api.genability.com\""
+      },
+      {
+        "name": "_GENABILITY_AUTH",
+        "value": "\"Basic ZjVjOGRlNmYtZTYyMi00ZTY3LTljNjctN2Y0MDg3ODFmMDQ5OmNkZTk1ZTQwLWYxNDUtNGQzNy05ZTdiLWNhYzFkY2M1ZmRkYw==\""
+      }
+    ]
   }
 }

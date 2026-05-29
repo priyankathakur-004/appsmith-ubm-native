@@ -4,13 +4,13 @@
   "borderColor": "#0f172a",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 176,
-  "bottomRowBeforeCollapse": 176,
+  "bottomRow": 243,
+  "bottomRowBeforeCollapse": 88,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1800,
+      "bottomRow": 1820,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -63,7 +63,7 @@
       "key": "boxShadow"
     }
   ],
-  "dynamicHeight": "FIXED",
+  "dynamicHeight": "AUTO_HEIGHT",
   "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "stretch",
   "isCanvas": true,
@@ -88,8 +88,8 @@
   "responsiveBehavior": "fill",
   "rightColumn": 64,
   "shouldScrollContents": true,
-  "topRow": 88,
-  "topRowBeforeCollapse": 88,
+  "topRow": 61,
+  "topRowBeforeCollapse": 0,
   "type": "CONTAINER_WIDGET",
   "version": 1,
   "widgetId": "rcresultsoute",
