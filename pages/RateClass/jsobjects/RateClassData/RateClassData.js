@@ -374,10 +374,10 @@ export default {
 	},
 
 	// Reset the screen pointer to 1 (search form) whenever the page loads.
-	// Toggle "Run on page load: ON" for this method in the Appsmith editor so
-	// the form is the first thing the user sees on a fresh navigate or refresh —
-	// without this, `appsmith.store.rc_screen` persists across reloads and the
-	// user is dropped back into the last view they left.
+	// Wired to run-on-load via queries/RateClassData-initPage/metadata.json
+	// (runBehaviour: AUTOMATIC) — without this, appsmith.store.rc_screen
+	// persists across reloads and the user is dropped back into the last view
+	// they left (tariffs or calculated results) instead of the search form.
 	async initPage() {
 		await storeValue("rc_screen", 1);
 	},
