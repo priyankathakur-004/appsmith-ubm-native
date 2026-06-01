@@ -3,7 +3,7 @@
   "borderColor": "#E0DEDE",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 180,
+  "bottomRow": 20,
   "boxShadow": "none",
   "defaultModel": "{{ ({ blocks: RateClassData.calcResults() }) }}",
   "dynamicBindingPathList": [
@@ -30,7 +30,7 @@
   "mobileRightColumn": 63,
   "mobileTopRow": 14,
   "needsErrorInfo": false,
-  "originalBottomRow": 180,
+  "originalBottomRow": 20,
   "originalTopRow": 14,
   "parentColumnSpace": 16,
   "parentId": "rcresultscan1",

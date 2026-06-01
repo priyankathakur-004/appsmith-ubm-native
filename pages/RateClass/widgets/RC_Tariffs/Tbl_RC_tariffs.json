@@ -3,7 +3,7 @@
   "borderColor": "#E0DEDE",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 180,
+  "bottomRow": 131,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ ({ rows: RateClassData.tariffRows() }) }}",
   "dynamicBindingPathList": [
@@ -46,7 +46,7 @@
   "parentId": "rctariffscan1",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 63,
+  "rightColumn": 64,
   "shouldScrollContents": true,
   "srcDoc": {
     "css": "html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }\n.ag-theme-alpine .ag-header-cell-menu-button { opacity: 1 !important; width: 20px !important; height: 20px !important; display: flex !important; align-items: center; justify-content: center; }\n.ag-theme-alpine .ag-icon-menu { font-size: 16px !important; opacity: 1 !important; visibility: visible !important; }\n.ag-menu, .ag-menu-option, .ag-tooltip { z-index: 999999 !important; }\n#myGrid { width: 100%; height: calc(var(--appsmith-ui-height) * 1px); }",
