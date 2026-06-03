@@ -1,5 +1,6 @@
 {
   "gitSyncId": "6a1fd180000000000000a009_c0a56429-29e7-4fc2-ad04-0c7742183b6b",
+  "id": "Reports_getCustomers",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {

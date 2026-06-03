@@ -1,9 +1,11 @@
 {
   "gitSyncId": "6a1fd180000000000000a008_ae9e484a-c9aa-422e-8d3e-f6f5187bdd05",
+  "id": "Reports_runReport",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
+      "body": "SELECT {{ ReportSpecs.selectedSpec().select }}\nFROM {{ ReportSpecs.selectedSpec().from }}\n{{ ReportSpecs.clauses() }}\n{{ ReportSpecs.selectedSpec().orderBy ? 'ORDER BY ' + ReportSpecs.selectedSpec().orderBy : '' }}\nLIMIT {{ Math.min(parseInt(LimitInput.text) || 1000, 5000) }}\nOFFSET {{ parseInt(OffsetInput.text) || 0 }};\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -27,7 +29,7 @@
     ],
     "name": "runReport",
     "pageId": "Reports",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }
