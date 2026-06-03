@@ -37,7 +37,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 44,
   "shouldTruncate": false,
-  "text": "{{ UBMUtils.statusText() }}",
+  "text": "{{ ReportSpecs.status() }}",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
   "topRow": 44,

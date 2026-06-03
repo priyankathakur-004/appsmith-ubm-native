@@ -5,7 +5,7 @@
   "borderWidth": "0",
   "bottomRow": 140,
   "boxShadow": "none",
-  "defaultModel": "{{ ({ rows: UBMUtils.rows(), columns: FieldsSelect.selectedOptionValues }) }}",
+  "defaultModel": "{{ ({ rows: runReport.data, columns: FieldsSelect.selectedOptionValues }) }}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"
