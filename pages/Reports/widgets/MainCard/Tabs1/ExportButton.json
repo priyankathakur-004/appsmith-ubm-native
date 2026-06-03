@@ -30,7 +30,7 @@
   "mobileRightColumn": 30,
   "mobileTopRow": 23,
   "needsErrorInfo": false,
-  "onClick": "{{ UBMUtils.exportCsv() }}",
+  "onClick": "{{ ReportSpecs.exportCsv() }}",
   "originalBottomRow": 48,
   "originalTopRow": 44,
   "parentColumnSpace": 16,

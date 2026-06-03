@@ -26,7 +26,7 @@
   "isDisabled": false,
   "isLoading": false,
   "isRequired": false,
-  "isVisible": "{{ UBMUtils.isPaginated() }}",
+  "isVisible": true,
   "key": "cr_limit",
   "label": "Limit (max 1000)",
   "labelAlignment": "left",

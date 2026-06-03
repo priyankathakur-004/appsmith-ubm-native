@@ -41,7 +41,7 @@
   "isDisabled": false,
   "isLoading": false,
   "isRequired": false,
-  "isVisible": "{{ UBMUtils.requiresDates() }}",
+  "isVisible": "{{ ReportSpecs.hasDateFilter() }}",
   "key": "cr_enddate",
   "label": "End date",
   "labelAlignment": "left",

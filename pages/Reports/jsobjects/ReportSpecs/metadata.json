@@ -9,10 +9,6 @@
       {
         "name": "reports",
         "value": "{}"
-      },
-      {
-        "name": "customerIds",
-        "value": "{}"
       }
     ]
   }

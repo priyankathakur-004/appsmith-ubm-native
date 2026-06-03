@@ -1,9 +1,10 @@
 {
-  "gitSyncId": "6a1fd180000000000000a008_ae9e484a-c9aa-422e-8d3e-f6f5187bdd05",
+  "gitSyncId": "6a1fd180000000000000a009_c0a56429-29e7-4fc2-ad04-0c7742183b6b",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
+      "body": "SELECT id, name\nFROM bill_management_v2.customers_search\nWHERE active IS NOT FALSE\nORDER BY name;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -11,7 +12,7 @@
           "value": false
         }
       ],
-      "timeoutInMillisecond": 60000
+      "timeoutInMillisecond": 10000
     },
     "confirmBeforeExecute": false,
     "datasource": {
@@ -20,14 +21,10 @@
       "name": "UBM_Database",
       "pluginId": "postgres-plugin"
     },
-    "dynamicBindingPathList": [
-      {
-        "key": "body"
-      }
-    ],
-    "name": "runReport",
+    "dynamicBindingPathList": [],
+    "name": "getCustomers",
     "pageId": "Reports",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }

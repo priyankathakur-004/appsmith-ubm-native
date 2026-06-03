@@ -71,13 +71,6 @@ export default {
 		}
 	},
 
-	// UBMUtils.activeCustomer() returns "ppg" / "simon"; map to integer
-	// customer_id. PPG TBD per project_ubm_customer_ids — runs unfiltered until set.
-	customerIds: {
-		ppg: null,
-		simon: 94512
-	},
-
 	options: () => {
 		return Object.entries(ReportSpecs.reports).map(([value, v]) => ({
 			label: v.label,
@@ -97,10 +90,13 @@ export default {
 	},
 
 	customerId: () => {
-		const code = UBMUtils.activeCustomer();
-		const id = ReportSpecs.customerIds[code];
-		return id == null ? null : id;
+		const v = CustomerSelect && CustomerSelect.selectedOptionValue;
+		if (v == null || v === "") return null;
+		const n = parseInt(v, 10);
+		return isNaN(n) ? null : n;
 	},
+
+	hasDateFilter: () => !!ReportSpecs.selectedSpec().dateCol,
 
 	// Returns the full WHERE clause ("WHERE 1=1 AND ...") so runReport stays
 	// a clean one-liner. All filters land here so pagination operates on the
@@ -135,5 +131,71 @@ export default {
 		if (!Array.isArray(rows)) return "Pick a report and click Run";
 		const t = ReportSpecs.selectedSpec().label || "report";
 		return `${rows.length} rows · ${t}`;
+	},
+
+	filenameStem: () => {
+		const customer = (CustomerSelect && CustomerSelect.selectedOptionLabel || "customer")
+			.toString().replace(/\s+/g, "_");
+		const report = ReportSpecs.selectedTable();
+		const stamp = moment().format("YYYYMMDD-HHmmss");
+		return `${customer}-${report}-${stamp}`;
+	},
+
+	exportCsv: () => {
+		const rows = runReport.data || [];
+		if (!rows.length) {
+			showAlert("Nothing to export — run a query first", "warning");
+			return;
+		}
+		const fields = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
+			? FieldsSelect.selectedOptionValues
+			: Object.keys(rows[0]);
+		const escape = v => {
+			if (v === null || v === undefined) return "";
+			if (typeof v === "object") v = JSON.stringify(v);
+			const s = String(v);
+			return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+		};
+		const csv = [fields.join(","), ...rows.map(r => fields.map(f => escape(r[f])).join(","))].join("\n");
+		const filename = `${ReportSpecs.filenameStem()}.csv`;
+		download(csv, filename, "text/csv");
+		showAlert(`Exported ${rows.length.toLocaleString()} rows to ${filename}`, "success");
+	},
+
+	exportXlsx: () => {
+		const rows = runReport.data || [];
+		if (!rows.length) {
+			showAlert("Nothing to export — run a query first", "warning");
+			return;
+		}
+		const fields = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
+			? FieldsSelect.selectedOptionValues
+			: Object.keys(rows[0]);
+		const flat = rows.map(r => {
+			const o = {};
+			for (const f of fields) {
+				const v = r[f];
+				o[f] = (v && typeof v === "object") ? JSON.stringify(v) : v;
+			}
+			return o;
+		});
+		const ws = XLSX.utils.json_to_sheet(flat, { header: fields });
+		const wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, "Report");
+		const filename = `${ReportSpecs.filenameStem()}.xlsx`;
+		const b64 = XLSX.write(wb, { type: "base64", bookType: "xlsx" });
+		download({ data: b64, name: filename, type: "xlsx" }, filename);
+		showAlert(`Exported ${rows.length.toLocaleString()} rows to ${filename}`, "success");
+	},
+
+	reset: () => {
+		if (typeof FieldsSelect !== "undefined" && FieldsSelect.clearValue) FieldsSelect.clearValue();
+		if (typeof StartDate !== "undefined" && StartDate.reset) StartDate.reset();
+		if (typeof EndDate !== "undefined" && EndDate.reset) EndDate.reset();
+		resetWidget("LimitInput", false);
+		resetWidget("OffsetInput", false);
+		resetWidget("EndpointSelect", false);
+		runReport.run();
+		showAlert("Filters reset", "success");
 	}
 };

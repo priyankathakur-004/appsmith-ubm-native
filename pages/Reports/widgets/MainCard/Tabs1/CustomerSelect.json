@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 7,
   "boxShadow": "none",
-  "defaultOptionValue": "ppg",
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
@@ -25,7 +25,7 @@
     }
   ],
   "isDisabled": false,
-  "isFilterable": false,
+  "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
@@ -46,9 +46,9 @@
   "mobileRightColumn": 30,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ (async () => { try { await UBMUtils.loginFor(CustomerSelect.selectedOptionValue); UBMUtils.run(); showAlert('Connected to ' + CustomerSelect.selectedOptionLabel, 'success'); } catch(e) { showAlert('Login failed: ' + e.message, 'error'); } })() }}",
-  "optionLabel": "label",
-  "optionValue": "value",
+  "onOptionChange": "{{ runReport.run() }}",
+  "optionLabel": "name",
+  "optionValue": "id",
   "originalBottomRow": 6,
   "originalTopRow": 0,
   "parentColumnSpace": 16,
@@ -59,7 +59,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 22,
   "serverSideFiltering": false,
-  "sourceData": "{{ UBMUtils.customerOptions }}",
+  "sourceData": "{{ getCustomers.data }}",
   "topRow": 0,
   "type": "SELECT_WIDGET",
   "version": 1,
