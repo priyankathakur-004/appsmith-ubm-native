@@ -30,7 +30,7 @@
   "mobileRightColumn": 15,
   "mobileTopRow": 24,
   "needsErrorInfo": false,
-  "onClick": "{{ UBMUtils.run() }}",
+  "onClick": "{{ runReport.run() }}",
   "originalBottomRow": 30,
   "originalTopRow": 26,
   "parentColumnSpace": 16,

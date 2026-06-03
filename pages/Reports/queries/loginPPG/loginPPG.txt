@@ -1,4 +1,0 @@
-{
-  "clientId": "w2S6GCYIMrZsN5xqB2PjABSg2VAerClxJCaiDqGdNuZfL0el",
-  "clientSecret": "EfegzY4GvbtYva5vSvmwF9dQB799aybszKY0mGdzUonS0HA4AyGR1eBkuUhNilB3"
-}

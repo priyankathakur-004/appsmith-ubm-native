@@ -30,7 +30,7 @@
   "mobileRightColumn": 30,
   "mobileTopRow": 24,
   "needsErrorInfo": false,
-  "onClick": "{{ UBMUtils.reset() }}",
+  "onClick": "{{ ReportSpecs.reset() }}",
   "originalBottomRow": 39,
   "originalTopRow": 35,
   "parentColumnSpace": 16,
