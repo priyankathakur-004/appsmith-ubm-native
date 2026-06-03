@@ -21,7 +21,8 @@ export default {
 		},
 		bills: {
 			// Mirrors the join graph from pages/Bills/queries/getBills/getBills.txt,
-			// aliased to the API's camelCase shape. DISTINCT ON collapses the join fan-out.
+			// aliased to the API's camelCase shape. DISTINCT ON collapses the join fan-out;
+			// orderBy is required to make the picked row deterministic.
 			label: "Bills",
 			from: `bill_management_v2.bill_metas bm
 				LEFT JOIN bill_management_v2.bill_metas_bill_records bmbr
@@ -47,7 +48,8 @@ export default {
 				bm.marked_for_payment AS "markedForPayment",
 				TO_CHAR(br.created_at, 'YYYY-MM-DD') AS "createdAt"`,
 			customerCol: "br.customer_id",
-			dateCol: "br.statement_date"
+			dateCol: "br.statement_date",
+			orderBy: "abi.bill_id DESC, br.client_account"
 		},
 		monthlyFeed: {
 			label: "Monthly Feed",
