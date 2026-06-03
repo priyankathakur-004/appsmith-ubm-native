@@ -6,7 +6,7 @@
   "bottomRow": 8,
   "boxShadow": "none",
   "defaultOptionValue": [
-    "reports_customer_monthly_usage"
+    "accounts"
   ],
   "dynamicBindingPathList": [
     {

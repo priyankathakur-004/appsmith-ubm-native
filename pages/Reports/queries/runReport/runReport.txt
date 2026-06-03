@@ -1,4 +1,5 @@
-SELECT * FROM bill_management_v2.{{ ReportSpecs.selectedTable() }}
+SELECT {{ ReportSpecs.selectedSpec().select }}
+FROM {{ ReportSpecs.selectedSpec().from }}
 {{ ReportSpecs.clauses() }}
 LIMIT {{ Math.min(parseInt(LimitInput.text) || 1000, 5000) }}
 OFFSET {{ parseInt(OffsetInput.text) || 0 }};

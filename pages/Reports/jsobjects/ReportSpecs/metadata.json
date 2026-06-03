@@ -7,7 +7,7 @@
     "pluginType": "JS",
     "variables": [
       {
-        "name": "tables",
+        "name": "reports",
         "value": "{}"
       },
       {
