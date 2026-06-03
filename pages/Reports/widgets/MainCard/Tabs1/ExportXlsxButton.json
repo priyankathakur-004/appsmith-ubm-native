@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 48,
+  "boxShadow": "none",
+  "buttonColor": "#93c5fd",
+  "buttonVariant": "TERTIARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "th",
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cr_expxlsx",
+  "leftColumn": 44,
+  "minWidth": 120,
+  "mobileBottomRow": 28,
+  "mobileLeftColumn": 30,
+  "mobileRightColumn": 45,
+  "mobileTopRow": 24,
+  "needsErrorInfo": false,
+  "onClick": "{{ UBMUtils.exportXlsx() }}",
+  "originalBottomRow": 48,
+  "originalTopRow": 44,
+  "parentColumnSpace": 16,
+  "parentId": "ndt2vywl7i",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 54,
+  "text": "Export to Excel",
+  "topRow": 44,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "1ghca5fqrp",
+  "widgetName": "ExportXlsxButton"
+}

@@ -1,0 +1,10 @@
+{
+  "accessor": [
+    "XLSX"
+  ],
+  "defs": "{\"!name\":\"LIB/XLSX\",\"XLSX\":{\"version\":{\"!type\":\"string\"},\"utils\":{\"book_new\":{\"!type\":\"fn()\",\"prototype\":{}},\"book_append_sheet\":{\"!type\":\"fn()\",\"prototype\":{}},\"json_to_sheet\":{\"!type\":\"fn()\",\"prototype\":{}},\"aoa_to_sheet\":{\"!type\":\"fn()\",\"prototype\":{}},\"sheet_to_json\":{\"!type\":\"fn()\",\"prototype\":{}},\"sheet_to_csv\":{\"!type\":\"fn()\",\"prototype\":{}}},\"write\":{\"!type\":\"fn()\",\"prototype\":{}},\"writeFile\":{\"!type\":\"fn()\",\"prototype\":{}},\"read\":{\"!type\":\"fn()\",\"prototype\":{}},\"readFile\":{\"!type\":\"fn()\",\"prototype\":{}}}}",
+  "name": "XLSX",
+  "uidString": "XLSX_https://cdn.sheetjs.com/xlsx-0.18.5/package/dist/xlsx.full.min.js",
+  "url": "https://cdn.sheetjs.com/xlsx-0.18.5/package/dist/xlsx.full.min.js",
+  "version": "0.18.5"
+}

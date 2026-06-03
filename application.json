@@ -80,6 +80,10 @@
     {
       "id": "UBM API Explorer",
       "isDefault": false
+    },
+    {
+      "id": "Reports",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
