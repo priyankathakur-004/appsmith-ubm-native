@@ -1,9 +1,11 @@
 {
   "gitSyncId": "6a1fd180000000000000a008_ae9e484a-c9aa-422e-8d3e-f6f5187bdd05",
+  "id": "Reports_runReport",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
+      "body": "SELECT {{ ReportSpecs.selectClause() }}\nFROM {{ ReportSpecs.fromClause }}\n{{ ReportSpecs.filterClauses() }}\nORDER BY {{ ReportSpecs.orderByClause }}\nLIMIT {{ Math.max(1, (appsmith.store.reportsPageEnd || 100) - (appsmith.store.reportsPageStart || 0)) }}\nOFFSET {{ Math.max(0, appsmith.store.reportsPageStart || 0) }};\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -27,7 +29,7 @@
     ],
     "name": "runReport",
     "pageId": "Reports",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }

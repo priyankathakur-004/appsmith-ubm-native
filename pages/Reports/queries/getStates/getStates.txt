@@ -1,0 +1,5 @@
+SELECT DISTINCT state AS value, state AS label
+FROM bill_management_v2.locations
+WHERE customer_id = {{ ReportSpecs.customerId() }}
+  AND state IS NOT NULL AND state <> ''
+ORDER BY state;

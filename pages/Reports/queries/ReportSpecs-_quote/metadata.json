@@ -1,12 +1,16 @@
 {
-  "gitSyncId": "6a1fc0d14811d588c6346bdf_25cfe6fc-7b2c-4c20-b043-dc0ec8bfa022",
-  "id": "Reports_ReportSpecs.columnOptions",
+  "gitSyncId": "6a1fc0d14811d588c6346bdf_e8f71401-fc2b-44c1-8587-56ea1b40e12e",
+  "id": "Reports_ReportSpecs._quote",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
     "actionConfiguration": {
       "encodeParamsToggle": true,
-      "jsArguments": [],
+      "jsArguments": [
+        {
+          "name": "v"
+        }
+      ],
       "paginationType": "NONE",
       "timeoutInMillisecond": 10000
     },
@@ -22,8 +26,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.columnOptions",
-    "name": "columnOptions",
+    "fullyQualifiedName": "ReportSpecs._quote",
+    "name": "_quote",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

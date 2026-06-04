@@ -1,13 +1,16 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 59,
+  "bottomRow": 13,
   "dynamicBindingPathList": [
     {
-      "key": "text"
+      "key": "truncateButtonColor"
     },
     {
       "key": "fontFamily"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -17,32 +20,33 @@
   "fontStyle": "",
   "isLoading": false,
   "isVisible": true,
-  "key": "cr_status",
+  "key": "hliyxcspbi",
   "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "minWidth": 200,
-  "mobileBottomRow": 49,
+  "minWidth": 450,
+  "mobileBottomRow": 4,
   "mobileLeftColumn": 0,
-  "mobileRightColumn": 30,
-  "mobileTopRow": 46,
+  "mobileRightColumn": 3,
+  "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "originalBottomRow": 59,
-  "originalTopRow": 55,
+  "originalBottomRow": 7,
+  "originalTopRow": 0,
   "overflow": "NONE",
-  "parentColumnSpace": 16,
-  "parentId": "ndt2vywl7i",
+  "parentColumnSpace": 19.09375,
+  "parentId": "uforckh29g",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 44,
+  "rightColumn": 7,
   "shouldTruncate": false,
-  "text": "{{ ReportSpecs.status() }}",
+  "text": "Country",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
-  "topRow": 55,
+  "topRow": 9,
+  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
   "version": 1,
-  "widgetId": "h8rzyrcjbv",
-  "widgetName": "StatusText"
+  "widgetId": "x0rtpo6gij",
+  "widgetName": "Text1"
 }

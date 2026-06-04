@@ -2,7 +2,7 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 55,
+  "bottomRow": 28,
   "boxShadow": "none",
   "defaultOptionValue": "include",
   "dynamicBindingPathList": [
@@ -29,7 +29,7 @@
   "labelTextColor": "#FFFFFF",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 44,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 240,
@@ -42,18 +42,26 @@
   "optionLabel": "label",
   "optionValue": "value",
   "options": [
-    { "label": "Include", "value": "include" },
-    { "label": "Exclude", "value": "exclude" }
+    {
+      "label": "Include",
+      "value": "include"
+    },
+    {
+      "label": "Exclude",
+      "value": "exclude"
+    }
   ],
+  "originalBottomRow": 28,
+  "originalTopRow": 19,
   "parentColumnSpace": 16,
   "parentId": "uforckh29g",
   "parentRowSpace": 10,
   "placeholderText": "Select",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 56,
+  "rightColumn": 16,
   "serverSideFiltering": false,
-  "topRow": 48,
+  "topRow": 19,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "cr712ab34f",

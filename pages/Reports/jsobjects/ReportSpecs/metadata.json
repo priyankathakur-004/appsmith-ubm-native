@@ -1,5 +1,6 @@
 {
   "gitSyncId": "6a1fd180000000000000a000_715416a6-13b3-4475-87b4-d0277bc08b4e",
+  "id": "Reports_ReportSpecs",
   "unpublishedCollection": {
     "name": "ReportSpecs",
     "pageId": "Reports",
@@ -8,19 +9,19 @@
     "variables": [
       {
         "name": "visibleFieldOptions",
-        "value": "[]"
+        "value": "[{\n  value: \"month\",\n  label: \"Month\",\n  sql: \"TO_CHAR(amf.time_period, 'YYYY-MM') AS \\\"month\\\"\"\n}, {\n  value: \"location\",\n  label: \"Location\",\n  sql: \"l.address_line_1 AS \\\"location\\\"\"\n}, {\n  value: \"locationId\",\n  label: \"Location ID\",\n  sql: \"l.id AS \\\"locationId\\\"\"\n}, {\n  value: \"locationAddress\",\n  label: \"Location Address\",\n  sql: \"l.address_line_1 AS \\\"locationAddress\\\"\"\n}, {\n  value: \"locationZip\",\n  label: \"Location Zip\",\n  sql: \"l.post_code AS \\\"locationZip\\\"\"\n}, {\n  value: \"locationState\",\n  label: \"State/Province\",\n  sql: \"l.state AS \\\"locationState\\\"\"\n}, {\n  value: \"locationCountry\",\n  label: \"Country\",\n  sql: \"l.country AS \\\"locationCountry\\\"\"\n}, {\n  value: \"vendor\",\n  label: \"Vendor\",\n  sql: \"COALESCE(cvn.pretty_name, amf.vendor_code) AS \\\"vendor\\\"\"\n}, {\n  value: \"vendorCode\",\n  label: \"Vendor Code\",\n  sql: \"amf.vendor_code AS \\\"vendorCode\\\"\"\n}, {\n  value: \"billType\",\n  label: \"Bill Type\",\n  sql: \"amf.bill_type AS \\\"billType\\\"\"\n}, {\n  value: \"utilityType\",\n  label: \"Service / Utility Type\",\n  sql: \"amf.utility_type AS \\\"utilityType\\\"\"\n}, {\n  value: \"totalCharges\",\n  label: \"Total Charges\",\n  sql: \"amf.total_charges AS \\\"totalCharges\\\"\"\n}, {\n  value: \"totalConsumption\",\n  label: \"Total Consumption\",\n  sql: \"amf.total_consumption AS \\\"totalConsumption\\\"\"\n}, {\n  value: \"uom\",\n  label: \"Unit of Measure\",\n  sql: \"amf.utility_type AS \\\"uom\\\"\"\n}, {\n  value: \"demand\",\n  label: \"Max Demand\",\n  sql: \"amf.max_demand AS \\\"demand\\\"\"\n}, {\n  value: \"daysOfService\",\n  label: \"Days of Service\",\n  sql: \"amf.days_of_service AS \\\"daysOfService\\\"\"\n}, {\n  value: \"startDate\",\n  label: \"Service Start\",\n  sql: \"TO_CHAR(amf.start_date, 'YYYY-MM-DD') AS \\\"startDate\\\"\"\n}, {\n  value: \"endDate\",\n  label: \"Service End\",\n  sql: \"TO_CHAR(amf.end_date, 'YYYY-MM-DD') AS \\\"endDate\\\"\"\n}]"
       },
       {
         "name": "defaultVisibleFields",
-        "value": "[]"
+        "value": "[\"month\", \"location\", \"locationId\", \"utilityType\", \"vendor\", \"totalCharges\", \"totalConsumption\", \"uom\"]"
       },
       {
         "name": "fromClause",
-        "value": "\"\""
+        "value": "`bill_management_v2.analytics_monthly_feed amf\n\t\tLEFT JOIN bill_management_v2.locations l ON l.id = amf.location_id\n\t\tLEFT JOIN bill_management_v2.customers_providers_pretty_name cvn\n\t\t\tON cvn.code = amf.vendor_code AND cvn.customer_id = amf.customer_id`"
       },
       {
         "name": "orderByClause",
-        "value": "\"\""
+        "value": "\"l.id, amf.time_period\""
       }
     ]
   }

@@ -2,7 +2,7 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 39,
+  "bottomRow": 35,
   "boxShadow": "none",
   "defaultOptionValue": "none",
   "dynamicBindingPathList": [
@@ -30,7 +30,7 @@
   "labelTextColor": "#FFFFFF",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 0,
+  "leftColumn": 17,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 240,
@@ -43,19 +43,30 @@
   "optionLabel": "label",
   "optionValue": "value",
   "options": [
-    { "label": "None", "value": "none" },
-    { "label": "Per Square Foot", "value": "perSqFt" },
-    { "label": "Per Degree Day", "value": "perDD" }
+    {
+      "label": "None",
+      "value": "none"
+    },
+    {
+      "label": "Per Square Foot",
+      "value": "perSqFt"
+    },
+    {
+      "label": "Per Degree Day",
+      "value": "perDD"
+    }
   ],
+  "originalBottomRow": 42,
+  "originalTopRow": 35,
   "parentColumnSpace": 16,
   "parentId": "uforckh29g",
   "parentRowSpace": 10,
   "placeholderText": "Select",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 16,
+  "rightColumn": 32,
   "serverSideFiltering": false,
-  "topRow": 32,
+  "topRow": 28,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "cr09f6230f",

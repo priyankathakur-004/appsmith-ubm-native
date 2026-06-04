@@ -1,5 +1,6 @@
 {
   "gitSyncId": "6a1fd180000000000000a012_6dc1d085-ef88-435f-aecd-3f3b48a4124a",
+  "id": "Reports_ReportSpecs.exportCsv",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {

@@ -1,5 +1,6 @@
 {
   "gitSyncId": "6a1fd180000000000000a023_7b0dd3a7-870a-4bb5-b64d-aa3652285be4",
+  "id": "Reports_getStates",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {

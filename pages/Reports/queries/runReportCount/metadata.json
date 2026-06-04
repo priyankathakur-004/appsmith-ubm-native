@@ -1,9 +1,11 @@
 {
   "gitSyncId": "6a1fd180000000000000a015_ed17747d-216e-4f86-984c-2e8bbecd7858",
+  "id": "Reports_runReportCount",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
+      "body": "SELECT COUNT(*) AS total\nFROM {{ ReportSpecs.fromClause }}\n{{ ReportSpecs.filterClauses() }};\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -27,7 +29,7 @@
     ],
     "name": "runReportCount",
     "pageId": "Reports",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }
