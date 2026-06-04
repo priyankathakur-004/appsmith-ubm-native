@@ -1,5 +1,5 @@
 {
-  "gitSyncId": "6a1fd180000000000000a010_c733c063-eeee-48f5-84b9-af2e1977db34",
+  "gitSyncId": "6a1fd180000000000000a020_ad5d6692-1b38-4233-bd03-9cb362f16b2b",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -21,8 +21,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.hasDateFilter",
-    "name": "hasDateFilter",
+    "fullyQualifiedName": "ReportSpecs.fieldOptions",
+    "name": "fieldOptions",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

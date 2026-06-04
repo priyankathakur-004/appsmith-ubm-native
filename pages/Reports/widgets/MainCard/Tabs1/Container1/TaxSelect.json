@@ -1,0 +1,61 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 55,
+  "boxShadow": "none",
+  "defaultOptionValue": "include",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": false,
+  "isFilterable": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "cr_tax",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Tax",
+  "labelTextColor": "#FFFFFF",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 44,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 240,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 56,
+  "mobileTopRow": 48,
+  "needsErrorInfo": false,
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "options": [
+    { "label": "Include", "value": "include" },
+    { "label": "Exclude", "value": "exclude" }
+  ],
+  "parentColumnSpace": 16,
+  "parentId": "uforckh29g",
+  "parentRowSpace": 10,
+  "placeholderText": "Select",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 56,
+  "serverSideFiltering": false,
+  "topRow": 48,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "cr712ab34f",
+  "widgetName": "TaxSelect"
+}

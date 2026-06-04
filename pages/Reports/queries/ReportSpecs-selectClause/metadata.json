@@ -1,5 +1,5 @@
 {
-  "gitSyncId": "6a1fd180000000000000a001_3ec6deaf-3c2e-458a-8d1f-0f92c47e7b4b",
+  "gitSyncId": "6a1fd180000000000000a022_63fcc790-4879-49d8-90c3-cf2873b38599",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -21,8 +21,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.options",
-    "name": "options",
+    "fullyQualifiedName": "ReportSpecs.selectClause",
+    "name": "selectClause",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

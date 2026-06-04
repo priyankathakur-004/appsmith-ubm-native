@@ -1,0 +1,42 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "alignWidget": "LEFT",
+  "animateLoading": true,
+  "bottomRow": 55,
+  "boxShadow": "none",
+  "defaultSwitchState": false,
+  "dynamicBindingPathList": [],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onChange"
+    }
+  ],
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cr_svcnotin",
+  "label": "Service Not In",
+  "labelPosition": "Left",
+  "labelTextColor": "#FFFFFF",
+  "leftColumn": 32,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 32,
+  "mobileRightColumn": 44,
+  "mobileTopRow": 48,
+  "needsErrorInfo": false,
+  "onChange": "{{ ReportSpecs.refreshGrid() }}",
+  "parentColumnSpace": 16,
+  "parentId": "uforckh29g",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 44,
+  "topRow": 48,
+  "type": "SWITCH_WIDGET",
+  "version": 1,
+  "widgetId": "cr4cf2370a",
+  "widgetName": "ServiceNotIn"
+}

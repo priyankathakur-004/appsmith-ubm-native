@@ -1,70 +1,66 @@
 {
-  "accentColor": "#0F2A47",
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 25,
+  "bottomRow": 47,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ ReportSpecs.defaultVisibleFields }}",
+  "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "defaultOptionValue"
     }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
-    },
-    {
-      "key": "optionValue"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
-  "key": "cr_fields",
+  "key": "cr_locstatus",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelStyle": "",
-  "labelText": "Visible Fields",
-  "labelTextColor": "#ffffff",
+  "labelText": "Location Status",
+  "labelTextColor": "#FFFFFF",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 0,
+  "leftColumn": 24,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "minWidth": 450,
-  "mobileBottomRow": 46,
-  "mobileLeftColumn": 0,
-  "mobileRightColumn": 30,
-  "mobileTopRow": 39,
+  "minWidth": 240,
+  "mobileBottomRow": 47,
+  "mobileLeftColumn": 24,
+  "mobileRightColumn": 40,
+  "mobileTopRow": 40,
   "needsErrorInfo": false,
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
   "optionLabel": "label",
   "optionValue": "value",
-  "originalBottomRow": 48,
-  "originalTopRow": 40,
   "parentColumnSpace": 16,
   "parentId": "uforckh29g",
   "parentRowSpace": 10,
-  "placeholderText": "Select",
+  "placeholderText": "All",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 63,
+  "rightColumn": 40,
   "serverSideFiltering": false,
-  "sourceData": "{{ ReportSpecs.fieldOptions() }}",
-  "topRow": 17,
+  "sourceData": "{{ getLocationStatuses.data }}",
+  "topRow": 40,
   "type": "MULTI_SELECT_WIDGET_V2",
-  "version": 1,
-  "widgetId": "kttar80kcq",
-  "widgetName": "FieldsSelect"
+  "version": 2,
+  "widgetId": "crf4ee0cc1",
+  "widgetName": "LocationStatusSelect"
 }

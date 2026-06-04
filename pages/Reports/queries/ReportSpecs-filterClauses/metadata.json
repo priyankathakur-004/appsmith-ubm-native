@@ -1,5 +1,5 @@
 {
-  "gitSyncId": "6a1fd180000000000000a003_a788b6ca-9dc5-4afc-8ab2-73dbe8743393",
+  "gitSyncId": "6a1fd180000000000000a021_cc4ea496-4b58-4d60-b05f-fa9613412d45",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -21,8 +21,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.selectedSpec",
-    "name": "selectedSpec",
+    "fullyQualifiedName": "ReportSpecs.filterClauses",
+    "name": "filterClauses",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

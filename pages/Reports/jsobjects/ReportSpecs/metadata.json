@@ -7,8 +7,20 @@
     "pluginType": "JS",
     "variables": [
       {
-        "name": "reports",
-        "value": "{}"
+        "name": "visibleFieldOptions",
+        "value": "[]"
+      },
+      {
+        "name": "defaultVisibleFields",
+        "value": "[]"
+      },
+      {
+        "name": "fromClause",
+        "value": "\"\""
+      },
+      {
+        "name": "orderByClause",
+        "value": "\"\""
       }
     ]
   }

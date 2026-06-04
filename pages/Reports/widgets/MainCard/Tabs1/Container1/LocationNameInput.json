@@ -1,0 +1,58 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 39,
+  "boxShadow": "none",
+  "defaultText": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onSubmit"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "search",
+  "inputType": "TEXT",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "cr_locname",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelStyle": "",
+  "labelText": "Location Name/Number",
+  "labelTextColor": "#FFFFFF",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 16,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 240,
+  "mobileBottomRow": 39,
+  "mobileLeftColumn": 16,
+  "mobileRightColumn": 32,
+  "mobileTopRow": 32,
+  "needsErrorInfo": false,
+  "onSubmit": "{{ ReportSpecs.refreshGrid() }}",
+  "parentColumnSpace": 16,
+  "parentId": "uforckh29g",
+  "parentRowSpace": 10,
+  "placeholderText": "Search by name or ID",
+  "renderMode": "CANVAS",
+  "resetOnSubmit": false,
+  "responsiveBehavior": "fill",
+  "rightColumn": 32,
+  "topRow": 32,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "cr04cbd36b",
+  "widgetName": "LocationNameInput"
+}

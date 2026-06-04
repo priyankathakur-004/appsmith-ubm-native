@@ -1,0 +1,42 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "alignWidget": "LEFT",
+  "animateLoading": true,
+  "bottomRow": 47,
+  "boxShadow": "none",
+  "defaultSwitchState": false,
+  "dynamicBindingPathList": [],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onChange"
+    }
+  ],
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cr_ctrynotin",
+  "label": "Country Not In",
+  "labelPosition": "Left",
+  "labelTextColor": "#FFFFFF",
+  "leftColumn": 12,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 47,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 24,
+  "mobileTopRow": 40,
+  "needsErrorInfo": false,
+  "onChange": "{{ ReportSpecs.refreshGrid() }}",
+  "parentColumnSpace": 16,
+  "parentId": "uforckh29g",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 24,
+  "topRow": 40,
+  "type": "SWITCH_WIDGET",
+  "version": 1,
+  "widgetId": "cred790c4b",
+  "widgetName": "CountryNotIn"
+}

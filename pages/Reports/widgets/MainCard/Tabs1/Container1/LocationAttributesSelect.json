@@ -1,0 +1,59 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": false,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 63,
+  "boxShadow": "none",
+  "defaultOptionValue": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "cr_locattr",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Location Attributes (limit 10) — TODO map",
+  "labelTextColor": "#FFFFFF",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 12,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 240,
+  "mobileBottomRow": 63,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 32,
+  "mobileTopRow": 56,
+  "needsErrorInfo": false,
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "options": [],
+  "parentColumnSpace": 16,
+  "parentId": "uforckh29g",
+  "parentRowSpace": 10,
+  "placeholderText": "Choose up to 10 attributes",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 32,
+  "serverSideFiltering": false,
+  "topRow": 56,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "cr9c37216f",
+  "widgetName": "LocationAttributesSelect"
+}

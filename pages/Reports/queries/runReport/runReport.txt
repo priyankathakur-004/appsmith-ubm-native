@@ -1,6 +1,6 @@
-SELECT {{ ReportSpecs.selectedSpec().select }}
-FROM {{ ReportSpecs.selectedSpec().from }}
-{{ ReportSpecs.clauses() }}
-{{ ReportSpecs.selectedSpec().orderBy ? 'ORDER BY ' + ReportSpecs.selectedSpec().orderBy : '' }}
+SELECT {{ ReportSpecs.selectClause() }}
+FROM {{ ReportSpecs.fromClause }}
+{{ ReportSpecs.filterClauses() }}
+ORDER BY {{ ReportSpecs.orderByClause }}
 LIMIT {{ Math.max(1, (appsmith.store.reportsPageEnd || 100) - (appsmith.store.reportsPageStart || 0)) }}
 OFFSET {{ Math.max(0, appsmith.store.reportsPageStart || 0) }};

@@ -1,70 +1,61 @@
 {
-  "accentColor": "#0F2A47",
-  "allowSelectAll": true,
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 25,
+  "bottomRow": 63,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ ReportSpecs.defaultVisibleFields }}",
+  "defaultOptionValue": "exclude",
   "dynamicBindingPathList": [
     {
-      "key": "sourceData"
-    },
-    {
       "key": "borderRadius"
-    },
-    {
-      "key": "defaultOptionValue"
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicPropertyPathList": [
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
     {
-      "key": "sourceData"
-    },
-    {
-      "key": "optionValue"
+      "key": "onOptionChange"
     }
   ],
-  "dynamicTriggerPathList": [],
   "isDisabled": false,
-  "isFilterable": true,
+  "isFilterable": false,
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
-  "key": "cr_fields",
+  "key": "cr_otc",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelStyle": "",
-  "labelText": "Visible Fields",
-  "labelTextColor": "#ffffff",
+  "labelText": "One Time Charges",
+  "labelTextColor": "#FFFFFF",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "minWidth": 450,
-  "mobileBottomRow": 46,
+  "minWidth": 240,
+  "mobileBottomRow": 63,
   "mobileLeftColumn": 0,
-  "mobileRightColumn": 30,
-  "mobileTopRow": 39,
+  "mobileRightColumn": 12,
+  "mobileTopRow": 56,
   "needsErrorInfo": false,
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
   "optionLabel": "label",
   "optionValue": "value",
-  "originalBottomRow": 48,
-  "originalTopRow": 40,
+  "options": [
+    { "label": "Include", "value": "include" },
+    { "label": "Exclude", "value": "exclude" }
+  ],
   "parentColumnSpace": 16,
   "parentId": "uforckh29g",
   "parentRowSpace": 10,
   "placeholderText": "Select",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 63,
+  "rightColumn": 12,
   "serverSideFiltering": false,
-  "sourceData": "{{ ReportSpecs.fieldOptions() }}",
-  "topRow": 17,
-  "type": "MULTI_SELECT_WIDGET_V2",
+  "topRow": 56,
+  "type": "SELECT_WIDGET",
   "version": 1,
-  "widgetId": "kttar80kcq",
-  "widgetName": "FieldsSelect"
+  "widgetId": "cr74d424f4",
+  "widgetName": "OneTimeChargesSelect"
 }
