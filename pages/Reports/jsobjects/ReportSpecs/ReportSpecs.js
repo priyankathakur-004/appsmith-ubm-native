@@ -1,9 +1,10 @@
 export default {
 	// One entry per dropdown option. Each spec is { label, from, select,
-	// customerCol, dateCol }. from + select are spliced into runReport's
-	// templated body, so SELECT and FROM stay co-located with their column
-	// mapping. customerCol/dateCol drive the WHERE clause built by clauses()
-	// — keeping all filters SQL-side per [[feedback-sql-side-filters]].
+	// customerCol, dateCol, orderBy? }. from + select are spliced into
+	// runReport's templated body, so SELECT and FROM stay co-located with
+	// their column mapping. customerCol/dateCol drive the WHERE clause built
+	// by clauses() — keeping all filters SQL-side per
+	// [[feedback-sql-side-filters]].
 	reports: {
 		accounts: {
 			label: "Accounts",
@@ -100,9 +101,9 @@ export default {
 
 	hasDateFilter: () => !!ReportSpecs.selectedSpec().dateCol,
 
-	// Returns the full WHERE clause ("WHERE 1=1 AND ...") so runReport stays
-	// a clean one-liner. All filters land here so pagination operates on the
-	// filtered set, not a JS post-filter.
+	// Returns the full WHERE clause ("WHERE 1=1 AND ...") so runReport and
+	// runReportCount stay one-liners. All filters land here so pagination
+	// operates on the filtered set, not a JS post-filter.
 	clauses: () => {
 		const spec = ReportSpecs.selectedSpec();
 		const parts = ["WHERE 1=1"];
@@ -127,12 +128,51 @@ export default {
 		return Object.keys(rows[0]).map(k => ({ label: k, value: k }));
 	},
 
+	// ------- Pagination (AG Grid server-side / infinite row model) -------
+	// Flow: grid calls getRows({startRow, endRow}) → widget fires onFetchPage
+	// → fetchPage() persists range in store + runs runReport + runReportCount
+	// → widget reads the new model and delivers rows to the grid callback.
+	//
+	// When filters change, refreshGrid() bumps a counter that the widget
+	// watches; on change, the widget purges its cache so the grid re-requests
+	// page 1 with the new SQL.
+
+	// Called from GridWidget.onFetchPage. The widget pushes the requested
+	// page range into its own model via appsmith.updateModel, so we read
+	// pendingStart/pendingEnd from there. Falls back to 0/100 (first page).
+	fetchPage: async () => {
+		const m = (typeof GridWidget !== "undefined") ? GridWidget.model : null;
+		const start = Math.max(0, (m && Number(m.pendingStart)) || 0);
+		const end = Math.max(start + 1, (m && Number(m.pendingEnd)) || (start + 100));
+		await storeValue("reportsPageStart", start);
+		await storeValue("reportsPageEnd", end);
+		await Promise.all([runReport.run(), runReportCount.run()]);
+	},
+
+	totalRows: () => {
+		const row = runReportCount.data && runReportCount.data[0];
+		if (!row) return null;
+		const n = Number(row.total);
+		return isNaN(n) ? null : n;
+	},
+
+	refreshKey: () => Number(appsmith.store.reportsRefreshKey) || 0,
+
+	// Called from every filter widget's onChange / RunButton onClick.
+	// Resets to page 1 (the widget responds to the bumped refreshKey by
+	// purging its cache, which triggers a fresh getRows from row 0).
+	refreshGrid: async () => {
+		await storeValue("reportsPageStart", 0);
+		await storeValue("reportsPageEnd", 100);
+		await storeValue("reportsRefreshKey", (Number(appsmith.store.reportsRefreshKey) || 0) + 1);
+	},
+
 	status: () => {
-		if (runReport.isLoading) return "Running...";
-		const rows = runReport.data;
-		if (!Array.isArray(rows)) return "Pick a report and click Run";
-		const t = ReportSpecs.selectedSpec().label || "report";
-		return `${rows.length} rows · ${t}`;
+		if (runReport.isLoading) return "Loading...";
+		const total = ReportSpecs.totalRows();
+		const label = ReportSpecs.selectedSpec().label || "report";
+		if (total == null) return `Pick a customer and click Run · ${label}`;
+		return `${total.toLocaleString()} total rows · ${label}`;
 	},
 
 	filenameStem: () => {
@@ -143,6 +183,8 @@ export default {
 		return `${customer}-${report}-${stamp}`;
 	},
 
+	// Export currently exports the LOADED page. For "export all rows", that
+	// would need a separate unpaginated query — leaving that for later.
 	exportCsv: () => {
 		const rows = runReport.data || [];
 		if (!rows.length) {
@@ -190,14 +232,12 @@ export default {
 		showAlert(`Exported ${rows.length.toLocaleString()} rows to ${filename}`, "success");
 	},
 
-	reset: () => {
+	reset: async () => {
 		if (typeof FieldsSelect !== "undefined" && FieldsSelect.clearValue) FieldsSelect.clearValue();
 		if (typeof StartDate !== "undefined" && StartDate.reset) StartDate.reset();
 		if (typeof EndDate !== "undefined" && EndDate.reset) EndDate.reset();
-		resetWidget("LimitInput", false);
-		resetWidget("OffsetInput", false);
 		resetWidget("EndpointSelect", false);
-		runReport.run();
+		await ReportSpecs.refreshGrid();
 		showAlert("Filters reset", "success");
 	}
 };

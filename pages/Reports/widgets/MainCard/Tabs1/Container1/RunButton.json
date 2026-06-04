@@ -30,7 +30,7 @@
   "mobileRightColumn": 15,
   "mobileTopRow": 24,
   "needsErrorInfo": false,
-  "onClick": "{{ runReport.run() }}",
+  "onClick": "{{ ReportSpecs.refreshGrid() }}",
   "originalBottomRow": 30,
   "originalTopRow": 26,
   "parentColumnSpace": 16,

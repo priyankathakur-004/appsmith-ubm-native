@@ -46,7 +46,7 @@
   "mobileRightColumn": 30,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ runReport.run() }}",
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
   "optionLabel": "name",
   "optionValue": "id",
   "originalBottomRow": 6,

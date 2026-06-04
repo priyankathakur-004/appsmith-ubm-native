@@ -23,7 +23,11 @@
       "key": "isVisible"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDateSelected"
+    }
+  ],
   "firstDayOfWeek": "0",
   "inputFormat": "MM/DD/YYYY",
   "isDisabled": false,
@@ -50,6 +54,7 @@
   "mobileRightColumn": 15,
   "mobileTopRow": 23,
   "needsErrorInfo": false,
+  "onDateSelected": "{{ ReportSpecs.refreshGrid() }}",
   "originalBottomRow": 39,
   "originalTopRow": 31,
   "parentColumnSpace": 16,
