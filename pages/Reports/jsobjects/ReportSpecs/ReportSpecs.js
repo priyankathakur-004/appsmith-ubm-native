@@ -137,9 +137,13 @@ export default {
 	// watches; on change, the widget purges its cache so the grid re-requests
 	// page 1 with the new SQL.
 
-	fetchPage: async (eventData) => {
-		const start = (eventData && Number(eventData.startRow)) || 0;
-		const end = (eventData && Number(eventData.endRow)) || (start + 100);
+	// Called from GridWidget.onFetchPage. The widget pushes the requested
+	// page range into its own model via appsmith.updateModel, so we read
+	// pendingStart/pendingEnd from there. Falls back to 0/100 (first page).
+	fetchPage: async () => {
+		const m = (typeof GridWidget !== "undefined") ? GridWidget.model : null;
+		const start = Math.max(0, (m && Number(m.pendingStart)) || 0);
+		const end = Math.max(start + 1, (m && Number(m.pendingEnd)) || (start + 100));
 		await storeValue("reportsPageStart", start);
 		await storeValue("reportsPageEnd", end);
 		await Promise.all([runReport.run(), runReportCount.run()]);
