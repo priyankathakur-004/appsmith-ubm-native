@@ -1,0 +1,3 @@
+SELECT COUNT(*) AS total
+FROM {{ ReportSpecs.selectedSpec().from }}
+{{ ReportSpecs.clauses() }};

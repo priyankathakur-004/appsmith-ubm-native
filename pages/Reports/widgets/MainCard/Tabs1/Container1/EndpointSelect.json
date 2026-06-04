@@ -52,7 +52,7 @@
   "mobileRightColumn": 30,
   "mobileTopRow": 15,
   "needsErrorInfo": false,
-  "onOptionChange": "{{resetWidget(\"FieldsSelect\", true);\nrunReport.run()\n}}",
+  "onOptionChange": "{{ resetWidget(\"FieldsSelect\", true); ReportSpecs.refreshGrid(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 23,
