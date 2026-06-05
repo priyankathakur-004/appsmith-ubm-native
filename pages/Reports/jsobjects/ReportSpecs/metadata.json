@@ -22,6 +22,14 @@
       {
         "name": "orderByClause",
         "value": "\"l.id, amf.time_period\""
+      },
+      {
+        "name": "stateNames",
+        "value": "{}"
+      },
+      {
+        "name": "countryNames",
+        "value": "{}"
       }
     ]
   }

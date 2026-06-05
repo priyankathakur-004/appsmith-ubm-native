@@ -52,6 +52,55 @@ export default {
 	// ORDER BY for both runReport and runReportCount alignment.
 	orderByClause: "l.id, amf.time_period",
 
+	// ----- ISO state/country code → pretty name maps -----
+	// DB stores ISO codes like "US-CA", "CA-ON". Filter SELECT/IN still uses
+	// the code; only the dropdown label changes via prettyStates/prettyCountries.
+	stateNames: {
+		"US-AL": "Alabama", "US-AK": "Alaska", "US-AZ": "Arizona", "US-AR": "Arkansas",
+		"US-CA": "California", "US-CO": "Colorado", "US-CT": "Connecticut", "US-DE": "Delaware",
+		"US-DC": "District of Columbia", "US-FL": "Florida", "US-GA": "Georgia", "US-HI": "Hawaii",
+		"US-ID": "Idaho", "US-IL": "Illinois", "US-IN": "Indiana", "US-IA": "Iowa",
+		"US-KS": "Kansas", "US-KY": "Kentucky", "US-LA": "Louisiana", "US-ME": "Maine",
+		"US-MD": "Maryland", "US-MA": "Massachusetts", "US-MI": "Michigan", "US-MN": "Minnesota",
+		"US-MS": "Mississippi", "US-MO": "Missouri", "US-MT": "Montana", "US-NE": "Nebraska",
+		"US-NV": "Nevada", "US-NH": "New Hampshire", "US-NJ": "New Jersey", "US-NM": "New Mexico",
+		"US-NY": "New York", "US-NC": "North Carolina", "US-ND": "North Dakota", "US-OH": "Ohio",
+		"US-OK": "Oklahoma", "US-OR": "Oregon", "US-PA": "Pennsylvania", "US-RI": "Rhode Island",
+		"US-SC": "South Carolina", "US-SD": "South Dakota", "US-TN": "Tennessee", "US-TX": "Texas",
+		"US-UT": "Utah", "US-VT": "Vermont", "US-VA": "Virginia", "US-WA": "Washington",
+		"US-WV": "West Virginia", "US-WI": "Wisconsin", "US-WY": "Wyoming",
+		"US-PR": "Puerto Rico", "US-VI": "U.S. Virgin Islands", "US-GU": "Guam",
+		"US-MP": "Northern Mariana Islands", "US-AS": "American Samoa",
+		"CA-AB": "Alberta", "CA-BC": "British Columbia", "CA-MB": "Manitoba",
+		"CA-NB": "New Brunswick", "CA-NL": "Newfoundland and Labrador", "CA-NS": "Nova Scotia",
+		"CA-ON": "Ontario", "CA-PE": "Prince Edward Island", "CA-QC": "Quebec",
+		"CA-SK": "Saskatchewan", "CA-NT": "Northwest Territories", "CA-NU": "Nunavut",
+		"CA-YT": "Yukon"
+	},
+
+	countryNames: {
+		"US": "United States", "USA": "United States", "CA": "Canada", "CAN": "Canada",
+		"MX": "Mexico", "GB": "United Kingdom", "UK": "United Kingdom"
+	},
+
+	prettyStates: () => {
+		const rows = (typeof getStates !== "undefined" && getStates.data) || [];
+		const map = ReportSpecs.stateNames;
+		return rows.map(r => ({
+			value: r.value,
+			label: map[r.value] ? `${map[r.value]} (${r.value})` : r.value
+		}));
+	},
+
+	prettyCountries: () => {
+		const rows = (typeof getCountries !== "undefined" && getCountries.data) || [];
+		const map = ReportSpecs.countryNames;
+		return rows.map(r => ({
+			value: r.value,
+			label: map[r.value] || r.value
+		}));
+	},
+
 	// ----- Helpers -----
 	customerId: () => {
 		const v = CustomerSelect && CustomerSelect.selectedOptionValue;
@@ -133,14 +182,15 @@ export default {
 		}
 
 		// Location name / number — free text, partial match on name/address or id.
-		const loc = (typeof LocationNameInput !== "undefined" && LocationNameInput.text) || "";
+		const loc = (typeof LocationName !== "undefined" && LocationName.text) || "";
 		if (loc.trim() !== "") {
 			const safe = String(loc).trim().replace(/'/g, "''");
 			parts.push(`AND (l.name ILIKE '%${safe}%' OR l.address ILIKE '%${safe}%' OR CAST(l.id AS TEXT) = '${safe}')`);
 		}
 
-		// Tax / One Time Charges / Normalization / Hierarchy / Account / Location attributes:
-		// TODO: NG → UBM mapping not yet confirmed for these. No-op until mapping arrives.
+		// Location attributes — picker populates from custom_location_attributes
+		// (attribute names). Actual value-level filtering is a second-level
+		// picker we haven't added yet; this just no-ops on the names for now.
 
 		return parts.join(" ");
 	},
@@ -238,12 +288,11 @@ export default {
 	// Reset all filter widgets and re-fetch from page 1.
 	reset: async () => {
 		const widgetNames = [
-			"FieldsSelect", "StartDate", "EndDate", "NormalizationType",
-			"LocationNameInput", "StateProvinceSelect", "StateNotIn",
+			"FieldsSelect", "StartDate", "EndDate",
+			"LocationName", "StateProvinceSelect", "StateNotIn",
 			"CountrySelect", "CountryNotIn", "LocationStatusSelect",
-			"VendorSelect", "VendorTerritory", "ServiceTypesSelect", "ServiceNotIn",
-			"TaxSelect", "OneTimeChargesSelect", "LocationAttributesSelect",
-			"HierarchyAttributesSelect", "AccountAttributesSelect"
+			"VendorSelect", "ServiceTypesSelect", "ServiceNotIn",
+			"LocationAttributesSelect"
 		];
 		for (const w of widgetNames) {
 			try { resetWidget(w, false); } catch (e) { /* widget may not exist yet */ }
