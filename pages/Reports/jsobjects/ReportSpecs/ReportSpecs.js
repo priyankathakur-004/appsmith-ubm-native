@@ -12,25 +12,55 @@ export default {
 	// Each entry: { value (alias used in column picker), label, sql (SELECT expr) }.
 	// SELECT clause is built by selectClause() from the user's pick.
 	visibleFieldOptions: [
+		// --- Time / period ---
 		{ value: "month", label: "Month", sql: "TO_CHAR(amf.time_period, 'YYYY-MM') AS \"month\"" },
+		{ value: "statementDate", label: "Statement Date", sql: "TO_CHAR(amf.statement_date, 'YYYY-MM-DD') AS \"statementDate\"" },
+		{ value: "startDate", label: "Service Start", sql: "TO_CHAR(amf.start_date, 'YYYY-MM-DD') AS \"startDate\"" },
+		{ value: "endDate", label: "Service End", sql: "TO_CHAR(amf.end_date, 'YYYY-MM-DD') AS \"endDate\"" },
+		{ value: "daysOfService", label: "Days of Service", sql: "amf.days_of_service AS \"daysOfService\"" },
+
+		// --- Location ---
 		{ value: "location", label: "Location", sql: "l.name AS \"location\"" },
 		{ value: "locationId", label: "Location ID", sql: "l.id AS \"locationId\"" },
 		{ value: "locationAddress", label: "Location Address", sql: "l.address AS \"locationAddress\"" },
-		{ value: "locationZip", label: "Location Zip", sql: "l.postcode AS \"locationZip\"" },
 		{ value: "locationCity", label: "City", sql: "l.city AS \"locationCity\"" },
 		{ value: "locationState", label: "State/Province", sql: "l.state AS \"locationState\"" },
 		{ value: "locationCountry", label: "Country", sql: "l.country AS \"locationCountry\"" },
+		{ value: "locationZip", label: "Location Zip", sql: "l.postcode AS \"locationZip\"" },
+		{ value: "locationStatus", label: "Location Status", sql: "lt.location_status AS \"locationStatus\"" },
+		{ value: "buildingType", label: "Building Type", sql: "l.building_type AS \"buildingType\"" },
+		{ value: "squareFeet", label: "Square Feet", sql: "l.square_feet AS \"squareFeet\"" },
+
+		// --- Hierarchy (location_detail groupings) ---
+		{ value: "locationDivision", label: "Division", sql: "lt.location_division AS \"locationDivision\"" },
+		{ value: "locationTopGroup", label: "Top Group", sql: "lt.location_top_group AS \"locationTopGroup\"" },
+		{ value: "locationSecondGroup", label: "Second Group", sql: "lt.location_second_group AS \"locationSecondGroup\"" },
+		{ value: "locationThirdGroup", label: "Third Group", sql: "lt.location_third_group AS \"locationThirdGroup\"" },
+
+		// --- Vendor / bill identity ---
 		{ value: "vendor", label: "Vendor", sql: "COALESCE(cvn.pretty_name, amf.vendor_code) AS \"vendor\"" },
 		{ value: "vendorCode", label: "Vendor Code", sql: "amf.vendor_code AS \"vendorCode\"" },
 		{ value: "billType", label: "Bill Type", sql: "amf.bill_type AS \"billType\"" },
 		{ value: "utilityType", label: "Service / Utility Type", sql: "amf.utility_type AS \"utilityType\"" },
-		{ value: "totalCharges", label: "Total Charges", sql: "amf.total_charges AS \"totalCharges\"" },
+
+		// --- Usage / consumption ---
+		{ value: "uom", label: "Unit of Measure", sql: "amf.total_consumption_uom AS \"uom\"" },
 		{ value: "totalConsumption", label: "Total Consumption", sql: "amf.total_consumption AS \"totalConsumption\"" },
-		{ value: "uom", label: "Unit of Measure", sql: "amf.utility_type AS \"uom\"" },
+		{ value: "totalGenConsumption", label: "Generation Consumption", sql: "amf.total_gen_consumption AS \"totalGenConsumption\"" },
 		{ value: "demand", label: "Max Demand", sql: "amf.max_demand AS \"demand\"" },
-		{ value: "daysOfService", label: "Days of Service", sql: "amf.days_of_service AS \"daysOfService\"" },
-		{ value: "startDate", label: "Service Start", sql: "TO_CHAR(amf.start_date, 'YYYY-MM-DD') AS \"startDate\"" },
-		{ value: "endDate", label: "Service End", sql: "TO_CHAR(amf.end_date, 'YYYY-MM-DD') AS \"endDate\"" }
+
+		// --- Charges (granular) ---
+		{ value: "totalCharges", label: "Total Charges", sql: "amf.total_charges AS \"totalCharges\"" },
+		{ value: "totalChargesUsage", label: "Usage Charges", sql: "amf.total_charges_usage AS \"totalChargesUsage\"" },
+		{ value: "totalChargesConsumption", label: "Consumption Charges", sql: "amf.total_charges_consumption AS \"totalChargesConsumption\"" },
+		{ value: "totalChargesDemand", label: "Demand Charges", sql: "amf.total_charges_demand AS \"totalChargesDemand\"" },
+		{ value: "totalChargesTaxes", label: "Tax Charges", sql: "amf.total_charges_taxes AS \"totalChargesTaxes\"" },
+		{ value: "totalChargesCustomer", label: "Customer Charges", sql: "amf.total_charges_customer AS \"totalChargesCustomer\"" },
+		{ value: "totalChargesOther", label: "Other Charges", sql: "amf.total_charges_other AS \"totalChargesOther\"" },
+
+		// --- Weather (for normalization) ---
+		{ value: "totalHdd", label: "Heating Degree Days", sql: "amf.total_hdd_billblock AS \"totalHdd\"" },
+		{ value: "totalCdd", label: "Cooling Degree Days", sql: "amf.total_cdd_billblock AS \"totalCdd\"" }
 	],
 
 	defaultVisibleFields: [

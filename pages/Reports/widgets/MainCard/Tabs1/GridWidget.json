@@ -5,7 +5,7 @@
   "borderWidth": "0",
   "bottomRow": 131,
   "boxShadow": "none",
-  "defaultModel": "{{ ({ rows: runReport.data, totalRows: ReportSpecs.totalRows(), refreshKey: ReportSpecs.refreshKey(), pageStart: appsmith.store.reportsPageStart || 0, columns: FieldsSelect.selectedOptionValues }) }}",
+  "defaultModel": "{{ ({ rows: runReport.data, totalRows: (runReportCount.data && runReportCount.data[0] && Number(runReportCount.data[0].total)) || null, refreshKey: Number(appsmith.store.reportsRefreshKey) || 0, pageStart: Number(appsmith.store.reportsPageStart) || 0, columns: FieldsSelect.selectedOptionValues }) }}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"
