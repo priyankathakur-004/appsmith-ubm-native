@@ -1,70 +1,68 @@
 {
   "accentColor": "#0F2A47",
-  "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
+  "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ ReportSpecs.defaultVisibleFields }}",
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "defaultOptionValue"
     }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
-    },
-    {
-      "key": "optionValue"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
-  "key": "cr_fields",
+  "key": "cr_custsel",
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
-  "labelText": "Visible Fields",
+  "labelText": "Customer",
   "labelTextColor": "#ffffff",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 17,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "minWidth": 450,
-  "mobileBottomRow": 46,
+  "minWidth": 240,
+  "mobileBottomRow": 7,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 30,
-  "mobileTopRow": 39,
+  "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "optionLabel": "label",
-  "optionValue": "value",
-  "originalBottomRow": 34,
-  "originalTopRow": 26,
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
+  "optionLabel": "name",
+  "optionValue": "id",
+  "originalBottomRow": 6,
+  "originalTopRow": 0,
   "parentColumnSpace": 16,
-  "parentId": "ndt2vywl7i",
+  "parentId": "uforckh29g",
   "parentRowSpace": 10,
-  "placeholderText": "Select",
+  "placeholderText": "Select customer",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 64,
+  "rightColumn": 16,
   "serverSideFiltering": false,
-  "sourceData": "{{ ReportSpecs.fieldOptions() }}",
-  "topRow": 1,
-  "type": "MULTI_SELECT_WIDGET_V2",
+  "sourceData": "{{ getCustomers.data }}",
+  "topRow": 0,
+  "type": "SELECT_WIDGET",
   "version": 1,
-  "widgetId": "kttar80kcq",
-  "widgetName": "FieldsSelect"
+  "widgetId": "1xcwht3qpt",
+  "widgetName": "CustomerSelect"
 }
