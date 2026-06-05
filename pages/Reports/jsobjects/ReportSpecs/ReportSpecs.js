@@ -184,11 +184,10 @@ export default {
 			parts.push(ReportSpecs._inList("l.state", states, notIn));
 		}
 
-		// Country (+ Not In)
+		// Country
 		const countries = (typeof CountrySelect !== "undefined" && CountrySelect.selectedOptionValues) || [];
 		if (countries.length > 0) {
-			const notIn = (typeof CountryNotIn !== "undefined") && CountryNotIn.isSwitchedOn;
-			parts.push(ReportSpecs._inList("l.country", countries, notIn));
+			parts.push(ReportSpecs._inList("l.country", countries));
 		}
 
 		// Location status — lives on location_detail (lt) per the schema.
@@ -320,7 +319,7 @@ export default {
 		const widgetNames = [
 			"FieldsSelect", "StartDate", "EndDate",
 			"LocationName", "StateProvinceSelect", "StateNotIn",
-			"CountrySelect", "CountryNotIn", "LocationStatusSelect",
+			"CountrySelect", "LocationStatusSelect",
 			"VendorSelect", "ServiceTypesSelect", "ServiceNotIn",
 			"LocationAttributesSelect"
 		];
