@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a1fd180000000000000a005_2e2c23f8-98d3-4d71-949b-4f9e651819fe",
-  "id": "Reports_ReportSpecs.clauses",
+  "gitSyncId": "6a1fd180000000000000a030_04c1ef66-b668-400d-9324-6b081660fd15",
+  "id": "Reports_ReportSpecs.prettyCountries",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.clauses",
-    "name": "clauses",
+    "fullyQualifiedName": "ReportSpecs.prettyCountries",
+    "name": "prettyCountries",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

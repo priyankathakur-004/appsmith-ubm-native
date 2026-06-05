@@ -1,13 +1,11 @@
 {
-  "accentColor": "#0F2A47",
-  "allowSelectAll": false,
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
+  "bottomRow": 28,
   "boxShadow": "none",
-  "defaultOptionValue": [
-    "accounts"
-  ],
+  "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
@@ -20,9 +18,6 @@
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
-    },
-    {
-      "key": "onOptionChange"
     }
   ],
   "dynamicTriggerPathList": [
@@ -35,40 +30,39 @@
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
-  "key": "cr_epsel",
+  "key": "cr_country",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelStyle": "",
-  "labelText": "Report (pick one — first one drives the rows)",
-  "labelTextColor": "#ffffff",
+  "labelText": "",
+  "labelTextColor": "#FFFFFF",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 0,
+  "leftColumn": 17,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 240,
-  "mobileBottomRow": 22,
+  "mobileBottomRow": 47,
   "mobileLeftColumn": 0,
-  "mobileRightColumn": 30,
-  "mobileTopRow": 15,
+  "mobileRightColumn": 12,
+  "mobileTopRow": 40,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ resetWidget(\"FieldsSelect\", true); ReportSpecs.refreshGrid(); }}",
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
   "optionLabel": "label",
   "optionValue": "value",
-  "originalBottomRow": 23,
-  "originalTopRow": 15,
+  "originalBottomRow": 19,
+  "originalTopRow": 13,
   "parentColumnSpace": 16,
   "parentId": "uforckh29g",
   "parentRowSpace": 10,
-  "placeholderText": "Select",
+  "placeholderText": "All",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 63,
+  "rightColumn": 32,
   "serverSideFiltering": false,
-  "sourceData": "{{ ReportSpecs.options() }}",
-  "topRow": 0,
+  "sourceData": "{{ ReportSpecs.prettyCountries() }}",
+  "topRow": 22,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 2,
-  "widgetId": "3sy70v4hf3",
-  "widgetName": "EndpointSelect"
+  "widgetId": "cr3632bfbe",
+  "widgetName": "CountrySelect"
 }

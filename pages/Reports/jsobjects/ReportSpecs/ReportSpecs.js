@@ -1,97 +1,143 @@
 export default {
-	// One entry per dropdown option. Each spec is { label, from, select,
-	// customerCol, dateCol, orderBy? }. from + select are spliced into
-	// runReport's templated body, so SELECT and FROM stay co-located with
-	// their column mapping. customerCol/dateCol drive the WHERE clause built
-	// by clauses() — keeping all filters SQL-side per
-	// [[feedback-sql-side-filters]].
-	reports: {
-		accounts: {
-			label: "Accounts",
-			from: "bill_management_v2.reports_customer_accounts_view",
-			select: "*",
-			customerCol: "customer_id",
-			dateCol: null
-		},
-		vendors: {
-			label: "Vendors",
-			from: "bill_management_v2.reports_vendors",
-			select: "*",
-			customerCol: "customer_id",
-			dateCol: null
-		},
-		bills: {
-			// Mirrors the join graph from pages/Bills/queries/getBills/getBills.txt,
-			// aliased to the API's camelCase shape. DISTINCT ON collapses the join fan-out;
-			// orderBy is required to make the picked row deterministic.
-			label: "Bills",
-			from: `bill_management_v2.bill_metas bm
-				LEFT JOIN bill_management_v2.bill_metas_bill_records bmbr
-					ON bmbr.bill_meta_id = bm.id AND bmbr.status = 'active'
-				LEFT JOIN bill_management_v2.bill_records br ON br.id = bmbr.bill_record_id
-				LEFT JOIN bill_management_v2.bill_items bi ON bi.bill_record_id = br.id
-				LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
-					ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
-				LEFT JOIN bill_management_v2.analytics_bills_items abi ON br.id = abi.bill_record_id
-				LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac
-					ON abi.bill_id = btac.bill_id`,
-			select: `DISTINCT ON (abi.bill_id, br.client_account)
-				abi.bill_id AS "billId",
-				COALESCE(cvn.pretty_name, br.vendor_code) AS "vendor",
-				br.vendor_code AS "vendorCode",
-				br.client_account AS "billingId",
-				TO_CHAR(br.statement_date, 'YYYY-MM-DD') AS "invoiceDate",
-				TO_CHAR(bi.start_date, 'YYYY-MM-DD') AS "serviceStartDate",
-				TO_CHAR(bi.end_date, 'YYYY-MM-DD') AS "serviceEndDate",
-				bi.commodity AS "virtacctUtilityType",
-				btac.total_charges AS "currentCharges",
-				btac.total_amount AS "totalPayAmount",
-				bm.marked_for_payment AS "markedForPayment",
-				TO_CHAR(br.created_at, 'YYYY-MM-DD') AS "createdAt"`,
-			customerCol: "br.customer_id",
-			dateCol: "br.statement_date",
-			orderBy: "abi.bill_id DESC, br.client_account"
-		},
-		monthlyFeed: {
-			label: "Monthly Feed",
-			from: "bill_management_v2.analytics_monthly_feed",
-			select: "*",
-			customerCol: "customer_id",
-			dateCol: "start_date"
-		},
-		billErrors: {
-			// bill_errors has no customer_id directly — scope via bill_records.
-			label: "Bill Errors",
-			from: `bill_management_v2.bill_errors be
-				LEFT JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id`,
-			select: `be.id AS "billErrorId",
-				TO_CHAR(be.created_at, 'YYYY-MM-DD') AS "importDate",
-				br.id AS "pearId",
-				br.client_account AS "billingId",
-				TO_CHAR(br.statement_date, 'YYYY-MM-DD') AS "invoiceDate"`,
-			customerCol: "br.customer_id",
-			dateCol: "be.created_at"
-		}
+	// =====================================================================
+	// Cost Analysis – Trendline
+	//
+	// Single-report builder modeled after the client's NG provider UI.
+	// All filters apply at the SQL layer (see [[feedback-sql-side-filters]]).
+	// Best-guess field mapping per [[project-reports-ng-builder]]; lines
+	// marked TODO need confirmation against the NG → UBM mapping doc.
+	// =====================================================================
+
+	// ----- Visible fields catalog (what the user picks from FieldsSelect) -----
+	// Each entry: { value (alias used in column picker), label, sql (SELECT expr) }.
+	// SELECT clause is built by selectClause() from the user's pick.
+	visibleFieldOptions: [
+		// --- Time / period ---
+		{ value: "month", label: "Month", sql: "TO_CHAR(amf.time_period, 'YYYY-MM') AS \"month\"" },
+		{ value: "statementDate", label: "Statement Date", sql: "TO_CHAR(amf.statement_date, 'YYYY-MM-DD') AS \"statementDate\"" },
+		{ value: "startDate", label: "Service Start", sql: "TO_CHAR(amf.start_date, 'YYYY-MM-DD') AS \"startDate\"" },
+		{ value: "endDate", label: "Service End", sql: "TO_CHAR(amf.end_date, 'YYYY-MM-DD') AS \"endDate\"" },
+		{ value: "daysOfService", label: "Days of Service", sql: "amf.days_of_service AS \"daysOfService\"" },
+
+		// --- Location ---
+		{ value: "location", label: "Location", sql: "l.name AS \"location\"" },
+		{ value: "locationId", label: "Location ID", sql: "l.id AS \"locationId\"" },
+		{ value: "locationAddress", label: "Location Address", sql: "l.address AS \"locationAddress\"" },
+		{ value: "locationCity", label: "City", sql: "l.city AS \"locationCity\"" },
+		{ value: "locationState", label: "State/Province", sql: "l.state AS \"locationState\"" },
+		{ value: "locationCountry", label: "Country", sql: "l.country AS \"locationCountry\"" },
+		{ value: "locationZip", label: "Location Zip", sql: "l.postcode AS \"locationZip\"" },
+		{ value: "locationStatus", label: "Location Status", sql: "lt.location_status AS \"locationStatus\"" },
+		{ value: "buildingType", label: "Building Type", sql: "l.building_type AS \"buildingType\"" },
+		{ value: "squareFeet", label: "Square Feet", sql: "l.square_feet AS \"squareFeet\"" },
+
+		// --- Hierarchy (location_detail groupings) ---
+		{ value: "locationDivision", label: "Division", sql: "lt.location_division AS \"locationDivision\"" },
+		{ value: "locationTopGroup", label: "Top Group", sql: "lt.location_top_group AS \"locationTopGroup\"" },
+		{ value: "locationSecondGroup", label: "Second Group", sql: "lt.location_second_group AS \"locationSecondGroup\"" },
+		{ value: "locationThirdGroup", label: "Third Group", sql: "lt.location_third_group AS \"locationThirdGroup\"" },
+
+		// --- Vendor / bill identity ---
+		{ value: "vendor", label: "Vendor", sql: "COALESCE(cvn.pretty_name, amf.vendor_code) AS \"vendor\"" },
+		{ value: "vendorCode", label: "Vendor Code", sql: "amf.vendor_code AS \"vendorCode\"" },
+		{ value: "billType", label: "Bill Type", sql: "amf.bill_type AS \"billType\"" },
+		{ value: "utilityType", label: "Service / Utility Type", sql: "amf.utility_type AS \"utilityType\"" },
+
+		// --- Usage / consumption ---
+		{ value: "uom", label: "Unit of Measure", sql: "amf.total_consumption_uom AS \"uom\"" },
+		{ value: "totalConsumption", label: "Total Consumption", sql: "amf.total_consumption AS \"totalConsumption\"" },
+		{ value: "totalGenConsumption", label: "Generation Consumption", sql: "amf.total_gen_consumption AS \"totalGenConsumption\"" },
+		{ value: "demand", label: "Max Demand", sql: "amf.max_demand AS \"demand\"" },
+
+		// --- Charges (granular) ---
+		{ value: "totalCharges", label: "Total Charges", sql: "amf.total_charges AS \"totalCharges\"" },
+		{ value: "totalChargesUsage", label: "Usage Charges", sql: "amf.total_charges_usage AS \"totalChargesUsage\"" },
+		{ value: "totalChargesConsumption", label: "Consumption Charges", sql: "amf.total_charges_consumption AS \"totalChargesConsumption\"" },
+		{ value: "totalChargesDemand", label: "Demand Charges", sql: "amf.total_charges_demand AS \"totalChargesDemand\"" },
+		{ value: "totalChargesTaxes", label: "Tax Charges", sql: "amf.total_charges_taxes AS \"totalChargesTaxes\"" },
+		{ value: "totalChargesCustomer", label: "Customer Charges", sql: "amf.total_charges_customer AS \"totalChargesCustomer\"" },
+		{ value: "totalChargesOther", label: "Other Charges", sql: "amf.total_charges_other AS \"totalChargesOther\"" },
+
+		// --- Weather (for normalization) ---
+		{ value: "totalHdd", label: "Heating Degree Days", sql: "amf.total_hdd_billblock AS \"totalHdd\"" },
+		{ value: "totalCdd", label: "Cooling Degree Days", sql: "amf.total_cdd_billblock AS \"totalCdd\"" }
+	],
+
+	defaultVisibleFields: [
+		"month", "location", "locationId", "utilityType",
+		"vendor", "totalCharges", "totalConsumption", "uom"
+	],
+
+	// ----- Base FROM (constant for Trendline) -----
+	// location_detail (lt) holds description/address/city/state/postcode for
+	// the location; locations (l) is the parent (id, customer_id, country).
+	// Pattern mirrors pages/Locations/queries/getLocationLists.
+	fromClause:
+		`bill_management_v2.analytics_monthly_feed amf
+		LEFT JOIN bill_management_v2.locations l ON l.id = amf.location_id
+		LEFT JOIN bill_management_v2.location_detail lt ON lt.location_id = l.id
+		LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+			ON cvn.code = amf.vendor_code AND cvn.customer_id = amf.customer_id`,
+
+	// ORDER BY for both runReport and runReportCount alignment.
+	orderByClause: "l.id, amf.time_period",
+
+	// ----- ISO state/country code → pretty name maps -----
+	// DB stores ISO codes like "US-CA", "CA-ON". Filter SELECT/IN still uses
+	// the code; only the dropdown label changes via prettyStates/prettyCountries.
+	stateNames: {
+		"US-AL": "Alabama", "US-AK": "Alaska", "US-AZ": "Arizona", "US-AR": "Arkansas",
+		"US-CA": "California", "US-CO": "Colorado", "US-CT": "Connecticut", "US-DE": "Delaware",
+		"US-DC": "District of Columbia", "US-FL": "Florida", "US-GA": "Georgia", "US-HI": "Hawaii",
+		"US-ID": "Idaho", "US-IL": "Illinois", "US-IN": "Indiana", "US-IA": "Iowa",
+		"US-KS": "Kansas", "US-KY": "Kentucky", "US-LA": "Louisiana", "US-ME": "Maine",
+		"US-MD": "Maryland", "US-MA": "Massachusetts", "US-MI": "Michigan", "US-MN": "Minnesota",
+		"US-MS": "Mississippi", "US-MO": "Missouri", "US-MT": "Montana", "US-NE": "Nebraska",
+		"US-NV": "Nevada", "US-NH": "New Hampshire", "US-NJ": "New Jersey", "US-NM": "New Mexico",
+		"US-NY": "New York", "US-NC": "North Carolina", "US-ND": "North Dakota", "US-OH": "Ohio",
+		"US-OK": "Oklahoma", "US-OR": "Oregon", "US-PA": "Pennsylvania", "US-RI": "Rhode Island",
+		"US-SC": "South Carolina", "US-SD": "South Dakota", "US-TN": "Tennessee", "US-TX": "Texas",
+		"US-UT": "Utah", "US-VT": "Vermont", "US-VA": "Virginia", "US-WA": "Washington",
+		"US-WV": "West Virginia", "US-WI": "Wisconsin", "US-WY": "Wyoming",
+		"US-PR": "Puerto Rico", "US-VI": "U.S. Virgin Islands", "US-GU": "Guam",
+		"US-MP": "Northern Mariana Islands", "US-AS": "American Samoa",
+		"CA-AB": "Alberta", "CA-BC": "British Columbia", "CA-MB": "Manitoba",
+		"CA-NB": "New Brunswick", "CA-NL": "Newfoundland and Labrador", "CA-NS": "Nova Scotia",
+		"CA-ON": "Ontario", "CA-PE": "Prince Edward Island", "CA-QC": "Quebec",
+		"CA-SK": "Saskatchewan", "CA-NT": "Northwest Territories", "CA-NU": "Nunavut",
+		"CA-YT": "Yukon"
 	},
 
-	options: () => {
-		return Object.entries(ReportSpecs.reports).map(([value, v]) => ({
-			label: v.label,
-			value
-		}));
+	countryNames: {
+		"US": "United States", "USA": "United States", "CA": "Canada", "CAN": "Canada",
+		"MX": "Mexico", "GB": "United Kingdom", "UK": "United Kingdom"
 	},
 
-	selectedTable: () => {
-		const v = EndpointSelect.selectedOptionValues;
-		const picked = Array.isArray(v) && v.length > 0 ? v[0] : null;
-		return picked || Object.keys(ReportSpecs.reports)[0];
+	prettyStates: () => {
+		const data = (typeof getStates !== "undefined") ? getStates.data : null;
+		const rows = Array.isArray(data) ? data : [];
+		const map = ReportSpecs.stateNames;
+		return rows
+			.filter(r => r && r.value)
+			.map(r => ({
+				value: r.value,
+				label: map[r.value] ? `${map[r.value]} (${r.value})` : r.value
+			}));
 	},
 
-	selectedSpec: () => {
-		return ReportSpecs.reports[ReportSpecs.selectedTable()]
-			|| ReportSpecs.reports[Object.keys(ReportSpecs.reports)[0]];
+	prettyCountries: () => {
+		const data = (typeof getCountries !== "undefined") ? getCountries.data : null;
+		const rows = Array.isArray(data) ? data : [];
+		const map = ReportSpecs.countryNames;
+		return rows
+			.filter(r => r && r.value)
+			.map(r => ({
+				value: r.value,
+				label: map[r.value] || r.value
+			}));
 	},
 
+	// ----- Helpers -----
 	customerId: () => {
 		const v = CustomerSelect && CustomerSelect.selectedOptionValue;
 		if (v == null || v === "") return null;
@@ -99,47 +145,92 @@ export default {
 		return isNaN(n) ? null : n;
 	},
 
-	hasDateFilter: () => !!ReportSpecs.selectedSpec().dateCol,
+	// Visible-fields options for the FieldsSelect dropdown.
+	fieldOptions: () => ReportSpecs.visibleFieldOptions.map(f => ({ label: f.label, value: f.value })),
 
-	// Returns the full WHERE clause ("WHERE 1=1 AND ...") so runReport and
-	// runReportCount stay one-liners. All filters land here so pagination
-	// operates on the filtered set, not a JS post-filter.
-	clauses: () => {
-		const spec = ReportSpecs.selectedSpec();
+	// ----- SELECT builder -----
+	selectClause: () => {
+		const picked = (FieldsSelect && FieldsSelect.selectedOptionValues) || [];
+		const fields = (Array.isArray(picked) && picked.length > 0) ? picked : ReportSpecs.defaultVisibleFields;
+		const exprs = fields
+			.map(f => ReportSpecs.visibleFieldOptions.find(o => o.value === f))
+			.filter(Boolean)
+			.map(o => o.sql);
+		return exprs.length > 0 ? exprs.join(", ") : "1 AS placeholder";
+	},
+
+	// ----- WHERE builder (every filter is SQL-side) -----
+	// Helpers
+	_quote: v => `'${String(v).replace(/'/g, "''")}'`,
+	_inList: (col, values, notIn) => {
+		const list = values.map(v => ReportSpecs._quote(v)).join(",");
+		return `AND ${col} ${notIn ? "NOT IN" : "IN"} (${list})`;
+	},
+
+	filterClauses: () => {
 		const parts = ["WHERE 1=1"];
 		const cid = ReportSpecs.customerId();
-		if (spec.customerCol && cid != null) {
-			parts.push(`AND ${spec.customerCol} = ${cid}`);
+		if (cid != null) parts.push(`AND amf.customer_id = ${cid}`);
+
+		// Date range (always applied if provided). amf.time_period is the canonical
+		// month bucket — start of month for monthly feed.
+		if (StartDate && StartDate.selectedDate) {
+			const d = moment(StartDate.selectedDate).startOf("month").format("YYYY-MM-DD");
+			parts.push(`AND amf.time_period >= '${d}'`);
 		}
-		if (spec.dateCol && StartDate.selectedDate) {
-			const d = moment(StartDate.selectedDate).format("YYYY-MM-DD");
-			parts.push(`AND ${spec.dateCol} >= '${d}'`);
+		if (EndDate && EndDate.selectedDate) {
+			const d = moment(EndDate.selectedDate).endOf("month").format("YYYY-MM-DD");
+			parts.push(`AND amf.time_period <= '${d}'`);
 		}
-		if (spec.dateCol && EndDate.selectedDate) {
-			const d = moment(EndDate.selectedDate).format("YYYY-MM-DD");
-			parts.push(`AND ${spec.dateCol} <= '${d}'`);
+
+		// State / Province (+ Not In)
+		const states = (typeof StateProvinceSelect !== "undefined" && StateProvinceSelect.selectedOptionValues) || [];
+		if (states.length > 0) {
+			const notIn = (typeof StateNotIn !== "undefined") && StateNotIn.isSwitchedOn;
+			parts.push(ReportSpecs._inList("l.state", states, notIn));
 		}
+
+		// Country
+		const countries = (typeof CountrySelect !== "undefined" && CountrySelect.selectedOptionValues) || [];
+		if (countries.length > 0) {
+			parts.push(ReportSpecs._inList("l.country", countries));
+		}
+
+		// Location status — lives on location_detail (lt) per the schema.
+		const statuses = (typeof LocationStatusSelect !== "undefined" && LocationStatusSelect.selectedOptionValues) || [];
+		if (statuses.length > 0) {
+			parts.push(ReportSpecs._inList("lt.location_status", statuses));
+		}
+
+		// Vendor — selecting by vendor code (the stable join key).
+		const vendors = (typeof VendorSelect !== "undefined" && VendorSelect.selectedOptionValues) || [];
+		if (vendors.length > 0) {
+			parts.push(ReportSpecs._inList("amf.vendor_code", vendors));
+		}
+		// Vendor Territory — TODO: column unclear in monthly feed; no-op for now.
+
+		// Service / Utility type (+ Not In)
+		const services = (typeof ServiceTypesSelect !== "undefined" && ServiceTypesSelect.selectedOptionValues) || [];
+		if (services.length > 0) {
+			const notIn = (typeof ServiceNotIn !== "undefined") && ServiceNotIn.isSwitchedOn;
+			parts.push(ReportSpecs._inList("amf.utility_type", services, notIn));
+		}
+
+		// Location name / number — free text, partial match on name/address or id.
+		const loc = (typeof LocationName !== "undefined" && LocationName.text) || "";
+		if (loc.trim() !== "") {
+			const safe = String(loc).trim().replace(/'/g, "''");
+			parts.push(`AND (l.name ILIKE '%${safe}%' OR l.address ILIKE '%${safe}%' OR CAST(l.id AS TEXT) = '${safe}')`);
+		}
+
+		// Location attributes — picker populates from custom_location_attributes
+		// (attribute names). Actual value-level filtering is a second-level
+		// picker we haven't added yet; this just no-ops on the names for now.
+
 		return parts.join(" ");
 	},
 
-	columnOptions: () => {
-		const rows = runReport.data;
-		if (!Array.isArray(rows) || rows.length === 0) return [];
-		return Object.keys(rows[0]).map(k => ({ label: k, value: k }));
-	},
-
-	// ------- Pagination (AG Grid server-side / infinite row model) -------
-	// Flow: grid calls getRows({startRow, endRow}) → widget fires onFetchPage
-	// → fetchPage() persists range in store + runs runReport + runReportCount
-	// → widget reads the new model and delivers rows to the grid callback.
-	//
-	// When filters change, refreshGrid() bumps a counter that the widget
-	// watches; on change, the widget purges its cache so the grid re-requests
-	// page 1 with the new SQL.
-
-	// Called from GridWidget.onFetchPage. The widget pushes the requested
-	// page range into its own model via appsmith.updateModel, so we read
-	// pendingStart/pendingEnd from there. Falls back to 0/100 (first page).
+	// ----- Pagination plumbing (unchanged contract for GridWidget) -----
 	fetchPage: async () => {
 		const m = (typeof GridWidget !== "undefined") ? GridWidget.model : null;
 		const start = Math.max(0, (m && Number(m.pendingStart)) || 0);
@@ -158,42 +249,41 @@ export default {
 
 	refreshKey: () => Number(appsmith.store.reportsRefreshKey) || 0,
 
-	// Called from every filter widget's onChange / RunButton onClick.
-	// Resets to page 1 (the widget responds to the bumped refreshKey by
-	// purging its cache, which triggers a fresh getRows from row 0).
 	refreshGrid: async () => {
 		await storeValue("reportsPageStart", 0);
 		await storeValue("reportsPageEnd", 100);
 		await storeValue("reportsRefreshKey", (Number(appsmith.store.reportsRefreshKey) || 0) + 1);
 	},
 
+	// Column keys actually present in runReport.data (for the column picker UI).
+	columnOptions: () => {
+		const rows = runReport.data;
+		if (!Array.isArray(rows) || rows.length === 0) return ReportSpecs.fieldOptions();
+		return Object.keys(rows[0]).map(k => ({ label: k, value: k }));
+	},
+
 	status: () => {
 		if (runReport.isLoading) return "Loading...";
 		const total = ReportSpecs.totalRows();
-		const label = ReportSpecs.selectedSpec().label || "report";
-		if (total == null) return `Pick a customer and click Run · ${label}`;
-		return `${total.toLocaleString()} total rows · ${label}`;
+		if (total == null) return "Pick a customer and click Run";
+		return `${total.toLocaleString()} total rows · Cost Analysis – Trendline`;
 	},
 
+	// ----- Export -----
 	filenameStem: () => {
 		const customer = (CustomerSelect && CustomerSelect.selectedOptionLabel || "customer")
 			.toString().replace(/\s+/g, "_");
-		const report = ReportSpecs.selectedTable();
 		const stamp = moment().format("YYYYMMDD-HHmmss");
-		return `${customer}-${report}-${stamp}`;
+		return `${customer}-cost-analysis-trendline-${stamp}`;
 	},
 
-	// Export currently exports the LOADED page. For "export all rows", that
-	// would need a separate unpaginated query — leaving that for later.
 	exportCsv: () => {
 		const rows = runReport.data || [];
 		if (!rows.length) {
 			showAlert("Nothing to export — run a query first", "warning");
 			return;
 		}
-		const fields = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
-			? FieldsSelect.selectedOptionValues
-			: Object.keys(rows[0]);
+		const fields = Object.keys(rows[0]);
 		const escape = v => {
 			if (v === null || v === undefined) return "";
 			if (typeof v === "object") v = JSON.stringify(v);
@@ -212,9 +302,7 @@ export default {
 			showAlert("Nothing to export — run a query first", "warning");
 			return;
 		}
-		const fields = (FieldsSelect.selectedOptionValues && FieldsSelect.selectedOptionValues.length > 0)
-			? FieldsSelect.selectedOptionValues
-			: Object.keys(rows[0]);
+		const fields = Object.keys(rows[0]);
 		const flat = rows.map(r => {
 			const o = {};
 			for (const f of fields) {
@@ -225,18 +313,25 @@ export default {
 		});
 		const ws = XLSX.utils.json_to_sheet(flat, { header: fields });
 		const wb = XLSX.utils.book_new();
-		XLSX.utils.book_append_sheet(wb, ws, "Report");
+		XLSX.utils.book_append_sheet(wb, ws, "Trendline");
 		const filename = `${ReportSpecs.filenameStem()}.xlsx`;
 		const b64 = XLSX.write(wb, { type: "base64", bookType: "xlsx" });
 		download({ data: b64, name: filename, type: "xlsx" }, filename);
 		showAlert(`Exported ${rows.length.toLocaleString()} rows to ${filename}`, "success");
 	},
 
+	// Reset all filter widgets and re-fetch from page 1.
 	reset: async () => {
-		if (typeof FieldsSelect !== "undefined" && FieldsSelect.clearValue) FieldsSelect.clearValue();
-		if (typeof StartDate !== "undefined" && StartDate.reset) StartDate.reset();
-		if (typeof EndDate !== "undefined" && EndDate.reset) EndDate.reset();
-		resetWidget("EndpointSelect", false);
+		const widgetNames = [
+			"FieldsSelect", "StartDate", "EndDate",
+			"LocationName", "StateProvinceSelect", "StateNotIn",
+			"CountrySelect", "LocationStatusSelect",
+			"VendorSelect", "ServiceTypesSelect", "ServiceNotIn",
+			"LocationAttributesSelect"
+		];
+		for (const w of widgetNames) {
+			try { resetWidget(w, false); } catch (e) { /* widget may not exist yet */ }
+		}
 		await ReportSpecs.refreshGrid();
 		showAlert("Filters reset", "success");
 	}

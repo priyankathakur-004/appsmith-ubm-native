@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a1fd180000000000000a002_9e135d6f-e23c-4d06-83b6-68eb06a62dea",
-  "id": "Reports_ReportSpecs.selectedTable",
+  "gitSyncId": "6a1fd180000000000000a020_ad5d6692-1b38-4233-bd03-9cb362f16b2b",
+  "id": "Reports_ReportSpecs.fieldOptions",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.selectedTable",
-    "name": "selectedTable",
+    "fullyQualifiedName": "ReportSpecs.fieldOptions",
+    "name": "fieldOptions",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

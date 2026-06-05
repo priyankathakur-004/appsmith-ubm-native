@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a1fd180000000000000a010_c733c063-eeee-48f5-84b9-af2e1977db34",
-  "id": "Reports_ReportSpecs.hasDateFilter",
+  "gitSyncId": "6a1fc0d14811d588c6346bdf_cfc66946-b44e-4f17-9cc4-7764c6867b39",
+  "id": "Reports_ReportSpecs.selectClause",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "ReportSpecs.hasDateFilter",
-    "name": "hasDateFilter",
+    "fullyQualifiedName": "ReportSpecs.selectClause",
+    "name": "selectClause",
     "pageId": "Reports",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

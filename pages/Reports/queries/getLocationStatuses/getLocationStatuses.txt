@@ -1,0 +1,6 @@
+SELECT DISTINCT lt.location_status AS value, lt.location_status AS label
+FROM bill_management_v2.location_detail lt
+JOIN bill_management_v2.locations l ON l.id = lt.location_id
+WHERE l.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}
+  AND lt.location_status IS NOT NULL AND lt.location_status <> ''
+ORDER BY lt.location_status;

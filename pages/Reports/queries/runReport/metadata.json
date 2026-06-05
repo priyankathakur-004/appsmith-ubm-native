@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT {{ ReportSpecs.selectedSpec().select }}\nFROM {{ ReportSpecs.selectedSpec().from }}\n{{ ReportSpecs.clauses() }}\n{{ ReportSpecs.selectedSpec().orderBy ? 'ORDER BY ' + ReportSpecs.selectedSpec().orderBy : '' }}\nLIMIT {{ Math.min(parseInt(LimitInput.text) || 1000, 5000) }}\nOFFSET {{ parseInt(OffsetInput.text) || 0 }};\n",
+      "body": "SELECT {{ ReportSpecs.selectClause() }}\nFROM {{ ReportSpecs.fromClause }}\n{{ ReportSpecs.filterClauses() }}\nORDER BY {{ ReportSpecs.orderByClause }}\nLIMIT {{ Math.max(1, (appsmith.store.reportsPageEnd || 100) - (appsmith.store.reportsPageStart || 0)) }}\nOFFSET {{ Math.max(0, appsmith.store.reportsPageStart || 0) }};\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
