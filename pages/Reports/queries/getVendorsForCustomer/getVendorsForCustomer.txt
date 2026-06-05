@@ -1,8 +1,19 @@
-SELECT DISTINCT amf.vendor_code AS value,
-  COALESCE(cvn.pretty_name, amf.vendor_code) AS label
-FROM bill_management_v2.analytics_monthly_feed amf
-LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
-  ON cvn.code = amf.vendor_code AND cvn.customer_id = amf.customer_id
-WHERE amf.customer_id = {{ ReportSpecs.customerId() }}
-  AND amf.vendor_code IS NOT NULL AND amf.vendor_code <> ''
+SELECT
+  br.vendor_code AS value,
+  MAX(
+    COALESCE(
+      NULLIF(btrim(cvpn.pretty_name::text), ''),
+      pvn.pretty_name::text,
+      br.vendor_code::text
+    )
+  )::varchar AS label
+FROM bill_management_v2.bill_records br
+LEFT JOIN bill_management_v2.providers_pretty_name pvn
+  ON pvn.code::text = br.vendor_code::text
+LEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn
+  ON cvpn.customer_id = br.customer_id
+  AND cvpn.vendor_id = pvn.vendor_id
+WHERE br.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 0 }}
+  AND br.vendor_code IS NOT NULL AND br.vendor_code <> ''
+GROUP BY br.vendor_code
 ORDER BY label;

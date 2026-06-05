@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT amf.vendor_code AS value,\n  COALESCE(cvn.pretty_name, amf.vendor_code) AS label\nFROM bill_management_v2.analytics_monthly_feed amf\nLEFT JOIN bill_management_v2.customers_providers_pretty_name cvn\n  ON cvn.code = amf.vendor_code AND cvn.customer_id = amf.customer_id\nWHERE amf.customer_id = {{ ReportSpecs.customerId() }}\n  AND amf.vendor_code IS NOT NULL AND amf.vendor_code <> ''\nORDER BY label;",
+      "body": "SELECT\n  br.vendor_code AS value,\n  MAX(\n    COALESCE(\n      NULLIF(btrim(cvpn.pretty_name::text), ''),\n      pvn.pretty_name::text,\n      br.vendor_code::text\n    )\n  )::varchar AS label\nFROM bill_management_v2.bill_records br\nLEFT JOIN bill_management_v2.providers_pretty_name pvn\n  ON pvn.code::text = br.vendor_code::text\nLEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn\n  ON cvpn.customer_id = br.customer_id\n  AND cvpn.vendor_id = pvn.vendor_id\nWHERE br.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 0 }}\n  AND br.vendor_code IS NOT NULL AND br.vendor_code <> ''\nGROUP BY br.vendor_code\nORDER BY label;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

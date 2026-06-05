@@ -9,10 +9,17 @@
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "sourceData"
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicPropertyPathList": [],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
   "dynamicTriggerPathList": [
     {
       "key": "onOptionChange"
@@ -26,7 +33,7 @@
   "key": "cr_locattr",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelText": "Location Attributes (limit 10) — TODO map",
+  "labelText": "Location Attributes (limit 10)",
   "labelTextColor": "#FFFFFF",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
@@ -42,7 +49,7 @@
   "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
   "optionLabel": "label",
   "optionValue": "value",
-  "options": [],
+  "sourceData": "{{ getLocationAttributesList.data }}",
   "originalBottomRow": 26,
   "originalTopRow": 19,
   "parentColumnSpace": 16,

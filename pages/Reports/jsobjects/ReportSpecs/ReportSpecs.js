@@ -13,10 +13,11 @@ export default {
 	// SELECT clause is built by selectClause() from the user's pick.
 	visibleFieldOptions: [
 		{ value: "month", label: "Month", sql: "TO_CHAR(amf.time_period, 'YYYY-MM') AS \"month\"" },
-		{ value: "location", label: "Location", sql: "l.address_line_1 AS \"location\"" },
+		{ value: "location", label: "Location", sql: "l.name AS \"location\"" },
 		{ value: "locationId", label: "Location ID", sql: "l.id AS \"locationId\"" },
-		{ value: "locationAddress", label: "Location Address", sql: "l.address_line_1 AS \"locationAddress\"" },
-		{ value: "locationZip", label: "Location Zip", sql: "l.post_code AS \"locationZip\"" },
+		{ value: "locationAddress", label: "Location Address", sql: "l.address AS \"locationAddress\"" },
+		{ value: "locationZip", label: "Location Zip", sql: "l.postcode AS \"locationZip\"" },
+		{ value: "locationCity", label: "City", sql: "l.city AS \"locationCity\"" },
 		{ value: "locationState", label: "State/Province", sql: "l.state AS \"locationState\"" },
 		{ value: "locationCountry", label: "Country", sql: "l.country AS \"locationCountry\"" },
 		{ value: "vendor", label: "Vendor", sql: "COALESCE(cvn.pretty_name, amf.vendor_code) AS \"vendor\"" },
@@ -38,9 +39,13 @@ export default {
 	],
 
 	// ----- Base FROM (constant for Trendline) -----
+	// location_detail (lt) holds description/address/city/state/postcode for
+	// the location; locations (l) is the parent (id, customer_id, country).
+	// Pattern mirrors pages/Locations/queries/getLocationLists.
 	fromClause:
 		`bill_management_v2.analytics_monthly_feed amf
 		LEFT JOIN bill_management_v2.locations l ON l.id = amf.location_id
+		LEFT JOIN bill_management_v2.location_detail lt ON lt.location_id = l.id
 		LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
 			ON cvn.code = amf.vendor_code AND cvn.customer_id = amf.customer_id`,
 
@@ -107,10 +112,10 @@ export default {
 			parts.push(ReportSpecs._inList("l.country", countries, notIn));
 		}
 
-		// Location status. TODO: confirm column name on locations table.
+		// Location status — lives on location_detail (lt) per the schema.
 		const statuses = (typeof LocationStatusSelect !== "undefined" && LocationStatusSelect.selectedOptionValues) || [];
 		if (statuses.length > 0) {
-			parts.push(ReportSpecs._inList("l.status", statuses));
+			parts.push(ReportSpecs._inList("lt.status", statuses));
 		}
 
 		// Vendor — selecting by vendor code (the stable join key).
@@ -127,11 +132,11 @@ export default {
 			parts.push(ReportSpecs._inList("amf.utility_type", services, notIn));
 		}
 
-		// Location name / number — free text, partial match on address or id.
+		// Location name / number — free text, partial match on name/address or id.
 		const loc = (typeof LocationNameInput !== "undefined" && LocationNameInput.text) || "";
 		if (loc.trim() !== "") {
 			const safe = String(loc).trim().replace(/'/g, "''");
-			parts.push(`AND (l.address_line_1 ILIKE '%${safe}%' OR CAST(l.id AS TEXT) = '${safe}')`);
+			parts.push(`AND (l.name ILIKE '%${safe}%' OR l.address ILIKE '%${safe}%' OR CAST(l.id AS TEXT) = '${safe}')`);
 		}
 
 		// Tax / One Time Charges / Normalization / Hierarchy / Account / Location attributes:
