@@ -114,21 +114,27 @@ export default {
 	},
 
 	prettyStates: () => {
-		const rows = (typeof getStates !== "undefined" && getStates.data) || [];
+		const data = (typeof getStates !== "undefined") ? getStates.data : null;
+		const rows = Array.isArray(data) ? data : [];
 		const map = ReportSpecs.stateNames;
-		return rows.map(r => ({
-			value: r.value,
-			label: map[r.value] ? `${map[r.value]} (${r.value})` : r.value
-		}));
+		return rows
+			.filter(r => r && r.value)
+			.map(r => ({
+				value: r.value,
+				label: map[r.value] ? `${map[r.value]} (${r.value})` : r.value
+			}));
 	},
 
 	prettyCountries: () => {
-		const rows = (typeof getCountries !== "undefined" && getCountries.data) || [];
+		const data = (typeof getCountries !== "undefined") ? getCountries.data : null;
+		const rows = Array.isArray(data) ? data : [];
 		const map = ReportSpecs.countryNames;
-		return rows.map(r => ({
-			value: r.value,
-			label: map[r.value] || r.value
-		}));
+		return rows
+			.filter(r => r && r.value)
+			.map(r => ({
+				value: r.value,
+				label: map[r.value] || r.value
+			}));
 	},
 
 	// ----- Helpers -----
