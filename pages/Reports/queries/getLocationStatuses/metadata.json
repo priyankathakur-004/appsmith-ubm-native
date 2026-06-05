@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT lt.status AS value, lt.status AS label\nFROM bill_management_v2.location_detail lt\nJOIN bill_management_v2.locations l ON l.id = lt.location_id\nWHERE l.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 0 }}\n  AND lt.status IS NOT NULL AND lt.status <> ''\nORDER BY lt.status;\n",
+      "body": "SELECT DISTINCT lt.location_status AS value, lt.location_status AS label\nFROM bill_management_v2.location_detail lt\nJOIN bill_management_v2.locations l ON l.id = lt.location_id\nWHERE l.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}\n  AND lt.location_status IS NOT NULL AND lt.location_status <> ''\nORDER BY lt.location_status;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

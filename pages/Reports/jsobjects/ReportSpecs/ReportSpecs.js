@@ -164,7 +164,7 @@ export default {
 		// Location status — lives on location_detail (lt) per the schema.
 		const statuses = (typeof LocationStatusSelect !== "undefined" && LocationStatusSelect.selectedOptionValues) || [];
 		if (statuses.length > 0) {
-			parts.push(ReportSpecs._inList("lt.status", statuses));
+			parts.push(ReportSpecs._inList("lt.location_status", statuses));
 		}
 
 		// Vendor — selecting by vendor code (the stable join key).

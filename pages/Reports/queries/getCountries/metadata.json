@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT country AS value, country AS label\nFROM bill_management_v2.locations\nWHERE customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 0 }}\n  AND country IS NOT NULL AND country <> ''\nORDER BY country;\n",
+      "body": "SELECT DISTINCT country AS value, country AS label\nFROM bill_management_v2.locations\nWHERE customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}\n  AND country IS NOT NULL AND country <> ''\nORDER BY country;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

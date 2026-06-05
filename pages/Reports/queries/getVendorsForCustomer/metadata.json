@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n  br.vendor_code AS value,\n  MAX(\n    COALESCE(\n      NULLIF(btrim(cvpn.pretty_name::text), ''),\n      pvn.pretty_name::text,\n      br.vendor_code::text\n    )\n  )::varchar AS label\nFROM bill_management_v2.bill_records br\nLEFT JOIN bill_management_v2.providers_pretty_name pvn\n  ON pvn.code::text = br.vendor_code::text\nLEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn\n  ON cvpn.customer_id = br.customer_id\n  AND cvpn.vendor_id = pvn.vendor_id\nWHERE br.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 0 }}\n  AND br.vendor_code IS NOT NULL AND br.vendor_code <> ''\nGROUP BY br.vendor_code\nORDER BY label;\n",
+      "body": "SELECT\n  br.vendor_code AS value,\n  MAX(\n    COALESCE(\n      NULLIF(btrim(cvpn.pretty_name::text), ''),\n      pvn.pretty_name::text,\n      br.vendor_code::text\n    )\n  )::varchar AS label\nFROM bill_management_v2.bill_records br\nLEFT JOIN bill_management_v2.providers_pretty_name pvn\n  ON pvn.code::text = br.vendor_code::text\nLEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn\n  ON cvpn.customer_id = br.customer_id\n  AND cvpn.vendor_id = pvn.vendor_id\nWHERE br.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}\n  AND br.vendor_code IS NOT NULL AND br.vendor_code <> ''\nGROUP BY br.vendor_code\nORDER BY label;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
