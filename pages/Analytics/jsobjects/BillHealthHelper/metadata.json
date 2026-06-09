@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_bh000000-0000-4000-8000-000000000000",
+  "id": "Analytics_BillHealthHelper",
+  "unpublishedCollection": {
+    "name": "BillHealthHelper",
+    "pageId": "Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}
