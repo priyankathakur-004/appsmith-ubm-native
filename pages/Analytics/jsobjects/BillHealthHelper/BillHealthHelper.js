@@ -54,11 +54,14 @@ export default {
 	/* ── rendering ───────────────────────────── */
 
 	getLegendHtml() {
-		const sw = (color, border) => '<span style="display:inline-block;width:26px;height:14px;border-radius:3px;background:' + color + ';border:1px solid ' + (border || color) + ';vertical-align:middle;margin-right:6px;"></span>';
-		const item = (inner, label) => '<span style="display:inline-flex;align-items:center;margin-right:28px;color:#475569;font-size:13px;">' + inner + label + '</span>';
-		return '<div style="display:flex;flex-wrap:wrap;align-items:center;padding:4px 0;">'
+		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle;"></span>';
+		// small white "document" glyph for the invoice-received marker
+		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid #CBD5E1;border-radius:2px;background:repeating-linear-gradient(#ffffff,#ffffff 2px,#cbd5e1 3px,#ffffff 4px);vertical-align:middle;"></span>';
+		const item = (inner, label) => '<span style="display:inline-flex;align-items:center;gap:8px;margin-right:32px;color:#E2E8F0;font-size:13px;">' + inner + '<span>' + label + '</span></span>';
+		return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 0;padding:4px 0;">'
 			+ item(sw('#15803d'), 'denotes the service period is fully covered by at least 1 bill')
-			+ item(sw('#86efac') + sw('#ef4444'), 'denotes the service period is partially/not covered')
+			+ item('<span style="display:inline-flex;">' + sw('#86efac') + sw('#ef4444') + '</span>', 'denotes the service period is partially/not covered')
+			+ item(invoice, 'denotes invoice received')
 			+ '</div>';
 	},
 
@@ -83,13 +86,13 @@ export default {
 		});
 
 		const fixedCols = ['Location', 'Account', 'Meter', 'Utility', 'Bill Type', '%Last12Mo'];
-		const th = 'padding:8px 10px;font-size:12px;font-weight:700;color:#334155;border-bottom:2px solid #CBD5E1;white-space:nowrap;text-align:left;';
-		const thMonth = 'padding:8px 6px;font-size:12px;font-weight:700;color:#334155;border-bottom:2px solid #CBD5E1;border-left:1px solid #E2E8F0;text-align:center;white-space:nowrap;';
-		const td = 'padding:6px 10px;font-size:12px;color:#1E293B;border-bottom:1px solid #E2E8F0;white-space:nowrap;';
-		const tdCell = 'border-bottom:1px solid #ffffff;border-left:1px solid #ffffff;width:42px;';
+		const th = 'padding:8px 10px;font-size:12px;font-weight:700;color:#F1F5F9;border-bottom:2px solid #475569;white-space:nowrap;text-align:left;';
+		const thMonth = 'padding:8px 6px;font-size:12px;font-weight:700;color:#F1F5F9;border-bottom:2px solid #475569;border-left:1px solid #475569;text-align:center;white-space:nowrap;';
+		const td = 'padding:6px 10px;font-size:12px;color:#E2E8F0;border-bottom:1px solid #334155;white-space:nowrap;';
+		const tdCell = 'border-bottom:1px solid #1E293B;border-left:1px solid #1E293B;width:42px;';
 
 		// year header row
-		let yearRow = '<tr><th colspan="' + fixedCols.length + '" style="' + th + 'border-bottom:none;"></th>';
+		let yearRow = '<tr><th colspan="' + fixedCols.length + '" style="' + th + 'background:#334155;border-bottom:none;"></th>';
 		yearRow += '<th style="' + thMonth + 'border-bottom:none;">Service Year</th>';
 		yearGroups.forEach(g => {
 			yearRow += '<th colspan="' + g.months.length + '" style="' + thMonth + 'border-bottom:none;">' + g.year + '</th>';
@@ -122,9 +125,9 @@ export default {
 			return tr;
 		}).join('');
 
-		return '<div style="max-height:640px;overflow:auto;border:1px solid #E2E8F0;border-radius:6px;">'
-			+ '<table style="width:100%;border-collapse:collapse;background:#ffffff;">'
-			+ '<thead style="position:sticky;top:0;background:#F8FAFC;">' + yearRow + headRow + '</thead>'
+		return '<div style="max-height:1150px;overflow:auto;border:1px solid #334155;border-radius:6px;">'
+			+ '<table style="width:100%;border-collapse:collapse;background:#1E293B;">'
+			+ '<thead style="position:sticky;top:0;background:#334155;">' + yearRow + headRow + '</thead>'
 			+ '<tbody>' + body + '</tbody>'
 			+ '</table></div>';
 	},

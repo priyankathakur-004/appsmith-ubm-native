@@ -1,10 +1,10 @@
 {
   "animateLoading": true,
-  "backgroundColor": "#ffffff",
-  "borderColor": "#E2E8F0",
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 117,
+  "bottomRow": 132,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -43,7 +43,7 @@
   "shouldTruncate": false,
   "text": "{{BillHealthHelper.getInvoiceParticipationHtml()}}",
   "textAlign": "LEFT",
-  "textColor": "#1E293B",
+  "textColor": "#E2E8F0",
   "topRow": 9,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
