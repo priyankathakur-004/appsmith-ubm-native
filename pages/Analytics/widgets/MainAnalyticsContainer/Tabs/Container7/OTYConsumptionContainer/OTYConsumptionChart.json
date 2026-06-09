@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 97,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ((chartType) => ( OverTheYearsHelper.getConsumptionChartConfig()))(OTYConsumptionChart.chartType) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bpjaeniiag",
+  "leftColumn": 0,
+  "mobileBottomRow": 290,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 5,
+  "onDataPointClick": "{{OverTheYearsHelper.onConsumptionChartClick()}}",
+  "parentColumnSpace": 15,
+  "parentId": "2ew6f8lze2",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 50,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "2p0ynkvzpe",
+  "widgetName": "OTYConsumptionChart"
+}
