@@ -4,11 +4,11 @@
   "borderColor": "#ffffff",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 180,
+  "bottomRow": 252,
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 1800,
+      "bottomRow": 1400,
       "canExtend": true,
       "detachFromLayout": true,
       "dynamicBindingPathList": [],
@@ -46,7 +46,7 @@
       "key": "isVisible"
     }
   ],
-  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "start",
   "isCanvas": true,
@@ -62,8 +62,8 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "originalBottomRow": 180,
-  "originalTopRow": 0,
+  "originalBottomRow": 252,
+  "originalTopRow": 146,
   "parentColumnSpace": 15,
   "parentId": "0",
   "parentRowSpace": 10,
@@ -71,7 +71,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 64,
   "shouldScrollContents": true,
-  "topRow": 0,
+  "topRow": 146,
   "type": "CONTAINER_WIDGET",
   "version": 1,
   "widgetId": "bhcontainer1",

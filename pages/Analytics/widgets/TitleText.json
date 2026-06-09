@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 6,
+  "bottomRow": 8,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -20,6 +20,8 @@
   "mobileLeftColumn": 1,
   "mobileRightColumn": 22,
   "mobileTopRow": 1,
+  "originalBottomRow": 6,
+  "originalTopRow": 2,
   "parentColumnSpace": 15,
   "parentId": "0",
   "parentRowSpace": 10,
@@ -29,7 +31,7 @@
   "text": "Analytics",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
-  "topRow": 2,
+  "topRow": 4,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
   "version": 1,

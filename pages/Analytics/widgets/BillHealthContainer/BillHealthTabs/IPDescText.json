@@ -28,7 +28,7 @@
   "shouldTruncate": false,
   "text": "This table shows if the service month is covered by one or more bills in the UBM database, and how many invoices were received monthly.",
   "textAlign": "LEFT",
-  "textColor": "#475569",
+  "textColor": "#ffffff",
   "topRow": 1,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

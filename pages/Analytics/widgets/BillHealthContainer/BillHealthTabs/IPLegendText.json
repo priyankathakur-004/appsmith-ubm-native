@@ -31,7 +31,7 @@
   "shouldTruncate": false,
   "text": "{{BillHealthHelper.getLegendHtml()}}",
   "textAlign": "LEFT",
-  "textColor": "#475569",
+  "textColor": "#ffffff",
   "topRow": 5,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
