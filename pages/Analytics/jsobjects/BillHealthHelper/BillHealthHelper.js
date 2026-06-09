@@ -96,46 +96,46 @@ export default {
 		const td = 'padding:6px 10px;font-size:12px;color:#E2E8F0;border-bottom:1px solid #334155;white-space:nowrap;';
 		const tdCell = 'border-bottom:1px solid #1E293B;border-left:1px solid #1E293B;width:42px;';
 
-		// year header row
-		let yearRow = '<tr><th colspan="' + fixedCols.length + '" style="' + th + 'background:#334155;border-bottom:none;"></th>';
-		yearRow += '<th style="' + thMonth + 'border-bottom:none;">Service Year</th>';
+		// year header row (\n line breaks keep the text widget from truncating the long HTML string)
+		let yearRow = '<tr>\n<th colspan="' + fixedCols.length + '" style="' + th + 'background:#334155;border-bottom:none;"></th>\n';
+		yearRow += '<th style="' + thMonth + 'border-bottom:none;">Service Year</th>\n';
 		yearGroups.forEach(g => {
-			yearRow += '<th colspan="' + g.months.length + '" style="' + thMonth + 'border-bottom:none;">' + g.year + '</th>';
+			yearRow += '<th colspan="' + g.months.length + '" style="' + thMonth + 'border-bottom:none;">' + g.year + '</th>\n';
 		});
-		yearRow += '</tr>';
+		yearRow += '</tr>\n';
 
 		// column header row — the Service-Year column doubles as the Vendor column when toggled on
-		let headRow = '<tr>' + fixedCols.map(c => '<th style="' + th + '">' + c + '</th>').join('');
-		headRow += '<th style="' + thMonth + (showVendor ? 'text-align:left;min-width:170px;' : '') + '">' + (showVendor ? 'Vendor' : '') + '</th>';
-		axis.forEach(ym => { headRow += '<th style="' + thMonth + '">' + this._monthLabel(ym) + '</th>'; });
-		headRow += '</tr>';
+		let headRow = '<tr>\n' + fixedCols.map(c => '<th style="' + th + '">' + c + '</th>').join('\n') + '\n';
+		headRow += '<th style="' + thMonth + (showVendor ? 'text-align:left;min-width:170px;' : '') + '">' + (showVendor ? 'Vendor' : '') + '</th>\n';
+		axis.forEach(ym => { headRow += '<th style="' + thMonth + '">' + this._monthLabel(ym) + '</th>\n'; });
+		headRow += '</tr>\n';
 
 		// body
 		const body = rows.map(r => {
 			const covered12 = last12.filter(ym => r.months[ym]).length;
 			const pct = last12.length ? Math.round((covered12 / last12.length) * 100 * 100) / 100 : 0;
-			let tr = '<tr>'
-				+ '<td style="' + td + '">' + r.location + '</td>'
-				+ '<td style="' + td + '">' + r.account + '</td>'
-				+ '<td style="' + td + '">' + r.meter + '</td>'
-				+ '<td style="' + td + '">' + r.utility + '</td>'
-				+ '<td style="' + td + '">' + r.billType + '</td>'
-				+ '<td style="' + td + 'text-align:right;">' + pct.toFixed(2) + '%</td>'
+			let tr = '<tr>\n'
+				+ '<td style="' + td + '">' + r.location + '</td>\n'
+				+ '<td style="' + td + '">' + r.account + '</td>\n'
+				+ '<td style="' + td + '">' + r.meter + '</td>\n'
+				+ '<td style="' + td + '">' + r.utility + '</td>\n'
+				+ '<td style="' + td + '">' + r.billType + '</td>\n'
+				+ '<td style="' + td + 'text-align:right;">' + pct.toFixed(2) + '%</td>\n'
 				+ (showVendor
-					? '<td style="' + td + 'min-width:170px;">' + r.vendor + '</td>'
-					: '<td style="' + tdCell + '"></td>');
+					? '<td style="' + td + 'min-width:170px;">' + r.vendor + '</td>\n'
+					: '<td style="' + tdCell + '"></td>\n');
 			axis.forEach(ym => {
 				const bg = r.months[ym] ? '#15803d' : '#E76D5F';
-				tr += '<td style="' + tdCell + 'background:' + bg + ';"></td>';
+				tr += '<td style="' + tdCell + 'background:' + bg + ';"></td>\n';
 			});
 			tr += '</tr>';
 			return tr;
-		}).join('');
+		}).join('\n');
 
-		return '<div style="overflow-x:auto;border:1px solid #334155;border-radius:6px;">'
-			+ '<table style="width:100%;border-collapse:collapse;background:#1E293B;">'
-			+ '<thead style="background:#334155;">' + yearRow + headRow + '</thead>'
-			+ '<tbody>' + body + '</tbody>'
+		return '<div style="overflow-x:auto;border:1px solid #334155;border-radius:6px;">\n'
+			+ '<table style="width:max-content;min-width:100%;border-collapse:collapse;background:#1E293B;">\n'
+			+ '<thead style="background:#334155;">\n' + yearRow + headRow + '</thead>\n'
+			+ '<tbody>\n' + body + '</tbody>\n'
 			+ '</table></div>';
 	},
 
