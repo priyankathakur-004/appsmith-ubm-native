@@ -52,7 +52,7 @@ export default {
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {
-		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle;"></span>';
+		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle; margin-left:2px"></span>';
 		// small white "document" glyph for the invoice-received marker
 		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid #CBD5E1;border-radius:2px;background:repeating-linear-gradient(#ffffff,#ffffff 2px,#cbd5e1 3px,#ffffff 4px);vertical-align:middle;"></span>';
 		// inline-block items flow left-to-right and wrap as a group (avoids flex justify gaps)
