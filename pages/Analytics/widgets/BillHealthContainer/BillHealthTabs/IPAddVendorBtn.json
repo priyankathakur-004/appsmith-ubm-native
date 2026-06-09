@@ -9,6 +9,12 @@
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "text"
+    },
+    {
+      "key": "tooltip"
     }
   ],
   "dynamicTriggerPathList": [
@@ -27,7 +33,7 @@
   "mobileLeftColumn": 50,
   "mobileRightColumn": 63,
   "mobileTopRow": 1,
-  "onClick": "{{showAlert('Add Vendor to table — coming soon','info')}}",
+  "onClick": "{{storeValue('bhShowVendor', !appsmith.store.bhShowVendor)}}",
   "parentColumnSpace": 15,
   "parentId": "ipcanvas0001",
   "parentRowSpace": 10,
@@ -35,7 +41,8 @@
   "renderMode": "CANVAS",
   "responsiveBehavior": "hug",
   "rightColumn": 63,
-  "text": "Add Vendor to table",
+  "text": "{{appsmith.store.bhShowVendor ? 'Remove Vendor from table' : 'Add Vendor to table'}}",
+  "tooltip": "{{appsmith.store.bhShowVendor ? 'Hide Vendor Column in the table' : 'Show Vendor Column in the table'}}",
   "topRow": 1,
   "type": "BUTTON_WIDGET",
   "version": 1,

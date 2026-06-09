@@ -13,15 +13,18 @@ export default {
 		return months[m - 1] || ym;
 	},
 
-	/* Distinct months present in the data, newest first, capped to last 13 */
+	/* Fixed trailing window of 12 months ending at the current calendar month, newest first */
 	getMonthAxis() {
-		const data = (fetch_analytics_data && fetch_analytics_data.data) || [];
-		const set = {};
-		data.forEach(r => {
-			const k = this._monthKey(r.time_period);
-			if (k.length === 7) set[k] = true;
-		});
-		return Object.keys(set).sort().reverse().slice(0, 13);
+		const now = new Date();
+		let y = now.getFullYear();
+		let m = now.getMonth(); // 0-11
+		const axis = [];
+		for (let i = 0; i < 12; i++) {
+			axis.push(y + '-' + String(m + 1).padStart(2, '0'));
+			m--;
+			if (m < 0) { m = 11; y--; }
+		}
+		return axis;
 	},
 
 	/* One row per location / account / meter / utility / bill type, with the set of covered months */
@@ -61,7 +64,7 @@ export default {
 		const item = (inner, label) => '<span style="display:inline-block;white-space:nowrap;margin-right:36px;color:#E2E8F0;font-size:13px;vertical-align:middle;">' + inner + '<span style="vertical-align:middle;margin-left:8px;">' + label + '</span></span>';
 		return '<div style="color:#E2E8F0;font-size:13px;line-height:32px;padding:4px 0;">'
 			+ item(sw('#15803d'), 'denotes the service period is fully covered by at least 1 bill')
-			+ item(sw('#86efac') + sw('#e08379'), 'denotes the service period is partially/not covered')
+			+ item(sw('#86efac') + sw('#E76D5F'), 'denotes the service period is partially/not covered')
 			+ item(invoice, 'denotes invoice received')
 			+ '</div>';
 	},
@@ -69,6 +72,7 @@ export default {
 	getInvoiceParticipationHtml() {
 		const rows = this.getRows();
 		const axis = this.getMonthAxis();
+		const showVendor = !!appsmith.store.bhShowVendor;
 
 		if (!rows.length || !axis.length) {
 			return '<div style="padding:20px;color:#94A3B8;text-align:center;">No data available</div>';
@@ -100,9 +104,9 @@ export default {
 		});
 		yearRow += '</tr>';
 
-		// column header row
+		// column header row — the Service-Year column doubles as the Vendor column when toggled on
 		let headRow = '<tr>' + fixedCols.map(c => '<th style="' + th + '">' + c + '</th>').join('');
-		headRow += '<th style="' + thMonth + '"></th>';
+		headRow += '<th style="' + thMonth + (showVendor ? 'text-align:left;min-width:170px;' : '') + '">' + (showVendor ? 'Vendor' : '') + '</th>';
 		axis.forEach(ym => { headRow += '<th style="' + thMonth + '">' + this._monthLabel(ym) + '</th>'; });
 		headRow += '</tr>';
 
@@ -117,9 +121,11 @@ export default {
 				+ '<td style="' + td + '">' + r.utility + '</td>'
 				+ '<td style="' + td + '">' + r.billType + '</td>'
 				+ '<td style="' + td + 'text-align:right;">' + pct.toFixed(2) + '%</td>'
-				+ '<td style="' + tdCell + '"></td>';
+				+ (showVendor
+					? '<td style="' + td + 'min-width:170px;">' + r.vendor + '</td>'
+					: '<td style="' + tdCell + '"></td>');
 			axis.forEach(ym => {
-				const bg = r.months[ym] ? '#15803d' : '#ef4444';
+				const bg = r.months[ym] ? '#15803d' : '#E76D5F';
 				tr += '<td style="' + tdCell + 'background:' + bg + ';"></td>';
 			});
 			tr += '</tr>';
