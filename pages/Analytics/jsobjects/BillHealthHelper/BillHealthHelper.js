@@ -57,10 +57,11 @@ export default {
 		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle;"></span>';
 		// small white "document" glyph for the invoice-received marker
 		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid #CBD5E1;border-radius:2px;background:repeating-linear-gradient(#ffffff,#ffffff 2px,#cbd5e1 3px,#ffffff 4px);vertical-align:middle;"></span>';
-		const item = (inner, label) => '<span style="display:inline-flex;align-items:center;gap:8px;margin-right:32px;color:#E2E8F0;font-size:13px;">' + inner + '<span>' + label + '</span></span>';
-		return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 0;padding:4px 0;">'
+		// inline-block items flow left-to-right and wrap as a group (avoids flex justify gaps)
+		const item = (inner, label) => '<span style="display:inline-block;white-space:nowrap;margin-right:36px;color:#E2E8F0;font-size:13px;vertical-align:middle;">' + inner + '<span style="vertical-align:middle;margin-left:8px;">' + label + '</span></span>';
+		return '<div style="color:#E2E8F0;font-size:13px;line-height:32px;padding:4px 0;">'
 			+ item(sw('#15803d'), 'denotes the service period is fully covered by at least 1 bill')
-			+ item('<span style="display:inline-flex;">' + sw('#86efac') + sw('#ef4444') + '</span>', 'denotes the service period is partially/not covered')
+			+ item(sw('#86efac') + sw('#e08379'), 'denotes the service period is partially/not covered')
 			+ item(invoice, 'denotes invoice received')
 			+ '</div>';
 	},
@@ -125,9 +126,9 @@ export default {
 			return tr;
 		}).join('');
 
-		return '<div style="max-height:1150px;overflow:auto;border:1px solid #334155;border-radius:6px;">'
+		return '<div style="overflow-x:auto;border:1px solid #334155;border-radius:6px;">'
 			+ '<table style="width:100%;border-collapse:collapse;background:#1E293B;">'
-			+ '<thead style="position:sticky;top:0;background:#334155;">' + yearRow + headRow + '</thead>'
+			+ '<thead style="background:#334155;">' + yearRow + headRow + '</thead>'
 			+ '<tbody>' + body + '</tbody>'
 			+ '</table></div>';
 	},
