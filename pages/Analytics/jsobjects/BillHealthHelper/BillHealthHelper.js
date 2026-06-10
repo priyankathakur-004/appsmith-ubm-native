@@ -7,13 +7,46 @@ export default {
 		return String(tp || '').slice(0, 7); // "YYYY-MM"
 	},
 
-	/* Fixed trailing window of 12 months ending at the current calendar month, newest first */
+	/* read a SELECT value, treating "All"/empty as "no filter" (guarded for import order) */
+	_sel(name) {
+		try {
+			const w = this._widget(name);
+			const v = w && w.selectedOptionValue;
+			return (v && v !== 'All') ? v : null;
+		} catch (e) { return null; }
+	},
+
+	_widget(name) {
+		// the Date filter inputs may not exist on first import; resolve safely
+		const reg = {
+			BHVendorSelect: typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null,
+			BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
+			BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null,
+			BHPctSelect: typeof BHPctSelect !== 'undefined' ? BHPctSelect : null
+		};
+		return reg[name];
+	},
+
+	/* Trailing window of N months ending at the current calendar month, newest first.
+	   N comes from the Date filter (BHDateNumInput), default 12. */
 	getMonthAxis() {
+		let n = 12;
+		try {
+			if (typeof BHDateNumInput !== 'undefined') {
+				const parsed = parseInt(BHDateNumInput.text, 10);
+				if (parsed) n = parsed;
+			}
+			if (typeof BHDateUnitSelect !== 'undefined' && BHDateUnitSelect.selectedOptionValue === 'Years') {
+				n = n * 12;
+			}
+		} catch (e) { /* keep default */ }
+		n = Math.max(1, Math.min(60, n));
+
 		const now = new Date();
 		let y = now.getFullYear();
 		let m = now.getMonth(); // 0-11
 		const axis = [];
-		for (let i = 0; i < 12; i++) {
+		for (let i = 0; i < n; i++) {
 			axis.push(y + '-' + String(m + 1).padStart(2, '0'));
 			m--;
 			if (m < 0) { m = 11; y--; }
@@ -44,9 +77,34 @@ export default {
 				map[key].months[mk] = (map[key].months[mk] || 0) + 1;
 			}
 		});
-		return Object.keys(map)
-			.sort()
-			.map(k => map[k]);
+
+		const axis = this.getMonthAxis();
+		let rows = Object.keys(map).sort().map(k => map[k]);
+		rows.forEach(r => {
+			const cov = axis.filter(ym => r.months[ym]).length;
+			r.pct = axis.length ? (cov / axis.length * 100) : 0;
+		});
+
+		/* client-side filters from the Bill Health filter bar */
+		const vend = this._sel('BHVendorSelect');
+		if (vend) rows = rows.filter(r => r.vendor === vend);
+		const util = this._sel('BHUtilitySelect');
+		if (util) rows = rows.filter(r => r.utility === util);
+		const loc = this._sel('BHLocationSelect');
+		if (loc) rows = rows.filter(r => r.location === loc);
+		const pctSel = this._sel('BHPctSelect');
+		if (pctSel) {
+			rows = rows.filter(r => {
+				const p = r.pct;
+				if (pctSel === '0') return p === 0;
+				if (pctSel === '1-50') return p > 0 && p <= 50;
+				if (pctSel === '51-99') return p > 50 && p < 100;
+				if (pctSel === '100') return p >= 100;
+				return true;
+			});
+		}
+
+		return rows;
 	},
 
 	/* ── legend (small enough for a Text widget) ── */

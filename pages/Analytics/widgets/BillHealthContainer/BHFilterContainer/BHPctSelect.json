@@ -1,0 +1,46 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicTriggerPathList": [],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bhpctselk1",
+  "labelText": "",
+  "leftColumn": 0,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 9,
+  "mobileTopRow": 4,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "bhfcanvas01",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "rightColumn": 9,
+  "sourceData": "[{\"label\": \"All\", \"value\": \"All\"}, {\"label\": \"0%\", \"value\": \"0\"}, {\"label\": \"1 - 50%\", \"value\": \"1-50\"}, {\"label\": \"51 - 99%\", \"value\": \"51-99\"}, {\"label\": \"100%\", \"value\": \"100\"}]",
+  "topRow": 4,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "bhpctsel001",
+  "widgetName": "BHPctSelect",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ]
+}

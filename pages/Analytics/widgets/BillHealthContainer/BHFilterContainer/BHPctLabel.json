@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bhpctlblk1",
+  "leftColumn": 0,
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 9,
+  "mobileTopRow": 0,
+  "parentColumnSpace": 15,
+  "parentId": "bhfcanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 9,
+  "text": "% Last 12 Mo",
+  "textAlign": "LEFT",
+  "textColor": "#94a3b8",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "bhpctlbl001",
+  "widgetName": "BHPctLabel"
+}

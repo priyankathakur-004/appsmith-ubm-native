@@ -1,0 +1,49 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicTriggerPathList": [],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bhlocselk1",
+  "labelText": "",
+  "leftColumn": 40,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 40,
+  "mobileRightColumn": 50,
+  "mobileTopRow": 4,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "bhfcanvas01",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "rightColumn": 50,
+  "sourceData": "{{ [{label:'All',value:'All'}].concat([...new Set((fetch_analytics_data.data||[]).map(d=>d.location_description).filter(Boolean))].sort().map(v=>({label:String(v),value:String(v)}))) }}",
+  "topRow": 4,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "bhlocsel001",
+  "widgetName": "BHLocationSelect",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ]
+}

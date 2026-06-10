@@ -5,7 +5,7 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 162,
+  "bottomRow": 174,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
@@ -88,8 +88,8 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{BillHealthHelper.setDefaults();}}",
-  "originalBottomRow": 161,
-  "originalTopRow": 2,
+  "originalBottomRow": 173,
+  "originalTopRow": 14,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",
   "parentRowSpace": 10,
@@ -107,7 +107,7 @@
       "widgetId": "ipcanvas0001"
     }
   },
-  "topRow": 2,
+  "topRow": 14,
   "type": "TABS_WIDGET",
   "version": 3,
   "widgetId": "bhtabs00001",
