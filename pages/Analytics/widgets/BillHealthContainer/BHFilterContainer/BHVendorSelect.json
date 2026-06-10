@@ -1,10 +1,11 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "All",
+  "defaultOptionValue": "",
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
@@ -21,24 +22,25 @@
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
-  "placeholderText": "Select option",
+  "placeholderText": "All",
   "renderMode": "CANVAS",
   "rightColumn": 20,
-  "sourceData": "{{ [{label:'All',value:'All'}].concat([...new Set((fetch_analytics_data.data||[]).map(d=>d.vendor_name).filter(Boolean))].sort().map(v=>({label:String(v),value:String(v)}))) }}",
+  "serverSideFiltering": false,
+  "sourceData": "{{ BillHealthHelper.getVendorOptions() }}",
   "topRow": 4,
-  "type": "SELECT_WIDGET",
+  "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "bhvendsel01",
   "widgetName": "BHVendorSelect",
   "dynamicBindingPathList": [
     {
-      "key": "sourceData"
+      "key": "accentColor"
     },
     {
       "key": "borderRadius"
     },
     {
-      "key": "accentColor"
+      "key": "sourceData"
     }
   ],
   "dynamicPropertyPathList": [

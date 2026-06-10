@@ -7,56 +7,73 @@ export default {
 		return String(tp || '').slice(0, 7); // "YYYY-MM"
 	},
 
-	/* read a SELECT value, treating "All"/empty as "no filter" (guarded for import order) */
-	_sel(name) {
-		try {
-			const w = this._widget(name);
-			const v = w && w.selectedOptionValue;
-			return (v && v !== 'All') ? v : null;
-		} catch (e) { return null; }
+	/* a trailing window of n months ending at the current calendar month, newest first */
+	_window(n) {
+		const now = new Date();
+		let y = now.getFullYear();
+		let m = now.getMonth(); // 0-11
+		const a = [];
+		for (let i = 0; i < n; i++) {
+			a.push(y + '-' + String(m + 1).padStart(2, '0'));
+			m--;
+			if (m < 0) { m = 11; y--; }
+		}
+		return a;
 	},
 
-	_widget(name) {
-		// the Date filter inputs may not exist on first import; resolve safely
-		const reg = {
-			BHVendorSelect: typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null,
-			BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
-			BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null,
-			BHPctSelect: typeof BHPctSelect !== 'undefined' ? BHPctSelect : null
-		};
-		return reg[name];
+	/* fixed 12-month window for the %Last12Mo metric (independent of the Date display filter) */
+	_last12() {
+		return this._window(12);
 	},
 
-	/* Trailing window of N months ending at the current calendar month, newest first.
-	   N comes from the Date filter (BHDateNumInput), default 12. */
+	/* display columns — driven by the Date filter (BHDateNumInput / BHDateUnitSelect) */
 	getMonthAxis() {
-		let n = 12;
+		let n = 13;
 		try {
 			if (typeof BHDateNumInput !== 'undefined') {
-				const parsed = parseInt(BHDateNumInput.text, 10);
-				if (parsed) n = parsed;
+				const p = parseInt(BHDateNumInput.text, 10);
+				if (p) n = p;
 			}
 			if (typeof BHDateUnitSelect !== 'undefined' && BHDateUnitSelect.selectedOptionValue === 'Years') {
 				n = n * 12;
 			}
 		} catch (e) { /* keep default */ }
 		n = Math.max(1, Math.min(60, n));
-
-		const now = new Date();
-		let y = now.getFullYear();
-		let m = now.getMonth(); // 0-11
-		const axis = [];
-		for (let i = 0; i < n; i++) {
-			axis.push(y + '-' + String(m + 1).padStart(2, '0'));
-			m--;
-			if (m < 0) { m = 11; y--; }
-		}
-		return axis;
+		return this._window(n);
 	},
 
-	/* One row per location / account / meter / utility / bill type, with the set of covered months.
-	   Consumed by the IPHeatmapTable custom widget via its defaultModel. */
-	getRows() {
+	/* read a multi-select's values as an array (guarded for import order) */
+	_multi(name) {
+		try {
+			const reg = {
+				BHVendorSelect: typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null,
+				BHPctSelect: typeof BHPctSelect !== 'undefined' ? BHPctSelect : null,
+				BHAcctStatusSelect: typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null
+			};
+			const w = reg[name];
+			const v = w && w.selectedOptionValues;
+			return Array.isArray(v) ? v : [];
+		} catch (e) { return []; }
+	},
+
+	/* read a single-select value, treating "All"/empty as "no filter" */
+	_single(name) {
+		try {
+			const reg = {
+				BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
+				BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null
+			};
+			const w = reg[name];
+			const v = w && w.selectedOptionValue;
+			return (v && v !== 'All') ? v : null;
+		} catch (e) { return null; }
+	},
+
+	/* ── data ────────────────────────────────── */
+
+	/* One row per location / account / meter / utility / bill type, with covered months + %Last12Mo.
+	   No filters applied (used to build filter option lists too). */
+	_buildRows() {
 		const data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		const map = {};
 		data.forEach(r => {
@@ -77,40 +94,54 @@ export default {
 				map[key].months[mk] = (map[key].months[mk] || 0) + 1;
 			}
 		});
-
-		const axis = this.getMonthAxis();
-		let rows = Object.keys(map).sort().map(k => map[k]);
+		const last12 = this._last12();
+		const rows = Object.keys(map).sort().map(k => map[k]);
 		rows.forEach(r => {
-			const cov = axis.filter(ym => r.months[ym]).length;
-			r.pct = axis.length ? (cov / axis.length * 100) : 0;
+			const cov = last12.filter(ym => r.months[ym]).length;
+			r.pct = cov / 12 * 100;
 		});
+		return rows;
+	},
 
-		/* client-side filters from the Bill Health filter bar */
-		const vend = this._sel('BHVendorSelect');
-		if (vend) rows = rows.filter(r => r.vendor === vend);
-		const util = this._sel('BHUtilitySelect');
+	/* Rows after applying the Bill Health filter bar. Consumed by IPHeatmapTable's defaultModel. */
+	getRows() {
+		let rows = this._buildRows();
+
+		const vend = this._multi('BHVendorSelect');
+		if (vend.length) rows = rows.filter(r => vend.includes(r.vendor));
+
+		const util = this._single('BHUtilitySelect');
 		if (util) rows = rows.filter(r => r.utility === util);
-		const loc = this._sel('BHLocationSelect');
+
+		const loc = this._single('BHLocationSelect');
 		if (loc) rows = rows.filter(r => r.location === loc);
-		const pctSel = this._sel('BHPctSelect');
-		if (pctSel) {
-			rows = rows.filter(r => {
-				const p = r.pct;
-				if (pctSel === '0') return p === 0;
-				if (pctSel === '1-50') return p > 0 && p <= 50;
-				if (pctSel === '51-99') return p > 50 && p < 100;
-				if (pctSel === '100') return p >= 100;
-				return true;
-			});
-		}
+
+		const pct = this._multi('BHPctSelect');
+		if (pct.length) rows = rows.filter(r => pct.includes(r.pct.toFixed(2) + '%'));
 
 		return rows;
+	},
+
+	/* ── filter option providers ─────────────── */
+
+	getVendorOptions() {
+		const data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		return [...new Set(data.map(d => d.vendor_name).filter(Boolean))]
+			.sort()
+			.map(v => ({ label: String(v), value: String(v) }));
+	},
+
+	/* distinct %Last12Mo values present in the data, highest first */
+	getPctOptions() {
+		const vals = [...new Set(this._buildRows().map(r => r.pct.toFixed(2) + '%'))];
+		vals.sort((a, b) => parseFloat(b) - parseFloat(a));
+		return vals.map(v => ({ label: v, value: v }));
 	},
 
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {
-		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle; margin-left:2px"></span>';
+		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle;margin-left:2px;"></span>';
 		// small white "document" glyph for the invoice-received marker
 		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid #CBD5E1;border-radius:2px;background:repeating-linear-gradient(#ffffff,#ffffff 2px,#cbd5e1 3px,#ffffff 4px);vertical-align:middle;"></span>';
 		// inline-block items flow left-to-right and wrap as a group (avoids flex justify gaps)

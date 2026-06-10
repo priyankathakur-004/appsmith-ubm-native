@@ -1,23 +1,11 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
   "defaultOptionValue": "",
-  "dynamicBindingPathList": [
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderRadius"
-    }
-  ],
-  "dynamicPropertyPathList": [
-    {
-      "key": "sourceData"
-    }
-  ],
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
@@ -38,10 +26,23 @@
   "renderMode": "CANVAS",
   "rightColumn": 31,
   "serverSideFiltering": false,
-  "sourceData": "[{\"label\": \"Active\", \"value\": \"Active\"}, {\"label\": \"Inactive\", \"value\": \"Inactive\"}]",
+  "sourceData": "[{\"label\": \"Unknown\", \"value\": \"Unknown\"}, {\"label\": \"Closed\", \"value\": \"Closed\"}]",
   "topRow": 4,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "bhacctsel01",
-  "widgetName": "BHAcctStatusSelect"
+  "widgetName": "BHAcctStatusSelect",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ]
 }
