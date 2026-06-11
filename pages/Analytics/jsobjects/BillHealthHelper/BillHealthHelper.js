@@ -48,25 +48,14 @@ export default {
 			const reg = {
 				BHVendorSelect: typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null,
 				BHPctSelect: typeof BHPctSelect !== 'undefined' ? BHPctSelect : null,
-				BHAcctStatusSelect: typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null
+				BHAcctStatusSelect: typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null,
+				BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
+				BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null
 			};
 			const w = reg[name];
 			const v = w && w.selectedOptionValues;
 			return Array.isArray(v) ? v : [];
 		} catch (e) { return []; }
-	},
-
-	/* read a single-select value, treating "All"/empty as "no filter" */
-	_single(name) {
-		try {
-			const reg = {
-				BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
-				BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null
-			};
-			const w = reg[name];
-			const v = w && w.selectedOptionValue;
-			return (v && v !== 'All') ? v : null;
-		} catch (e) { return null; }
 	},
 
 	/* ── data ────────────────────────────────── */
@@ -120,11 +109,11 @@ export default {
 		const vend = this._multi('BHVendorSelect');
 		if (vend.length) rows = rows.filter(r => vend.includes(r.vendor));
 
-		const util = this._single('BHUtilitySelect');
-		if (util) rows = rows.filter(r => r.utility === util);
+		const util = this._multi('BHUtilitySelect');
+		if (util.length) rows = rows.filter(r => util.includes(r.utility));
 
-		const loc = this._single('BHLocationSelect');
-		if (loc) rows = rows.filter(r => r.location === loc);
+		const loc = this._multi('BHLocationSelect');
+		if (loc.length) rows = rows.filter(r => loc.includes(r.location));
 
 		const pct = this._multi('BHPctSelect');
 		if (pct.length) rows = rows.filter(r => pct.includes(r.pct.toFixed(2) + '%'));
@@ -187,8 +176,8 @@ export default {
 		/* honour the shared filter bar where it maps to this grouping */
 		const vend = this._multi('BHVendorSelect');
 		if (vend.length) rows = rows.filter(r => vend.includes(r.vendor));
-		const loc = this._single('BHLocationSelect');
-		if (loc) rows = rows.filter(r => r.location === loc);
+		const loc = this._multi('BHLocationSelect');
+		if (loc.length) rows = rows.filter(r => loc.includes(r.location));
 
 		return rows;
 	},
