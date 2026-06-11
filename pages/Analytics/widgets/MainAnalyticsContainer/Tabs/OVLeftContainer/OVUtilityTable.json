@@ -4,7 +4,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 73,
+  "bottomRow": 62,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -33,8 +33,8 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 55,
-  "originalBottomRow": 62,
-  "originalTopRow": 35,
+  "originalBottomRow": 73,
+  "originalTopRow": 39,
   "parentColumnSpace": 15,
   "parentId": "ovlcanv0001",
   "parentRowSpace": 10,
@@ -45,7 +45,7 @@
   "text": "{{OverviewHelper.getUtilitySummaryHtml()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
-  "topRow": 39,
+  "topRow": 35,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "ovutchart0001",

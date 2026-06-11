@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 39,
+  "bottomRow": 35,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -55,15 +55,15 @@
   "mobileLeftColumn": 60,
   "mobileRightColumn": 64,
   "mobileTopRow": 51,
-  "originalBottomRow": 35,
-  "originalTopRow": 31,
+  "originalBottomRow": 39,
+  "originalTopRow": 35,
   "parentColumnSpace": 15,
   "parentId": "ovlcanv0001",
   "parentRowSpace": 10,
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "rightColumn": 63,
-  "topRow": 35,
+  "topRow": 31,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "ovutmnu0001",
