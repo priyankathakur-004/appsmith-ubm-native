@@ -15,7 +15,14 @@
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onBlur"
+    },
+    {
+      "key": "onSubmit"
+    }
+  ],
   "iconAlign": "left",
   "inputType": "NUMBER",
   "isDisabled": false,
@@ -52,5 +59,7 @@
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "bhdatenum01",
-  "widgetName": "BHDateNumInput"
+  "widgetName": "BHDateNumInput",
+  "onBlur": "{{ fetch_analytics_data.run() }}",
+  "onSubmit": "{{ fetch_analytics_data.run() }}"
 }

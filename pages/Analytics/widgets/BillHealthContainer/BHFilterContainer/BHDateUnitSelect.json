@@ -18,7 +18,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": true,
@@ -42,5 +46,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "bhdateunit1",
-  "widgetName": "BHDateUnitSelect"
+  "widgetName": "BHDateUnitSelect",
+  "onOptionChange": "{{ fetch_analytics_data.run() }}"
 }

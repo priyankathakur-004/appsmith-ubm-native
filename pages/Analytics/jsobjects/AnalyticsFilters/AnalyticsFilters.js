@@ -19,6 +19,21 @@ export default {
 		const c = [];
 
 		if (report === 'Bill Health Report') {
+			// Bound the data to the displayed window (Date filter: Last N months/years).
+			// The heatmap only renders this window, so this is both correct and avoids fetching
+			// years of history (which blows past Appsmith's 5 MB response limit).
+			let n = 13;
+			const pn = (typeof BHDateNumInput !== 'undefined') ? parseInt(BHDateNumInput.text, 10) : NaN;
+			if (pn) n = pn;
+			if (typeof BHDateUnitSelect !== 'undefined' && BHDateUnitSelect.selectedOptionValue === 'Years') n = n * 12;
+			n = Math.max(1, Math.min(60, n));
+			const now = new Date();
+			let y = now.getFullYear();
+			let mo = now.getMonth() - (n - 1); // 0-indexed month, n-1 months back
+			while (mo < 0) { mo += 12; y -= 1; }
+			const cutoff = `${y}-${String(mo + 1).padStart(2, '0')}-01`;
+			c.push(`AND m.time_period >= '${cutoff}'`);
+
 			// Bill Health: only Account Status is SQL-side; Vendor/Utility/Location/%Last12Mo
 			// are applied client-side in BillHealthHelper.getRows so their option lists stay complete.
 			const acct = (typeof BHAcctStatusSelect !== 'undefined') ? this._multiVals(BHAcctStatusSelect) : [];
