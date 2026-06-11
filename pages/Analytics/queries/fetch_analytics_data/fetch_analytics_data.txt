@@ -7,6 +7,7 @@ SELECT
     m.client_account as service_account,
     m.meter_serial as meter,
     m.vendor_name,
+    m.account_status,
     m.location_description,
     l.address,
     l.state,
@@ -70,6 +71,10 @@ WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
 {{ LocationSelect.selectedOptionValue ?
 `AND m.location_id = ${LocationSelect.selectedOptionValue}`
+: "" }}
+
+{{ BHAcctStatusSelect.selectedOptionValues && BHAcctStatusSelect.selectedOptionValues.length > 0 ?
+`AND m.account_status IN (${ BHAcctStatusSelect.selectedOptionValues.map(s => `'${s}'`).join(",") })`
 : "" }}
 
 {{ LocationAttrSelect.selectedOptionValue && LocationAttrSelect.selectedOptionValue !== 'All' ?

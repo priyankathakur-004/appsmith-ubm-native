@@ -25,7 +25,8 @@
     "dynamicBindingPathList": [],
     "name": "fetch_account_status",
     "pageId": "Analytics",
-    "runBehaviour": "MANUAL",
-    "userSetOnLoad": false
+    "runBehaviour": "AUTOMATIC",
+    "userSetOnLoad": false,
+    "executeOnLoad": true
   }
 }
