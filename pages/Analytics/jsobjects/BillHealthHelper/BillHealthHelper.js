@@ -175,36 +175,41 @@ export default {
 
 	/* ── Missing Invoice Data tab ────────────── */
 
-	/* One row per Location / Billing ID (account) / Vendor. For each month, coverage across all
-	   the account's meter+utility+billType combos: 'full' (all present), 'partial' (some), else absent.
-	   Consumed by the MissingInvoiceTable custom widget. */
+	/* One row per Location / Billing ID (account) / Vendor. For each month, coverage is based on the
+	   bill's actual service days (analytics_monthly_feed.days_of_service) vs the days in that month:
+	     full    = days_of_service >= days-in-month   (no missing invoice)
+	     partial = 0 < days_of_service < days-in-month (rendered "Mon*")
+	     none    = no bill that month                  (rendered "Mon" — fully missing)
+	   The MissingInvoiceTable widget then lists only partial + missing months. */
 	getMissingInvoiceRows() {
 		const data = (fetch_analytics_data && fetch_analytics_data.data) || [];
 		const groups = {};
-		data.forEach(r => {
-			const loc = r.location_description || '';
-			const acct = r.service_account || '';
-			const vend = r.vendor_name || '';
+		const ensure = (loc, acct, vend) => {
 			const gkey = [loc, acct, vend].join('||');
-			if (!groups[gkey]) {
-				groups[gkey] = { location: loc, billingId: acct, vendor: vend, subkeys: {}, monthSub: {} };
-			}
-			const sub = [r.meter, r.utility_type, r.bill_type].join('|');
-			groups[gkey].subkeys[sub] = true;
+			if (!groups[gkey]) groups[gkey] = { location: loc, billingId: acct, vendor: vend, maxDays: {} };
+			return groups[gkey];
+		};
+
+		data.forEach(r => {
+			const g = ensure(r.location_description || '', r.service_account || '', r.vendor_name || '');
 			const mk = this._monthKey(r.time_period);
 			if (mk.length === 7) {
-				if (!groups[gkey].monthSub[mk]) groups[gkey].monthSub[mk] = {};
-				groups[gkey].monthSub[mk][sub] = true;
+				const d = Number(r.days_of_service) || 0;
+				g.maxDays[mk] = Math.max(g.maxDays[mk] || 0, d);
 			}
 		});
 
+		// include accounts with no bills in the window (from the roster) so they show as fully missing
+		const roster = (typeof fetch_bill_accounts !== 'undefined' && Array.isArray(fetch_bill_accounts.data)) ? fetch_bill_accounts.data : [];
+		roster.forEach(r => ensure(r.location_description || '', r.service_account || '', r.vendor_name || ''));
+
 		let rows = Object.keys(groups).sort().map(k => {
 			const g = groups[k];
-			const total = Object.keys(g.subkeys).length || 1;
 			const cover = {};
-			Object.keys(g.monthSub).forEach(mk => {
-				const c = Object.keys(g.monthSub[mk]).length;
-				cover[mk] = c >= total ? 'full' : (c > 0 ? 'partial' : 'none');
+			Object.keys(g.maxDays).forEach(mk => {
+				const dim = new Date(parseInt(mk.slice(0, 4), 10), parseInt(mk.slice(5, 7), 10), 0).getDate();
+				const d = g.maxDays[mk];
+				cover[mk] = d >= dim ? 'full' : (d > 0 ? 'partial' : 'none');
 			});
 			return { location: g.location, billingId: g.billingId, vendor: g.vendor, cover: cover };
 		});
