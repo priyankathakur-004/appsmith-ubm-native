@@ -1,1 +1,0 @@
-SELECT * FROM bill_management_v2."account_history" LIMIT 10;
