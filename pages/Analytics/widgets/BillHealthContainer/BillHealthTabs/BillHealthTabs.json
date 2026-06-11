@@ -52,6 +52,51 @@
       "version": 1,
       "widgetId": "ipcanvas0001",
       "widgetName": "CanvasIP"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1560,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "micanvaskey1",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "bhtabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "tabmissinv001",
+      "tabName": "Missing Invoice Data",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "micanvas0001",
+      "widgetName": "CanvasMI"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -105,6 +150,13 @@
       "isVisible": true,
       "label": "Invoice Participation",
       "widgetId": "ipcanvas0001"
+    },
+    "tabmissinv001": {
+      "id": "tabmissinv001",
+      "index": 1,
+      "isVisible": true,
+      "label": "Missing Invoice Data",
+      "widgetId": "micanvas0001"
     }
   },
   "topRow": 14,

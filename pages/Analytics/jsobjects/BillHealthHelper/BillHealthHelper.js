@@ -138,6 +138,51 @@ export default {
 		return vals.map(v => ({ label: v, value: v }));
 	},
 
+	/* ── Missing Invoice Data tab ────────────── */
+
+	/* One row per Location / Billing ID (account) / Vendor. For each month, coverage across all
+	   the account's meter+utility+billType combos: 'full' (all present), 'partial' (some), else absent.
+	   Consumed by the MissingInvoiceTable custom widget. */
+	getMissingInvoiceRows() {
+		const data = (fetch_analytics_data && fetch_analytics_data.data) || [];
+		const groups = {};
+		data.forEach(r => {
+			const loc = r.location_description || '';
+			const acct = r.service_account || '';
+			const vend = r.vendor_name || '';
+			const gkey = [loc, acct, vend].join('||');
+			if (!groups[gkey]) {
+				groups[gkey] = { location: loc, billingId: acct, vendor: vend, subkeys: {}, monthSub: {} };
+			}
+			const sub = [r.meter, r.utility_type, r.bill_type].join('|');
+			groups[gkey].subkeys[sub] = true;
+			const mk = this._monthKey(r.time_period);
+			if (mk.length === 7) {
+				if (!groups[gkey].monthSub[mk]) groups[gkey].monthSub[mk] = {};
+				groups[gkey].monthSub[mk][sub] = true;
+			}
+		});
+
+		let rows = Object.keys(groups).sort().map(k => {
+			const g = groups[k];
+			const total = Object.keys(g.subkeys).length || 1;
+			const cover = {};
+			Object.keys(g.monthSub).forEach(mk => {
+				const c = Object.keys(g.monthSub[mk]).length;
+				cover[mk] = c >= total ? 'full' : (c > 0 ? 'partial' : 'none');
+			});
+			return { location: g.location, billingId: g.billingId, vendor: g.vendor, cover: cover };
+		});
+
+		/* honour the shared filter bar where it maps to this grouping */
+		const vend = this._multi('BHVendorSelect');
+		if (vend.length) rows = rows.filter(r => vend.includes(r.vendor));
+		const loc = this._single('BHLocationSelect');
+		if (loc) rows = rows.filter(r => r.location === loc);
+
+		return rows;
+	},
+
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {
