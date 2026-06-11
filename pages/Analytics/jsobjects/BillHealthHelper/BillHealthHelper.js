@@ -83,6 +83,25 @@ export default {
 				map[key].months[mk] = (map[key].months[mk] || 0) + 1;
 			}
 		});
+
+		// Merge the full account/meter roster (all-time, lightweight) so combos with no bills in
+		// the current window still appear — with their Account / Meter / Utility / Bill Type filled in.
+		const roster = (typeof fetch_bill_accounts !== 'undefined' && Array.isArray(fetch_bill_accounts.data)) ? fetch_bill_accounts.data : [];
+		roster.forEach(r => {
+			const key = [r.location_description, r.service_account, r.meter, r.utility_type, r.bill_type].join('||');
+			if (!map[key]) {
+				map[key] = {
+					location: r.location_description || '',
+					account: r.service_account || '',
+					meter: r.meter || '',
+					utility: r.utility_type || '',
+					billType: r.bill_type || '',
+					vendor: r.vendor_name || '',
+					months: {}
+				};
+			}
+		});
+
 		// %Last12Mo = service days covered by bills in the last 12 months / 365 (matches the UBM app).
 		// NOTE: the monthly feed has no per-bill service dates, so a covered month contributes its full
 		// calendar days. This matches UBM for full-month bills; partial-month bills need service start/end.
