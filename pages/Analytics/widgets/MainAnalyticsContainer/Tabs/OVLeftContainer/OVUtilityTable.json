@@ -4,7 +4,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 62,
+  "bottomRow": 73,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -45,7 +45,7 @@
   "text": "{{OverviewHelper.getUtilitySummaryHtml()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
-  "topRow": 35,
+  "topRow": 39,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "ovutchart0001",

@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 12,
+  "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -15,7 +15,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "txt_bill_lbl",
-  "leftColumn": 0,
+  "leftColumn": 49,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 23,
   "mobileRightColumn": 32,
@@ -26,11 +26,11 @@
   "parentId": "ia1ed10g78",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 16,
+  "rightColumn": 64,
   "text": "Bill Type",
   "textAlign": "LEFT",
   "textColor": "#94a3b8",
-  "topRow": 9,
+  "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "cga8p22wq3",
