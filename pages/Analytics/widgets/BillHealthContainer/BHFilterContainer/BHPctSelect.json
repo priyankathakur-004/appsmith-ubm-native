@@ -9,7 +9,7 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Invoice Participation' }}",
   "key": "bhpctselk1",
   "labelText": "",
   "leftColumn": 0,
@@ -41,6 +41,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [
