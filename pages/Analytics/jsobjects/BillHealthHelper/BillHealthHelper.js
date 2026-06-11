@@ -58,43 +58,6 @@ export default {
 		} catch (e) { return []; }
 	},
 
-	/* Report-scoped WHERE clause for fetch_analytics_data, so one report's filters never
-	   leak into the other. Returns the AND conditions that follow the shared customer filter.
-	   The active report is read from ReportSelect. */
-	analyticsWhere() {
-		const report = (typeof ReportSelect !== 'undefined' && ReportSelect.selectedOptionValue) || 'Main Analytics Report';
-		const q = s => `'${String(s).replace(/'/g, "''")}'`;
-		const c = [];
-
-		if (report === 'Bill Health Report') {
-			// Bill Health: only Account Status is SQL-side here; Vendor/Utility/Location/%Last12Mo
-			// are applied client-side in getRows so their option lists stay complete.
-			const acct = this._multi('BHAcctStatusSelect');
-			if (acct.length) c.push(`AND m.account_status IN (${acct.map(q).join(',')})`);
-		} else {
-			// Main Analytics Report filters (ported verbatim from the original query)
-			const dates = (typeof DateSelect !== 'undefined' && Array.isArray(DateSelect.selectedOptionValues))
-				? DateSelect.selectedOptionValues.filter(d => d.includes('-')) : [];
-			if (dates.length) c.push(`AND m.time_period IN (${dates.map(q).join(',')})`);
-
-			if (typeof UtilityTypeSelect !== 'undefined' && UtilityTypeSelect.selectedOptionValue)
-				c.push(`AND m.utility_type = ${q(UtilityTypeSelect.selectedOptionValue)}`);
-
-			if (typeof BillTypeSelect !== 'undefined' && BillTypeSelect.selectedOptionValue)
-				c.push(`AND m.bill_type = ${q(BillTypeSelect.selectedOptionValue)}`);
-
-			if (typeof LocationSelect !== 'undefined' && LocationSelect.selectedOptionValue)
-				c.push(`AND m.location_id = ${LocationSelect.selectedOptionValue}`);
-
-			if (typeof LocationAttrSelect !== 'undefined' && LocationAttrSelect.selectedOptionValue && LocationAttrSelect.selectedOptionValue !== 'All') {
-				const choice = (typeof AttrChoiceSelect !== 'undefined' && AttrChoiceSelect.selectedOptionValue && AttrChoiceSelect.selectedOptionValue !== 'All')
-					? AttrChoiceSelect.selectedOptionValue : null;
-				c.push(`AND EXISTS (\n    SELECT 1\n    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr\n    WHERE attr->>'id' = ${q(LocationAttrSelect.selectedOptionValue)}\n    ${choice ? `AND attr->>'value' = ${q(choice)}` : ''}\n)`);
-			}
-		}
-		return c.join('\n');
-	},
-
 	/* ── data ────────────────────────────────── */
 
 	/* One row per location / account / meter / utility / bill type, with covered months + %Last12Mo.
@@ -154,6 +117,25 @@ export default {
 
 		const pct = this._multi('BHPctSelect');
 		if (pct.length) rows = rows.filter(r => pct.includes(r.pct.toFixed(2) + '%'));
+
+		const acct = this._multi('BHAcctStatusSelect');
+
+		// Show every location for the customer (from fetch_locations), even those with no bill
+		// data — as empty 0%/all-red rows. Only when no value-filter is narrowing the set;
+		// the Location filter is still honoured.
+		if (!vend.length && !util.length && !pct.length && !acct.length) {
+			const present = {};
+			rows.forEach(r => { present[r.location] = true; });
+			const locs = (typeof fetch_locations !== 'undefined' && Array.isArray(fetch_locations.data)) ? fetch_locations.data : [];
+			locs.forEach(l => {
+				const name = l && l.name;
+				if (!name || present[name]) return;
+				if (loc.length && !loc.includes(name)) return;
+				rows.push({ location: name, account: '', meter: '', utility: '', billType: '', vendor: '', months: {}, pct: 0 });
+				present[name] = true;
+			});
+			rows.sort((a, b) => (a.location + '|' + a.account + '|' + a.meter).localeCompare(b.location + '|' + b.account + '|' + b.meter));
+		}
 
 		return rows;
 	},

@@ -57,6 +57,6 @@ LEFT JOIN LATERAL (
 
 WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
-{{ BillHealthHelper.analyticsWhere() }}
+{{ AnalyticsFilters.analyticsWhere() }}
 
 ORDER BY m.location_description, m.time_period DESC;
