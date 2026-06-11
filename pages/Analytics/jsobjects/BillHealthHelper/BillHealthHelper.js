@@ -94,11 +94,21 @@ export default {
 				map[key].months[mk] = (map[key].months[mk] || 0) + 1;
 			}
 		});
+		// %Last12Mo = service days covered by bills in the last 12 months / 365 (matches the UBM app).
+		// NOTE: the monthly feed has no per-bill service dates, so a covered month contributes its full
+		// calendar days. This matches UBM for full-month bills; partial-month bills need service start/end.
 		const last12 = this._last12();
 		const rows = Object.keys(map).sort().map(k => map[k]);
 		rows.forEach(r => {
-			const cov = last12.filter(ym => r.months[ym]).length;
-			r.pct = cov / 12 * 100;
+			let days = 0;
+			last12.forEach(ym => {
+				if (r.months[ym]) {
+					const y = parseInt(ym.slice(0, 4), 10);
+					const mo = parseInt(ym.slice(5, 7), 10);
+					days += new Date(y, mo, 0).getDate(); // days in that month
+				}
+			});
+			r.pct = days / 365 * 100;
 		});
 		return rows;
 	},
