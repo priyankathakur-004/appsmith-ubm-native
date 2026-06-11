@@ -21,9 +21,10 @@ export default {
 		return a;
 	},
 
-	/* fixed 12-month window for the %Last12Mo metric (independent of the Date display filter) */
+	/* the 12 completed months ending LAST month (current month excluded) for the %Last12Mo metric.
+	   Matches the UBM app: e.g. in Jun 2026 the window is Jun 2025 … May 2026. */
 	_last12() {
-		return this._window(12);
+		return this._window(13).slice(1);
 	},
 
 	/* display columns — driven by the Date filter (BHDateNumInput / BHDateUnitSelect) */
