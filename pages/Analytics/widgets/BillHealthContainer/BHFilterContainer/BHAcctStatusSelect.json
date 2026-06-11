@@ -6,7 +6,11 @@
   "bottomRow": 9,
   "boxShadow": "none",
   "defaultOptionValue": "",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": true,
@@ -47,5 +51,6 @@
     {
       "key": "sourceData"
     }
-  ]
+  ],
+  "onOptionChange": "{{ fetch_analytics_data.run() }}"
 }

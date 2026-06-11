@@ -19,7 +19,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
@@ -57,5 +61,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "py78uoi9cy",
-  "widgetName": "ReportSelect"
+  "widgetName": "ReportSelect",
+  "onOptionChange": "{{ fetch_analytics_data.run() }}"
 }

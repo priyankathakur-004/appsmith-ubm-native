@@ -57,35 +57,6 @@ LEFT JOIN LATERAL (
 
 WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
-{{ DateSelect.selectedOptionValues.filter(d => d.includes('-')).length > 0 ?
-    `AND m.time_period IN (${ DateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
-: "" }}
-
-{{ UtilityTypeSelect.selectedOptionValue ?
-`AND m.utility_type = '${UtilityTypeSelect.selectedOptionValue}'`
-: "" }}
-
-{{ BillTypeSelect.selectedOptionValue ?
-`AND m.bill_type = '${BillTypeSelect.selectedOptionValue}'`
-: "" }}
-
-{{ LocationSelect.selectedOptionValue ?
-`AND m.location_id = ${LocationSelect.selectedOptionValue}`
-: "" }}
-
-{{ BHAcctStatusSelect.selectedOptionValues && BHAcctStatusSelect.selectedOptionValues.length > 0 ?
-`AND m.account_status IN (${ BHAcctStatusSelect.selectedOptionValues.map(s => `'${s}'`).join(",") })`
-: "" }}
-
-{{ LocationAttrSelect.selectedOptionValue && LocationAttrSelect.selectedOptionValue !== 'All' ?
-`AND EXISTS (
-    SELECT 1
-    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr
-    WHERE attr->>'id' = '${LocationAttrSelect.selectedOptionValue}'
-    ${AttrChoiceSelect.selectedOptionValue && AttrChoiceSelect.selectedOptionValue !== 'All'
-      ? `AND attr->>'value' = '${AttrChoiceSelect.selectedOptionValue}'`
-      : "" }
-)`
-: "" }}
+{{ BillHealthHelper.analyticsWhere() }}
 
 ORDER BY m.location_description, m.time_period DESC;
