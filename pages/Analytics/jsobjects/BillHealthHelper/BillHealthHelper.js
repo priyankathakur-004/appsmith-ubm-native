@@ -75,12 +75,15 @@ export default {
 					utility: r.utility_type || '',
 					billType: r.bill_type || '',
 					vendor: r.vendor_name || '',
-					months: {}
+					months: {},
+					monthDays: {}
 				};
 			}
 			const mk = this._monthKey(r.time_period);
 			if (mk.length === 7) {
 				map[key].months[mk] = (map[key].months[mk] || 0) + 1;
+				// real billed days for the month (from analytics_monthly_feed.days_of_service)
+				map[key].monthDays[mk] = Math.max(map[key].monthDays[mk] || 0, Number(r.days_of_service) || 0);
 			}
 		});
 
@@ -97,25 +100,19 @@ export default {
 					utility: r.utility_type || '',
 					billType: r.bill_type || '',
 					vendor: r.vendor_name || '',
-					months: {}
+					months: {},
+					monthDays: {}
 				};
 			}
 		});
 
-		// %Last12Mo = service days covered by bills in the last 12 months / 365 (matches the UBM app).
-		// NOTE: the monthly feed has no per-bill service dates, so a covered month contributes its full
-		// calendar days. This matches UBM for full-month bills; partial-month bills need service start/end.
+		// %Last12Mo = actual billed service days in the last 12 months / 365 (matches the UBM app).
+		// days come from analytics_monthly_feed.days_of_service (real bill service period, may be < a full month).
 		const last12 = this._last12();
 		const rows = Object.keys(map).sort().map(k => map[k]);
 		rows.forEach(r => {
 			let days = 0;
-			last12.forEach(ym => {
-				if (r.months[ym]) {
-					const y = parseInt(ym.slice(0, 4), 10);
-					const mo = parseInt(ym.slice(5, 7), 10);
-					days += new Date(y, mo, 0).getDate(); // days in that month
-				}
-			});
+			last12.forEach(ym => { days += (r.monthDays[ym] || 0); });
 			r.pct = days / 365 * 100;
 		});
 		return rows;
