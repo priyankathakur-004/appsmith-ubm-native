@@ -97,6 +97,51 @@
       "version": 1,
       "widgetId": "micanvas0001",
       "widgetName": "CanvasMI"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1320,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "ntcanvaskey1",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "bhtabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "tabnotif001",
+      "tabName": "Notifications",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "ntcanvas0001",
+      "widgetName": "CanvasNT"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -157,6 +202,13 @@
       "isVisible": true,
       "label": "Missing Invoice Data",
       "widgetId": "micanvas0001"
+    },
+    "tabnotif001": {
+      "id": "tabnotif001",
+      "index": 2,
+      "isVisible": true,
+      "label": "Notifications",
+      "widgetId": "ntcanvas0001"
     }
   },
   "topRow": 14,

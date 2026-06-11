@@ -223,6 +223,25 @@ export default {
 		return rows;
 	},
 
+	/* ── Notifications tab ───────────────────── */
+
+	/* Rows for the Notifications table (bill chat / workflow). Reads fetch_notifications once it
+	   exists (guarded so the tab renders "No data" until the query is added). Adjust the field
+	   mapping below to the query's actual column names. */
+	getNotificationRows() {
+		const data = (typeof fetch_notifications !== 'undefined' && Array.isArray(fetch_notifications.data)) ? fetch_notifications.data : [];
+		return data.map(r => ({
+			location: r.location || r.location_description || '',
+			billId: r.bill_id || r.billId || '',
+			workflow: r.workflow_state || r.workflow || '',
+			markedDate: r.marked_for_payment || r.markedDate || '',
+			chatDate: r.last_chat_date || r.chatDate || '',
+			chatUser: r.last_chat_user || r.chatUser || '',
+			chatTags: r.last_chat_tags || r.chatTags || '',
+			chatHistory: r.chat_history || r.chatHistory || ''
+		}));
+	},
+
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {
