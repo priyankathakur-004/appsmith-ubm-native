@@ -1,4 +1,4 @@
-SELECT
+SELECT DISTINCT ON (w.warning_id)
     w.warning_id                            AS warning_id,
     w.bill_warning                          AS bill_warning,
     w.bill_warning_severity                 AS severity,
@@ -29,5 +29,5 @@ LEFT JOIN bill_management_v2.locations l
     ON l.id = m.location_id
 WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
 {{ BillHealthHelper.warnDateSql() }}
-ORDER BY w.bill_warning_severity DESC, w.warning_id DESC
+ORDER BY w.warning_id DESC, d.last_updated DESC NULLS LAST
 LIMIT 1000
