@@ -367,7 +367,8 @@ export default {
 		const win = this._warnDateWindow();
 		if (win) rows = rows.filter(r => {
 			const d = this._parseDate(r.invoiceDateRaw);
-			return d && d >= win.start && d <= win.end;
+			if (!d) return true; /* keep warnings with no invoice date — don't silently blank the tab */
+			return d >= win.start && d <= win.end;
 		});
 
 		const rank = { High: 3, Medium: 2, Low: 1 };
