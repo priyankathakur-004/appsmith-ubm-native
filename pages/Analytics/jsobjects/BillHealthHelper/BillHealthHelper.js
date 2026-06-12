@@ -230,16 +230,21 @@ export default {
 	   mapping below to the query's actual column names. */
 	getNotificationRows() {
 		const data = (typeof fetch_notifications !== 'undefined' && Array.isArray(fetch_notifications.data)) ? fetch_notifications.data : [];
-		return data.map(r => ({
-			location: r.location || r.location_description || '',
-			billId: r.bill_id || r.billId || '',
-			workflow: r.workflow_state || r.workflow || '',
-			markedDate: r.marked_for_payment || r.markedDate || '',
-			chatDate: r.last_chat_date || r.chatDate || '',
-			chatUser: r.last_chat_user || r.chatUser || '',
-			chatTags: r.last_chat_tags || r.chatTags || '',
-			chatHistory: r.chat_history || r.chatHistory || ''
-		}));
+		return data.map(r => {
+			// "Last Chat Tags" = the @mention at the start of the latest message (heuristic).
+			const text = r.last_chat_text || '';
+			const m = text.match(/@[^,\n]+/);
+			return {
+				location: r.location || '',
+				billId: r.bill_id || '',
+				workflow: r.workflow_state || '',
+				markedDate: r.marked_for_payment || '',
+				chatDate: r.last_chat_date || '',
+				chatUser: r.last_chat_user || '',
+				chatTags: m ? m[0].trim() : '',
+				chatHistory: r.chat_history || ''
+			};
+		});
 	},
 
 	/* ── legend (small enough for a Text widget) ── */
