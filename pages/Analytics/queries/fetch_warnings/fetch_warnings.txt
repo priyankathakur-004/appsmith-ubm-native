@@ -1,0 +1,27 @@
+SELECT DISTINCT ON (be.id)
+    be.id AS warning_id,
+    COALESCE(btac.total_amount, 0)                AS total_amount,
+    TO_CHAR(br.statement_date, 'DD/MM/YYYY')      AS invoice_date,
+    br.statement_date,
+    be.message                                    AS bill_warning,
+    abli.bill_id                                  AS pear_id,
+    l.name                                        AS location,
+    l.latitude,
+    l.longitude,
+    COALESCE(cvn.pretty_name, br.vendor_code)     AS vendor,
+    be.severity,
+    be.resolved,
+    bi.commodity                                  AS utility_type
+FROM bill_management_v2.bill_errors be
+JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+LEFT JOIN bill_management_v2.analytics_billing_line_items abli ON abli.bill_record_id = br.id
+LEFT JOIN bill_management_v2.bill_items bi ON bi.id = abli.bill_item_id
+LEFT JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+LEFT JOIN bill_management_v2.locations l ON l.id = biva.location_id
+LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac ON btac.bill_id = abli.bill_id
+LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+    ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
+WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND br.statement_date >= CURRENT_DATE - INTERVAL '6 months'
+ORDER BY be.id, be.severity DESC
+LIMIT 2000

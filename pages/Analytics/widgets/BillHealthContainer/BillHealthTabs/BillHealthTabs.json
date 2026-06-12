@@ -142,6 +142,51 @@
       "version": 1,
       "widgetId": "ntcanvas0001",
       "widgetName": "CanvasNT"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1320,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "wocanvaskey1",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "bhtabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "tabwarnov001",
+      "tabName": "Warnings Overview",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "wocanvas0001",
+      "widgetName": "CanvasWO"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -209,6 +254,13 @@
       "isVisible": true,
       "label": "Notifications",
       "widgetId": "ntcanvas0001"
+    },
+    "tabwarnov001": {
+      "id": "tabwarnov001",
+      "index": 3,
+      "isVisible": true,
+      "label": "Warnings Overview",
+      "widgetId": "wocanvas0001"
     }
   },
   "topRow": 14,

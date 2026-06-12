@@ -247,6 +247,21 @@ export default {
 		});
 	},
 
+	/* ── Warnings Overview tab ───────────────── */
+
+	/* Rows for the Warnings table (bill_errors). One row per warning. */
+	getWarningRows() {
+		const data = (typeof fetch_warnings !== 'undefined' && Array.isArray(fetch_warnings.data)) ? fetch_warnings.data : [];
+		return data.map(r => ({
+			totalAmount: r.total_amount,
+			invoiceDate: r.invoice_date || '',
+			warning: r.bill_warning || '',
+			pearId: r.pear_id || '',
+			location: r.location || '',
+			vendor: r.vendor || ''
+		}));
+	},
+
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {
