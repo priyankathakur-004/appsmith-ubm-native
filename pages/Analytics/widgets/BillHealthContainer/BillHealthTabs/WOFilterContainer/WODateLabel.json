@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 2,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "wodatelblk",
+  "leftColumn": 52,
+  "mobileBottomRow": 2,
+  "mobileLeftColumn": 52,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 0,
+  "parentColumnSpace": 15,
+  "parentId": "wofcanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "text": "Invoice Date",
+  "textAlign": "LEFT",
+  "textColor": "#475569",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "wodatelbl1",
+  "widgetName": "WODateLabel"
+}

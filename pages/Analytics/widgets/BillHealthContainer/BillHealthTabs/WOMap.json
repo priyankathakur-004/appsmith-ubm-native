@@ -1,0 +1,68 @@
+{
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 130,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ { markers: BillHealthHelper.getWarningMapMarkers() } }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "womapkey001",
+  "leftColumn": 40,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 130,
+  "mobileLeftColumn": 40,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 11,
+  "needsErrorInfo": false,
+  "originalBottomRow": 130,
+  "originalTopRow": 11,
+  "parentColumnSpace": 15,
+  "parentId": "wocanvas0001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "srcDoc": {
+    "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.wm-wrap { height: calc(var(--appsmith-ui-height) * 1px); width: calc(var(--appsmith-ui-width) * 1px); background:#fff; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; font-family:system-ui; display:flex; flex-direction:column; }\n.wm-title { padding:8px 14px; font-size:13px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0; flex:0 0 auto; }\n.wm-empty { flex:1 1 auto; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; }\n#map { flex:1 1 auto; width:100%; min-height:120px; }",
+    "html": "<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\"/><script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script><div class=\"wm-wrap\"><div class=\"wm-title\">Locations Impacted. Size represents the largest bill impacted.</div><div id=\"map\"></div></div>",
+    "js": "var map, layer;\nfunction waitForL(cb, tries){\n  tries = tries || 0;\n  if (window.L) { cb(); }\n  else if (tries < 100) { setTimeout(function(){ waitForL(cb, tries + 1); }, 80); }\n}\nfunction fmt(n){ return Math.round(Number(n) || 0).toLocaleString(); }\nfunction render(model){\n  var markers = (model && model.markers) || [];\n  waitForL(function(){\n    if (!map) {\n      map = L.map('map', { attributionControl: false, zoomControl: true }).setView([39.8283, -98.5795], 4);\n      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);\n      layer = L.layerGroup().addTo(map);\n    }\n    layer.clearLayers();\n    var max = 0;\n    markers.forEach(function(m){ if ((m.maxBill || 0) > max) max = m.maxBill; });\n    var bounds = [];\n    markers.forEach(function(m){\n      if (m.lat == null || m.lng == null || isNaN(m.lat) || isNaN(m.lng)) return;\n      var r = max > 0 ? (6 + 24 * Math.sqrt((m.maxBill || 0) / max)) : 8;\n      var c = L.circleMarker([m.lat, m.lng], { radius: r, color: '#1d4ed8', weight: 1, fillColor: '#3b82f6', fillOpacity: 0.45 });\n      c.bindTooltip((m.location || '') + ': $' + fmt(m.maxBill) + ' (' + (m.count || 0) + ' warnings)');\n      c.addTo(layer);\n      bounds.push([m.lat, m.lng]);\n    });\n    if (bounds.length) { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 10 }); }\n    setTimeout(function(){ map.invalidateSize(); }, 150);\n  });\n}\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(function(m){ render(m); }); });\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 11,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.wm-wrap { height: calc(var(--appsmith-ui-height) * 1px); width: calc(var(--appsmith-ui-width) * 1px); background:#fff; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; font-family:system-ui; display:flex; flex-direction:column; }\n.wm-title { padding:8px 14px; font-size:13px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0; flex:0 0 auto; }\n.wm-empty { flex:1 1 auto; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; }\n#map { flex:1 1 auto; width:100%; min-height:120px; }",
+    "html": "<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\"/><script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script><div class=\"wm-wrap\"><div class=\"wm-title\">Locations Impacted. Size represents the largest bill impacted.</div><div id=\"map\"></div></div>",
+    "js": "var map, layer;\nfunction waitForL(cb, tries){\n  tries = tries || 0;\n  if (window.L) { cb(); }\n  else if (tries < 100) { setTimeout(function(){ waitForL(cb, tries + 1); }, 80); }\n}\nfunction fmt(n){ return Math.round(Number(n) || 0).toLocaleString(); }\nfunction render(model){\n  var markers = (model && model.markers) || [];\n  waitForL(function(){\n    if (!map) {\n      map = L.map('map', { attributionControl: false, zoomControl: true }).setView([39.8283, -98.5795], 4);\n      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 19 }).addTo(map);\n      layer = L.layerGroup().addTo(map);\n    }\n    layer.clearLayers();\n    var max = 0;\n    markers.forEach(function(m){ if ((m.maxBill || 0) > max) max = m.maxBill; });\n    var bounds = [];\n    markers.forEach(function(m){\n      if (m.lat == null || m.lng == null || isNaN(m.lat) || isNaN(m.lng)) return;\n      var r = max > 0 ? (6 + 24 * Math.sqrt((m.maxBill || 0) / max)) : 8;\n      var c = L.circleMarker([m.lat, m.lng], { radius: r, color: '#1d4ed8', weight: 1, fillColor: '#3b82f6', fillOpacity: 0.45 });\n      c.bindTooltip((m.location || '') + ': $' + fmt(m.maxBill) + ' (' + (m.count || 0) + ' warnings)');\n      c.addTo(layer);\n      bounds.push([m.lat, m.lng]);\n    });\n    if (bounds.length) { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 10 }); }\n    setTimeout(function(){ map.invalidateSize(); }, 150);\n  });\n}\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(function(m){ render(m); }); });\n"
+  },
+  "version": 1,
+  "widgetId": "womap0001",
+  "widgetName": "WOMap"
+}

@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 2,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "woreslblk",
+  "leftColumn": 25,
+  "mobileBottomRow": 2,
+  "mobileLeftColumn": 25,
+  "mobileRightColumn": 32,
+  "mobileTopRow": 0,
+  "parentColumnSpace": 15,
+  "parentId": "wofcanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 32,
+  "text": "Resolved",
+  "textAlign": "LEFT",
+  "textColor": "#475569",
+  "topRow": 0,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "woreslbl01",
+  "widgetName": "WOResolvedLabel"
+}

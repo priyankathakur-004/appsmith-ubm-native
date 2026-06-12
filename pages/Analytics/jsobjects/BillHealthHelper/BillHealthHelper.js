@@ -51,7 +51,12 @@ export default {
 				BHPctSelect: typeof BHPctSelect !== 'undefined' ? BHPctSelect : null,
 				BHAcctStatusSelect: typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null,
 				BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
-				BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null
+				BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null,
+				WOSeveritySelect: typeof WOSeveritySelect !== 'undefined' ? WOSeveritySelect : null,
+				WOWarningSelect: typeof WOWarningSelect !== 'undefined' ? WOWarningSelect : null,
+				WOResolvedSelect: typeof WOResolvedSelect !== 'undefined' ? WOResolvedSelect : null,
+				WOUtilitySelect: typeof WOUtilitySelect !== 'undefined' ? WOUtilitySelect : null,
+				WOLocationSelect: typeof WOLocationSelect !== 'undefined' ? WOLocationSelect : null
 			};
 			const w = reg[name];
 			const v = w && w.selectedOptionValues;
@@ -249,17 +254,175 @@ export default {
 
 	/* ── Warnings Overview tab ───────────────── */
 
-	/* Rows for the Warnings table (bill_errors). One row per warning. */
-	getWarningRows() {
+	/* Normalise be.severity to a display label (High / Medium / Low). Handles text or numeric codes. */
+	_warnSeverity(raw) {
+		const s = String(raw == null ? '' : raw).trim();
+		if (!s) return '';
+		const low = s.toLowerCase();
+		if (low === 'high' || low === '3') return 'High';
+		if (low === 'medium' || low === 'med' || low === '2') return 'Medium';
+		if (low === 'low' || low === '1') return 'Low';
+		return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+	},
+
+	/* Classify a warning message into the same buckets the UBM report uses for the "Warning" slicer. */
+	_warnCategory(msg) {
+		const m = String(msg || '');
+		if (/unit cost/i.test(m) && /higher than/i.test(m)) return 'Unit cost > 10% higher than prior bill';
+		if (/charge/i.test(m) && /(out of range|not within|expected range)/i.test(m)) return 'Charges are out of range (warning)';
+		if (/(consumption|volume)/i.test(m) && /(out of range|not within|expected range)/i.test(m)) return 'Volume is out of range (warning)';
+		return 'Other';
+	},
+
+	/* Utility type for a warning — prefer the commodity embedded in the message "[acct / meter / COMMODITY]",
+	   fall back to the joined bill_items.commodity. */
+	_warnUtility(msg, fallback) {
+		const m = String(msg || '').match(/\[([^\]]+)\]/);
+		if (m) {
+			const parts = m[1].split('/').map(s => s.trim());
+			const last = (parts[parts.length - 1] || '').toUpperCase();
+			if (/^(NATURALGAS|NATURAL GAS|GAS|ELECTRIC|ELECTRICITY|WATER|SEWER|STEAM|SOLAR)$/.test(last)) return last;
+		}
+		return String(fallback || '').toUpperCase();
+	},
+
+	_parseDate(v) {
+		if (!v) return null;
+		const d = new Date(v);
+		return isNaN(d.getTime()) ? null : d;
+	},
+
+	/* The Invoice Date relative window from WODateModeSelect / WODateNumInput / WODateUnitSelect.
+	   Returns {start,end} or null when no usable filter is set. Mirrors the UBM "Last 6 Months" slicer. */
+	_warnDateWindow() {
+		try {
+			if (typeof WODateNumInput === 'undefined' || typeof WODateUnitSelect === 'undefined') return null;
+			const mode = (typeof WODateModeSelect !== 'undefined' && WODateModeSelect.selectedOptionValue) || 'Last';
+			const n = parseInt(WODateNumInput.text, 10);
+			const unit = WODateUnitSelect.selectedOptionValue || 'Months';
+			if (!n || unit === 'Select') return null;
+			const now = new Date();
+			const start = new Date(now);
+			const end = new Date(now);
+			const shift = (d, sign) => {
+				if (unit === 'Days') d.setDate(d.getDate() + sign * n);
+				else if (unit === 'Weeks') d.setDate(d.getDate() + sign * 7 * n);
+				else if (unit === 'Years') d.setFullYear(d.getFullYear() + sign * n);
+				else d.setMonth(d.getMonth() + sign * n);
+			};
+			if (mode === 'Next') { shift(end, 1); }
+			else if (mode === 'This') {
+				start.setDate(1);
+				end.setMonth(end.getMonth() + 1, 0);
+			} else { shift(start, -1); } /* Last */
+			start.setHours(0, 0, 0, 0);
+			end.setHours(23, 59, 59, 999);
+			return { start, end };
+		} catch (e) { return null; }
+	},
+
+	/* All warnings mapped to display rows, before slicer filtering. */
+	_warnBase() {
 		const data = (typeof fetch_warnings !== 'undefined' && Array.isArray(fetch_warnings.data)) ? fetch_warnings.data : [];
-		return data.map(r => ({
-			totalAmount: r.total_amount,
-			invoiceDate: r.invoice_date || '',
-			warning: r.bill_warning || '',
-			pearId: r.pear_id || '',
-			location: r.location || '',
-			vendor: r.vendor || ''
-		}));
+		return data.map(r => {
+			const msg = r.bill_warning || '';
+			const res = r.resolved;
+			return {
+				totalAmount: r.total_amount,
+				invoiceDate: r.invoice_date || '',
+				invoiceDateRaw: r.invoice_date_raw || '',
+				warning: msg,
+				category: this._warnCategory(msg),
+				pearId: r.pear_id || '',
+				location: r.location || '',
+				vendor: r.vendor || '',
+				utility: this._warnUtility(msg, r.utility_type),
+				severity: this._warnSeverity(r.severity),
+				resolved: (res === true || res === 't' || res === 'true' || res === 1) ? 'Yes' : 'No',
+				lat: parseFloat(r.latitude),
+				lng: parseFloat(r.longitude)
+			};
+		});
+	},
+
+	/* Rows for the Warnings table after applying the slicer bar. Consumed by WarningsTable.defaultModel. */
+	getWarningRows() {
+		let rows = this._warnBase();
+
+		const sev = this._multi('WOSeveritySelect');
+		if (sev.length) rows = rows.filter(r => sev.includes(r.severity));
+
+		const cat = this._multi('WOWarningSelect');
+		if (cat.length) rows = rows.filter(r => cat.includes(r.category));
+
+		const res = this._multi('WOResolvedSelect');
+		if (res.length) rows = rows.filter(r => res.includes(r.resolved));
+
+		const util = this._multi('WOUtilitySelect');
+		if (util.length) rows = rows.filter(r => util.includes(r.utility));
+
+		const loc = this._multi('WOLocationSelect');
+		if (loc.length) rows = rows.filter(r => loc.includes(r.location));
+
+		const win = this._warnDateWindow();
+		if (win) rows = rows.filter(r => {
+			const d = this._parseDate(r.invoiceDateRaw);
+			return d && d >= win.start && d <= win.end;
+		});
+
+		const rank = { High: 3, Medium: 2, Low: 1 };
+		rows.sort((a, b) => {
+			const sr = (rank[b.severity] || 0) - (rank[a.severity] || 0);
+			if (sr) return sr;
+			const da = this._parseDate(a.invoiceDateRaw), db = this._parseDate(b.invoiceDateRaw);
+			return (db ? db.getTime() : 0) - (da ? da.getTime() : 0);
+		});
+		return rows;
+	},
+
+	/* ── Warnings slicer option providers ────── */
+
+	getWarnSeverityOptions() {
+		const order = { High: 3, Medium: 2, Low: 1 };
+		const vals = [...new Set(this._warnBase().map(r => r.severity).filter(Boolean))];
+		vals.sort((a, b) => (order[b] || 0) - (order[a] || 0) || a.localeCompare(b));
+		return vals.map(v => ({ label: v, value: v }));
+	},
+
+	getWarnCategoryOptions() {
+		const vals = [...new Set(this._warnBase().map(r => r.category).filter(Boolean))].sort();
+		return vals.map(v => ({ label: v, value: v }));
+	},
+
+	getWarnResolvedOptions() {
+		const vals = [...new Set(this._warnBase().map(r => r.resolved).filter(Boolean))].sort();
+		return vals.map(v => ({ label: v, value: v }));
+	},
+
+	getWarnUtilityOptions() {
+		const vals = [...new Set(this._warnBase().map(r => r.utility).filter(Boolean))].sort();
+		return vals.map(v => ({ label: v, value: v }));
+	},
+
+	getWarnLocationOptions() {
+		const vals = [...new Set(this._warnBase().map(r => r.location).filter(Boolean))].sort();
+		return vals.map(v => ({ label: v, value: v }));
+	},
+
+	/* Bubble-map points for WOMap — one per impacted location, sized by the largest bill impacted.
+	   Honours the slicer bar (reads getWarningRows). */
+	getWarningMapMarkers() {
+		const rows = this.getWarningRows();
+		const byLoc = {};
+		rows.forEach(r => {
+			if (isNaN(r.lat) || isNaN(r.lng) || (!r.lat && !r.lng)) return;
+			const key = r.lat + ',' + r.lng;
+			if (!byLoc[key]) byLoc[key] = { lat: r.lat, lng: r.lng, location: r.location, maxBill: 0, count: 0 };
+			const amt = Number(r.totalAmount) || 0;
+			if (amt > byLoc[key].maxBill) byLoc[key].maxBill = amt;
+			byLoc[key].count += 1;
+		});
+		return Object.keys(byLoc).map(k => byLoc[k]);
 	},
 
 	/* ── legend (small enough for a Text widget) ── */
