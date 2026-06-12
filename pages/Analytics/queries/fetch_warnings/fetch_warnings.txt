@@ -1,33 +1,32 @@
-SELECT DISTINCT ON (be.id)
-    be.id                                     AS warning_id,
-    be.message                                AS bill_warning,
-    be.severity                               AS severity,
-    be.resolved                               AS resolved,
-    abi.bill_id                               AS pear_id,
-    TO_CHAR(br.statement_date, 'MM/DD/YYYY')  AS invoice_date,
-    br.statement_date                         AS invoice_date_raw,
-    btac.total_amount                         AS total_amount,
-    COALESCE(cvn.pretty_name, br.vendor_code) AS vendor,
-    l.name                                    AS location,
-    l.latitude                                AS latitude,
-    l.longitude                               AS longitude,
-    bi.commodity                              AS utility_type
-FROM bill_management_v2.bill_errors be
-JOIN bill_management_v2.bill_records br
-    ON br.id = be.bill_record_id
-LEFT JOIN bill_management_v2.bill_items bi
-    ON bi.bill_record_id = br.id
-LEFT JOIN bill_management_v2.bill_items_virtual_accounts biva
-    ON biva.bill_item_id = bi.id
+SELECT
+    w.warning_id                            AS warning_id,
+    w.bill_warning                          AS bill_warning,
+    w.bill_warning_severity                 AS severity,
+    w.pear_id                               AS pear_id,
+    w.billing_id                            AS billing_id,
+    w.vendor                                AS vendor,
+    w.invoice_date                          AS invoice_date_raw,
+    TO_CHAR(w.invoice_date, 'MM/DD/YYYY')   AS invoice_date,
+    w.total_amount                          AS total_amount,
+    d.category                              AS category,
+    d.workflow_state                        AS workflow_state,
+    d.resolvable                            AS resolvable,
+    m.location_description                  AS location,
+    m.utility_type                          AS utility_type,
+    l.latitude                              AS latitude,
+    l.longitude                             AS longitude
+FROM bill_management_v2.bill_warnings w
+LEFT JOIN bill_management_v2.bill_warning_definitions_view d
+    ON d.warning_id = w.warning_id
+LEFT JOIN LATERAL (
+    SELECT m.location_description, m.utility_type, m.location_id
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.client_account = w.billing_id
+      AND m.customer_id = w.customer_id
+    LIMIT 1
+) m ON TRUE
 LEFT JOIN bill_management_v2.locations l
-    ON l.id = biva.location_id
-LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
-    ON cvn.code = br.vendor_code
-    AND cvn.customer_id = br.customer_id
-LEFT JOIN bill_management_v2.analytics_bills_items abi
-    ON abi.bill_record_id = br.id
-LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac
-    ON abi.bill_id = btac.bill_id
-WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
-ORDER BY be.id, bi.id
+    ON l.id = m.location_id
+WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+ORDER BY w.bill_warning_severity DESC, w.warning_id DESC
 LIMIT 1000

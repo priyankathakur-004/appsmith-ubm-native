@@ -321,24 +321,32 @@ export default {
 		} catch (e) { return null; }
 	},
 
-	/* All warnings mapped to display rows, before slicer filtering. */
+	/* Resolved (Yes/No) — derived from the definition view's workflow_state. */
+	_warnResolved(workflowState) {
+		const w = String(workflowState || '').toLowerCase();
+		if (!w) return 'No';
+		if (/resolv|clos|done|complete|paid|approved/.test(w)) return 'Yes';
+		return 'No';
+	},
+
+	/* All warnings mapped to display rows, before slicer filtering.
+	   Source: bill_management_v2.bill_warnings + bill_warning_definitions_view (see fetch_warnings). */
 	_warnBase() {
 		const data = (typeof fetch_warnings !== 'undefined' && Array.isArray(fetch_warnings.data)) ? fetch_warnings.data : [];
 		return data.map(r => {
 			const msg = r.bill_warning || '';
-			const res = r.resolved;
 			return {
 				totalAmount: r.total_amount,
 				invoiceDate: r.invoice_date || '',
 				invoiceDateRaw: r.invoice_date_raw || '',
 				warning: msg,
-				category: this._warnCategory(msg),
+				category: r.category || this._warnCategory(msg),
 				pearId: r.pear_id || '',
-				location: r.location || '',
+				location: r.location || r.billing_id || '',
 				vendor: r.vendor || '',
 				utility: this._warnUtility(msg, r.utility_type),
 				severity: this._warnSeverity(r.severity),
-				resolved: (res === true || res === 't' || res === 'true' || res === 1) ? 'Yes' : 'No',
+				resolved: this._warnResolved(r.workflow_state),
 				lat: parseFloat(r.latitude),
 				lng: parseFloat(r.longitude)
 			};
