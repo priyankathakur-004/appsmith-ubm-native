@@ -1,11 +1,14 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 2,
+  "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -13,24 +16,24 @@
   "fontSize": "0.875rem",
   "fontStyle": "BOLD",
   "isLoading": false,
-  "isVisible": true,
-  "key": "woutillblk",
-  "leftColumn": 33,
-  "mobileBottomRow": 2,
-  "mobileLeftColumn": 33,
-  "mobileRightColumn": 41,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
+  "key": "woloclblk",
+  "leftColumn": 40,
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 40,
+  "mobileRightColumn": 50,
   "mobileTopRow": 0,
   "parentColumnSpace": 15,
-  "parentId": "wofcanvas01",
+  "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 41,
-  "text": "Utility Type",
+  "rightColumn": 50,
+  "text": "Location",
   "textAlign": "LEFT",
   "textColor": "#475569",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,
-  "widgetId": "woutillbl1",
-  "widgetName": "WOUtilityLabel"
+  "widgetId": "woloclbl01",
+  "widgetName": "WOLocationLabel"
 }

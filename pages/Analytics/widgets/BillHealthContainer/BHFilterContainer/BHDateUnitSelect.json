@@ -11,6 +11,9 @@
     },
     {
       "key": "accentColor"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [
@@ -25,7 +28,7 @@
   ],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
+  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' }}",
   "key": "bhdateunik",
   "labelText": "",
   "leftColumn": 58,

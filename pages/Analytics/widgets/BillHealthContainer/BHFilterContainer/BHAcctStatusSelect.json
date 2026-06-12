@@ -13,7 +13,7 @@
   ],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
+  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' }}",
   "key": "bhacctselk",
   "labelText": "",
   "leftColumn": 20,
@@ -45,6 +45,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [

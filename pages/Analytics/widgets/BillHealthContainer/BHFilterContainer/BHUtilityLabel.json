@@ -6,6 +6,9 @@
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -13,7 +16,7 @@
   "fontSize": "0.875rem",
   "fontStyle": "BOLD",
   "isLoading": false,
-  "isVisible": true,
+  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' }}",
   "key": "bhutillblk",
   "leftColumn": 31,
   "mobileBottomRow": 4,

@@ -7,7 +7,7 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
+  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' }}",
   "key": "bhutilselk",
   "labelText": "",
   "leftColumn": 31,
@@ -38,6 +38,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [

@@ -7,7 +7,7 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
+  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' }}",
   "key": "bhlocselk1",
   "labelText": "",
   "leftColumn": 40,
@@ -38,6 +38,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [

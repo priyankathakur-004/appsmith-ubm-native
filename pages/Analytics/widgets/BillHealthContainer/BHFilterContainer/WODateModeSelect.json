@@ -2,15 +2,18 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 7,
+  "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "Months",
+  "defaultOptionValue": "Last",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
     },
     {
       "key": "accentColor"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [
@@ -21,26 +24,26 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
-  "key": "wodateunik",
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
+  "key": "wodatemodk",
   "labelText": "",
-  "leftColumn": 59,
-  "mobileBottomRow": 7,
-  "mobileLeftColumn": 59,
-  "mobileRightColumn": 64,
-  "mobileTopRow": 2,
+  "leftColumn": 50,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 50,
+  "mobileRightColumn": 55,
+  "mobileTopRow": 4,
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,
-  "parentId": "wofcanvas01",
+  "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
   "placeholderText": "Select option",
   "renderMode": "CANVAS",
-  "rightColumn": 64,
-  "sourceData": "[{\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Years\", \"value\": \"Years\"}]",
-  "topRow": 2,
+  "rightColumn": 55,
+  "sourceData": "[{\"label\": \"Last\", \"value\": \"Last\"}, {\"label\": \"Next\", \"value\": \"Next\"}, {\"label\": \"This\", \"value\": \"This\"}]",
+  "topRow": 4,
   "type": "SELECT_WIDGET",
   "version": 1,
-  "widgetId": "wodateunit1",
-  "widgetName": "WODateUnitSelect"
+  "widgetId": "wodatemode1",
+  "widgetName": "WODateModeSelect"
 }

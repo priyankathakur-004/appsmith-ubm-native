@@ -1,11 +1,14 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 2,
+  "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -13,24 +16,24 @@
   "fontSize": "0.875rem",
   "fontStyle": "BOLD",
   "isLoading": false,
-  "isVisible": true,
-  "key": "woreslblk",
-  "leftColumn": 25,
-  "mobileBottomRow": 2,
-  "mobileLeftColumn": 25,
-  "mobileRightColumn": 32,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
+  "key": "wowarnlblk",
+  "leftColumn": 9,
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 9,
+  "mobileRightColumn": 20,
   "mobileTopRow": 0,
   "parentColumnSpace": 15,
-  "parentId": "wofcanvas01",
+  "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 32,
-  "text": "Resolved",
+  "rightColumn": 20,
+  "text": "Warning",
   "textAlign": "LEFT",
   "textColor": "#475569",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,
-  "widgetId": "woreslbl01",
-  "widgetName": "WOResolvedLabel"
+  "widgetId": "wowarnlbl1",
+  "widgetName": "WOWarningLabel"
 }

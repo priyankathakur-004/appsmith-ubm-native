@@ -2,33 +2,33 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 7,
+  "bottomRow": 9,
   "boxShadow": "none",
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": true,
-  "key": "woresselk",
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
+  "key": "wowarnselk",
   "labelText": "",
-  "leftColumn": 25,
-  "mobileBottomRow": 7,
-  "mobileLeftColumn": 25,
-  "mobileRightColumn": 32,
-  "mobileTopRow": 2,
+  "leftColumn": 9,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 9,
+  "mobileRightColumn": 20,
+  "mobileTopRow": 4,
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,
-  "parentId": "wofcanvas01",
+  "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 32,
-  "sourceData": "{{ BillHealthHelper.getWarnResolvedOptions() }}",
-  "topRow": 2,
+  "rightColumn": 20,
+  "sourceData": "{{ BillHealthHelper.getWarnCategoryOptions() }}",
+  "topRow": 4,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "woressel01",
-  "widgetName": "WOResolvedSelect",
+  "widgetId": "wowarnsel1",
+  "widgetName": "WOWarningSelect",
   "dynamicBindingPathList": [
     {
       "key": "accentColor"
@@ -38,6 +38,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [
