@@ -34,7 +34,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "womapkey001",
-  "leftColumn": 40,
+  "leftColumn": 39,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "mobileBottomRow": 130,
@@ -48,7 +48,7 @@
   "parentId": "wocanvas0001",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 63,
+  "rightColumn": 64,
   "srcDoc": {
     "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.wm-wrap { height: calc(var(--appsmith-ui-height) * 1px); width: calc(var(--appsmith-ui-width) * 1px); background:#fff; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; font-family:system-ui; display:flex; flex-direction:column; }\n.wm-title { padding:8px 14px; font-size:13px; font-weight:600; color:#0f172a; border-bottom:1px solid #e2e8f0; flex:0 0 auto; }\n.wm-empty { flex:1 1 auto; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; }\n#map { flex:1 1 auto; width:100%; min-height:120px; }",
     "html": "<link rel=\"stylesheet\" href=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.css\"/><script src=\"https://unpkg.com/leaflet@1.9.4/dist/leaflet.js\"></script><div class=\"wm-wrap\"><div class=\"wm-title\">Locations Impacted. Size represents the largest bill impacted.</div><div id=\"map\"></div></div>",

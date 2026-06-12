@@ -35,7 +35,7 @@
   "isSearchWildcard": true,
   "isVisible": true,
   "key": "wotblkey001",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "mobileBottomRow": 130,
