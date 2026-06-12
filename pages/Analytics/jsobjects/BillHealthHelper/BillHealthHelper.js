@@ -321,6 +321,15 @@ export default {
 		} catch (e) { return null; }
 	},
 
+	/* Server-side date filter for fetch_warnings — pushes the Invoice Date slicer into the WHERE
+	   clause (DB-backed report, so we never post-filter dates in JS). Returns "" when unset. */
+	warnDateSql() {
+		const win = this._warnDateWindow();
+		if (!win) return '';
+		const fmt = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+		return "AND w.invoice_date >= '" + fmt(win.start) + "' AND w.invoice_date <= '" + fmt(win.end) + "'";
+	},
+
 	/* Resolved (Yes/No) — derived from the definition view's workflow_state. */
 	_warnResolved(workflowState) {
 		const w = String(workflowState || '').toLowerCase();
@@ -372,12 +381,7 @@ export default {
 		const loc = this._multi('WOLocationSelect');
 		if (loc.length) rows = rows.filter(r => loc.includes(r.location));
 
-		const win = this._warnDateWindow();
-		if (win) rows = rows.filter(r => {
-			const d = this._parseDate(r.invoiceDateRaw);
-			if (!d) return true; /* keep warnings with no invoice date — don't silently blank the tab */
-			return d >= win.start && d <= win.end;
-		});
+		/* Invoice Date is filtered server-side via warnDateSql() in fetch_warnings — not here. */
 
 		const rank = { High: 3, Medium: 2, Low: 1 };
 		rows.sort((a, b) => {

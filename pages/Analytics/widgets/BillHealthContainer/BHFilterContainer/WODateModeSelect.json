@@ -21,7 +21,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
@@ -45,5 +49,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "wodatemode1",
-  "widgetName": "WODateModeSelect"
+  "widgetName": "WODateModeSelect",
+  "onOptionChange": "{{ fetch_warnings.run() }}"
 }

@@ -18,7 +18,14 @@
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onBlur"
+    },
+    {
+      "key": "onSubmit"
+    }
+  ],
   "iconAlign": "left",
   "inputType": "NUMBER",
   "isDisabled": false,
@@ -55,5 +62,7 @@
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "wodatenum01",
-  "widgetName": "WODateNumInput"
+  "widgetName": "WODateNumInput",
+  "onBlur": "{{ fetch_warnings.run() }}",
+  "onSubmit": "{{ fetch_warnings.run() }}"
 }
