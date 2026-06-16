@@ -254,15 +254,41 @@ export default {
 
 	/* ── Warnings Overview tab ───────────────── */
 
-	/* Normalise be.severity to a display label (High / Medium / Low). Handles text or numeric codes. */
+	/* Normalise bill_warning_severity to a display label. The DB uses numeric codes
+	   (10/20 = Low, 30 = Medium, 40/60 = High); also tolerate text/legacy 1-3 codes. */
 	_warnSeverity(raw) {
 		const s = String(raw == null ? '' : raw).trim();
 		if (!s) return '';
+		const n = parseInt(s, 10);
+		if (!isNaN(n) && String(n) === s) {
+			if (n >= 40 || n === 3) return 'High';
+			if (n === 30 || n === 2) return 'Medium';
+			if (n <= 20 || n === 1) return 'Low';
+		}
 		const low = s.toLowerCase();
-		if (low === 'high' || low === '3') return 'High';
-		if (low === 'medium' || low === 'med' || low === '2') return 'Medium';
-		if (low === 'low' || low === '1') return 'Low';
+		if (low === 'high') return 'High';
+		if (low === 'medium' || low === 'med') return 'Medium';
+		if (low === 'low') return 'Low';
 		return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+	},
+
+	/* Map a severity display label to its bill_warning_severity bucket (used by warnSeveritySql). */
+	_warnSeverityClause(label) {
+		if (label === 'Low') return 'w.bill_warning_severity <= 20';
+		if (label === 'Medium') return 'w.bill_warning_severity = 30';
+		if (label === 'High') return 'w.bill_warning_severity >= 40';
+		return '';
+	},
+
+	/* Server-side severity filter for fetch_warnings. A bill is bucketed by its MAX warning
+	   severity (Low ≤20 / Medium =30 / High ≥40) and we show that bill's top-severity warnings.
+	   Reads the WOSeveritySelect slicer; defaults to Medium (the UBM "Medium" report view). */
+	warnSeveritySql() {
+		const sel = this._multi('WOSeveritySelect');
+		const labels = sel.length ? sel : ['Medium'];
+		const parts = labels.map(l => this._warnSeverityClause(l)).filter(Boolean);
+		if (!parts.length) return '';
+		return 'AND (' + parts.join(' OR ') + ')';
 	},
 
 	/* Classify a warning message into the same buckets the UBM report uses for the "Warning" slicer. */
@@ -396,10 +422,13 @@ export default {
 	/* ── Warnings slicer option providers ────── */
 
 	getWarnSeverityOptions() {
-		const order = { High: 3, Medium: 2, Low: 1 };
-		const vals = [...new Set(this._warnBase().map(r => r.severity).filter(Boolean))];
-		vals.sort((a, b) => (order[b] || 0) - (order[a] || 0) || a.localeCompare(b));
-		return vals.map(v => ({ label: v, value: v }));
+		/* Fixed High/Medium/Low — the slicer drives the server-side bucket filter
+		   (warnSeveritySql), so options can't be derived from the already-filtered rows. */
+		return [
+			{ label: 'High', value: 'High' },
+			{ label: 'Medium', value: 'Medium' },
+			{ label: 'Low', value: 'Low' }
+		];
 	},
 
 	getWarnCategoryOptions() {
