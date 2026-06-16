@@ -1,4 +1,4 @@
-SELECT DISTINCT ON (w.warning_id)
+SELECT
     w.warning_id                            AS warning_id,
     w.bill_warning                          AS bill_warning,
     w.bill_warning_severity                 AS severity,
@@ -19,15 +19,16 @@ FROM bill_management_v2.bill_warnings w
 LEFT JOIN bill_management_v2.bill_warning_definitions_view d
     ON d.warning_id = w.warning_id
 LEFT JOIN LATERAL (
-    SELECT m.location_description, m.utility_type, m.location_id
+    SELECT DISTINCT m.location_description, m.utility_type, m.location_id
     FROM bill_management_v2.reports_customer_monthly_usage m
     WHERE m.client_account = w.billing_id
       AND m.customer_id = w.customer_id
-    LIMIT 1
 ) m ON TRUE
 LEFT JOIN bill_management_v2.locations l
     ON l.id = m.location_id
 WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND COALESCE(w.total_amount, 0) <> 0
+  AND w.bill_warning_severity = 30
 {{ BillHealthHelper.warnDateSql() }}
-ORDER BY w.warning_id DESC, d.last_updated DESC NULLS LAST
+ORDER BY w.total_amount DESC, w.warning_id
 LIMIT 1000
