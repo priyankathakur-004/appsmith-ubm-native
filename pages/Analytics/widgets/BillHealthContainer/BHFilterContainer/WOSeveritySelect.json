@@ -4,7 +4,12 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "onOptionChange": "{{ fetch_warnings.run() }}",
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
