@@ -41,7 +41,8 @@ WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
   )
   {{ BillHealthHelper.warnSeveritySql() }}
   AND (
-      m.utility_type IS NULL
+      w.bill_warning_severity <> 30
+      OR m.utility_type IS NULL
       OR m.utility_type IN (
           SELECT UPPER(TRIM(REGEXP_REPLACE(
                      SUBSTRING(cw.bill_warning FROM '\[[^\]]*/([^/\]]+)\]'),
@@ -49,7 +50,7 @@ WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
           FROM bill_management_v2.bill_warnings cw
           WHERE cw.pear_id = w.pear_id
             AND cw.customer_id = w.customer_id
-            AND cw.bill_warning_severity = w.bill_warning_severity
+            AND cw.bill_warning_severity = 30
       )
   )
 {{ BillHealthHelper.warnDateSql() }}

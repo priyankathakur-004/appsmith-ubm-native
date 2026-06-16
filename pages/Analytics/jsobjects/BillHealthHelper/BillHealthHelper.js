@@ -284,7 +284,15 @@ export default {
 	   severity (Low ≤20 / Medium =30 / High ≥40) and we show that bill's top-severity warnings.
 	   Reads the WOSeveritySelect slicer; defaults to Medium (the UBM "Medium" report view). */
 	warnSeveritySql() {
-		const sel = this._multi('WOSeveritySelect');
+		/* Read WOSeveritySelect DIRECTLY (not via _multi) — _multi references every other slicer
+		   widget, several of which source their options from fetch_warnings.data, which would make
+		   this query depend on itself (cyclic dependency). */
+		let sel = [];
+		try {
+			if (typeof WOSeveritySelect !== 'undefined' && Array.isArray(WOSeveritySelect.selectedOptionValues)) {
+				sel = WOSeveritySelect.selectedOptionValues;
+			}
+		} catch (e) { sel = []; }
 		const labels = sel.length ? sel : ['Medium'];
 		const parts = labels.map(l => this._warnSeverityClause(l)).filter(Boolean);
 		if (!parts.length) return '';
