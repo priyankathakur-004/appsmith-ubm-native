@@ -12,6 +12,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -25,7 +28,7 @@
       "key": "onOptionChange"
     }
   ],
-  "isDisabled": false,
+  "isDisabled": "{{ !(AccountAttributesSelect.selectedOptionValues && AccountAttributesSelect.selectedOptionValues.length) }}",
   "isFilterable": true,
   "isLoading": false,
   "isRequired": false,

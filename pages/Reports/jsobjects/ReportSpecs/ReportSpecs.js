@@ -167,6 +167,16 @@ export default {
 		return `AND ${col} ${notIn ? "NOT IN" : "IN"} (${list})`;
 	},
 
+	// Quoted CSV of the attribute names picked in AccountAttributesSelect, for
+	// the getAccountAttributeValues IN (...) clause. Returns '' (matches nothing)
+	// when none are selected, so the values picker stays empty until a name is
+	// chosen. Kept here so the query binding stays a simple function call.
+	accountAttrNames: () => {
+		const names = (typeof AccountAttributesSelect !== "undefined" && AccountAttributesSelect.selectedOptionValues) || [];
+		if (!names.length) return "''";
+		return names.map(n => ReportSpecs._quote(n)).join(",");
+	},
+
 	filterClauses: () => {
 		const parts = ["WHERE 1=1"];
 		const cid = ReportSpecs.customerId();
