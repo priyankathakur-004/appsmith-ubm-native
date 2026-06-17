@@ -46,7 +46,7 @@
   "mobileRightColumn": 32,
   "mobileTopRow": 63,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
+  "onOptionChange": "{{ ReportSpecs.onAccountAttrChange() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 40,

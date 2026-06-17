@@ -296,6 +296,16 @@ export default {
 
 	refreshKey: () => Number(appsmith.store.reportsRefreshKey) || 0,
 
+	// onOptionChange handler for AccountAttributesSelect. The values query's
+	// dependency on the names picker is hidden inside accountAttrNames(), so
+	// Appsmith won't auto-re-run it — do it explicitly here. Clear any stale
+	// value selections first, then repopulate options and refresh the grid.
+	onAccountAttrChange: async () => {
+		resetWidget("AccountAttributeValuesSelect", false);
+		getAccountAttributeValues.run();
+		await ReportSpecs.refreshGrid();
+	},
+
 	refreshGrid: async () => {
 		await storeValue("reportsPageStart", 0);
 		await storeValue("reportsPageEnd", 100);
