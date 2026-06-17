@@ -1,0 +1,17 @@
+-- Account / VA attribute VALUES for the second-level picker.
+-- Lists distinct "attribute_name: value" pairs for whichever attribute names
+-- are currently selected in AccountAttributesSelect. The option value encodes
+-- name + value separated by CHR(31) (unit separator) so ReportSpecs can split
+-- them back apart and build per-attribute EXISTS filters.
+-- Returns nothing until at least one attribute name is picked.
+SELECT DISTINCT
+  vmeta.attribute_name || CHR(31) || vam.attribute_value AS value,
+  vmeta.attribute_name || ': ' || vam.attribute_value     AS label
+FROM bill_management_v2.virtual_accounts_attributes_mapping vam
+JOIN bill_management_v2.virtual_accounts_attributes_metadata vmeta
+  ON vmeta.id = vam.virtual_accounts_attributes_metadata_id
+WHERE vmeta.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}
+  AND vmeta.deleted_at IS NULL
+  AND vam.attribute_value IS NOT NULL AND vam.attribute_value <> ''
+  AND vmeta.attribute_name IN ({{ (AccountAttributesSelect.selectedOptionValues && AccountAttributesSelect.selectedOptionValues.length ? AccountAttributesSelect.selectedOptionValues.map(v => "'" + String(v).replace(/'/g, "''") + "'").join(",") : "''") }})
+ORDER BY label;

@@ -230,16 +230,39 @@ export default {
 		// amf.location_id. Picker shows attribute names; value-level filtering is
 		// a second-level picker we haven't added yet, so this no-ops for now.
 
-		// Account attributes (AccountAttributesSelect) = UBM "VA attributes"
-		// (Virtual Accounts). Picker (getAccountAttributesList) lists attribute
-		// names from virtual_accounts_attributes_metadata. Value-level filtering
-		// is a second-level picker we haven't added yet, so this no-ops for now.
-		// When built, filter via:
-		//   amf.virtual_account_id = vam.virtual_account_id
-		//   AND vam.virtual_accounts_attributes_metadata_id = vmeta.id
-		//   AND vmeta.attribute_name = <picked> AND vam.attribute_value IN (...)
-		// (vam = virtual_accounts_attributes_mapping, vmeta = ..._metadata.
-		//  UBM schema confirmed 2026-06-17.)
+		// Account attributes = UBM "VA attributes" (Virtual Accounts).
+		// AccountAttributesSelect picks attribute NAMES (from
+		// virtual_accounts_attributes_metadata); AccountAttributeValuesSelect
+		// picks VALUES, each option encoded as name + CHR(31) + value (the unit
+		// separator). We group the picked values by attribute name and emit one
+		// EXISTS per attribute, so multiple attributes AND together (a VA must
+		// match every picked attribute), values within an attribute OR together.
+		// (Schema confirmed 2026-06-17: vam = virtual_accounts_attributes_mapping,
+		//  vmeta = virtual_accounts_attributes_metadata.)
+		const accVals = (typeof AccountAttributeValuesSelect !== "undefined" && AccountAttributeValuesSelect.selectedOptionValues) || [];
+		if (accVals.length > 0) {
+			const SEP = String.fromCharCode(31); // unit separator, matches CHR(31) in the query
+			const groups = {};
+			accVals.forEach(s => {
+				const str = String(s);
+				const i = str.indexOf(SEP);
+				if (i < 0) return;
+				const name = str.slice(0, i);
+				const val = str.slice(i + 1);
+				(groups[name] = groups[name] || []).push(val);
+			});
+			Object.keys(groups).forEach(name => {
+				const vals = groups[name].map(v => ReportSpecs._quote(v)).join(",");
+				parts.push(
+					"AND EXISTS (SELECT 1 FROM bill_management_v2.virtual_accounts_attributes_mapping vam " +
+					"JOIN bill_management_v2.virtual_accounts_attributes_metadata vmeta " +
+					"ON vmeta.id = vam.virtual_accounts_attributes_metadata_id " +
+					"WHERE vam.virtual_account_id = amf.virtual_account_id " +
+					`AND vmeta.attribute_name = ${ReportSpecs._quote(name)} ` +
+					`AND vam.attribute_value IN (${vals}))`
+				);
+			});
+		}
 
 		return parts.join(" ");
 	},
@@ -341,7 +364,8 @@ export default {
 			"LocationName", "StateProvinceSelect", "StateNotIn",
 			"CountrySelect", "LocationStatusSelect",
 			"VendorSelect", "ServiceTypesSelect", "ServiceNotIn",
-			"LocationAttributesSelect", "AccountAttributesSelect"
+			"LocationAttributesSelect", "AccountAttributesSelect",
+			"AccountAttributeValuesSelect"
 		];
 		for (const w of widgetNames) {
 			try { resetWidget(w, false); } catch (e) { /* widget may not exist yet */ }
