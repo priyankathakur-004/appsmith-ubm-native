@@ -475,6 +475,87 @@ export default {
 		return Object.keys(byLoc).map(k => byLoc[k]);
 	},
 
+	/* ── Warnings over Time tab ──────────────── */
+
+	/* "YYYY-MM" → "YYYY Month" (matches the UBM chart axis, e.g. "2025 December"). */
+	_warnMonthLabel(mk) {
+		const names = ['January', 'February', 'March', 'April', 'May', 'June',
+			'July', 'August', 'September', 'October', 'November', 'December'];
+		const mi = parseInt(mk.slice(5, 7), 10) - 1;
+		return mk.slice(0, 4) + ' ' + (names[mi] || '');
+	},
+
+	/* Aggregate the slicer-filtered warnings (getWarningRows) by invoice month × warning category.
+	   Returns { 'YYYY-MM': { category: { amount, count } } }. */
+	_warnOverTime() {
+		const rows = this.getWarningRows();
+		const out = {};
+		rows.forEach(r => {
+			const d = this._parseDate(r.invoiceDateRaw);
+			if (!d) return;
+			const mk = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+			const cat = this._warnCategory(r.warning);
+			if (!out[mk]) out[mk] = {};
+			if (!out[mk][cat]) out[mk][cat] = { amount: 0, count: 0 };
+			out[mk][cat].amount += Number(r.totalAmount) || 0;
+			out[mk][cat].count += 1;
+		});
+		return out;
+	},
+
+	/* Shared stacked-bar ECharts option for the two Warnings-over-Time charts.
+	   metric = 'amount' (Bills Impacted $) or 'count' (Warning Count). Built as plain data
+	   (no function expressions / nulls) per the CUSTOM_ECHART constraints. */
+	_warnOverTimeConfig(metric, title) {
+		const data = this._warnOverTime();
+		const keys = Object.keys(data).sort();
+		const labels = keys.map(k => this._warnMonthLabel(k));
+
+		/* Known categories (fixed colours to match the UBM legend); any other category that
+		   shows up (e.g. for High/Low buckets) is appended so the chart never hides data. */
+		const known = [
+			{ name: 'Charges are out of range (warning)', color: '#33A8F4' },
+			{ name: 'Unit cost > 10% higher than prior bill', color: '#1F4E96' },
+			{ name: 'Volume is out of range (warning)', color: '#8BC53F' }
+		];
+		const present = {};
+		keys.forEach(k => Object.keys(data[k]).forEach(c => { present[c] = true; }));
+		const cats = known.filter(c => present[c.name]);
+		const extra = ['#F59E0B', '#EF4444', '#8B5CF6', '#14B8A6', '#64748B'];
+		let ei = 0;
+		Object.keys(present).sort().forEach(name => {
+			if (!known.some(c => c.name === name)) cats.push({ name: name, color: extra[ei++ % extra.length] });
+		});
+		if (!cats.length) known.forEach(c => cats.push(c));
+
+		const series = cats.map(c => ({
+			name: c.name,
+			type: 'bar',
+			stack: 'total',
+			emphasis: { focus: 'series' },
+			itemStyle: { color: c.color },
+			data: keys.map(k => {
+				const cell = (data[k] && data[k][c.name]) || { amount: 0, count: 0 };
+				return metric === 'amount' ? Number(cell.amount.toFixed(2)) : cell.count;
+			})
+		}));
+
+		return {
+			backgroundColor: '#FFFFFF',
+			title: { text: title, left: 8, top: 6, textStyle: { color: '#1E293B', fontSize: 15, fontWeight: 600 } },
+			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+			legend: { data: cats.map(c => c.name), bottom: 4, textStyle: { color: '#334155' } },
+			grid: { left: 64, right: 24, top: 44, bottom: 64 },
+			xAxis: { type: 'category', data: labels, axisLabel: { color: '#475569' }, axisLine: { lineStyle: { color: '#CBD5E1' } } },
+			yAxis: { type: 'value', axisLabel: { color: '#475569' }, splitLine: { lineStyle: { color: '#E2E8F0' } } },
+			series: series
+		};
+	},
+
+	getWarnImpactChartConfig() { return this._warnOverTimeConfig('amount', 'Bills Impacted ($)'); },
+
+	getWarnCountChartConfig() { return this._warnOverTimeConfig('count', 'Warning Count'); },
+
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {

@@ -187,6 +187,52 @@
       "version": 1,
       "widgetId": "wocanvas0001",
       "widgetName": "CanvasWO"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1320,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "wotcanvaskey",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "bhtabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "tabwarntime1",
+      "tabName": "Warnings over Time",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "wotcanvas001",
+      "widgetName": "CanvasWOT",
+      "children": []
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -261,6 +307,13 @@
       "isVisible": true,
       "label": "Warnings Overview",
       "widgetId": "wocanvas0001"
+    },
+    "tabwarntime1": {
+      "id": "tabwarntime1",
+      "index": 4,
+      "isVisible": true,
+      "label": "Warnings over Time",
+      "widgetId": "wotcanvas001"
     }
   },
   "topRow": 14,
