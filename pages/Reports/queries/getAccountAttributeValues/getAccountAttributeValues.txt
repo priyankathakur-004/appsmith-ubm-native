@@ -1,0 +1,11 @@
+SELECT DISTINCT
+  vmeta.attribute_name || CHR(31) || vam.attribute_value AS value,
+  vmeta.attribute_name || ': ' || vam.attribute_value     AS label
+FROM bill_management_v2.virtual_accounts_attributes_mapping vam
+JOIN bill_management_v2.virtual_accounts_attributes_metadata vmeta
+  ON vmeta.id = vam.virtual_accounts_attributes_metadata_id
+WHERE vmeta.customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}
+  AND vmeta.deleted_at IS NULL
+  AND vam.attribute_value IS NOT NULL AND vam.attribute_value <> ''
+  AND vmeta.attribute_name IN ({{ ReportSpecs.accountAttrNames() }})
+ORDER BY label;

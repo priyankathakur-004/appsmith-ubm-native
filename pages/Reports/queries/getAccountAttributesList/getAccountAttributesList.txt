@@ -1,0 +1,6 @@
+SELECT DISTINCT attribute_name AS value, attribute_name AS label
+FROM bill_management_v2.virtual_accounts_attributes_metadata
+WHERE customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}
+  AND deleted_at IS NULL
+  AND attribute_name IS NOT NULL AND attribute_name <> ''
+ORDER BY attribute_name;

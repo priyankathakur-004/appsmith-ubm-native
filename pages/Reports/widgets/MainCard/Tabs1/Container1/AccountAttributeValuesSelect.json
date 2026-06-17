@@ -1,0 +1,71 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": false,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 40,
+  "boxShadow": "none",
+  "defaultOptionValue": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": "{{ !(AccountAttributesSelect.selectedOptionValues && AccountAttributesSelect.selectedOptionValues.length) }}",
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "cr_acctattrval",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "",
+  "labelTextColor": "#FFFFFF",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 17,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 240,
+  "mobileBottomRow": 77,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 32,
+  "mobileTopRow": 70,
+  "needsErrorInfo": false,
+  "onOptionChange": "{{ ReportSpecs.refreshGrid() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 40,
+  "originalTopRow": 33,
+  "parentColumnSpace": 16,
+  "parentId": "uforckh29g",
+  "parentRowSpace": 10,
+  "placeholderText": "Pick attribute(s) first, then values",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 33,
+  "serverSideFiltering": false,
+  "sourceData": "{{ getAccountAttributeValues.data }}",
+  "topRow": 33,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "cr9acctattrv1",
+  "widgetName": "AccountAttributeValuesSelect"
+}
