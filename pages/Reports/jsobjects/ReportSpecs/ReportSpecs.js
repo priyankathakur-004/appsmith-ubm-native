@@ -31,11 +31,9 @@ export default {
 		{ value: "buildingType", label: "Building Type", sql: "l.building_type AS \"buildingType\"" },
 		{ value: "squareFeet", label: "Square Feet", sql: "l.square_feet AS \"squareFeet\"" },
 
-		// --- Hierarchy (location_detail groupings) ---
-		{ value: "locationDivision", label: "Division", sql: "lt.location_division AS \"locationDivision\"" },
-		{ value: "locationTopGroup", label: "Top Group", sql: "lt.location_top_group AS \"locationTopGroup\"" },
-		{ value: "locationSecondGroup", label: "Second Group", sql: "lt.location_second_group AS \"locationSecondGroup\"" },
-		{ value: "locationThirdGroup", label: "Third Group", sql: "lt.location_third_group AS \"locationThirdGroup\"" },
+		// --- Hierarchy: removed. UBM has no hierarchy/grouping attributes
+		// (location_division / top / second / third group) — confirmed by
+		// UBM team 2026-06-17. Do not re-add without a real source column.
 
 		// --- Vendor / bill identity ---
 		{ value: "vendor", label: "Vendor", sql: "COALESCE(cvn.pretty_name, amf.vendor_code) AS \"vendor\"" },
@@ -58,7 +56,9 @@ export default {
 		{ value: "totalChargesCustomer", label: "Customer Charges", sql: "amf.total_charges_customer AS \"totalChargesCustomer\"" },
 		{ value: "totalChargesOther", label: "Other Charges", sql: "amf.total_charges_other AS \"totalChargesOther\"" },
 
-		// --- Weather (for normalization) ---
+		// --- Weather (raw degree-days only) ---
+		// UBM has no "normalization type" attribute; we expose raw HDD/CDD and
+		// any normalization is done client-side. (UBM team 2026-06-17.)
 		{ value: "totalHdd", label: "Heating Degree Days", sql: "amf.total_hdd_billblock AS \"totalHdd\"" },
 		{ value: "totalCdd", label: "Cooling Degree Days", sql: "amf.total_cdd_billblock AS \"totalCdd\"" }
 	],
@@ -207,7 +207,9 @@ export default {
 		if (vendors.length > 0) {
 			parts.push(ReportSpecs._inList("amf.vendor_code", vendors));
 		}
-		// Vendor Territory — TODO: column unclear in monthly feed; no-op for now.
+		// Vendor Territory — not available in UBM. UBM stores vendor *location*
+		// info instead; filter by vendor location once that column is mapped.
+		// (UBM team 2026-06-17.)
 
 		// Service / Utility type (+ Not In)
 		const services = (typeof ServiceTypesSelect !== "undefined" && ServiceTypesSelect.selectedOptionValues) || [];
@@ -223,9 +225,21 @@ export default {
 			parts.push(`AND (l.name ILIKE '%${safe}%' OR l.address ILIKE '%${safe}%' OR CAST(l.id AS TEXT) = '${safe}')`);
 		}
 
-		// Location attributes — picker populates from custom_location_attributes
-		// (attribute names). Actual value-level filtering is a second-level
-		// picker we haven't added yet; this just no-ops on the names for now.
+		// Location attributes (LocationAttributesSelect) — source is the
+		// bill_management_v2.location_monthly_attributes_* tables, joined via
+		// amf.location_id. Picker shows attribute names; value-level filtering is
+		// a second-level picker we haven't added yet, so this no-ops for now.
+
+		// Account attributes (AccountAttributesSelect) = UBM "VA attributes"
+		// (Virtual Accounts). Picker (getAccountAttributesList) lists attribute
+		// names from virtual_accounts_attributes_metadata. Value-level filtering
+		// is a second-level picker we haven't added yet, so this no-ops for now.
+		// When built, filter via:
+		//   amf.virtual_account_id = vam.virtual_account_id
+		//   AND vam.virtual_accounts_attributes_metadata_id = vmeta.id
+		//   AND vmeta.attribute_name = <picked> AND vam.attribute_value IN (...)
+		// (vam = virtual_accounts_attributes_mapping, vmeta = ..._metadata.
+		//  UBM schema confirmed 2026-06-17.)
 
 		return parts.join(" ");
 	},
@@ -327,7 +341,7 @@ export default {
 			"LocationName", "StateProvinceSelect", "StateNotIn",
 			"CountrySelect", "LocationStatusSelect",
 			"VendorSelect", "ServiceTypesSelect", "ServiceNotIn",
-			"LocationAttributesSelect"
+			"LocationAttributesSelect", "AccountAttributesSelect"
 		];
 		for (const w of widgetNames) {
 			try { resetWidget(w, false); } catch (e) { /* widget may not exist yet */ }
