@@ -618,6 +618,56 @@ export default {
 	   misuse (BillHealthHelper reads both fetch_warnings.data and, via the SQL builders, the
 	   slicer widgets that run fetch_warnings). */
 
+	/* ── Impacted Locations tab ──────────────── */
+
+	/* ISO date → "DD/MM/YYYY" (matches the UBM Impacted-Locations legend). */
+	_ddmmyyyy(raw) {
+		const d = this._parseDate(raw);
+		if (!d) return '';
+		return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+	},
+
+	/* Horizontal bar: Total Amount per location, stacked/coloured by invoice date. One amount per
+	   bill (dedupe by pear_id) so utility fan-out / multi-warning bills aren't double-counted.
+	   Locations sorted so the highest total sits on top. */
+	getImpactedLocationsConfig() {
+		const rows = this.getWarningRows();
+		const seen = {};
+		const byLoc = {};
+		const dateRaw = {};
+		rows.forEach(r => {
+			if (seen[r.pearId]) return;
+			seen[r.pearId] = true;
+			const loc = r.location || '(no location)';
+			const dlabel = this._ddmmyyyy(r.invoiceDateRaw);
+			const amt = Number(r.totalAmount) || 0;
+			if (!byLoc[loc]) byLoc[loc] = { total: 0, byDate: {} };
+			byLoc[loc].total += amt;
+			byLoc[loc].byDate[dlabel] = (byLoc[loc].byDate[dlabel] || 0) + amt;
+			if (!(dlabel in dateRaw)) dateRaw[dlabel] = r.invoiceDateRaw;
+		});
+		const locs = Object.keys(byLoc).sort((a, b) => byLoc[a].total - byLoc[b].total);
+		const dates = Object.keys(dateRaw).sort((a, b) => (this._parseDate(dateRaw[b]) || 0) - (this._parseDate(dateRaw[a]) || 0));
+		const palette = ['#33A8F4', '#1F4E96', '#8BC53F', '#0E7C66', '#F59E0B', '#EF4444', '#8B5CF6', '#14B8A6'];
+		const series = dates.map((d, i) => ({
+			name: d,
+			type: 'bar',
+			stack: 'total',
+			itemStyle: { color: palette[i % palette.length] },
+			data: locs.map(l => Number((byLoc[l].byDate[d] || 0).toFixed(2)))
+		}));
+		return {
+			backgroundColor: '#1E293B',
+			title: { text: 'Impacted Locations', left: 8, top: 6, textStyle: { color: '#F1F5F9', fontSize: 15, fontWeight: 600 } },
+			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+			legend: { data: dates, top: 8, right: 8, textStyle: { color: '#E2E8F0' } },
+			grid: { left: 84, right: 24, top: 48, bottom: 44, containLabel: false },
+			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: '#94A3B8' }, axisLabel: { color: '#94A3B8' }, splitLine: { lineStyle: { color: '#334155' } } },
+			yAxis: { type: 'category', data: locs, axisLabel: { color: '#94A3B8' } },
+			series: series
+		};
+	},
+
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {

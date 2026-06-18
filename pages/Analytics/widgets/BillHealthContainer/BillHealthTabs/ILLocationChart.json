@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 130,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{BillHealthHelper.getImpactedLocationsConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "illocchk1",
+  "leftColumn": 39,
+  "mobileBottomRow": 130,
+  "mobileLeftColumn": 39,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 2,
+  "parentColumnSpace": 1,
+  "parentId": "ilcanvas001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 2,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "illocchart01",
+  "widgetName": "ILLocationChart"
+}

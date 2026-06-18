@@ -232,6 +232,52 @@
       "version": 1,
       "widgetId": "wotcanvas001",
       "widgetName": "CanvasWOT"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1300,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "ilcanvaskey1",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "bhtabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "tabimploc001",
+      "tabName": "Impacted Locations",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "ilcanvas001",
+      "widgetName": "CanvasIL",
+      "children": []
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -313,6 +359,13 @@
       "isVisible": true,
       "label": "Warnings over Time",
       "widgetId": "wotcanvas001"
+    },
+    "tabimploc001": {
+      "id": "tabimploc001",
+      "index": 5,
+      "isVisible": true,
+      "label": "Impacted Locations",
+      "widgetId": "ilcanvas001"
     }
   },
   "topRow": 14,
