@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
-  "backgroundColor": "#F1F5F9",
-  "borderColor": "#E2E8F0",
+  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
+  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 13,
@@ -52,6 +52,12 @@
   ],
   "containerStyle": "card",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "backgroundColor"
+    },
     {
       "key": "borderRadius"
     },
