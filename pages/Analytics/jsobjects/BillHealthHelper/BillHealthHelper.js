@@ -52,7 +52,9 @@ export default {
 				BHAcctStatusSelect: typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null,
 				BHUtilitySelect: typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null,
 				BHLocationSelect: typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null,
-				WOSeveritySelect: typeof WOSeveritySelect !== 'undefined' ? WOSeveritySelect : null,
+				/* WOSeveritySelect is intentionally NOT here: it is read directly by warnSeveritySql()
+				   and its onOptionChange runs fetch_warnings. Referencing it from a generic data
+				   helper (which also reads fetch_warnings.data) trips Appsmith's reactive-misuse check. */
 				WOWarningSelect: typeof WOWarningSelect !== 'undefined' ? WOWarningSelect : null,
 				WOResolvedSelect: typeof WOResolvedSelect !== 'undefined' ? WOResolvedSelect : null,
 				WOUtilitySelect: typeof WOUtilitySelect !== 'undefined' ? WOUtilitySelect : null,
@@ -400,8 +402,8 @@ export default {
 	getWarningRows() {
 		let rows = this._warnBase();
 
-		const sev = this._multi('WOSeveritySelect');
-		if (sev.length) rows = rows.filter(r => sev.includes(r.severity));
+		/* Severity is filtered server-side (warnSeveritySql in fetch_warnings) — fetch_warnings.data
+		   already holds only the selected bucket, so no JS severity re-filter is needed here. */
 
 		const cat = this._multi('WOWarningSelect');
 		if (cat.length) rows = rows.filter(r => cat.includes(r.category));
