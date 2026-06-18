@@ -28,7 +28,7 @@
   "placeholderText": "All",
   "renderMode": "CANVAS",
   "rightColumn": 9,
-  "sourceData": "{{ [{ \"label\": \"High\", \"value\": \"High\" }, { \"label\": \"Medium\", \"value\": \"Medium\" }, { \"label\": \"Low\", \"value\": \"Low\" }] }}",
+  "sourceData": "{{ WOFilterHelper.severityOptions() }}",
   "topRow": 4,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
