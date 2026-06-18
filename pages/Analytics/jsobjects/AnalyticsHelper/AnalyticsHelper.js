@@ -2,13 +2,11 @@ export default {
 		getTableData() {
 				let data = [];
 
-				/* Bill Health → Warnings over Time charts (live under BillHealthTabs, not Tabs,
-				   so route by chartName only). Uses WarnTableHelper (not BillHealthHelper) so this
-				   data path doesn't inherit fetch_warnings.run via BillHealthHelper's SQL builders. */
-				if (appsmith.store.chartName === 'WO_BillsImpacted')
-						return WarnTableHelper.getBillsTable();
-				if (appsmith.store.chartName === 'WO_WarningCount')
-						return WarnTableHelper.getCountTable();
+				/* Bill Health Warnings-over-Time charts: the menu's onClick computes the table (a
+				   trigger context) and stashes it in the store, so this data path never reads the
+				   warnings query directly (which would entangle its data with its run trigger). */
+				if (appsmith.store.chartName === 'WO_BillsImpacted' || appsmith.store.chartName === 'WO_WarningCount')
+						return appsmith.store.woTable || [];
 
 				if (Tabs.selectedTab === 'Rank of Locations')
 						data = RankLocationHelper.getTableData();

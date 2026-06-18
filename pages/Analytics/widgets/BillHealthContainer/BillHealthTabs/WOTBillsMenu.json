@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'WO_BillsImpacted');\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'WO_BillsImpacted');\nstoreValue('woTable', WarnTableHelper.getBillsTable());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_wotb_tbl"
     }
   },

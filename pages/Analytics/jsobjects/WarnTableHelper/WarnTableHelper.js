@@ -1,9 +1,10 @@
 export default {
 	/* Self-contained "Show as a Table" / Export data source for the Warnings-over-Time charts.
-	   It reads fetch_warnings.data directly and only the NON-trigger slicers (Warning/Resolved/
-	   Utility/Location). It deliberately does NOT reference BillHealthHelper or the Severity/Date
-	   widgets — those run fetch_warnings, and mixing a query's .run trigger with its .data in one
-	   JSObject trips Appsmith's reactive-dependency-misuse check. */
+	   It reads the warnings query result directly and references no widgets, so it stays a pure
+	   data source (reading the Warnings slicers would pull in BillHealthHelper, whose SQL builders
+	   read the widgets that run the query — Appsmith flags mixing a query's run trigger with its
+	   data in one path). It therefore reflects the server-side Severity + Invoice Date filters,
+	   not the four JS slicers. */
 
 	_cat(msg) {
 		const m = String(msg || '');
@@ -11,23 +12,6 @@ export default {
 		if (/charge/i.test(m) && /(out of range|not within|expected range)/i.test(m)) return 'Charges are out of range (warning)';
 		if (/(consumption|volume)/i.test(m) && /(out of range|not within|expected range)/i.test(m)) return 'Volume is out of range (warning)';
 		return 'Other';
-	},
-
-	_util(msg, fallback) {
-		const m = String(msg || '').match(/\[([^\]]+)\]/);
-		if (m) {
-			const parts = m[1].split('/').map(s => s.trim());
-			const last = (parts[parts.length - 1] || '').toUpperCase();
-			if (/^(NATURALGAS|NATURAL GAS|GAS|ELECTRIC|ELECTRICITY|WATER|SEWER|STEAM|SOLAR)$/.test(last)) return last;
-		}
-		return String(fallback || '').toUpperCase();
-	},
-
-	_resolved(ws) {
-		const w = String(ws || '').toLowerCase();
-		if (!w) return 'No';
-		if (/resolv|clos|done|complete|paid|approved/.test(w)) return 'Yes';
-		return 'No';
 	},
 
 	_parse(v) { if (!v) return null; const d = new Date(v); return isNaN(d.getTime()) ? null : d; },
@@ -39,40 +23,16 @@ export default {
 		return mk.slice(0, 4) + ' ' + (names[mi] || '');
 	},
 
-	/* Only the JS-side Warnings slicers (these do NOT run the query). */
-	_multi(name) {
-		try {
-			const reg = {
-				WOWarningSelect: typeof WOWarningSelect !== 'undefined' ? WOWarningSelect : null,
-				WOResolvedSelect: typeof WOResolvedSelect !== 'undefined' ? WOResolvedSelect : null,
-				WOUtilitySelect: typeof WOUtilitySelect !== 'undefined' ? WOUtilitySelect : null,
-				WOLocationSelect: typeof WOLocationSelect !== 'undefined' ? WOLocationSelect : null
-			};
-			const w = reg[name];
-			const v = w && w.selectedOptionValues;
-			return Array.isArray(v) ? v : [];
-		} catch (e) { return []; }
-	},
-
-	/* Mapped + slicer-filtered warning rows (severity/date are already applied server-side). */
+	/* Mapped warning rows straight from the (server-filtered) query result — no widget reads. */
 	_rows() {
 		const data = (typeof fetch_warnings !== 'undefined' && Array.isArray(fetch_warnings.data)) ? fetch_warnings.data : [];
-		let rows = data.map(r => ({
+		return data.map(r => ({
 			pearId: r.pear_id || '',
 			warning: r.bill_warning || '',
 			amount: Number(r.total_amount) || 0,
 			vendor: r.vendor || '',
-			invoiceDateRaw: r.invoice_date_raw || '',
-			category: r.category || this._cat(r.bill_warning || ''),
-			utility: this._util(r.bill_warning, r.utility_type),
-			resolved: this._resolved(r.workflow_state),
-			location: r.location || r.billing_id || ''
+			invoiceDateRaw: r.invoice_date_raw || ''
 		}));
-		const cat = this._multi('WOWarningSelect'); if (cat.length) rows = rows.filter(r => cat.includes(r.category));
-		const res = this._multi('WOResolvedSelect'); if (res.length) rows = rows.filter(r => res.includes(r.resolved));
-		const util = this._multi('WOUtilitySelect'); if (util.length) rows = rows.filter(r => util.includes(r.utility));
-		const loc = this._multi('WOLocationSelect'); if (loc.length) rows = rows.filter(r => loc.includes(r.location));
-		return rows;
 	},
 
 	/* Pivot: one row per month, Total Amount (or Count) + Vendor per warning category.
