@@ -586,18 +586,18 @@ export default {
 		const insight = this._warnInsight(metric);
 
 		return {
-			backgroundColor: '#FFFFFF',
+			backgroundColor: '#1E293B',
 			title: [
-				{ text: title, left: 8, top: 6, textStyle: { color: '#1E293B', fontSize: 15, fontWeight: 600 } },
-				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: '#1E293B', fontSize: 13, fontWeight: 600 } },
-				{ text: 'Auto-Generated Insights', right: '2%', top: 6, textAlign: 'right', textStyle: { color: '#1E293B', fontSize: 14, fontWeight: 600 } },
-				{ text: insight, right: '2%', top: 36, textAlign: 'left', textStyle: { color: '#334155', fontSize: 12, fontWeight: 'normal', lineHeight: 18, width: 360, overflow: 'break' } }
+				{ text: title, left: 8, top: 6, textStyle: { color: '#F1F5F9', fontSize: 15, fontWeight: 600 } },
+				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: '#E2E8F0', fontSize: 13, fontWeight: 600 } },
+				{ text: 'Auto-Generated Insights', right: '2%', top: 6, textAlign: 'right', textStyle: { color: '#E2E8F0', fontSize: 14, fontWeight: 600 } },
+				{ text: insight, right: '2%', top: 36, textAlign: 'left', textStyle: { color: '#94A3B8', fontSize: 12, fontWeight: 'normal', lineHeight: 18, width: 360, overflow: 'break' } }
 			],
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: '#334155' }, data: cats.map(c => c.name) },
+			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: '#E2E8F0' }, data: cats.map(c => c.name) },
 			grid: { left: 56, right: '62%', top: 44, bottom: 36, containLabel: false },
-			xAxis: { type: 'category', data: labels, axisLabel: { color: '#475569' }, axisLine: { lineStyle: { color: '#CBD5E1' } } },
-			yAxis: { type: 'value', axisLabel: { color: '#475569' }, splitLine: { lineStyle: { color: '#E2E8F0' } } },
+			xAxis: { type: 'category', data: labels, axisLabel: { color: '#94A3B8' }, axisLine: { lineStyle: { color: '#475569' } } },
+			yAxis: { type: 'value', axisLabel: { color: '#94A3B8' }, splitLine: { lineStyle: { color: '#334155' } } },
 			series: series
 		};
 	},
