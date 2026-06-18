@@ -490,7 +490,13 @@ export default {
 	_warnOverTime() {
 		const rows = this.getWarningRows();
 		const out = {};
+		const seen = {};
 		rows.forEach(r => {
+			/* getWarningRows fans a warning out per utility (SEWER+WATER) for the table; collapse
+			   those back to one warning here so the charts don't double-count amounts/counts. */
+			const dk = (r.pearId || '') + '||' + (r.warning || '');
+			if (seen[dk]) return;
+			seen[dk] = true;
 			const d = this._parseDate(r.invoiceDateRaw);
 			if (!d) return;
 			const mk = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
@@ -503,9 +509,44 @@ export default {
 		return out;
 	},
 
+	/* Best-effort "Auto-Generated Insights" narrative (mirrors the UBM/Power-BI smart-narrative
+	   structure; the exact figures are computed from our data, so wording matches but numbers
+	   may differ from Power BI's algorithm). */
+	_warnInsight(metric) {
+		const data = this._warnOverTime();
+		const keys = Object.keys(data).sort();
+		if (keys.length < 2) return '';
+		const cats = ['Charges are out of range (warning)', 'Unit cost > 10% higher than prior bill', 'Volume is out of range (warning)'];
+		const v = (mk, c) => { const x = data[mk] && data[mk][c]; return x ? (metric === 'amount' ? x.amount : x.count) : 0; };
+		const first = keys[0], last = keys[keys.length - 1], span = keys.length - 1;
+		const num = (x) => metric === 'amount'
+			? Number(x).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+			: String(Math.round(x));
+		let incCat = cats[0], incPct = -Infinity, decCat = cats[0], decPct = Infinity;
+		cats.forEach(c => {
+			const a = v(first, c), b = v(last, c);
+			const pct = a > 0 ? (b - a) / a * 100 : (b > 0 ? 100 : 0);
+			if (pct > incPct) { incPct = pct; incCat = c; }
+			if (pct < decPct) { decPct = pct; decCat = c; }
+		});
+		const a = v(first, incCat), b = v(last, incCat), delta = b - a;
+		const risePct = a > 0 ? (delta / a * 100) : 0;
+		const label = metric === 'amount' ? 'Total Amount' : 'Count of Warnings';
+		let s = '';
+		if (metric === 'count') {
+			s += 'Between ' + this._warnMonthLabel(first) + ' and ' + this._warnMonthLabel(last) + ', ' + incCat
+				+ ' had the largest increase in Count of Warnings (' + incPct.toFixed(2) + '%) while ' + decCat
+				+ ' had the largest decrease (' + Math.abs(decPct).toFixed(2) + '%).\n\n';
+		}
+		s += label + ' for ' + incCat + ' started trending up on ' + this._warnMonthLabel(first)
+			+ ', rising by ' + risePct.toFixed(2) + '% (' + num(delta) + ') in ' + span + ' months.';
+		return s;
+	},
+
 	/* Shared stacked-bar ECharts option for the two Warnings-over-Time charts.
 	   metric = 'amount' (Bills Impacted $) or 'count' (Warning Count). Built as plain data
-	   (no function expressions / nulls) per the CUSTOM_ECHART constraints. */
+	   (no function expressions / nulls) per the CUSTOM_ECHART constraints. Layout mirrors the
+	   UBM tab: bars on the left, vertical legend in the middle, insights text on the right. */
 	_warnOverTimeConfig(metric, title) {
 		const data = this._warnOverTime();
 		const keys = Object.keys(data).sort();
@@ -540,12 +581,19 @@ export default {
 			})
 		}));
 
+		const insight = this._warnInsight(metric);
+
 		return {
 			backgroundColor: '#FFFFFF',
-			title: { text: title, left: 8, top: 6, textStyle: { color: '#1E293B', fontSize: 15, fontWeight: 600 } },
+			title: [
+				{ text: title, left: 8, top: 6, textStyle: { color: '#1E293B', fontSize: 15, fontWeight: 600 } },
+				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: '#1E293B', fontSize: 13, fontWeight: 600 } },
+				{ text: 'Auto-Generated Insights', right: '2%', top: 6, textAlign: 'right', textStyle: { color: '#1E293B', fontSize: 14, fontWeight: 600 } },
+				{ text: insight, right: '2%', top: 36, textAlign: 'left', textStyle: { color: '#334155', fontSize: 12, fontWeight: 'normal', lineHeight: 18, width: 360, overflow: 'break' } }
+			],
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { data: cats.map(c => c.name), bottom: 4, textStyle: { color: '#334155' } },
-			grid: { left: 64, right: 24, top: 44, bottom: 64 },
+			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: '#334155' }, data: cats.map(c => c.name) },
+			grid: { left: 56, right: '62%', top: 44, bottom: 36, containLabel: false },
 			xAxis: { type: 'category', data: labels, axisLabel: { color: '#475569' }, axisLine: { lineStyle: { color: '#CBD5E1' } } },
 			yAxis: { type: 'value', axisLabel: { color: '#475569' }, splitLine: { lineStyle: { color: '#E2E8F0' } } },
 			series: series
@@ -555,6 +603,59 @@ export default {
 	getWarnImpactChartConfig() { return this._warnOverTimeConfig('amount', 'Bills Impacted ($)'); },
 
 	getWarnCountChartConfig() { return this._warnOverTimeConfig('count', 'Warning Count'); },
+
+	/* Deduped warning records (one per real warning, utility fan-out collapsed) used by the
+	   "Show as a Table" / Export feature. */
+	_warnOverTimeRows() {
+		const rows = this.getWarningRows();
+		const seen = {};
+		const out = [];
+		rows.forEach(r => {
+			const dk = (r.pearId || '') + '||' + (r.warning || '');
+			if (seen[dk]) return;
+			seen[dk] = true;
+			const d = this._parseDate(r.invoiceDateRaw);
+			if (!d) return;
+			out.push({
+				mk: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'),
+				cat: this._warnCategory(r.warning),
+				amount: Number(r.totalAmount) || 0,
+				vendor: r.vendor || ''
+			});
+		});
+		return out;
+	},
+
+	/* Pivot rows for the modal table / CSV: one row per month, with Total Amount (or Count) and
+	   Vendor per warning category — mirrors the UBM "Show as a Table" view. */
+	_warnOverTimeTableData(metric) {
+		const cats = [
+			{ key: 'Charges are out of range (warning)', name: 'Charges are out of range (warning)' },
+			{ key: 'Unit cost > 10% higher than prior bill', name: 'Unit cost > 10% higher than prior bill' },
+			{ key: 'Volume is out of range (warning)', name: 'Volume is out of range (warning)' }
+		];
+		const valLabel = metric === 'amount' ? 'Total Amount' : 'Count';
+		const byMonth = {};
+		this._warnOverTimeRows().forEach(r => {
+			if (!byMonth[r.mk]) byMonth[r.mk] = {};
+			if (!byMonth[r.mk][r.cat]) byMonth[r.mk][r.cat] = { val: 0, vendors: {} };
+			byMonth[r.mk][r.cat].val += (metric === 'amount' ? r.amount : 1);
+			if (r.vendor) byMonth[r.mk][r.cat].vendors[r.vendor] = true;
+		});
+		return Object.keys(byMonth).sort().map(mk => {
+			const row = { 'Year, Month': this._warnMonthLabel(mk) };
+			cats.forEach(c => {
+				const cell = byMonth[mk][c.name];
+				row[c.key + ' — ' + valLabel] = cell ? (metric === 'amount' ? cell.val.toFixed(2) : String(cell.val)) : '';
+				row[c.key + ' — Vendor'] = cell ? Object.keys(cell.vendors).join(', ') : '';
+			});
+			return row;
+		});
+	},
+
+	getWarnImpactTableData() { return this._warnOverTimeTableData('amount'); },
+
+	getWarnCountTableData() { return this._warnOverTimeTableData('count'); },
 
 	/* ── legend (small enough for a Text widget) ── */
 

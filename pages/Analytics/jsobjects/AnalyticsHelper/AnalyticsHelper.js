@@ -2,6 +2,13 @@ export default {
 		getTableData() {
 				let data = [];
 
+				/* Bill Health → Warnings over Time charts (live under BillHealthTabs, not Tabs,
+				   so route by chartName only). */
+				if (appsmith.store.chartName === 'WO_BillsImpacted')
+						return BillHealthHelper.getWarnImpactTableData();
+				if (appsmith.store.chartName === 'WO_WarningCount')
+						return BillHealthHelper.getWarnCountTableData();
+
 				if (Tabs.selectedTab === 'Rank of Locations')
 						data = RankLocationHelper.getTableData();
 
