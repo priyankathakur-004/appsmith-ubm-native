@@ -366,10 +366,12 @@ export default {
 		return "AND w.invoice_date >= '" + fmt(win.start) + "' AND w.invoice_date <= '" + fmt(win.end) + "'";
 	},
 
-	/* Resolved (Yes/No) — derived from the definition view's workflow_state. */
-	_warnResolved(workflowState) {
-		const w = String(workflowState || '').toLowerCase();
-		if (!w) return 'No';
+	/* Resolved (Yes/No) — from the definition view's `resolvable` column (yes/no), with a
+	   workflow_state-style fallback. */
+	_warnResolved(resolvable) {
+		const w = String(resolvable == null ? '' : resolvable).toLowerCase().trim();
+		if (w === 'yes' || w === 'true' || w === 'y' || w === '1') return 'Yes';
+		if (w === 'no' || w === 'false' || w === 'n' || w === '0') return 'No';
 		if (/resolv|clos|done|complete|paid|approved/.test(w)) return 'Yes';
 		return 'No';
 	},
@@ -385,13 +387,13 @@ export default {
 				invoiceDate: r.invoice_date || '',
 				invoiceDateRaw: r.invoice_date_raw || '',
 				warning: msg,
-				category: r.category || this._warnCategory(msg),
+				category: this._warnCategory(msg),
 				pearId: r.pear_id || '',
 				location: r.location || r.billing_id || '',
 				vendor: r.vendor || '',
 				utility: this._warnUtility(msg, r.utility_type),
 				severity: this._warnSeverity(r.severity),
-				resolved: this._warnResolved(r.workflow_state),
+				resolved: this._warnResolved(r.resolvable),
 				lat: parseFloat(r.latitude),
 				lng: parseFloat(r.longitude)
 			};
@@ -442,8 +444,12 @@ export default {
 	},
 
 	getWarnCategoryOptions() {
-		const vals = [...new Set(this._warnBase().map(r => r.category).filter(Boolean))].sort();
-		return vals.map(v => ({ label: v, value: v }));
+		/* Fixed analytical warning categories — matches the UBM "Warning" slicer. */
+		return [
+			{ label: 'Charges are out of range (warning)', value: 'Charges are out of range (warning)' },
+			{ label: 'Unit cost > 10% higher than prior bill', value: 'Unit cost > 10% higher than prior bill' },
+			{ label: 'Volume is out of range (warning)', value: 'Volume is out of range (warning)' }
+		];
 	},
 
 	getWarnResolvedOptions() {
@@ -452,8 +458,9 @@ export default {
 	},
 
 	getWarnUtilityOptions() {
-		const vals = [...new Set(this._warnBase().map(r => r.utility).filter(Boolean))].sort();
-		return vals.map(v => ({ label: v, value: v }));
+		/* Full utility-type domain (matches the UBM "Utility Type" slicer), not just present types. */
+		return ['ELECTRIC', 'INTERNET', 'LIGHTING', 'NATURALGAS', 'OIL2', 'PROPANE', 'SEWER', 'SOLARPV', 'STEAM', 'STORMWATER', 'TELEPHONE', 'WATER']
+			.map(v => ({ label: v, value: v }));
 	},
 
 	getWarnLocationOptions() {
