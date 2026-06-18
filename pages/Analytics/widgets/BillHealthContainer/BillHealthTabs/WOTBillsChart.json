@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 64,
+  "bottomRow": 65,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{BillHealthHelper.getWarnImpactChartConfig()}}",
@@ -27,7 +27,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 2,
+  "topRow": 3,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "wotbills001",

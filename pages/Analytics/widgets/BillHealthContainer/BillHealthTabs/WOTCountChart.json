@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 128,
+  "bottomRow": 130,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{BillHealthHelper.getWarnCountChartConfig()}}",
@@ -27,7 +27,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 66,
+  "topRow": 68,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "wotcount001",

@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 150,
+  "bottomRow": 148,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1570,
+      "bottomRow": 1580,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -55,7 +55,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1320,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -100,7 +100,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1320,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -145,7 +145,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1320,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -190,7 +190,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1320,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -231,8 +231,7 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "wotcanvas001",
-      "widgetName": "CanvasWOT",
-      "children": []
+      "widgetName": "CanvasWOT"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -269,7 +268,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
-  "originalBottomRow": 150,
+  "originalBottomRow": 148,
   "originalTopRow": 14,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",

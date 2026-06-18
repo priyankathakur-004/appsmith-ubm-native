@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 69,
+  "bottomRow": 68,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -63,7 +63,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 66,
+  "topRow": 65,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "wotcountmnu1",
