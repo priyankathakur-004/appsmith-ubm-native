@@ -16,7 +16,7 @@
   "fontSize": "0.875rem",
   "fontStyle": "BOLD",
   "isLoading": false,
-  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' || BillHealthTabs.selectedTab === 'Warnings over Time' }}",
   "key": "wodatelblk",
   "leftColumn": 50,
   "mobileBottomRow": 4,

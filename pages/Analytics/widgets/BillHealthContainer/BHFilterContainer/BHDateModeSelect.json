@@ -24,7 +24,7 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' }}",
+  "isVisible": "{{ BillHealthTabs.selectedTab !== 'Warnings Overview' && BillHealthTabs.selectedTab !== 'Warnings over Time' }}",
   "key": "bhdatemodk",
   "labelText": "",
   "leftColumn": 50,

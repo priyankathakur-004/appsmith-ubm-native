@@ -12,7 +12,7 @@
   "onOptionChange": "{{ fetch_warnings.run() }}",
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' }}",
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Warnings Overview' || BillHealthTabs.selectedTab === 'Warnings over Time' }}",
   "key": "wosevselk",
   "labelText": "",
   "leftColumn": 0,
