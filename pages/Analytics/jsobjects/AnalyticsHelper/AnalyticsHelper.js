@@ -3,11 +3,12 @@ export default {
 				let data = [];
 
 				/* Bill Health → Warnings over Time charts (live under BillHealthTabs, not Tabs,
-				   so route by chartName only). */
+				   so route by chartName only). Uses WarnTableHelper (not BillHealthHelper) so this
+				   data path doesn't inherit fetch_warnings.run via BillHealthHelper's SQL builders. */
 				if (appsmith.store.chartName === 'WO_BillsImpacted')
-						return BillHealthHelper.getWarnImpactTableData();
+						return WarnTableHelper.getBillsTable();
 				if (appsmith.store.chartName === 'WO_WarningCount')
-						return BillHealthHelper.getWarnCountTableData();
+						return WarnTableHelper.getCountTable();
 
 				if (Tabs.selectedTab === 'Rank of Locations')
 						data = RankLocationHelper.getTableData();

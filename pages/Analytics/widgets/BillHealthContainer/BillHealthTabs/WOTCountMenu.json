@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'WO_WarningCount');\ndownload(\n  [Object.keys(BillHealthHelper.getWarnCountTableData()[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat(BillHealthHelper.getWarnCountTableData().map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'warnings_count.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'WO_WarningCount');\ndownload(\n  [Object.keys(WarnTableHelper.getCountTable()[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat(WarnTableHelper.getCountTable().map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'warnings_count.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_wotc_exp"
     },
     "mi_wotc_tbl": {

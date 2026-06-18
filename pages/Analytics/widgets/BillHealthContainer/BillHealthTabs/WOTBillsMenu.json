@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'WO_BillsImpacted');\ndownload(\n  [Object.keys(BillHealthHelper.getWarnImpactTableData()[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat(BillHealthHelper.getWarnImpactTableData().map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'warnings_bills_impacted.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'WO_BillsImpacted');\ndownload(\n  [Object.keys(WarnTableHelper.getBillsTable()[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat(WarnTableHelper.getBillsTable().map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'warnings_bills_impacted.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_wotb_exp"
     },
     "mi_wotb_tbl": {

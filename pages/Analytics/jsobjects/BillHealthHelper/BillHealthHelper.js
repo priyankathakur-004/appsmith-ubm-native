@@ -606,58 +606,10 @@ export default {
 
 	getWarnCountChartConfig() { return this._warnOverTimeConfig('count', 'Warning Count'); },
 
-	/* Deduped warning records (one per real warning, utility fan-out collapsed) used by the
-	   "Show as a Table" / Export feature. */
-	_warnOverTimeRows() {
-		const rows = this.getWarningRows();
-		const seen = {};
-		const out = [];
-		rows.forEach(r => {
-			const dk = (r.pearId || '') + '||' + (r.warning || '');
-			if (seen[dk]) return;
-			seen[dk] = true;
-			const d = this._parseDate(r.invoiceDateRaw);
-			if (!d) return;
-			out.push({
-				mk: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'),
-				cat: this._warnCategory(r.warning),
-				amount: Number(r.totalAmount) || 0,
-				vendor: r.vendor || ''
-			});
-		});
-		return out;
-	},
-
-	/* Pivot rows for the modal table / CSV: one row per month, with Total Amount (or Count) and
-	   Vendor per warning category — mirrors the UBM "Show as a Table" view. */
-	_warnOverTimeTableData(metric) {
-		const cats = [
-			{ key: 'Charges are out of range (warning)', name: 'Charges are out of range (warning)' },
-			{ key: 'Unit cost > 10% higher than prior bill', name: 'Unit cost > 10% higher than prior bill' },
-			{ key: 'Volume is out of range (warning)', name: 'Volume is out of range (warning)' }
-		];
-		const valLabel = metric === 'amount' ? 'Total Amount' : 'Count';
-		const byMonth = {};
-		this._warnOverTimeRows().forEach(r => {
-			if (!byMonth[r.mk]) byMonth[r.mk] = {};
-			if (!byMonth[r.mk][r.cat]) byMonth[r.mk][r.cat] = { val: 0, vendors: {} };
-			byMonth[r.mk][r.cat].val += (metric === 'amount' ? r.amount : 1);
-			if (r.vendor) byMonth[r.mk][r.cat].vendors[r.vendor] = true;
-		});
-		return Object.keys(byMonth).sort().map(mk => {
-			const row = { 'Year, Month': this._warnMonthLabel(mk) };
-			cats.forEach(c => {
-				const cell = byMonth[mk][c.name];
-				row[c.key + ' — ' + valLabel] = cell ? (metric === 'amount' ? cell.val.toFixed(2) : String(cell.val)) : '';
-				row[c.key + ' — Vendor'] = cell ? Object.keys(cell.vendors).join(', ') : '';
-			});
-			return row;
-		});
-	},
-
-	getWarnImpactTableData() { return this._warnOverTimeTableData('amount'); },
-
-	getWarnCountTableData() { return this._warnOverTimeTableData('count'); },
+	/* Note: the "Show as a Table" / Export data for these charts lives in the separate
+	   WarnTableHelper JSObject — keeping it out of BillHealthHelper avoids a reactive-dependency
+	   misuse (BillHealthHelper reads both fetch_warnings.data and, via the SQL builders, the
+	   slicer widgets that run fetch_warnings). */
 
 	/* ── legend (small enough for a Text widget) ── */
 
