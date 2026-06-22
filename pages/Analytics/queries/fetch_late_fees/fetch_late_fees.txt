@@ -14,5 +14,6 @@ FROM bill_management_v2.analytics_billing_line_items li
 WHERE li.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
   AND li.statement_date >= (CURRENT_DATE - INTERVAL '12 months')
 GROUP BY li.bill_id, li.statement_date
+HAVING SUM(CASE WHEN li.code = 'LATEFEE' THEN li.charge ELSE 0 END) <> 0
 ORDER BY li.bill_id
 LIMIT 5000
