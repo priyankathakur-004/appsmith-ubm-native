@@ -62,7 +62,7 @@ export default {
 		const titleByDim = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' };
 		const data = keys.map((k, i) => ({ name: k, value: Number(agg[k].net.toFixed(2)), itemStyle: { color: palette[i % palette.length] } }));
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: '#1E293B',
 			tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
 			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: '#E2E8F0' }, data: keys },
 			title: { text: titleByDim[this.getBreakdownBy()] || '', right: 8, top: 0, textStyle: { color: '#E2E8F0', fontSize: 12, fontWeight: 600 } },
@@ -148,5 +148,19 @@ export default {
 		keys.forEach(k => { tot.net += agg[k].net; tot.late += agg[k].late; tot.recoup += agg[k].recoup; tot.charges += agg[k].charges; });
 		rows.push(mk('Total', tot));
 		return rows;
+	},
+
+	/* Bill-table rows as plain objects for the right table's "Show as a Table" / Export. */
+	getBillsTableData() {
+		return this.getBills().map(r => ({
+			'Pear ID': r.pearId,
+			'Net Late Fee': (Number(r.netLateFee) || 0).toFixed(2),
+			'Total Charges': (Number(r.totalCharges) || 0).toFixed(2),
+			'Late fee/charges': (Number(r.lateFeePct) || 0).toFixed(2) + '%',
+			'Utility Type': r.utility,
+			'Vendor Name': r.vendor,
+			'Invoice Date': r.invoiceDate,
+			'Location': r.location
+		}));
 	}
 }
