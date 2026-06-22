@@ -668,6 +668,21 @@ export default {
 		};
 	},
 
+	/* Impacted-locations "Show as a Table" / Export rows (one amount per bill, by location). */
+	getImpactedLocationsTable() {
+		const rows = this.getWarningRows();
+		const seen = {};
+		const byLoc = {};
+		rows.forEach(r => {
+			if (seen[r.pearId]) return;
+			seen[r.pearId] = true;
+			const loc = r.location || '(no location)';
+			byLoc[loc] = (byLoc[loc] || 0) + (Number(r.totalAmount) || 0);
+		});
+		return Object.keys(byLoc).sort((a, b) => byLoc[b] - byLoc[a])
+			.map(l => ({ 'Location': l, 'Total Amount': byLoc[l].toFixed(2) }));
+	},
+
 	/* ── legend (small enough for a Text widget) ── */
 
 	getLegendHtml() {

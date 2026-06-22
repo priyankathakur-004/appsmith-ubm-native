@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_il_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_il_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_il_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_il_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ilmenuk1",
+  "leftColumn": 60,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_il_exp": {
+      "id": "mi_il_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'IL_Locations');\ndownload(\n  [Object.keys((BillHealthHelper.getImpactedLocationsTable())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BillHealthHelper.getImpactedLocationsTable()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'impacted_locations.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_il_exp"
+    },
+    "mi_il_tbl": {
+      "id": "mi_il_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'IL_Locations');\nstoreValue('woTable', BillHealthHelper.getImpactedLocationsTable());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_il_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 2,
+  "parentColumnSpace": 1,
+  "parentId": "ilcanvas001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 2,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "ilmenu0001",
+  "widgetName": "ILLocationMenu"
+}

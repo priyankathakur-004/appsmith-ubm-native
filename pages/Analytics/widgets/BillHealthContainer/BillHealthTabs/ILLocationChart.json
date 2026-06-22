@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 130,
+  "bottomRow": 72,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{BillHealthHelper.getImpactedLocationsConfig()}}",
@@ -18,7 +18,7 @@
   "isVisible": true,
   "key": "illocchk1",
   "leftColumn": 39,
-  "mobileBottomRow": 130,
+  "mobileBottomRow": 72,
   "mobileLeftColumn": 39,
   "mobileRightColumn": 64,
   "mobileTopRow": 2,

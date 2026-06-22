@@ -122,5 +122,30 @@ export default {
 			+ '<td style="' + tf + '">' + pct(tot.net, tot.charges) + '</td></tr>';
 		h += '</table></div>';
 		return h;
+	},
+
+	/* Matrix rows as plain objects for "Show as a Table" / Export (includes a Total row). */
+	getMatrixTableData() {
+		const agg = this._byDim();
+		const dimLabel = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' }[this.getBreakdownBy()] || 'Group';
+		const keys = Object.keys(agg).sort((a, b) => agg[b].net - agg[a].net);
+		const f = (v) => (Number(v) || 0).toFixed(2);
+		const pct = (n, d) => d ? (n / d * 100).toFixed(2) + '%' : '';
+		const mk = (label, a) => {
+			const row = {};
+			row[dimLabel] = label;
+			row['Net Late Fee'] = f(a.net);
+			row['Late Fee'] = f(a.late);
+			row['Recouped Late Fee'] = f(a.recoup);
+			row['Total Charges'] = f(a.charges);
+			row['Recouped/late fees'] = pct(Math.abs(a.recoup), a.late);
+			row['Late fee/charges'] = pct(a.net, a.charges);
+			return row;
+		};
+		const rows = keys.map(k => mk(k, agg[k]));
+		const tot = { net: 0, late: 0, recoup: 0, charges: 0 };
+		keys.forEach(k => { tot.net += agg[k].net; tot.late += agg[k].late; tot.recoup += agg[k].recoup; tot.charges += agg[k].charges; });
+		rows.push(mk('Total', tot));
+		return rows;
 	}
 }

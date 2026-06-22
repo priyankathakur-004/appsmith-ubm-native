@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 128,
+  "bottomRow": 80,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{LateFeeHelper.getDonutConfig()}}",
@@ -21,7 +21,7 @@
   "isVisible": "{{ (appsmith.store.lfView || 'donut') === 'donut' }}",
   "key": "lfdonutk1",
   "leftColumn": 0,
-  "mobileBottomRow": 128,
+  "mobileBottomRow": 80,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 36,
   "mobileTopRow": 13,

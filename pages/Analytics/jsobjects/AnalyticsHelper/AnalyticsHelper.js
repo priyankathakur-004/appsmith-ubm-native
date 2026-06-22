@@ -2,10 +2,10 @@ export default {
 		getTableData() {
 				let data = [];
 
-				/* Bill Health Warnings-over-Time charts: the menu's onClick computes the table (a
-				   trigger context) and stashes it in the store, so this data path never reads the
-				   warnings query directly (which would entangle its data with its run trigger). */
-				if (appsmith.store.chartName === 'WO_BillsImpacted' || appsmith.store.chartName === 'WO_WarningCount')
+				/* Bill Health charts (Warnings over Time, Impacted Locations, Late Fees): the menu's
+				   onClick computes the table (a trigger context) and stashes it in the store, so this
+				   data path never reads those queries directly (which would entangle data + run trigger). */
+				if (['WO_BillsImpacted', 'WO_WarningCount', 'IL_Locations', 'LF_LateFees'].includes(appsmith.store.chartName))
 						return appsmith.store.woTable || [];
 
 				if (Tabs.selectedTab === 'Rank of Locations')
