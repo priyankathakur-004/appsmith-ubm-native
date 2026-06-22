@@ -1,0 +1,18 @@
+SELECT
+    li.bill_id                                 AS pear_id,
+    li.statement_date                          AS invoice_date_raw,
+    TO_CHAR(li.statement_date, 'DD/MM/YYYY')   AS invoice_date,
+    MAX(li.vendor_name)                        AS vendor,
+    MAX(li.commodity)                          AS utility_type,
+    MAX(li.location_description)               AS location,
+    MAX(li.account_status)                     AS account_status,
+    SUM(li.charge)                                                                 AS total_charges,
+    SUM(CASE WHEN li.code = 'LATEFEE' AND li.charge > 0 THEN li.charge ELSE 0 END) AS late_fee,
+    SUM(CASE WHEN li.code = 'LATEFEE' AND li.charge < 0 THEN li.charge ELSE 0 END) AS recouped_late_fee,
+    SUM(CASE WHEN li.code = 'LATEFEE' THEN li.charge ELSE 0 END)                   AS net_late_fee
+FROM bill_management_v2.analytics_billing_line_items li
+WHERE li.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND li.statement_date >= (CURRENT_DATE - INTERVAL '12 months')
+GROUP BY li.bill_id, li.statement_date
+ORDER BY li.bill_id
+LIMIT 5000

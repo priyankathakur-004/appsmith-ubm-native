@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "{{ appsmith.store.lfBreakdown === 'vendor' ? 'PRIMARY' : 'SECONDARY' }}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "buttonVariant"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lfbvk",
+  "leftColumn": 15,
+  "minWidth": 120,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 15,
+  "mobileRightColumn": 23,
+  "mobileTopRow": 8,
+  "onClick": "{{ LateFeeHelper.setBreakdown('vendor') }}",
+  "parentColumnSpace": 1,
+  "parentId": "lfcanvas001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 23,
+  "text": "Vendors",
+  "topRow": 8,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfbv001",
+  "widgetName": "LFBreakVendorBtn"
+}

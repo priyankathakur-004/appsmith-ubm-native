@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "{{ appsmith.store.lfBreakdown === 'location' ? 'PRIMARY' : 'SECONDARY' }}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "buttonVariant"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lfblk",
+  "leftColumn": 23,
+  "minWidth": 120,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 23,
+  "mobileRightColumn": 31,
+  "mobileTopRow": 8,
+  "onClick": "{{ LateFeeHelper.setBreakdown('location') }}",
+  "parentColumnSpace": 1,
+  "parentId": "lfcanvas001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 31,
+  "text": "Locations",
+  "topRow": 8,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfbl001",
+  "widgetName": "LFBreakLocBtn"
+}

@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 6,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonVariant": "{{ appsmith.store.lfView === 'tabular' ? 'PRIMARY' : 'SECONDARY' }}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "buttonVariant"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lfvtabk",
+  "leftColumn": 17,
+  "minWidth": 120,
+  "mobileBottomRow": 6,
+  "mobileLeftColumn": 17,
+  "mobileRightColumn": 27,
+  "mobileTopRow": 2,
+  "onClick": "{{ LateFeeHelper.setView('tabular') }}",
+  "parentColumnSpace": 1,
+  "parentId": "lfcanvas001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 27,
+  "text": "Tabular Data",
+  "topRow": 2,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfvtab001",
+  "widgetName": "LFViewTableBtn"
+}
