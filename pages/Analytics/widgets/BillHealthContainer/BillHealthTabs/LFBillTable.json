@@ -8,16 +8,13 @@
   "defaultModel": "{{ { rows: LateFeeHelper.getBills() } }}",
   "dynamicBindingPathList": [
     {
-      "key": "theme"
+      "key": "defaultModel"
     },
     {
       "key": "borderRadius"
     },
     {
       "key": "boxShadow"
-    },
-    {
-      "key": "defaultModel"
     }
   ],
   "dynamicHeight": "FIXED",

@@ -8,15 +8,6 @@
   "defaultModel": "{{ { rows: BillHealthHelper.getNotificationRows() } }}",
   "dynamicBindingPathList": [
     {
-      "key": "theme"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "boxShadow"
-    },
-    {
       "key": "defaultModel"
     },
     {
@@ -24,6 +15,12 @@
     },
     {
       "key": "borderColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
     }
   ],
   "dynamicHeight": "FIXED",

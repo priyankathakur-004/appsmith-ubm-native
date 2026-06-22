@@ -6,16 +6,13 @@
   "defaultMarkers": "{{OverTheYearsHelper.getMapMarkers()}}",
   "dynamicBindingPathList": [
     {
+      "key": "mapCenter"
+    },
+    {
       "key": "defaultMarkers"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "mapCenter"
-    },
-    {
-      "key": "zoomLevel"
     }
   ],
   "dynamicTriggerPathList": [

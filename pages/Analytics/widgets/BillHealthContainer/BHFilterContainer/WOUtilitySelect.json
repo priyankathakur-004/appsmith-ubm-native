@@ -9,16 +9,16 @@
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
+      "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
     },
     {
       "key": "borderRadius"
     },
     {
-      "key": "sourceData"
-    },
-    {
-      "key": "isVisible"
+      "key": "accentColor"
     }
   ],
   "dynamicPropertyPathList": [

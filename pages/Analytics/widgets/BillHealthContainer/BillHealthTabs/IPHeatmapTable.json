@@ -3,19 +3,10 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 161,
+  "bottomRow": 162,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ { rows: BillHealthHelper.getRows(), axis: BillHealthHelper.getMonthAxis(), showVendor: !!appsmith.store.bhShowVendor } }}",
   "dynamicBindingPathList": [
-    {
-      "key": "theme"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "boxShadow"
-    },
     {
       "key": "defaultModel"
     },
@@ -24,6 +15,12 @@
     },
     {
       "key": "borderColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -43,7 +40,7 @@
   "mobileRightColumn": 63,
   "mobileTopRow": 12,
   "needsErrorInfo": false,
-  "originalBottomRow": 159,
+  "originalBottomRow": 161,
   "originalTopRow": 15,
   "parentColumnSpace": 15,
   "parentId": "ipcanvas0001",

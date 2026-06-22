@@ -1,17 +1,17 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 80,
+  "bottomRow": 24,
   "boxShadow": "none",
   "dynamicBindingPathList": [
-    {
-      "key": "fontFamily"
-    },
     {
       "key": "text"
     },
     {
       "key": "isVisible"
+    },
+    {
+      "key": "fontFamily"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -29,8 +29,8 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 11,
-  "originalBottomRow": 107,
-  "originalTopRow": 82,
+  "originalBottomRow": 80,
+  "originalTopRow": 11,
   "parentColumnSpace": 1,
   "parentId": "lfleftcanvas",
   "parentRowSpace": 10,

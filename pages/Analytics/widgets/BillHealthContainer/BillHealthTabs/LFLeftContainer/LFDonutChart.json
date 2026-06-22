@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 80,
+  "bottomRow": 78,
   "bottomRowBeforeCollapse": 82,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
@@ -11,10 +11,10 @@
       "key": "customEChartConfig"
     },
     {
-      "key": "borderRadius"
+      "key": "isVisible"
     },
     {
-      "key": "isVisible"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -26,14 +26,14 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 11,
-  "originalBottomRow": 82,
-  "originalTopRow": 13,
+  "originalBottomRow": 80,
+  "originalTopRow": 11,
   "parentColumnSpace": 1,
   "parentId": "lfleftcanvas",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 11,
+  "topRow": 24,
   "topRowBeforeCollapse": 13,
   "type": "CHART_WIDGET",
   "version": 1,

@@ -6,20 +6,15 @@
   "borderWidth": "1",
   "bottomRow": 77,
   "boxShadow": "none",
-  "dynamicHeight": "AUTO_HEIGHT",
-  "maxDynamicHeight": 9000,
-  "minDynamicHeight": 4,
   "dynamicBindingPathList": [
     {
       "key": "text"
     },
     {
       "key": "fontFamily"
-    },
-    {
-      "key": "borderRadius"
     }
   ],
+  "dynamicHeight": "AUTO_HEIGHT",
   "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
@@ -29,6 +24,8 @@
   "isVisible": true,
   "key": "7w7x1rug2r",
   "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
   "mobileBottomRow": 37,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 19,

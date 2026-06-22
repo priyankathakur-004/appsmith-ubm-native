@@ -7,9 +7,6 @@
   "defaultOptionValue": "Main Analytics Report",
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
-    },
-    {
       "key": "borderRadius"
     }
   ],
@@ -44,6 +41,7 @@
   "mobileRightColumn": 53,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
+  "onOptionChange": "{{ fetch_analytics_data.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 7,
@@ -61,6 +59,5 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "py78uoi9cy",
-  "widgetName": "ReportSelect",
-  "onOptionChange": "{{ fetch_analytics_data.run() }}"
+  "widgetName": "ReportSelect"
 }

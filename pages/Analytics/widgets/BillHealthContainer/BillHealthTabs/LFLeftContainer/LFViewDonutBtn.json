@@ -8,10 +8,10 @@
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
+      "key": "buttonVariant"
     },
     {
-      "key": "buttonVariant"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [
