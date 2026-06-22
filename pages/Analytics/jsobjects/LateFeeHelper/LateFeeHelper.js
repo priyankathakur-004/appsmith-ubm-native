@@ -57,11 +57,12 @@ export default {
 	getDonutConfig() {
 		const agg = this._byDim();
 		const keys = Object.keys(agg).filter(k => Math.abs(agg[k].net) > 0.0001).sort((a, b) => agg[b].net - agg[a].net);
-		const palette = ['#33A8F4', '#1F4E96', '#8BC53F', '#0E7C66', '#1E3A8A', '#94A3B8', '#14B8A6', '#F59E0B', '#EF4444', '#8B5CF6', '#DB2777', '#0EA5E9'];
+		/* bright, distinguishable hues that read well on the dark card */
+		const palette = ['#38BDF8', '#A78BFA', '#34D399', '#FBBF24', '#F472B6', '#22D3EE', '#FB923C', '#4ADE80', '#E879F9', '#60A5FA', '#F87171', '#2DD4BF', '#C084FC', '#FACC15'];
 		const titleByDim = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' };
 		const data = keys.map((k, i) => ({ name: k, value: Number(agg[k].net.toFixed(2)), itemStyle: { color: palette[i % palette.length] } }));
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: 'transparent',
 			tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
 			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: '#E2E8F0' }, data: keys },
 			title: { text: titleByDim[this.getBreakdownBy()] || '', right: 8, top: 0, textStyle: { color: '#E2E8F0', fontSize: 12, fontWeight: 600 } },

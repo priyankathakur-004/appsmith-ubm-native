@@ -658,10 +658,10 @@ export default {
 		}));
 		return {
 			backgroundColor: '#1E293B',
-			title: { text: 'Impacted Locations', left: 8, top: 6, textStyle: { color: '#F1F5F9', fontSize: 15, fontWeight: 600 } },
+			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: '#F1F5F9', fontSize: 15, fontWeight: 600 } },
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { data: dates, top: 8, right: 8, textStyle: { color: '#E2E8F0' } },
-			grid: { left: 84, right: 24, top: 48, bottom: 44, containLabel: false },
+			legend: { data: dates, top: 40, right: 8, textStyle: { color: '#E2E8F0' } },
+			grid: { left: 84, right: 24, top: 66, bottom: 44, containLabel: false },
 			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: '#94A3B8' }, axisLabel: { color: '#94A3B8' }, splitLine: { lineStyle: { color: '#334155' } } },
 			yAxis: { type: 'category', data: locs, axisLabel: { color: '#94A3B8' } },
 			series: series

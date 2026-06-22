@@ -1,6 +1,6 @@
 {
-  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
-  "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 83,
@@ -18,12 +18,6 @@
     },
     {
       "key": "defaultModel"
-    },
-    {
-      "key": "backgroundColor"
-    },
-    {
-      "key": "borderColor"
     }
   ],
   "dynamicHeight": "FIXED",
