@@ -57,10 +57,17 @@ export default {
 	getDonutConfig() {
 		const agg = this._byDim();
 		const keys = Object.keys(agg).filter(k => Math.abs(agg[k].net) > 0.0001).sort((a, b) => agg[b].net - agg[a].net);
-		/* bright, distinguishable hues that read well on the dark card */
-		const palette = ['#38BDF8', '#A78BFA', '#34D399', '#FBBF24', '#F472B6', '#22D3EE', '#FB923C', '#4ADE80', '#E879F9', '#60A5FA', '#F87171', '#2DD4BF', '#C084FC', '#FACC15'];
+		/* fixed per-utility colours (green gas, blue electric, …) like the UBM donut; palette is the
+		   fallback for the Vendors / Locations breakdowns. */
+		const utilColors = {
+			NATURALGAS: '#6BA644', ELECTRIC: '#3E6FB5', WATER: '#3AAFA9', SEWER: '#8E6E53',
+			LIGHTING: '#E0B93C', OIL2: '#C0584B', STEAM: '#9B6FB0', SOLARPV: '#1F9E89',
+			PROPANE: '#E07B39', STORMWATER: '#5B9BD5', TELEPHONE: '#7F8C8D', INTERNET: '#B5495B'
+		};
+		const palette = ['#3E6FB5', '#6BA644', '#3AAFA9', '#E0B93C', '#9B6FB0', '#C0584B', '#5B9BD5', '#1F9E89', '#E07B39', '#7F8C8D', '#B5495B', '#4DB6AC'];
+		const byUtil = this.getBreakdownBy() === 'utility';
 		const titleByDim = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' };
-		const data = keys.map((k, i) => ({ name: k, value: Number(agg[k].net.toFixed(2)), itemStyle: { color: palette[i % palette.length] } }));
+		const data = keys.map((k, i) => ({ name: k, value: Number(agg[k].net.toFixed(2)), itemStyle: { color: (byUtil && utilColors[String(k).toUpperCase()]) || palette[i % palette.length] } }));
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
