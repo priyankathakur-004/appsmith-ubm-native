@@ -3,6 +3,7 @@
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
+  "bottomRowBeforeCollapse": 9,
   "boxShadow": "none",
   "defaultOptionValue": "Months",
   "dynamicBindingPathList": [
@@ -36,8 +37,11 @@
   "mobileLeftColumn": 58,
   "mobileRightColumn": 64,
   "mobileTopRow": 4,
+  "onOptionChange": "{{ fetch_warnings.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
@@ -46,9 +50,9 @@
   "rightColumn": 64,
   "sourceData": "[{\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Years\", \"value\": \"Years\"}]",
   "topRow": 4,
+  "topRowBeforeCollapse": 4,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "wodateunit1",
-  "widgetName": "WODateUnitSelect",
-  "onOptionChange": "{{ fetch_warnings.run() }}"
+  "widgetName": "WODateUnitSelect"
 }

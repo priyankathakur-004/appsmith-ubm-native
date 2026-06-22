@@ -4,7 +4,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 62,
+  "bottomRow": 63,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -33,7 +33,7 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 55,
-  "originalBottomRow": 62,
+  "originalBottomRow": 63,
   "originalTopRow": 35,
   "parentColumnSpace": 15,
   "parentId": "ovlcanv0001",

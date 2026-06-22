@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 4,
+  "bottomRow": 8,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -23,6 +23,8 @@
   "mobileLeftColumn": 31,
   "mobileRightColumn": 40,
   "mobileTopRow": 0,
+  "originalBottomRow": 4,
+  "originalTopRow": 0,
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
@@ -31,7 +33,7 @@
   "text": "Utility Type",
   "textAlign": "LEFT",
   "textColor": "#94a3b8",
-  "topRow": 0,
+  "topRow": 4,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "bhutillbl01",

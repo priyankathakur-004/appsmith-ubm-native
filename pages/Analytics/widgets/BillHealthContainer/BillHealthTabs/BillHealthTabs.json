@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 148,
+  "bottomRow": 140,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1580,
+      "bottomRow": 1610,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -235,7 +235,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1300,
+      "bottomRow": 1090,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -276,12 +276,11 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "ilcanvas001",
-      "widgetName": "CanvasIL",
-      "children": []
+      "widgetName": "CanvasIL"
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1300,
+      "bottomRow": 1090,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -322,8 +321,7 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "lfcanvas001",
-      "widgetName": "CanvasLF",
-      "children": []
+      "widgetName": "CanvasLF"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -360,7 +358,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
-  "originalBottomRow": 148,
+  "originalBottomRow": 103,
   "originalTopRow": 14,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",
@@ -371,12 +369,26 @@
   "shouldScrollContents": true,
   "shouldShowTabs": true,
   "tabsObj": {
+    "tabimploc001": {
+      "id": "tabimploc001",
+      "index": 5,
+      "isVisible": true,
+      "label": "Impacted Locations",
+      "widgetId": "ilcanvas001"
+    },
     "tabinvpart001": {
       "id": "tabinvpart001",
       "index": 0,
       "isVisible": true,
       "label": "Invoice Participation",
       "widgetId": "ipcanvas0001"
+    },
+    "tablatefee01": {
+      "id": "tablatefee01",
+      "index": 6,
+      "isVisible": true,
+      "label": "Late Fees",
+      "widgetId": "lfcanvas001"
     },
     "tabmissinv001": {
       "id": "tabmissinv001",
@@ -405,23 +417,9 @@
       "isVisible": true,
       "label": "Warnings over Time",
       "widgetId": "wotcanvas001"
-    },
-    "tabimploc001": {
-      "id": "tabimploc001",
-      "index": 5,
-      "isVisible": true,
-      "label": "Impacted Locations",
-      "widgetId": "ilcanvas001"
-    },
-    "tablatefee01": {
-      "id": "tablatefee01",
-      "index": 6,
-      "isVisible": true,
-      "label": "Late Fees",
-      "widgetId": "lfcanvas001"
     }
   },
-  "topRow": 14,
+  "topRow": 27,
   "type": "TABS_WIDGET",
   "version": 3,
   "widgetId": "bhtabs00001",

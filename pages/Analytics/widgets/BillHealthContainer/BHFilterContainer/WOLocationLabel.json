@@ -2,6 +2,7 @@
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 4,
+  "bottomRowBeforeCollapse": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -23,6 +24,8 @@
   "mobileLeftColumn": 40,
   "mobileRightColumn": 50,
   "mobileTopRow": 0,
+  "originalBottomRow": 4,
+  "originalTopRow": 0,
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
@@ -32,6 +35,7 @@
   "textAlign": "LEFT",
   "textColor": "#475569",
   "topRow": 0,
+  "topRowBeforeCollapse": 0,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "woloclbl01",

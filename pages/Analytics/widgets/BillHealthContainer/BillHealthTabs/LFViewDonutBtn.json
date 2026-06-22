@@ -3,15 +3,12 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 6,
   "boxShadow": "none",
-  "buttonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "buttonColor": "#1e293b",
   "buttonVariant": "{{ (appsmith.store.lfView || 'donut') === 'donut' ? 'PRIMARY' : 'SECONDARY' }}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "buttonColor"
     },
     {
       "key": "buttonVariant"

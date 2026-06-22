@@ -49,6 +49,10 @@
   "mobileRightColumn": 58,
   "mobileTopRow": 4,
   "needsErrorInfo": false,
+  "onBlur": "{{ fetch_analytics_data.run() }}",
+  "onSubmit": "{{ fetch_analytics_data.run() }}",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
@@ -62,7 +66,5 @@
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "bhdatenum01",
-  "widgetName": "BHDateNumInput",
-  "onBlur": "{{ fetch_analytics_data.run() }}",
-  "onSubmit": "{{ fetch_analytics_data.run() }}"
+  "widgetName": "BHDateNumInput"
 }

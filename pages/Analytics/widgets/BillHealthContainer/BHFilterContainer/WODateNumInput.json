@@ -4,6 +4,7 @@
   "autoFocus": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
+  "bottomRowBeforeCollapse": 9,
   "boxShadow": "none",
   "defaultText": "6",
   "dynamicBindingPathList": [
@@ -49,6 +50,10 @@
   "mobileRightColumn": 58,
   "mobileTopRow": 4,
   "needsErrorInfo": false,
+  "onBlur": "{{ fetch_warnings.run() }}",
+  "onSubmit": "{{ fetch_warnings.run() }}",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
@@ -59,10 +64,9 @@
   "shouldAllowAutofill": false,
   "showStepArrows": true,
   "topRow": 4,
+  "topRowBeforeCollapse": 4,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "wodatenum01",
-  "widgetName": "WODateNumInput",
-  "onBlur": "{{ fetch_warnings.run() }}",
-  "onSubmit": "{{ fetch_warnings.run() }}"
+  "widgetName": "WODateNumInput"
 }
