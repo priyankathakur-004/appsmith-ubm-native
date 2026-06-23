@@ -62,24 +62,40 @@ export default {
 
 	/* ── Donut: Net Late Fee by dimension ── */
 	getDonutConfig() {
-		const agg = this._byDim();
-		const keys = Object.keys(agg).filter(k => Math.abs(agg[k].net) > 0.0001).sort((a, b) => agg[b].net - agg[a].net);
-		/* fixed per-utility colours (green gas, blue electric, …) like the UBM donut; palette is the
-		   fallback for the Vendors / Locations breakdowns. */
+		const dim = this.getBreakdownBy();
+		/* Group by the breakdown dimension AND utility — so a multi-utility vendor (Eversource)
+		   splits into its ELECTRIC / NATURALGAS arcs like the UBM donut. Slices are coloured by the
+		   dimension value, so the two Eversource arcs share one colour + one legend entry. */
+		const groups = {};
+		this._allBills().forEach(r => {
+			const dv = this._dimKey(r, dim);
+			const u = r.utility || '(none)';
+			const key = dv + '' + u;
+			if (!groups[key]) groups[key] = { dim: dv, util: u, net: 0, charges: 0 };
+			groups[key].net += r.netLateFee;
+			groups[key].charges += r.totalCharges;
+		});
+		const list = Object.keys(groups).map(k => groups[k]).filter(g => g.net > 0.0001).sort((a, b) => b.net - a.net);
+
 		const utilColors = {
 			NATURALGAS: '#6BA644', ELECTRIC: '#3E6FB5', WATER: '#3AAFA9', SEWER: '#8E6E53',
 			LIGHTING: '#E0B93C', OIL2: '#C0584B', STEAM: '#9B6FB0', SOLARPV: '#1F9E89',
 			PROPANE: '#E07B39', STORMWATER: '#5B9BD5', TELEPHONE: '#7F8C8D', INTERNET: '#B5495B'
 		};
-		const palette = ['#3E6FB5', '#6BA644', '#3AAFA9', '#E0B93C', '#9B6FB0', '#C0584B', '#5B9BD5', '#1F9E89', '#E07B39', '#7F8C8D', '#B5495B', '#4DB6AC'];
-		const byUtil = this.getBreakdownBy() === 'utility';
+		const palette = ['#3E6FB5', '#6BA644', '#3AAFA9', '#E0B93C', '#9B6FB0', '#C0584B', '#5B9BD5', '#1F9E89', '#E07B39', '#7F8C8D', '#B5495B', '#4DB6AC', '#C084FC', '#FACC15'];
+		const colorOf = {};
+		let ci = 0;
+		list.forEach(g => {
+			if (g.dim in colorOf) return;
+			colorOf[g.dim] = (dim === 'utility' && utilColors[String(g.dim).toUpperCase()]) || palette[ci++ % palette.length];
+		});
+		const data = list.map(g => ({ name: g.dim, value: Number(g.net.toFixed(2)), itemStyle: { color: colorOf[g.dim] } }));
 		const titleByDim = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' };
-		const data = keys.map((k, i) => ({ name: k, value: Number(agg[k].net.toFixed(2)), itemStyle: { color: (byUtil && utilColors[String(k).toUpperCase()]) || palette[i % palette.length] } }));
 		return {
 			backgroundColor: '#1E293B',
 			tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: '#E2E8F0' }, data: keys },
-			title: { text: titleByDim[this.getBreakdownBy()] || '', right: 8, top: 0, textStyle: { color: '#E2E8F0', fontSize: 12, fontWeight: 600 } },
+			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: '#E2E8F0' }, data: Object.keys(colorOf) },
+			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: '#E2E8F0', fontSize: 12, fontWeight: 600 } },
 			series: [{
 				type: 'pie', radius: ['45%', '72%'], center: ['38%', '52%'],
 				avoidLabelOverlap: true,
