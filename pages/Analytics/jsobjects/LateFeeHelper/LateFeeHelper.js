@@ -9,8 +9,9 @@ export default {
 
 	/* ── data ── */
 
-	/* Per-bill late-fee rows from fetch_late_fees, shaped for the bill table. */
-	getBills() {
+	/* ALL live+processed bills (fetch_late_fees has no net≠0 filter) — feeds the matrix/donut so
+	   vendors/locations with zero late fees still appear with their Total Charges. */
+	_allBills() {
 		const data = (typeof fetch_late_fees !== 'undefined' && Array.isArray(fetch_late_fees.data)) ? fetch_late_fees.data : [];
 		return data.map(r => {
 			const net = Number(r.net_late_fee) || 0;
@@ -31,19 +32,24 @@ export default {
 		});
 	},
 
-	/* Dimension value for the current "Breakdown by" choice. */
-	_dimKey(r) {
-		const b = this.getBreakdownBy();
+	/* Only bills that actually carry a late fee (Net Late Fee ≠ 0) — the right-side detail table. */
+	getBills() {
+		return this._allBills().filter(r => Math.abs(r.netLateFee) > 1e-6);
+	},
+
+	/* Dimension value for a given dimension (defaults to the "Breakdown by" choice). */
+	_dimKey(r, dim) {
+		const b = dim || this.getBreakdownBy();
 		if (b === 'vendor') return r.vendor || '(none)';
 		if (b === 'location') return r.location || '(none)';
 		return r.utility || '(none)';
 	},
 
-	/* Aggregate by the selected dimension: net / lateFee / recouped / totalCharges. */
-	_byDim() {
+	/* Aggregate net / lateFee / recouped / totalCharges by dimension (default = selected breakdown). */
+	_byDim(dim) {
 		const out = {};
-		this.getBills().forEach(r => {
-			const k = this._dimKey(r);
+		this._allBills().forEach(r => {
+			const k = this._dimKey(r, dim);
 			if (!out[k]) out[k] = { net: 0, late: 0, recoup: 0, charges: 0 };
 			out[k].net += r.netLateFee;
 			out[k].late += r.lateFee;
@@ -85,8 +91,8 @@ export default {
 
 	/* ── Tabular: matrix by dimension with a Total row ── */
 	getMatrixHtml() {
-		const agg = this._byDim();
-		const dimLabel = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' }[this.getBreakdownBy()] || 'Group';
+		const agg = this._byDim('vendor');
+		const dimLabel = 'Vendor Name';
 		const keys = Object.keys(agg).sort((a, b) => agg[b].net - agg[a].net);
 
 		const money = (v) => {
@@ -134,8 +140,8 @@ export default {
 
 	/* Matrix rows as plain objects for "Show as a Table" / Export (includes a Total row). */
 	getMatrixTableData() {
-		const agg = this._byDim();
-		const dimLabel = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' }[this.getBreakdownBy()] || 'Group';
+		const agg = this._byDim('vendor');
+		const dimLabel = 'Vendor Name';
 		const keys = Object.keys(agg).sort((a, b) => agg[b].net - agg[a].net);
 		const f = (v) => (Number(v) || 0).toFixed(2);
 		const pct = (n, d) => d ? (n / d * 100).toFixed(2) + '%' : '';
