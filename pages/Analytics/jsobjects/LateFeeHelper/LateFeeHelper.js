@@ -52,8 +52,9 @@ export default {
 			const k = this._dimKey(r, dim);
 			if (!out[k]) out[k] = { net: 0, late: 0, recoup: 0, charges: 0 };
 			out[k].net += r.netLateFee;
-			out[k].late += r.lateFee;
-			out[k].recoup += r.recoupedLateFee;
+			/* UBM's "Late Fee" / "Recouped Late Fee" split by each BILL's net sign (not line-level). */
+			out[k].late += (r.netLateFee > 0 ? r.netLateFee : 0);
+			out[k].recoup += (r.netLateFee < 0 ? r.netLateFee : 0);
 			out[k].charges += r.totalCharges;
 		});
 		return out;
