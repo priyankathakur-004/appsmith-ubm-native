@@ -9,15 +9,19 @@ export default {
 
 	/* ── data ── */
 
-	/* ALL live+processed bills (fetch_late_fees has no net≠0 filter) — feeds the matrix/donut so
-	   vendors/locations with zero late fees still appear with their Total Charges. */
+	/* ALL live bills, ANY workflow_state (fetch_late_fees no longer filters on workflow_state).
+	   Total Charges must span every live bill to match UBM (6 vendors / 56,176); late fees are
+	   scoped to processed bills downstream via `processed` — see getBills/_byDim/getDonutConfig. */
 	_allBills() {
 		const data = (typeof fetch_late_fees !== 'undefined' && Array.isArray(fetch_late_fees.data)) ? fetch_late_fees.data : [];
 		return data.map(r => {
 			const net = Number(r.net_late_fee) || 0;
 			const tot = Number(r.total_charges) || 0;
+			const ws = (r.workflow_state || '').toLowerCase();
 			return {
 				pearId: r.pear_id,
+				workflowState: ws,
+				processed: ws === 'processed',
 				netLateFee: net,
 				lateFee: Number(r.late_fee) || 0,
 				recoupedLateFee: Number(r.recouped_late_fee) || 0,
@@ -32,9 +36,10 @@ export default {
 		});
 	},
 
-	/* Only bills that actually carry a late fee (Net Late Fee ≠ 0) — the right-side detail table. */
+	/* Right-side detail table: processed bills that carry a late fee (Net Late Fee ≠ 0). Late fees
+	   are only counted on processed bills (matches UBM's 29-row / 42.08 figures). */
 	getBills() {
-		return this._allBills().filter(r => Math.abs(r.netLateFee) > 1e-6);
+		return this._allBills().filter(r => r.processed && Math.abs(r.netLateFee) > 1e-6);
 	},
 
 	/* Dimension value for a given dimension (defaults to the "Breakdown by" choice). */
@@ -51,11 +56,14 @@ export default {
 		this._allBills().forEach(r => {
 			const k = this._dimKey(r, dim);
 			if (!out[k]) out[k] = { net: 0, late: 0, recoup: 0, charges: 0 };
-			out[k].net += r.netLateFee;
-			/* UBM's "Late Fee" / "Recouped Late Fee" split by each BILL's net sign (not line-level). */
-			out[k].late += (r.netLateFee > 0 ? r.netLateFee : 0);
-			out[k].recoup += (r.netLateFee < 0 ? r.netLateFee : 0);
+			/* Total Charges = every live bill (all workflow states). */
 			out[k].charges += r.totalCharges;
+			/* Late fees only from processed bills; split Late/Recouped by each BILL's net sign. */
+			if (r.processed) {
+				out[k].net += r.netLateFee;
+				out[k].late += (r.netLateFee > 0 ? r.netLateFee : 0);
+				out[k].recoup += (r.netLateFee < 0 ? r.netLateFee : 0);
+			}
 		});
 		return out;
 	},
@@ -71,9 +79,9 @@ export default {
 			const dv = this._dimKey(r, dim);
 			const u = r.utility || '(none)';
 			const key = dv + '' + u;
-			if (!groups[key]) groups[key] = { dim: dv, util: u, net: 0, charges: 0 };
-			groups[key].net += r.netLateFee;
-			groups[key].charges += r.totalCharges;
+			if (!groups[key]) groups[key] = { dim: dv, util: u, net: 0, charges: 0, vendor: r.vendor || '', location: r.location || '' };
+			groups[key].charges += r.totalCharges;            // all live bills
+			if (r.processed) groups[key].net += r.netLateFee; // late fees only from processed
 		});
 		const list = Object.keys(groups).map(k => groups[k]).filter(g => g.net > 0.0001).sort((a, b) => b.net - a.net);
 
@@ -89,11 +97,40 @@ export default {
 			if (g.dim in colorOf) return;
 			colorOf[g.dim] = (dim === 'utility' && utilColors[String(g.dim).toUpperCase()]) || palette[ci++ % palette.length];
 		});
-		const data = list.map(g => ({ name: g.dim, value: Number(g.net.toFixed(2)), itemStyle: { color: colorOf[g.dim] } }));
 		const titleByDim = { utility: 'Utility Type', vendor: 'Vendor Name', location: 'Location' };
+		const dimLabel = titleByDim[dim] || 'Group';
+		const data = list.map(g => ({
+			name: g.dim,
+			value: Number(g.net.toFixed(2)),
+			itemStyle: { color: colorOf[g.dim] },
+			d_label: dimLabel,
+			d_util: g.util === '(none)' ? '' : g.util,
+			d_vendor: g.vendor,
+			d_loc: g.location,
+			d_charges: Number(g.charges.toFixed(2))
+		}));
 		return {
 			backgroundColor: '#1E293B',
-			tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+			tooltip: {
+				trigger: 'item',
+				backgroundColor: '#0F172A',
+				borderColor: '#334155',
+				textStyle: { color: '#E2E8F0' },
+				formatter: function (p) {
+					var d = p.data || {};
+					var pct = (p.percent == null ? 0 : p.percent).toFixed(1) + '%';
+					var charges = Number(d.d_charges || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+					var lfc = d.d_charges ? (d.value / d.d_charges * 100).toFixed(2) + '%' : '0.00%';
+					var rows = [];
+					rows.push('<b>' + d.d_label + ':</b> ' + d.name);
+					if (d.d_util) rows.push('Utility Type: ' + d.d_util);
+					if (d.d_label !== 'Vendor Name' && d.d_vendor) rows.push('Vendor Name: ' + d.d_vendor);
+					rows.push('Total Late Fee: ' + Number(d.value).toFixed(2) + ' (' + pct + ')');
+					rows.push('Total Charges: ' + charges);
+					rows.push('Late fee/charges: ' + lfc);
+					return rows.join('<br/>');
+				}
+			},
 			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: '#E2E8F0' }, data: Object.keys(colorOf) },
 			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: '#E2E8F0', fontSize: 12, fontWeight: 600 } },
 			series: [{
