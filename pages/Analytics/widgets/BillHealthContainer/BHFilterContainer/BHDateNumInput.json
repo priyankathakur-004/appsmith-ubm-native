@@ -5,7 +5,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "defaultText": "13",
+  "defaultText": "12",
   "dynamicBindingPathList": [
     {
       "key": "isVisible"
@@ -49,8 +49,8 @@
   "mobileRightColumn": 58,
   "mobileTopRow": 4,
   "needsErrorInfo": false,
-  "onBlur": "{{ fetch_analytics_data.run() }}",
-  "onSubmit": "{{ fetch_analytics_data.run() }}",
+  "onBlur": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}",
+  "onSubmit": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,

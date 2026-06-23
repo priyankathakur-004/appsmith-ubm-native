@@ -43,49 +43,19 @@ export default {
 		catch (e) { return []; }
 	},
 
-	/* Relative invoice-date window from the Date filter (Mode / Number / Unit). Returns {start,end}
-	   Date pair, or null when unset. Only ever NARROWS the query's 12-month set — never widens it. */
-	_lfDateWindow() {
-		try {
-			if (typeof BHDateNumInput === 'undefined') return null;
-			const n = parseInt(BHDateNumInput.text, 10);
-			if (!n || n <= 0) return null;
-			const unit = (typeof BHDateUnitSelect !== 'undefined' && BHDateUnitSelect.selectedOptionValue) || 'Months';
-			const mode = (typeof BHDateModeSelect !== 'undefined' && BHDateModeSelect.selectedOptionValue) || 'Last';
-			if (unit === 'Select') return null;
-			const shift = (d, k) => {
-				if (unit === 'Days') d.setDate(d.getDate() - k);
-				else if (unit === 'Weeks') d.setDate(d.getDate() - k * 7);
-				else if (unit === 'Years') d.setFullYear(d.getFullYear() - k);
-				else d.setMonth(d.getMonth() - k);
-			};
-			const now = new Date();
-			if (mode === 'Next') {
-				const end = new Date(now); shift(end, -n);   // shift forward
-				return { start: now, end };
-			}
-			const start = new Date(now);
-			shift(start, mode === 'This' ? 1 : n);
-			return { start, end: now };
-		} catch (e) { return null; }
-	},
-
-	/* Apply the visible Late Fees page filters (Account Status / Utility / Location / Vendor / Date). */
+	/* Apply the categorical Late Fees page filters (Account Status / Utility / Location / Vendor).
+	   The Invoice Date filter is handled in SQL (it can point to the future or a window wider than
+	   the loaded set, which JS narrowing can't do) — see LFDateHelper + fetch_late_fees. */
 	_applyFilters(rows) {
 		const acct = this._lfMulti(typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null);
 		const util = this._lfMulti(typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null);
 		const loc = this._lfMulti(typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null);
 		const vend = this._lfMulti(typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null);
-		const win = this._lfDateWindow();
 		return rows.filter(r => {
 			if (acct.length && acct.indexOf(r.accountStatus) === -1) return false;
 			if (util.length && util.indexOf(r.utility) === -1) return false;
 			if (loc.length && loc.indexOf(r.location) === -1) return false;
 			if (vend.length && vend.indexOf(r.vendor) === -1) return false;
-			if (win && r.invoiceDateRaw) {
-				const d = new Date(r.invoiceDateRaw);
-				if (!isNaN(d.getTime()) && (d < win.start || d > win.end)) return false;
-			}
 			return true;
 		});
 	},

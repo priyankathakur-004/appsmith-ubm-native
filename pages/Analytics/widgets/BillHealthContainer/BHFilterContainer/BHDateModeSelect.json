@@ -18,7 +18,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
@@ -44,5 +48,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "bhdatemode1",
-  "widgetName": "BHDateModeSelect"
+  "widgetName": "BHDateModeSelect",
+  "onOptionChange": "{{ BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}"
 }

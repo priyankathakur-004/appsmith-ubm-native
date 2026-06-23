@@ -33,7 +33,7 @@
   "mobileLeftColumn": 58,
   "mobileRightColumn": 64,
   "mobileTopRow": 4,
-  "onOptionChange": "{{ fetch_analytics_data.run() }}",
+  "onOptionChange": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
