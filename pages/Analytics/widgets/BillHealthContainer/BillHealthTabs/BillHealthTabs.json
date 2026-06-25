@@ -10,7 +10,7 @@
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1660,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -448,7 +448,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
-  "originalBottomRow": 140,
+  "originalBottomRow": 142,
   "originalTopRow": 42,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",
