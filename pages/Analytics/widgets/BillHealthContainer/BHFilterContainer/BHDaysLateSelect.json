@@ -3,7 +3,7 @@
   "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 22,
+  "bottomRow": 10,
   "boxShadow": "none",
   "defaultOptionValue": [
     "0-7",
@@ -32,7 +32,7 @@
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "kbhdayslate1",
   "labelText": "Days Late",
-  "leftColumn": 12,
+  "leftColumn": 52,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
@@ -43,7 +43,7 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 25,
+  "rightColumn": 58,
   "serverSideFiltering": false,
   "sourceData": [
     {
@@ -67,7 +67,7 @@
       "value": "unknown"
     }
   ],
-  "topRow": 15,
+  "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "bhdayslatesel",

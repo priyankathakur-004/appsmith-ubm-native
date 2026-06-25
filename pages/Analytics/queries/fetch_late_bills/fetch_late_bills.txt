@@ -11,7 +11,8 @@ WITH base AS (
     WHERE e.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
       AND e.account_status IN ('Open', 'Unknown')
       AND COALESCE(TRIM(e.billing_id), '') <> ''
-      AND e.last_bill_invoice_date >= (CURRENT_DATE - INTERVAL '6 months')
+      AND e.last_bill_invoice_date >= '{{ LBDateHelper.start() }}'
+      AND e.last_bill_invoice_date <  '{{ LBDateHelper.end() }}'
       AND e.days_late >= 0
 ),
 rep AS (   -- representative = the account's latest bill (matches UBM)

@@ -54,9 +54,9 @@ export default {
 	/* Apply the Bill Health filters: Account Status / Utility / Location / Vendor +
 	   the UBM-specific Bill Type / Days Late / Days to Next Due Date. */
 	_applyFilters(rows) {
-		const acct = this._multi(typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null);
-		const util = this._multi(typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null);
-		const loc = this._multi(typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null);
+		const acct = this._multi(typeof LBAccountStatus !== 'undefined' ? LBAccountStatus : null);
+		const util = this._multi(typeof LBUtilityType !== 'undefined' ? LBUtilityType : null);
+		const loc = this._multi(typeof LBLocation !== 'undefined' ? LBLocation : null);
 		const vend = this._multi(typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null);
 		const bt = this._multi(typeof BHBillTypeSelect !== 'undefined' ? BHBillTypeSelect : null);
 		const dl = this._multi(typeof BHDaysLateSelect !== 'undefined' ? BHDaysLateSelect : null);

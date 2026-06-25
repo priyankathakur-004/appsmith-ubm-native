@@ -1,14 +1,11 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 4,
+  "bottomRow": 3,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
       "key": "isVisible"
-    },
-    {
-      "key": "fontFamily"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -16,24 +13,20 @@
   "fontSize": "0.875rem",
   "fontStyle": "BOLD",
   "isLoading": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
-  "key": "bhdatelblk",
-  "leftColumn": 50,
-  "mobileBottomRow": 4,
-  "mobileLeftColumn": 50,
-  "mobileRightColumn": 64,
-  "mobileTopRow": 0,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "klbdtlbl01",
+  "leftColumn": 40,
   "parentColumnSpace": 15,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 64,
-  "text": "Date",
+  "rightColumn": 52,
+  "text": "Last Bill Invoice Date",
   "textAlign": "LEFT",
   "textColor": "#94a3b8",
-  "topRow": 0,
+  "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,
-  "widgetId": "bhdatelbl01",
-  "widgetName": "BHDateLabel"
+  "widgetId": "lbdatelbl01",
+  "widgetName": "LBDateLabel"
 }

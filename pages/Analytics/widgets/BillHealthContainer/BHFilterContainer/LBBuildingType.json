@@ -3,21 +3,12 @@
   "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 14,
+  "bottomRow": 10,
   "boxShadow": "none",
-  "defaultOptionValue": "",
+  "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
-      "key": "sourceData"
-    },
-    {
       "key": "isVisible"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "accentColor"
     }
   ],
   "dynamicPropertyPathList": [
@@ -28,14 +19,11 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
-  "key": "bhlocselk1",
-  "labelText": "",
-  "leftColumn": 40,
-  "mobileBottomRow": 9,
-  "mobileLeftColumn": 40,
-  "mobileRightColumn": 50,
-  "mobileTopRow": 4,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "klbbldg001",
+  "labelText": "Building Type",
+  "leftColumn": 17,
+  "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
@@ -45,12 +33,16 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 50,
+  "rightColumn": 25,
   "serverSideFiltering": false,
-  "sourceData": "{{fetch_locations.data.map( (obj) =>{ return  {'label': obj.name, 'value': obj.name } })}}",
-  "topRow": 9,
+  "sourceData": [],
+  "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "bhlocsel001",
-  "widgetName": "BHLocationSelect"
+  "widgetId": "lbbldgsel01",
+  "widgetName": "LBBuildingType",
+  "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "isDisabled": true
 }

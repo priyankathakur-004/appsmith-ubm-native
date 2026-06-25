@@ -3,18 +3,12 @@
   "animateLoading": true,
   "autoFocus": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 9,
+  "bottomRow": 10,
   "boxShadow": "none",
-  "defaultText": "12",
+  "defaultText": "6",
   "dynamicBindingPathList": [
     {
       "key": "isVisible"
-    },
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -31,8 +25,8 @@
   "isDisabled": false,
   "isLoading": false,
   "isRequired": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
-  "key": "bhdatenumk",
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "klbdtnum01",
   "label": "",
   "labelAlignment": "left",
   "labelPosition": "Top",
@@ -40,17 +34,13 @@
   "labelTextColor": "#f4f4f5",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 55,
+  "leftColumn": 44,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
-  "mobileBottomRow": 9,
-  "mobileLeftColumn": 55,
-  "mobileRightColumn": 58,
-  "mobileTopRow": 4,
   "needsErrorInfo": false,
-  "onBlur": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}",
-  "onSubmit": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}",
+  "onBlur": "{{ fetch_late_bills.run() }}",
+  "onSubmit": "{{ fetch_late_bills.run() }}",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
@@ -59,12 +49,12 @@
   "renderMode": "CANVAS",
   "resetOnSubmit": true,
   "responsiveBehavior": "fill",
-  "rightColumn": 58,
+  "rightColumn": 47,
   "shouldAllowAutofill": false,
   "showStepArrows": true,
   "topRow": 4,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
-  "widgetId": "bhdatenum01",
-  "widgetName": "BHDateNumInput"
+  "widgetId": "lbdatenum01",
+  "widgetName": "LBDateNum"
 }
