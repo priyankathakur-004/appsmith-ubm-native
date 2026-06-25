@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 24,
+  "bottomRow": 11,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -29,7 +29,7 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 11,
-  "originalBottomRow": 80,
+  "originalBottomRow": 24,
   "originalTopRow": 11,
   "parentColumnSpace": 1,
   "parentId": "lfleftcanvas",

@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 116,
+  "bottomRow": 224,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1620,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -55,7 +55,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1300,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -100,7 +100,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1300,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -145,7 +145,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1300,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -190,7 +190,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1300,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -235,7 +235,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 970,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -280,7 +280,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 850,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -325,7 +325,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 850,
+      "bottomRow": 1670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -366,8 +366,7 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "lbcanvas001",
-      "widgetName": "CanvasLB",
-      "children": []
+      "widgetName": "CanvasLB"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -404,8 +403,8 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
-  "originalBottomRow": 116,
-  "originalTopRow": 27,
+  "originalBottomRow": 224,
+  "originalTopRow": 53,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",
   "parentRowSpace": 10,
@@ -428,6 +427,13 @@
       "isVisible": true,
       "label": "Invoice Participation",
       "widgetId": "ipcanvas0001"
+    },
+    "tablatebill1": {
+      "id": "tablatebill1",
+      "index": 7,
+      "isVisible": true,
+      "label": "Late Bills",
+      "widgetId": "lbcanvas001"
     },
     "tablatefee01": {
       "id": "tablatefee01",
@@ -463,16 +469,9 @@
       "isVisible": true,
       "label": "Warnings over Time",
       "widgetId": "wotcanvas001"
-    },
-    "tablatebill1": {
-      "id": "tablatebill1",
-      "index": 7,
-      "isVisible": true,
-      "label": "Late Bills",
-      "widgetId": "lbcanvas001"
     }
   },
-  "topRow": 27,
+  "topRow": 53,
   "type": "TABS_WIDGET",
   "version": 3,
   "widgetId": "bhtabs00001",

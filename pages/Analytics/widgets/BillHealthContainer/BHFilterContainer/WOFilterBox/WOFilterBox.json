@@ -5,48 +5,12 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
   "bottomRow": 12,
+  "bottomRowBeforeCollapse": 12,
   "boxShadow": "none",
-  "containerStyle": "none",
-  "dynamicBindingPathList": [
-    {
-      "key": "isVisible"
-    },
-    {
-      "key": "borderRadius"
-    }
-  ],
-  "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [],
-  "flexVerticalAlignment": "stretch",
-  "isCanvas": true,
-  "isLoading": false,
-  "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
-  "key": "wofboxkey1",
-  "leftColumn": 0,
-  "maxDynamicHeight": 9000,
-  "minDynamicHeight": 10,
-  "minWidth": 450,
-  "mobileBottomRow": 12,
-  "mobileLeftColumn": 0,
-  "mobileRightColumn": 64,
-  "mobileTopRow": 0,
-  "needsErrorInfo": false,
-  "parentColumnSpace": 7.375,
-  "parentId": "bhfcanvas01",
-  "parentRowSpace": 10,
-  "renderMode": "CANVAS",
-  "responsiveBehavior": "fill",
-  "rightColumn": 64,
-  "shouldScrollContents": false,
-  "topRow": 0,
-  "type": "CONTAINER_WIDGET",
-  "version": 1,
-  "widgetId": "wofilterbox1",
-  "widgetName": "WOFilterBox",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 240,
+      "bottomRow": 120,
       "boxShadow": "none",
       "canExtend": false,
       "containerStyle": "none",
@@ -83,5 +47,45 @@
       "widgetId": "wofcanvas01",
       "widgetName": "WOFilterCanvas"
     }
-  ]
+  ],
+  "containerStyle": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [],
+  "flexVerticalAlignment": "stretch",
+  "isCanvas": true,
+  "isLoading": false,
+  "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "wofboxkey1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 10,
+  "minWidth": 450,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "originalBottomRow": 12,
+  "originalTopRow": 0,
+  "parentColumnSpace": 7.375,
+  "parentId": "bhfcanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "topRow": 0,
+  "topRowBeforeCollapse": 0,
+  "type": "CONTAINER_WIDGET",
+  "version": 1,
+  "widgetId": "wofilterbox1",
+  "widgetName": "WOFilterBox"
 }

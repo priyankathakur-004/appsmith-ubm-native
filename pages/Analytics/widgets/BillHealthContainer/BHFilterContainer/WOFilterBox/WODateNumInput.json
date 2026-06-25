@@ -34,10 +34,11 @@
   "isRequired": false,
   "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
   "key": "wodatenumk",
-  "label": "",
+  "label": " ",
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
+  "labelText": " ",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
@@ -63,11 +64,10 @@
   "rightColumn": 58,
   "shouldAllowAutofill": false,
   "showStepArrows": true,
-  "topRow": 2,
+  "topRow": 4,
   "topRowBeforeCollapse": 4,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "wodatenum01",
-  "widgetName": "WODateNumInput",
-  "labelText": " "
+  "widgetName": "WODateNumInput"
 }

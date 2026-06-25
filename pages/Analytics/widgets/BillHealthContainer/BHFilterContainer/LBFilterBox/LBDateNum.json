@@ -30,10 +30,11 @@
   "isRequired": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbdtnum01",
-  "label": "",
+  "label": " ",
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
+  "labelText": " ",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
@@ -55,10 +56,9 @@
   "rightColumn": 46,
   "shouldAllowAutofill": false,
   "showStepArrows": true,
-  "topRow": 2,
+  "topRow": 4,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "lbdatenum01",
-  "widgetName": "LBDateNum",
-  "labelText": "\u00a0"
+  "widgetName": "LBDateNum"
 }
