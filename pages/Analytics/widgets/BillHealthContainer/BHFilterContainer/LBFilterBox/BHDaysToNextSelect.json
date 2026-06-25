@@ -5,19 +5,20 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 10,
   "boxShadow": "none",
-  "defaultOptionValue": "",
+  "defaultOptionValue": [
+    "<=5",
+    "6-10",
+    ">10"
+  ],
   "dynamicBindingPathList": [
-    {
-      "key": "sourceData"
-    },
-    {
-      "key": "isVisible"
-    },
     {
       "key": "borderRadius"
     },
     {
       "key": "accentColor"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [
@@ -28,33 +29,43 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
-  "key": "bhvendselk",
-  "labelText": "Vendor",
-  "leftColumn": 9,
-  "mobileBottomRow": 9,
-  "mobileLeftColumn": 9,
-  "mobileRightColumn": 20,
-  "mobileTopRow": 4,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "kbhdaystonx1",
+  "labelText": "Days to Next Due Date",
+  "leftColumn": 58,
+  "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "bhfcanvas01",
+  "parentId": "lbfcanvas01",
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 20,
+  "rightColumn": 64,
   "serverSideFiltering": false,
-  "sourceData": "{{ BillHealthHelper.getVendorOptions() }}",
+  "sourceData": [
+    {
+      "label": "5 days or less",
+      "value": "<=5"
+    },
+    {
+      "label": "6 - 10 days",
+      "value": "6-10"
+    },
+    {
+      "label": "More than 10 Days",
+      "value": ">10"
+    }
+  ],
   "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "bhvendsel01",
-  "widgetName": "BHVendorSelect",
+  "widgetId": "bhdaystonext1",
+  "widgetName": "BHDaysToNextSelect",
   "labelPosition": "Top",
-  "labelAlignment": "left",
   "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem"
+  "labelTextSize": "0.875rem",
+  "labelAlignment": "left"
 }

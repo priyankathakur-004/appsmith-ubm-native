@@ -4,9 +4,13 @@
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 10,
+  "bottomRowBeforeCollapse": 9,
   "boxShadow": "none",
-  "defaultOptionValue": [],
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
     {
       "key": "isVisible"
     },
@@ -14,7 +18,7 @@
       "key": "borderRadius"
     },
     {
-      "key": "sourceData"
+      "key": "accentColor"
     }
   ],
   "dynamicPropertyPathList": [
@@ -25,31 +29,34 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
-  "key": "klbbldg001",
-  "labelText": "Building Type",
-  "leftColumn": 15,
-  "onOptionChange": "",
+  "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "woresselk",
+  "labelText": "Resolved",
+  "leftColumn": 20,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 20,
+  "mobileRightColumn": 31,
+  "mobileTopRow": 4,
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "bhfcanvas01",
+  "parentId": "wofcanvas01",
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 22,
+  "rightColumn": 31,
   "serverSideFiltering": false,
-  "sourceData": "{{ (fetch_building_types.data || []).map(d => ({label: d.building_type, value: d.building_type})) }}",
+  "sourceData": "{{ BillHealthHelper.getWarnResolvedOptions() }}",
   "topRow": 2,
+  "topRowBeforeCollapse": 4,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "lbbldgsel01",
-  "widgetName": "LBBuildingType",
+  "widgetId": "woressel01",
+  "widgetName": "WOResolvedSelect",
   "labelPosition": "Top",
+  "labelAlignment": "left",
   "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem",
-  "isDisabled": false,
-  "labelAlignment": "left"
+  "labelTextSize": "0.875rem"
 }

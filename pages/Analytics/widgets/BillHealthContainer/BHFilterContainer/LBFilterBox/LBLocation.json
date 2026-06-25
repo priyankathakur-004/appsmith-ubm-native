@@ -5,20 +5,16 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 10,
   "boxShadow": "none",
-  "defaultOptionValue": [
-    "<=5",
-    "6-10",
-    ">10"
-  ],
+  "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
-      "key": "borderRadius"
-    },
-    {
-      "key": "accentColor"
-    },
-    {
       "key": "isVisible"
+    },
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicPropertyPathList": [
@@ -30,42 +26,30 @@
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
-  "key": "kbhdaystonx1",
-  "labelText": "Days to Next Due Date",
-  "leftColumn": 58,
+  "key": "klbloc0001",
+  "labelText": "Location",
+  "leftColumn": 8,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "bhfcanvas01",
+  "parentId": "lbfcanvas01",
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 64,
+  "rightColumn": 15,
   "serverSideFiltering": false,
-  "sourceData": [
-    {
-      "label": "5 days or less",
-      "value": "<=5"
-    },
-    {
-      "label": "6 - 10 days",
-      "value": "6-10"
-    },
-    {
-      "label": "More than 10 Days",
-      "value": ">10"
-    }
-  ],
+  "sourceData": "{{ fetch_locations.data.map( (obj) => ({'label': obj.name, 'value': obj.name }) ) }}",
   "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "bhdaystonext1",
-  "widgetName": "BHDaysToNextSelect",
+  "widgetId": "lblocsel001",
+  "widgetName": "LBLocation",
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
+  "isDisabled": false,
   "labelAlignment": "left"
 }

@@ -5,16 +5,19 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 10,
   "boxShadow": "none",
-  "defaultOptionValue": [],
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
-    {
-      "key": "isVisible"
-    },
     {
       "key": "sourceData"
     },
     {
+      "key": "isVisible"
+    },
+    {
       "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
     }
   ],
   "dynamicPropertyPathList": [
@@ -25,31 +28,33 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
-  "key": "klbutil001",
-  "labelText": "Utility Type",
-  "leftColumn": 22,
-  "onOptionChange": "",
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "bhlocselk1",
+  "labelText": "Location",
+  "leftColumn": 40,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 40,
+  "mobileRightColumn": 50,
+  "mobileTopRow": 4,
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "bhfcanvas01",
+  "parentId": "bhsetcanvas1",
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 29,
+  "rightColumn": 50,
   "serverSideFiltering": false,
-  "sourceData": "{{ (fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type})) }}",
+  "sourceData": "{{fetch_locations.data.map( (obj) =>{ return  {'label': obj.name, 'value': obj.name } })}}",
   "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "lbutilsel01",
-  "widgetName": "LBUtilityType",
+  "widgetId": "bhlocsel001",
+  "widgetName": "BHLocationSelect",
   "labelPosition": "Top",
+  "labelAlignment": "left",
   "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem",
-  "isDisabled": false,
-  "labelAlignment": "left"
+  "labelTextSize": "0.875rem"
 }

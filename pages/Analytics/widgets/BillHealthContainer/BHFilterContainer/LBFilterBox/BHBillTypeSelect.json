@@ -8,13 +8,13 @@
   "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
-      "key": "isVisible"
-    },
-    {
-      "key": "sourceData"
-    },
-    {
       "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicPropertyPathList": [
@@ -26,30 +26,38 @@
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
-  "key": "klbacct001",
-  "labelText": "Account Status",
-  "leftColumn": 0,
+  "key": "kbhbilltype1",
+  "labelText": "Bill Type",
+  "leftColumn": 29,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "bhfcanvas01",
+  "parentId": "lbfcanvas01",
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 8,
+  "rightColumn": 36,
   "serverSideFiltering": false,
-  "sourceData": "{{ (fetch_account_status.data || []).map(d => ({label: d.account_status, value: d.account_status})) }}",
+  "sourceData": [
+    {
+      "label": "live",
+      "value": "live"
+    },
+    {
+      "label": "historical",
+      "value": "historical"
+    }
+  ],
   "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "lbacctsel01",
-  "widgetName": "LBAccountStatus",
+  "widgetId": "bhbilltypesel",
+  "widgetName": "BHBillTypeSelect",
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
-  "isDisabled": false,
   "labelAlignment": "left"
 }

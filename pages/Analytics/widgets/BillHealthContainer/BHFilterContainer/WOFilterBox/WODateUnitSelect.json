@@ -1,24 +1,17 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
-  "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 10,
   "bottomRowBeforeCollapse": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "",
+  "defaultOptionValue": "Months",
   "dynamicBindingPathList": [
-    {
-      "key": "sourceData"
-    },
     {
       "key": "isVisible"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "accentColor"
     }
   ],
   "dynamicPropertyPathList": [
@@ -26,35 +19,39 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
-  "key": "wowarnselk",
-  "labelText": "Warning",
-  "leftColumn": 9,
+  "key": "wodateunik",
+  "labelText": " ",
+  "leftColumn": 58,
   "mobileBottomRow": 9,
-  "mobileLeftColumn": 9,
-  "mobileRightColumn": 20,
+  "mobileLeftColumn": 58,
+  "mobileRightColumn": 64,
   "mobileTopRow": 4,
+  "onOptionChange": "{{ fetch_warnings.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,
   "originalTopRow": 4,
   "parentColumnSpace": 15,
-  "parentId": "bhfcanvas01",
+  "parentId": "wofcanvas01",
   "parentRowSpace": 10,
-  "placeholderText": "All",
+  "placeholderText": "Select option",
   "renderMode": "CANVAS",
-  "rightColumn": 20,
-  "serverSideFiltering": false,
-  "sourceData": "{{ BillHealthHelper.getWarnCategoryOptions() }}",
+  "rightColumn": 64,
+  "sourceData": "[{\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Years\", \"value\": \"Years\"}]",
   "topRow": 2,
   "topRowBeforeCollapse": 4,
-  "type": "MULTI_SELECT_WIDGET_V2",
+  "type": "SELECT_WIDGET",
   "version": 1,
-  "widgetId": "wowarnsel1",
-  "widgetName": "WOWarningSelect",
+  "widgetId": "wodateunit1",
+  "widgetName": "WODateUnitSelect",
   "labelPosition": "Top",
   "labelAlignment": "left",
   "labelTextColor": "#94a3b8",
