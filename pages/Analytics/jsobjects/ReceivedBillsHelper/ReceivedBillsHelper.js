@@ -90,57 +90,87 @@ export default {
 			return '<div style="padding:24px;color:#94A3B8;font-size:13px;">No received bills for the current filters.</div>';
 		}
 		const tree = this._buildTree();
+		const mn = this._monthNames();
 
-		/* Group months by year for the two-row header (year spans its months). */
-		const years = [];
+		/* Group invoice months into years (descending order preserved) for the two-row header. */
+		const yearGroups = [];
 		months.forEach(m => {
 			const y = m.split('-')[0];
-			const last = years[years.length - 1];
-			if (last && last.year === y) last.span++;
-			else years.push({ year: y, span: 1 });
+			let g = yearGroups[yearGroups.length - 1];
+			if (!g || g.year !== y) { g = { year: y, months: [] }; yearGroups.push(g); }
+			g.months.push(m);
 		});
 
-		const th = 'padding:6px 10px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;';
+		/* Flat column model: each year's months, a per-year subtotal, then a grand total. */
+		const cols = [];
+		yearGroups.forEach(g => {
+			g.months.forEach(m => cols.push({ kind: 'm', month: m }));
+			cols.push({ kind: 'yt', months: g.months });
+		});
+		cols.push({ kind: 'gt' });
+
+		/* Aggregate month -> count for any subtree (leaves carry numbers, groups carry children). */
+		const aggOf = (node) => {
+			const out = {};
+			for (const k in node) {
+				const v = node[k];
+				if (typeof v === 'number') { out[k] = (out[k] || 0) + v; }
+				else { const sub = aggOf(v); for (const mm in sub) out[mm] = (out[mm] || 0) + sub[mm]; }
+			}
+			return out;
+		};
+		const colVal = (agg, c) => {
+			if (c.kind === 'm') return agg[c.month] || 0;
+			if (c.kind === 'yt') return c.months.reduce((s, m) => s + (agg[m] || 0), 0);
+			let s = 0; for (const m in agg) s += agg[m]; return s;
+		};
+
+		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;';
 		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;';
-		const tdC = 'padding:5px 10px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:center;white-space:nowrap;';
+		const sep = 'border-left:1px solid #475569;';
+		const tdBase = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:center;white-space:nowrap;';
 		const lvlPad = [12, 28, 44, 60];
-		const lvlStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:left;white-space:nowrap;'
-			+ (lvl === 0 ? 'color:#F8FAFC;font-weight:700;' : (lvl === 1 ? 'color:#CBD5E1;font-weight:600;' : 'color:#E2E8F0;'));
+		const lvlColor = ['color:#F8FAFC;font-weight:700;', 'color:#CBD5E1;font-weight:600;', 'color:#E2E8F0;', 'color:#CBD5E1;'];
+		const lvlBg = ['background:#243043;', '', '', 'background:#1B2738;'];
+		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:left;white-space:nowrap;' + lvlColor[lvl] + lvlBg[lvl];
+		const cellStyle = (c, lvl) => tdBase + (lvl <= 1 ? 'color:#F1F5F9;font-weight:600;' : 'color:#E2E8F0;') + lvlBg[lvl] + (c.kind !== 'm' ? sep + 'font-weight:700;color:#F8FAFC;' : '');
 
-		let h = '<div style="max-height:620px;overflow:auto;"><table style="border-collapse:collapse;background:#1E293B;min-width:100%;">';
-		/* header row 1: Service Year + year spans */
-		h += '<tr style="background:#334155;"><th style="' + thL + '" rowspan="2">Location</th>';
-		years.forEach(y => { h += '<th style="' + th + '" colspan="' + y.span + '">' + y.year + '</th>'; });
-		h += '</tr>';
-		/* header row 2: month abbreviations */
-		h += '<tr style="background:#334155;">';
-		months.forEach(m => {
-			const idx = parseInt(m.split('-')[1], 10) - 1;
-			h += '<th style="' + th + '">' + (this._monthNames()[idx] || m) + '</th>';
+		let h = '<div style="width:100%;overflow-x:auto;"><table style="border-collapse:collapse;background:#1E293B;min-width:100%;">\n';
+		/* header row 1: Service Year + year spans (each spans its months + its subtotal) + grand Total */
+		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
+		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
+		h += '<th style="' + th + sep + '" rowspan="2">Total</th></tr>\n';
+		/* header row 2: Location + month abbreviations + per-year Total */
+		h += '<tr style="background:#334155;"><th style="' + thL + '">Location</th>';
+		yearGroups.forEach(g => {
+			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + '">' + (mn[idx] || m) + '</th>'; });
+			h += '<th style="' + th + sep + '">Total</th>';
 		});
-		h += '</tr>';
+		h += '</tr>\n';
 
-		const blanks = months.map(() => '<td style="' + tdC + '"></td>').join('');
 		const sortK = (o) => Object.keys(o).sort();
+		const renderRow = (label, lvl, agg) => {
+			let r = '<tr><td style="' + labelStyle(lvl) + '">' + label + '</td>';
+			cols.forEach(c => { const v = colVal(agg, c); r += '<td style="' + cellStyle(c, lvl) + '">' + (v ? v : '') + '</td>'; });
+			return r + '</tr>\n';
+		};
 
+		/* Every level shows its rolled-up counts (Location > Utility > Meter > Bill Type). */
 		sortK(tree).forEach(loc => {
-			h += '<tr><td style="' + lvlStyle(0) + '">' + loc + '</td>' + blanks + '</tr>';
+			h += renderRow(loc, 0, aggOf(tree[loc]));
 			const U = tree[loc];
 			sortK(U).forEach(util => {
-				h += '<tr><td style="' + lvlStyle(1) + '">' + util + '</td>' + blanks + '</tr>';
+				h += renderRow(util, 1, aggOf(U[util]));
 				const M = U[util];
 				sortK(M).forEach(meter => {
-					h += '<tr><td style="' + lvlStyle(2) + '">' + meter + '</td>' + blanks + '</tr>';
+					h += renderRow(meter, 2, aggOf(M[meter]));
 					const B = M[meter];
-					sortK(B).forEach(bt => {
-						const counts = B[bt];
-						let cells = '';
-						months.forEach(m => { cells += '<td style="' + tdC + '">' + (counts[m] ? counts[m] : '') + '</td>'; });
-						h += '<tr><td style="' + lvlStyle(3) + '">' + bt + '</td>' + cells + '</tr>';
-					});
+					sortK(B).forEach(bt => { h += renderRow(bt, 3, B[bt]); });
 				});
 			});
 		});
+		/* Grand Total row. */
+		h += renderRow('Total', 0, aggOf(tree)).replace('<tr>', '<tr style="background:#334155;border-top:2px solid #475569;">');
 		h += '</table></div>';
 		return h;
 	},
@@ -222,21 +252,27 @@ export default {
 		};
 	},
 
-	/* Chart data as plain rows for "Show as a Table" / Export (Utility × month counts). */
+	/* Chart data as plain rows for "Show as a Table" / Export: one row per invoice month
+	   (newest first), one column per utility — matching the Power BI "Count of Bills by
+	   Utility Types" tabular view. */
 	getUtilityChartTableData() {
-		const months = this.getMonths();               // newest first
+		const months = this.getMonths();               // YYYY-MM, newest first
+		const mn = this._monthNames();
 		const bills = this._allBills();
-		const utils = {};
+		const utilSet = {};
+		const byMonthUtil = {};
 		bills.forEach(r => {
 			const u = r.utility || '(none)';
-			if (!utils[u]) utils[u] = {};
-			utils[u][r.month] = (utils[u][r.month] || 0) + 1;
+			utilSet[u] = true;
+			const mu = byMonthUtil[r.month] || (byMonthUtil[r.month] = {});
+			mu[u] = (mu[u] || 0) + 1;
 		});
-		return Object.keys(utils).sort().map(u => {
-			const row = { 'Utility Type': u };
-			let total = 0;
-			months.forEach(m => { const c = utils[u][m] || 0; row[this._monthLabel(m)] = c; total += c; });
-			row.Total = total;
+		const utils = Object.keys(utilSet).sort();
+		return months.map(m => {
+			const idx = parseInt(m.split('-')[1], 10) - 1;
+			const row = { 'Service Year, Service Month': m.split('-')[0] + ', ' + (mn[idx] || m) };
+			const mu = byMonthUtil[m] || {};
+			utils.forEach(u => { row[u] = mu[u] || ''; });
 			return row;
 		});
 	}

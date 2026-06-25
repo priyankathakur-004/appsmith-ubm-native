@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_rbmtx_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rbmtx_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_rbmtx_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rbmtx_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rbmtxmenuk",
+  "leftColumn": 33,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_rbmtx_exp": {
+      "id": "mi_rbmtx_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'RB_Matrix');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'received_bills.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_rbmtx_exp"
+    },
+    "mi_rbmtx_tbl": {
+      "id": "mi_rbmtx_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'RB_Matrix');\nstoreValue('woTable', ReceivedBillsHelper.getMatrixTableData());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_rbmtx_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 10,
+  "mobileLeftColumn": 33,
+  "mobileRightColumn": 37,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 1,
+  "parentId": "rbcanvas001",
+  "placement": "CENTER",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 37,
+  "topRow": 6,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "rbmtxmenu01",
+  "widgetName": "RBMatrixMenu"
+}
