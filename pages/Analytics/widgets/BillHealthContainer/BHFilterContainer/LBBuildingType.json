@@ -12,6 +12,9 @@
     },
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "sourceData"
     }
   ],
   "dynamicPropertyPathList": [
@@ -38,7 +41,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 22,
   "serverSideFiltering": false,
-  "sourceData": [],
+  "sourceData": "{{ (fetch_building_types.data || []).map(d => ({label: d.building_type, value: d.building_type})) }}",
   "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
@@ -47,6 +50,6 @@
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
-  "isDisabled": true,
+  "isDisabled": false,
   "labelAlignment": "left"
 }

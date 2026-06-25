@@ -23,7 +23,8 @@ export default {
 			daysToNext: r.days_to_next_expected_due_date,
 			meterId: r.meter_id || '',
 			said: r.said || '',
-			vendor: r.vendor || ''
+			vendor: r.vendor || '',
+			buildingType: r.building_type || ''
 		}));
 	},
 
@@ -61,6 +62,7 @@ export default {
 		const bt = this._multi(typeof BHBillTypeSelect !== 'undefined' ? BHBillTypeSelect : null);
 		const dl = this._multi(typeof BHDaysLateSelect !== 'undefined' ? BHDaysLateSelect : null);
 		const dn = this._multi(typeof BHDaysToNextSelect !== 'undefined' ? BHDaysToNextSelect : null);
+		const bldg = this._multi(typeof LBBuildingType !== 'undefined' ? LBBuildingType : null);
 		return rows.filter(r => {
 			if (acct.length && acct.indexOf(r.accountStatus) === -1) return false;
 			if (!this._hasAny(r.utility, util)) return false;
@@ -69,6 +71,7 @@ export default {
 			if (!this._hasAny(r.lastBillType, bt)) return false;
 			if (dl.length && dl.indexOf(this._daysLateBucket(r.daysLate)) === -1) return false;
 			if (dn.length && dn.indexOf(this._daysToNextBucket(r.daysToNext)) === -1) return false;
+			if (bldg.length && bldg.indexOf(r.buildingType) === -1) return false;
 			return true;
 		});
 	},

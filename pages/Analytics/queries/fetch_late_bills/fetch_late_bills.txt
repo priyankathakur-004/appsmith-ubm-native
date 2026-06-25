@@ -1,50 +1,50 @@
-WITH base AS (
-    SELECT
-        e.billing_id, e.days_late, e.last_bill_invoice_date, e.last_bill_due_date,
-        e.expected_bill_arrival, e.last_bill_service_start_date, e.last_bill_adj_service_end_date,
-        e.last_bill_id, e.account_status, e.utility, e.meter_id, e.vendor,
-        l.name      AS loc_name,
-        bm.bill_type AS last_bill_type
-    FROM bill_management_v2.reports_expected_bills_by_account e
-    LEFT JOIN bill_management_v2.locations l   ON l.id  = e.location_id
-    LEFT JOIN bill_management_v2.bill_metas bm ON bm.id = e.last_bill_id
-    WHERE e.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
-      AND e.account_status IN ('Open', 'Unknown')
-      AND COALESCE(TRIM(e.billing_id), '') <> ''
-      AND e.last_bill_invoice_date >= '{{ LBDateHelper.start() }}'
-      AND e.last_bill_invoice_date <  '{{ LBDateHelper.end() }}'
-      AND e.days_late >= 0
+WITH abi AS (   -- analytics_bills_items: latest bill per virtual account (UBM ord=1)
+    SELECT virtual_account_id, days_of_service, due_date
+    FROM (
+        SELECT a.virtual_account_id,
+               row_number() OVER (PARTITION BY a.virtual_account_id
+                                  ORDER BY a.statement_date DESC, a.bill_adjusted_end_date DESC, b.expected_next_bill_date DESC) AS ord,
+               b.days_of_service,
+               c.due_date
+        FROM bill_management_v2.analytics_bills_items a
+        JOIN bill_management_v2.bill_metas   m ON a.bill_id = m.id
+        JOIN bill_management_v2.bill_items   b ON a.bill_item_id = b.id
+        JOIN bill_management_v2.bill_records c ON b.bill_record_id = c.id AND c.deleted_at IS NULL
+        WHERE a.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+    ) x
+    WHERE x.ord = 1
 ),
-rep AS (   -- representative = the account's latest bill (matches UBM)
-    SELECT DISTINCT ON (billing_id) *
-    FROM base
-    ORDER BY billing_id, last_bill_invoice_date DESC NULLS LAST, last_bill_id DESC
-),
-agg AS (   -- meters / utilities / locations / vendors across the whole account
-    SELECT billing_id,
-        string_agg(DISTINCT loc_name, ', ' ORDER BY loc_name) AS locations,
-        string_agg(DISTINCT utility,  ', ' ORDER BY utility)  AS utilities,
-        string_agg(DISTINCT meter_id, ', ' ORDER BY meter_id) AS meters,
-        string_agg(DISTINCT vendor,   ', ' ORDER BY vendor)   AS vendors
-    FROM base GROUP BY billing_id
+reb AS (   -- reports_expected_bills: one expected_bill_arrival per account
+    SELECT customer_id, billing_id, MIN(expected_bill_arrival) AS expected_bill_arrival
+    FROM bill_management_v2.reports_expected_bills
+    GROUP BY customer_id, billing_id
 )
 SELECT
-    r.days_late                                                             AS days_late,
-    TO_CHAR(r.last_bill_invoice_date, 'DD/MM/YYYY')                         AS last_bill_invoice_date,
-    r.billing_id                                                            AS billing_account,
-    a.locations                                                             AS location,
-    r.account_status,
-    a.utilities                                                             AS utility_type,
-    r.last_bill_type                                                        AS last_bill_type,
-    TO_CHAR(r.last_bill_due_date, 'DD/MM/YYYY')                             AS last_bill_due_date,
-    (r.last_bill_adj_service_end_date - r.last_bill_service_start_date + 1)  AS days_of_service,
-    TO_CHAR(r.expected_bill_arrival, 'DD/MM/YYYY')                          AS expected_bill_arrival,
-    TO_CHAR(r.last_bill_due_date + INTERVAL '30 days', 'DD/MM/YYYY')        AS expected_bill_due_date,
-    ((r.last_bill_due_date + INTERVAL '30 days')::date - CURRENT_DATE)      AS days_to_next_expected_due_date,
-    a.meters                                                                AS meter_id,
-    r.billing_id                                                            AS said,
-    a.vendors                                                               AS vendor
-FROM rep r
-JOIN agg a ON a.billing_id = r.billing_id
-ORDER BY r.days_late DESC
+    (CURRENT_DATE - reb.expected_bill_arrival)                          AS days_late,
+    TO_CHAR(rnva.date_of_last_bill, 'DD/MM/YYYY')                       AS last_bill_invoice_date,
+    rnva.billing_id                                                    AS billing_account,
+    rnva.location                                                      AS location,
+    rnva.account_status,
+    rnva.utility_type,
+    rnva.bill_type                                                     AS last_bill_type,
+    TO_CHAR(abi.due_date, 'DD/MM/YYYY')                                AS last_bill_due_date,
+    abi.days_of_service,
+    TO_CHAR(reb.expected_bill_arrival, 'DD/MM/YYYY')                   AS expected_bill_arrival,
+    TO_CHAR(abi.due_date + INTERVAL '30 days', 'DD/MM/YYYY')           AS expected_bill_due_date,
+    ((abi.due_date + INTERVAL '30 days')::date - CURRENT_DATE)         AS days_to_next_expected_due_date,
+    rnva.meter_id,
+    rnva.service_account_id                                            AS said,
+    rnva.vendor,
+    l.building_type
+FROM bill_management_v2.reports_new_virtual_accounts rnva
+LEFT JOIN abi                                  ON abi.virtual_account_id = rnva.virtual_account_id
+LEFT JOIN reb                                  ON reb.customer_id = rnva.customer_id AND reb.billing_id = rnva.billing_id
+LEFT JOIN bill_management_v2.locations l       ON l.id = rnva.location_id
+WHERE rnva.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND rnva.account_status IN ('Open', 'Unknown')
+  AND COALESCE(TRIM(rnva.billing_id), '') <> ''
+  AND rnva.date_of_last_bill >= '{{ LBDateHelper.start() }}'
+  AND rnva.date_of_last_bill <  '{{ LBDateHelper.end() }}'
+  AND (CURRENT_DATE - reb.expected_bill_arrival) >= 0
+ORDER BY days_late DESC
 LIMIT 5000
