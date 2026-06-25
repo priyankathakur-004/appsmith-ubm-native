@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_3cb69703-6c69-4107-9065-d2826f58eecf",
+  "id": "Analytics_ReceivedBillsHelper",
+  "unpublishedCollection": {
+    "name": "ReceivedBillsHelper",
+    "pageId": "Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

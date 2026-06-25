@@ -367,6 +367,51 @@
       "version": 1,
       "widgetId": "lbcanvas001",
       "widgetName": "CanvasLB"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 850,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "canvasrbkey",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1200,
+      "minWidth": 450,
+      "mobileBottomRow": 1201,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "bhtabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "shouldScrollContents": false,
+      "tabId": "tabrecvbill1",
+      "tabName": "Received Bills Details",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "rbcanvas001",
+      "widgetName": "CanvasRB"
     }
   ],
   "defaultTab": "Invoice Participation",
@@ -469,6 +514,13 @@
       "isVisible": true,
       "label": "Warnings over Time",
       "widgetId": "wotcanvas001"
+    },
+    "tabrecvbill1": {
+      "id": "tabrecvbill1",
+      "index": 8,
+      "isVisible": true,
+      "label": "Received Bills Details",
+      "widgetId": "rbcanvas001"
     }
   },
   "topRow": 42,

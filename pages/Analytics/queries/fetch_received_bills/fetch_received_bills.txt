@@ -1,0 +1,22 @@
+-- Received Bills Details: one row per received bill (reports_customer_monthly_usage),
+-- same table the rest of the app reads (fetch_bill_types / fetch_analytics_data). The
+-- matrix counts these rows by Location > Utility > Meter > Bill Type across invoice months,
+-- and the chart counts them by Utility per month. Date window is pushed to SQL via the
+-- shared Bill-Health date filter (LFDateHelper reads BHDateModeSelect/Num/Unit); the
+-- categorical Account Status / Utility / Location filters are applied JS-side in
+-- ReceivedBillsHelper so they react live without a re-query.
+SELECT
+    m.location_description                         AS location,
+    m.utility_type                                 AS utility_type,
+    m.meter_serial                                 AS meter_id,
+    m.bill_type                                    AS bill_type,
+    m.account_status                               AS account_status,
+    m.vendor_name                                  AS vendor,
+    m.time_period                                  AS invoice_date_raw,
+    TO_CHAR(m.time_period, 'YYYY-MM')              AS invoice_month
+FROM bill_management_v2.reports_customer_monthly_usage m
+WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND m.time_period >= '{{ LFDateHelper.start() }}'
+  AND m.time_period <  '{{ LFDateHelper.end() }}'
+ORDER BY m.location_description, m.utility_type, m.meter_serial, m.bill_type, m.time_period
+LIMIT 20000
