@@ -15,13 +15,23 @@ export default {
 			location: r.location || '',
 			accountStatus: r.account_status || '',
 			utility: r.utility_type || '',
+			lastBillType: r.last_bill_type || '',
 			lastDueDate: r.last_bill_due_date || '',
 			daysOfService: r.days_of_service,
 			expectedArrival: r.expected_bill_arrival || '',
+			expectedDueDate: r.expected_bill_due_date || '',
+			daysToNext: r.days_to_next_expected_due_date,
 			meterId: r.meter_id || '',
 			said: r.said || '',
 			vendor: r.vendor || ''
 		}));
+	},
+
+	/* Match a selection against a comma-joined cell (utility/location/vendor are aggregated per account). */
+	_hasAny(cell, selected) {
+		if (!selected.length) return true;
+		const parts = String(cell || '').split(',').map(s => s.trim());
+		return selected.some(s => parts.indexOf(s) !== -1);
 	},
 
 	/* Apply the Bill Health page filters (Account Status / Utility / Location / Vendor). */
@@ -32,9 +42,9 @@ export default {
 		const vend = this._multi(typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null);
 		return rows.filter(r => {
 			if (acct.length && acct.indexOf(r.accountStatus) === -1) return false;
-			if (util.length && util.indexOf(r.utility) === -1) return false;
-			if (loc.length && loc.indexOf(r.location) === -1) return false;
-			if (vend.length && vend.indexOf(r.vendor) === -1) return false;
+			if (!this._hasAny(r.utility, util)) return false;
+			if (!this._hasAny(r.location, loc)) return false;
+			if (!this._hasAny(r.vendor, vend)) return false;
 			return true;
 		});
 	},
@@ -50,9 +60,12 @@ export default {
 			'Location': r.location,
 			'Account Status': r.accountStatus,
 			'Utility Type': r.utility,
+			'Last Bill Type': r.lastBillType,
 			'Last Bill Due Date': r.lastDueDate,
 			'Days of Service': r.daysOfService,
 			'Expected Bill Arrival': r.expectedArrival,
+			'Expected Bill Due Date': r.expectedDueDate,
+			'Days To Next Expected Due Date': r.daysToNext,
 			'Meter ID': r.meterId,
 			'SAID': r.said,
 			'Vendor': r.vendor
