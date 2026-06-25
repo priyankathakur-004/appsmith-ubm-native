@@ -25,7 +25,7 @@
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbutil001",
   "labelText": "Utility Type",
-  "leftColumn": 25,
+  "leftColumn": 22,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
@@ -36,7 +36,7 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 33,
+  "rightColumn": 29,
   "serverSideFiltering": false,
   "sourceData": "{{ (fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type})) }}",
   "topRow": 2,
@@ -47,5 +47,6 @@
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
-  "isDisabled": false
+  "isDisabled": false,
+  "labelAlignment": "left"
 }

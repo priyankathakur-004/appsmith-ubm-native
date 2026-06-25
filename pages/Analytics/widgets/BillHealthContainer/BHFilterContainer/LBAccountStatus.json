@@ -25,7 +25,7 @@
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbacct001",
   "labelText": "Account Status",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
@@ -36,7 +36,7 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 9,
+  "rightColumn": 8,
   "serverSideFiltering": false,
   "sourceData": "{{ (fetch_account_status.data || []).map(d => ({label: d.account_status, value: d.account_status})) }}",
   "topRow": 2,
@@ -47,5 +47,6 @@
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
-  "isDisabled": false
+  "isDisabled": false,
+  "labelAlignment": "left"
 }

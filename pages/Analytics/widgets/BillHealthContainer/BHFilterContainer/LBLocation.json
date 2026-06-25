@@ -25,7 +25,7 @@
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbloc0001",
   "labelText": "Location",
-  "leftColumn": 9,
+  "leftColumn": 8,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
@@ -36,7 +36,7 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 17,
+  "rightColumn": 15,
   "serverSideFiltering": false,
   "sourceData": "{{ fetch_locations.data.map( (obj) => ({'label': obj.name, 'value': obj.name }) ) }}",
   "topRow": 2,
@@ -47,5 +47,6 @@
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
-  "isDisabled": false
+  "isDisabled": false,
+  "labelAlignment": "left"
 }

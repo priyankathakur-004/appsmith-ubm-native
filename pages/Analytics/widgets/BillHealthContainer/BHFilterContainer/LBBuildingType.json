@@ -22,7 +22,7 @@
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbbldg001",
   "labelText": "Building Type",
-  "leftColumn": 17,
+  "leftColumn": 15,
   "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
@@ -33,7 +33,7 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 25,
+  "rightColumn": 22,
   "serverSideFiltering": false,
   "sourceData": [],
   "topRow": 2,
@@ -44,5 +44,6 @@
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
-  "isDisabled": true
+  "isDisabled": true,
+  "labelAlignment": "left"
 }

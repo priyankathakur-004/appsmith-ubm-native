@@ -74,5 +74,6 @@
   "widgetName": "BHDaysLateSelect",
   "labelPosition": "Top",
   "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem"
+  "labelTextSize": "0.875rem",
+  "labelAlignment": "left"
 }

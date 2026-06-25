@@ -25,7 +25,7 @@
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbdtunit1",
   "labelText": "",
-  "leftColumn": 47,
+  "leftColumn": 46,
   "onOptionChange": "{{ fetch_late_bills.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
@@ -38,9 +38,13 @@
   "renderMode": "CANVAS",
   "rightColumn": 52,
   "sourceData": "[{\"label\": \"Select\", \"value\": \"Select\"}, {\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Weeks (Calendar)\", \"value\": \"Weeks (Calendar)\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Months (Calendar)\", \"value\": \"Months (Calendar)\"}, {\"label\": \"Years\", \"value\": \"Years\"}, {\"label\": \"Years (Calendar)\", \"value\": \"Years (Calendar)\"}]",
-  "topRow": 4,
+  "topRow": 2,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "lbdateunit1",
-  "widgetName": "LBDateUnit"
+  "widgetName": "LBDateUnit",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
 }
