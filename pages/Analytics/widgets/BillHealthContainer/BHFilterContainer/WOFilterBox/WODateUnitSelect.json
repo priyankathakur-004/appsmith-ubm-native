@@ -28,7 +28,7 @@
   "isLoading": false,
   "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
   "key": "wodateunik",
-  "labelText": " ",
+  "labelText": " ",
   "leftColumn": 58,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 58,

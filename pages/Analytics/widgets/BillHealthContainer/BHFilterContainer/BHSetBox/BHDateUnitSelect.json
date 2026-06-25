@@ -27,7 +27,7 @@
   "isLoading": false,
   "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhdateunik",
-  "labelText": " ",
+  "labelText": " ",
   "leftColumn": 58,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 58,
