@@ -135,7 +135,7 @@ export default {
 		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:left;white-space:nowrap;' + lvlColor[lvl] + lvlBg[lvl];
 		const cellStyle = (c, lvl) => tdBase + (lvl <= 1 ? 'color:#F1F5F9;font-weight:600;' : 'color:#E2E8F0;') + lvlBg[lvl] + (c.kind !== 'm' ? sep + 'font-weight:700;color:#F8FAFC;' : '');
 
-		let h = '<div style="width:100%;overflow-x:auto;"><table style="border-collapse:collapse;background:#1E293B;min-width:100%;">\n';
+		let h = '<div style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#1E293B;min-width:100%;">\n';
 		/* header row 1: Service Year + year spans (each spans its months + its subtotal) + grand Total */
 		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
