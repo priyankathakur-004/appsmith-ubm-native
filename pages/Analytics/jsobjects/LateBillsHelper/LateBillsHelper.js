@@ -34,17 +34,41 @@ export default {
 		return selected.some(s => parts.indexOf(s) !== -1);
 	},
 
-	/* Apply the Bill Health page filters (Account Status / Utility / Location / Vendor). */
+	/* UBM Days-Late bucket from the numeric days_late. */
+	_daysLateBucket(d) {
+		if (d == null) return 'unknown';
+		if (d < 0) return 'notlate';
+		if (d <= 7) return '0-7';
+		if (d <= 15) return '8-15';
+		return '>15';
+	},
+
+	/* UBM Days-to-Next-Due bucket (negative = overdue → "5 days or less"). */
+	_daysToNextBucket(d) {
+		if (d == null) return null;
+		if (d <= 5) return '<=5';
+		if (d <= 10) return '6-10';
+		return '>10';
+	},
+
+	/* Apply the Bill Health filters: Account Status / Utility / Location / Vendor +
+	   the UBM-specific Bill Type / Days Late / Days to Next Due Date. */
 	_applyFilters(rows) {
 		const acct = this._multi(typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null);
 		const util = this._multi(typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null);
 		const loc = this._multi(typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null);
 		const vend = this._multi(typeof BHVendorSelect !== 'undefined' ? BHVendorSelect : null);
+		const bt = this._multi(typeof BHBillTypeSelect !== 'undefined' ? BHBillTypeSelect : null);
+		const dl = this._multi(typeof BHDaysLateSelect !== 'undefined' ? BHDaysLateSelect : null);
+		const dn = this._multi(typeof BHDaysToNextSelect !== 'undefined' ? BHDaysToNextSelect : null);
 		return rows.filter(r => {
 			if (acct.length && acct.indexOf(r.accountStatus) === -1) return false;
 			if (!this._hasAny(r.utility, util)) return false;
 			if (!this._hasAny(r.location, loc)) return false;
 			if (!this._hasAny(r.vendor, vend)) return false;
+			if (!this._hasAny(r.lastBillType, bt)) return false;
+			if (dl.length && dl.indexOf(this._daysLateBucket(r.daysLate)) === -1) return false;
+			if (dn.length && dn.indexOf(this._daysToNextBucket(r.daysToNext)) === -1) return false;
 			return true;
 		});
 	},
