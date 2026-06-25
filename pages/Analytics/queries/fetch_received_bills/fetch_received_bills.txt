@@ -1,22 +1,36 @@
--- Received Bills Details: one row per received bill (reports_customer_monthly_usage),
--- same table the rest of the app reads (fetch_bill_types / fetch_analytics_data). The
--- matrix counts these rows by Location > Utility > Meter > Bill Type across invoice months,
--- and the chart counts them by Utility per month. Date window is pushed to SQL via the
--- shared Bill-Health date filter (LFDateHelper reads BHDateModeSelect/Num/Unit); the
--- categorical Account Status / Utility / Location filters are applied JS-side in
--- ReceivedBillsHelper so they react live without a re-query.
-SELECT
-    m.location_description                         AS location,
-    m.utility_type                                 AS utility_type,
-    m.meter_serial                                 AS meter_id,
-    m.bill_type                                    AS bill_type,
-    m.account_status                               AS account_status,
-    m.vendor_name                                  AS vendor,
-    m.time_period                                  AS invoice_date_raw,
-    TO_CHAR(m.time_period, 'YYYY-MM')              AS invoice_month
-FROM bill_management_v2.reports_customer_monthly_usage m
-WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
-  AND m.time_period >= '{{ LFDateHelper.start() }}'
-  AND m.time_period <  '{{ LFDateHelper.end() }}'
-ORDER BY m.location_description, m.utility_type, m.meter_serial, m.bill_type, m.time_period
+WITH bt AS (
+    SELECT DISTINCT ON (m.meter_serial, m.utility_type)
+           m.meter_serial,
+           m.utility_type,
+           m.bill_type,
+           m.account_status
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+    ORDER BY m.meter_serial, m.utility_type, m.time_period DESC
+)
+SELECT DISTINCT
+    bm.id                                              AS bill_id,
+    l.name                                             AS location,
+    bi.commodity                                       AS utility_type,
+    bi.meter_serial                                    AS meter_id,
+    COALESCE(bt.bill_type, '(unspecified)')            AS bill_type,
+    COALESCE(bt.account_status, '')                    AS account_status,
+    COALESCE(NULLIF(BTRIM(cvpn.pretty_name), ''), pvn.pretty_name, br.vendor_code) AS vendor,
+    br.statement_date::date                            AS invoice_date_raw,
+    TO_CHAR(br.statement_date, 'YYYY-MM')              AS invoice_month
+FROM bill_management_v2.bill_metas bm
+INNER JOIN bill_management_v2.bill_metas_bill_records bmbr ON bmbr.bill_meta_id = bm.id AND bmbr.status = 'active'
+INNER JOIN bill_management_v2.bill_records br ON br.id = bmbr.bill_record_id
+INNER JOIN bill_management_v2.bill_items bi ON bi.bill_record_id = br.id
+INNER JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+INNER JOIN bill_management_v2.locations l ON l.id = biva.location_id
+LEFT JOIN bill_management_v2.providers_pretty_name pvn ON pvn.code::text = br.vendor_code::text
+LEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn ON cvpn.customer_id = bm.customer_id AND cvpn.vendor_id = pvn.vendor_id
+LEFT JOIN bt ON bt.meter_serial = bi.meter_serial AND bt.utility_type = bi.commodity
+WHERE bm.deleted_at IS NULL
+  AND bm.customer_ready IS NOT NULL
+  AND bm.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND br.statement_date >= '{{ LFDateHelper.start() }}'
+  AND br.statement_date <  '{{ LFDateHelper.end() }}'
+ORDER BY location, utility_type, meter_id, bill_type, invoice_date_raw
 LIMIT 20000

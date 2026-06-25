@@ -101,13 +101,11 @@ export default {
 			g.months.push(m);
 		});
 
-		/* Flat column model: each year's months, a per-year subtotal, then a grand total. */
+		/* Column model: just the invoice months (totals live only in "Show as a Table"). */
 		const cols = [];
 		yearGroups.forEach(g => {
 			g.months.forEach(m => cols.push({ kind: 'm', month: m }));
-			cols.push({ kind: 'yt', months: g.months });
 		});
-		cols.push({ kind: 'gt' });
 
 		/* Aggregate month -> count for any subtree (leaves carry numbers, groups carry children). */
 		const aggOf = (node) => {
@@ -136,15 +134,14 @@ export default {
 		const cellStyle = (c, lvl) => tdBase + (lvl <= 1 ? 'color:#F1F5F9;font-weight:600;' : 'color:#E2E8F0;') + lvlBg[lvl] + (c.kind !== 'm' ? sep + 'font-weight:700;color:#F8FAFC;' : '');
 
 		let h = '<div style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#1E293B;min-width:100%;">\n';
-		/* header row 1: Service Year + year spans (each spans its months + its subtotal) + grand Total */
+		/* header row 1: Service Year + year spans */
 		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
-		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
-		h += '<th style="' + th + sep + '" rowspan="2">Total</th></tr>\n';
-		/* header row 2: Location + month abbreviations + per-year Total */
+		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
+		h += '</tr>\n';
+		/* header row 2: Location + month abbreviations */
 		h += '<tr style="background:#334155;"><th style="' + thL + '">Location</th>';
 		yearGroups.forEach(g => {
 			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + '">' + (mn[idx] || m) + '</th>'; });
-			h += '<th style="' + th + sep + '">Total</th>';
 		});
 		h += '</tr>\n';
 
@@ -169,8 +166,6 @@ export default {
 				});
 			});
 		});
-		/* Grand Total row. */
-		h += renderRow('Total', 0, aggOf(tree)).replace('<tr>', '<tr style="background:#334155;border-top:2px solid #475569;">');
 		h += '</table></div>';
 		return h;
 	},
