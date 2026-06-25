@@ -3,7 +3,7 @@
   "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 9,
+  "bottomRow": 10,
   "boxShadow": "none",
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
@@ -30,7 +30,7 @@
   "isLoading": false,
   "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhvendselk",
-  "labelText": "",
+  "labelText": "Vendor",
   "leftColumn": 9,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 9,
@@ -48,9 +48,13 @@
   "rightColumn": 20,
   "serverSideFiltering": false,
   "sourceData": "{{ BillHealthHelper.getVendorOptions() }}",
-  "topRow": 4,
+  "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "bhvendsel01",
-  "widgetName": "BHVendorSelect"
+  "widgetName": "BHVendorSelect",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
 }

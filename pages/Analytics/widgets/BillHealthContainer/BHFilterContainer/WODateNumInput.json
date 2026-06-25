@@ -3,7 +3,7 @@
   "animateLoading": true,
   "autoFocus": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 9,
+  "bottomRow": 10,
   "bottomRowBeforeCollapse": 9,
   "boxShadow": "none",
   "defaultText": "6",
@@ -38,7 +38,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 55,
@@ -63,10 +63,11 @@
   "rightColumn": 58,
   "shouldAllowAutofill": false,
   "showStepArrows": true,
-  "topRow": 4,
+  "topRow": 2,
   "topRowBeforeCollapse": 4,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "wodatenum01",
-  "widgetName": "WODateNumInput"
+  "widgetName": "WODateNumInput",
+  "labelText": " "
 }

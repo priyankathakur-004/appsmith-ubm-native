@@ -2,7 +2,7 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 14,
+  "bottomRow": 10,
   "boxShadow": "none",
   "defaultOptionValue": "Last",
   "dynamicBindingPathList": [
@@ -27,7 +27,7 @@
   "isLoading": false,
   "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhdatemodk",
-  "labelText": "",
+  "labelText": "Date",
   "leftColumn": 50,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 50,
@@ -44,10 +44,14 @@
   "renderMode": "CANVAS",
   "rightColumn": 55,
   "sourceData": "[{\"label\": \"Last\", \"value\": \"Last\"}, {\"label\": \"Next\", \"value\": \"Next\"}, {\"label\": \"This\", \"value\": \"This\"}]",
-  "topRow": 9,
+  "topRow": 2,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "bhdatemode1",
   "widgetName": "BHDateModeSelect",
-  "onOptionChange": "{{ BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}"
+  "onOptionChange": "{{ BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : null }}",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
 }

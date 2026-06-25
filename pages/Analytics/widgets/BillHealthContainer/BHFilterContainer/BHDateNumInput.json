@@ -3,7 +3,7 @@
   "animateLoading": true,
   "autoFocus": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 9,
+  "bottomRow": 10,
   "boxShadow": "none",
   "defaultText": "12",
   "dynamicBindingPathList": [
@@ -37,7 +37,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelStyle": "",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "#94a3b8",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 55,
@@ -62,9 +62,10 @@
   "rightColumn": 58,
   "shouldAllowAutofill": false,
   "showStepArrows": true,
-  "topRow": 4,
+  "topRow": 2,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "bhdatenum01",
-  "widgetName": "BHDateNumInput"
+  "widgetName": "BHDateNumInput",
+  "labelText": " "
 }

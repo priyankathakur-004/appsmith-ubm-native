@@ -2,7 +2,7 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 9,
+  "bottomRow": 10,
   "boxShadow": "none",
   "defaultOptionValue": "Months",
   "dynamicBindingPathList": [
@@ -27,7 +27,7 @@
   "isLoading": false,
   "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhdateunik",
-  "labelText": "",
+  "labelText": " ",
   "leftColumn": 58,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 58,
@@ -45,9 +45,13 @@
   "renderMode": "CANVAS",
   "rightColumn": 64,
   "sourceData": "[{\"label\": \"Select\", \"value\": \"Select\"}, {\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Weeks (Calendar)\", \"value\": \"Weeks (Calendar)\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Months (Calendar)\", \"value\": \"Months (Calendar)\"}, {\"label\": \"Years\", \"value\": \"Years\"}, {\"label\": \"Years (Calendar)\", \"value\": \"Years (Calendar)\"}]",
-  "topRow": 4,
+  "topRow": 2,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "bhdateunit1",
-  "widgetName": "BHDateUnitSelect"
+  "widgetName": "BHDateUnitSelect",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
 }

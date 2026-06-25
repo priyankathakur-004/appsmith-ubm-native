@@ -3,7 +3,7 @@
   "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 14,
+  "bottomRow": 10,
   "boxShadow": "none",
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
@@ -30,7 +30,7 @@
   "isLoading": false,
   "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhutilselk",
-  "labelText": "",
+  "labelText": "Utility Type",
   "leftColumn": 31,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 31,
@@ -48,9 +48,13 @@
   "rightColumn": 40,
   "serverSideFiltering": false,
   "sourceData": "{{ (fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type})) }}",
-  "topRow": 9,
+  "topRow": 2,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "bhutilsel01",
-  "widgetName": "BHUtilitySelect"
+  "widgetName": "BHUtilitySelect",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
 }
