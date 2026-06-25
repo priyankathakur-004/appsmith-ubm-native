@@ -9,6 +9,9 @@
   "dynamicBindingPathList": [
     {
       "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicPropertyPathList": [

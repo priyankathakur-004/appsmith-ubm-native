@@ -8,6 +8,9 @@
   "dynamicBindingPathList": [
     {
       "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicPropertyPathList": [
@@ -24,7 +27,7 @@
   "isLoading": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
   "key": "klbdtunit1",
-  "labelText": "",
+  "labelText": "\u00a0",
   "leftColumn": 46,
   "onOptionChange": "{{ fetch_late_bills.run() }}",
   "optionLabel": "label",

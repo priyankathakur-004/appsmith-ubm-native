@@ -9,6 +9,9 @@
   "dynamicBindingPathList": [
     {
       "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -57,5 +60,5 @@
   "version": 2,
   "widgetId": "lbdatenum01",
   "widgetName": "LBDateNum",
-  "labelText": ""
+  "labelText": "\u00a0"
 }

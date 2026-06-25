@@ -12,6 +12,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
     }
   ],
   "dynamicPropertyPathList": [
