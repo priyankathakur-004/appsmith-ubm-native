@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 131,
+  "bottomRow": 142,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1650,
+      "bottomRow": 1660,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -280,7 +280,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 850,
+      "bottomRow": 960,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -325,7 +325,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 850,
+      "bottomRow": 960,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -370,7 +370,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 850,
+      "bottomRow": 960,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -448,8 +448,8 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
-  "originalBottomRow": 142,
-  "originalTopRow": 53,
+  "originalBottomRow": 140,
+  "originalTopRow": 42,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",
   "parentRowSpace": 10,
@@ -501,6 +501,13 @@
       "label": "Notifications",
       "widgetId": "ntcanvas0001"
     },
+    "tabrecvbill1": {
+      "id": "tabrecvbill1",
+      "index": 8,
+      "isVisible": true,
+      "label": "Received Bills Details",
+      "widgetId": "rbcanvas001"
+    },
     "tabwarnov001": {
       "id": "tabwarnov001",
       "index": 3,
@@ -514,13 +521,6 @@
       "isVisible": true,
       "label": "Warnings over Time",
       "widgetId": "wotcanvas001"
-    },
-    "tabrecvbill1": {
-      "id": "tabrecvbill1",
-      "index": 8,
-      "isVisible": true,
-      "label": "Received Bills Details",
-      "widgetId": "rbcanvas001"
     }
   },
   "topRow": 42,

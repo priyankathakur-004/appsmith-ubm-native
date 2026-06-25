@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
+  "bottomRow": 4,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -23,8 +23,8 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 0,
-  "originalBottomRow": 0,
-  "originalTopRow": 8,
+  "originalBottomRow": 8,
+  "originalTopRow": 0,
   "parentColumnSpace": 1,
   "parentId": "rbcanvas001",
   "parentRowSpace": 10,

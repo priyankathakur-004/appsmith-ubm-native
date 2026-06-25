@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 90,
+  "bottomRow": 94,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -11,7 +11,7 @@
       "key": "fontFamily"
     }
   ],
-  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
   "fontSize": "0.875rem",
@@ -26,8 +26,6 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 37,
   "mobileTopRow": 10,
-  "originalBottomRow": 10,
-  "originalTopRow": 10,
   "parentColumnSpace": 1,
   "parentId": "rbcanvas001",
   "parentRowSpace": 10,
@@ -38,7 +36,7 @@
   "text": "{{ ReceivedBillsHelper.getMatrixHtml() }}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
-  "topRow": 10,
+  "topRow": 6,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
   "version": 1,
