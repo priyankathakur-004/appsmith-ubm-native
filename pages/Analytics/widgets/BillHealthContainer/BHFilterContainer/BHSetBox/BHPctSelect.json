@@ -31,7 +31,11 @@
   "isLoading": false,
   "isVisible": "{{ BillHealthTabs.selectedTab === 'Invoice Participation' }}",
   "key": "bhpctselk1",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
   "labelText": "% Last 12 Mo",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
   "leftColumn": 0,
   "mobileBottomRow": 9,
   "mobileLeftColumn": 0,
@@ -46,7 +50,7 @@
   "parentRowSpace": 10,
   "placeholderText": "All",
   "renderMode": "CANVAS",
-  "rightColumn": 9,
+  "rightColumn": 8,
   "serverSideFiltering": false,
   "sourceData": "{{ BillHealthHelper.getPctOptions() }}",
   "topRow": 2,
@@ -54,9 +58,5 @@
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "bhpctsel001",
-  "widgetName": "BHPctSelect",
-  "labelPosition": "Top",
-  "labelAlignment": "left",
-  "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem"
+  "widgetName": "BHPctSelect"
 }
