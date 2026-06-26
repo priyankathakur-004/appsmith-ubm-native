@@ -123,7 +123,7 @@ export default {
 		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:#9FB0C4;margin-right:8px;vertical-align:middle;">-</span>';
 		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
 
-		let h = '<div style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#172131;min-width:100%;">\n';
+		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
 		/* header row 1: Service Year + year spans */
 		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
