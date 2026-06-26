@@ -566,12 +566,13 @@ export default {
 			},
 			series: [{
 				type: 'treemap',
-				top: 44, left: 6, right: 6, bottom: 6,
+				top: 40, left: 6, right: 6, bottom: 6,
 				roam: false,
-				nodeClick: 'zoomToNode',
-				breadcrumb: { show: true, top: 22, textStyle: { color: '#94A3B8' } },
+				nodeClick: false,
+				breadcrumb: { show: false },
+				visibleMin: 1,
 				label: { show: true, position: 'insideBottomLeft', color: '#FFFFFF', fontSize: 11, formatter: '{b}' },
-				upperLabel: { show: true, height: 22, color: '#FFFFFF', fontSize: 13, fontWeight: 700, align: 'left' },
+				upperLabel: { show: true, height: 20, color: '#FFFFFF', fontSize: 12, fontWeight: 700, align: 'left' },
 				levels: [
 					{ itemStyle: { borderColor: '#0F172A', borderWidth: 2, gapWidth: 2 } },
 					{ itemStyle: { borderColor: '#1E293B', borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
