@@ -571,8 +571,8 @@ export default {
 				nodeClick: false,
 				breadcrumb: { show: false },
 				visibleMin: 1,
-				label: { show: true, position: 'insideBottomLeft', color: '#FFFFFF', fontSize: 11, formatter: '{b}' },
-				upperLabel: { show: true, height: 20, color: '#FFFFFF', fontSize: 12, fontWeight: 700, align: 'left' },
+				label: { show: true, position: 'insideTopLeft', color: '#FFFFFF', fontSize: 13, fontWeight: 700, formatter: '{b}' },
+				upperLabel: { show: false },
 				levels: [
 					{ itemStyle: { borderColor: '#0F172A', borderWidth: 2, gapWidth: 2 } },
 					{ itemStyle: { borderColor: '#1E293B', borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
