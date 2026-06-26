@@ -274,5 +274,92 @@ export default {
 			utils.forEach(u => { row[u] = mu[u] || ''; });
 			return row;
 		});
+	},
+
+	/* ── Received Bills per Location ──────────────────────────────────────────
+	   A flat per-Location matrix of received-bill counts by invoice month, WITH a
+	   per-year Total column and a Total row (mirrors the UBM "Bill counts by months
+	   for various locations" page). Same fetch_received_bills data + shared filters. */
+	getLocationMatrixHtml() {
+		const months = this.getMonths();
+		if (!months.length) {
+			return '<div style="padding:24px;color:#94A3B8;font-size:13px;">No received bills for the current filters.</div>';
+		}
+		const mn = this._monthNames();
+		const byLoc = {};
+		this._allBills().forEach(r => {
+			const L = byLoc[r.location] || (byLoc[r.location] = {});
+			L[r.month] = (L[r.month] || 0) + 1;
+		});
+
+		const yearGroups = [];
+		months.forEach(m => {
+			const y = m.split('-')[0];
+			let g = yearGroups[yearGroups.length - 1];
+			if (!g || g.year !== y) { g = { year: y, months: [] }; yearGroups.push(g); }
+			g.months.push(m);
+		});
+		const cols = [];
+		yearGroups.forEach(g => {
+			g.months.forEach(m => cols.push({ kind: 'm', month: m }));
+			cols.push({ kind: 'yt', months: g.months });
+		});
+		const colVal = (mc, c) => c.kind === 'm' ? (mc[c.month] || 0) : c.months.reduce((s, m) => s + (mc[m] || 0), 0);
+
+		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;';
+		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;';
+		const sep = 'border-left:1px solid #475569;';
+		const tdL = 'padding:5px 12px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;color:#E2E8F0;';
+		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;color:#E2E8F0;';
+
+		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
+		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
+		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
+		h += '</tr>\n';
+		h += '<tr style="background:#334155;"><th style="' + thL + '">Location</th>';
+		yearGroups.forEach(g => {
+			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + '">' + (mn[idx] || m) + '</th>'; });
+			h += '<th style="' + th + sep + '">Total</th>';
+		});
+		h += '</tr>\n';
+
+		const locs = Object.keys(byLoc).sort();
+		const grand = {};
+		locs.forEach((loc, i) => {
+			const mc = byLoc[loc];
+			for (const m in mc) grand[m] = (grand[m] || 0) + mc[m];
+			const bg = (i % 2) ? 'background:#1B2738;' : 'background:#172131;';
+			let r = '<tr><td style="' + tdL + bg + '">' + loc + '</td>';
+			cols.forEach(c => {
+				const v = colVal(mc, c);
+				const st = tdC + bg + (c.kind === 'yt' ? 'font-weight:700;color:#F8FAFC;' + sep : '');
+				r += '<td style="' + st + '">' + (v ? v : '') + '</td>';
+			});
+			h += r + '</tr>\n';
+		});
+		let tr = '<tr style="background:#334155;border-top:2px solid #475569;"><td style="' + tdL + 'background:#334155;font-weight:700;color:#F8FAFC;">Total</td>';
+		cols.forEach(c => {
+			const v = colVal(grand, c);
+			tr += '<td style="' + tdC + 'background:#334155;font-weight:700;color:#F8FAFC;' + (c.kind === 'yt' ? sep : '') + '">' + (v ? v : '') + '</td>';
+		});
+		h += tr + '</tr>\n</table></div>';
+		return h;
+	},
+
+	/* Per-location rows for "Show as a Table" / Export (one row per location, a column per month + Total). */
+	getLocationMatrixTableData() {
+		const months = this.getMonths();
+		const byLoc = {};
+		this._allBills().forEach(r => {
+			const L = byLoc[r.location] || (byLoc[r.location] = {});
+			L[r.month] = (L[r.month] || 0) + 1;
+		});
+		return Object.keys(byLoc).sort().map(loc => {
+			const row = { Location: loc };
+			let total = 0;
+			months.forEach(m => { const c = byLoc[loc][m] || 0; row[this._monthLabel(m)] = c || ''; total += c; });
+			row.Total = total;
+			return row;
+		});
 	}
 }

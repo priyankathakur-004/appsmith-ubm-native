@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_rblmtx_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rblmtx_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_rblmtx_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rblmtx_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rblmtxmenuk",
+  "leftColumn": 61,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_rblmtx_exp": {
+      "id": "mi_rblmtx_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'RBL_Matrix');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getLocationMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getLocationMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'received_bills_per_location.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_rblmtx_exp"
+    },
+    "mi_rblmtx_tbl": {
+      "id": "mi_rblmtx_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'RBL_Matrix');\nstoreValue('woTable', ReceivedBillsHelper.getLocationMatrixTableData());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_rblmtx_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 61,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 0,
+  "parentColumnSpace": 1,
+  "parentId": "rblcanvas01",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 0,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "rblmtxmenu1",
+  "widgetName": "RBLMatrixMenu"
+}
