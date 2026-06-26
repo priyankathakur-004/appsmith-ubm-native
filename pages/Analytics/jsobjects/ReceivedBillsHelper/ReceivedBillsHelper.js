@@ -341,10 +341,11 @@ export default {
 			});
 			h += r + '</tr>\n';
 		});
-		let tr = '<tr style="background:#334155;border-top:2px solid #475569;"><td style="' + tdL + 'background:#334155;font-weight:700;color:#F8FAFC;">Total</td>';
+		const sb = 'position:sticky;bottom:0;z-index:6;';
+		let tr = '<tr><td style="' + tdL + 'background:#334155;font-weight:700;color:#F8FAFC;border-top:2px solid #475569;' + sb + '">Total</td>';
 		cols.forEach(c => {
 			const v = colVal(grand, c);
-			tr += '<td style="' + tdC + 'background:#334155;font-weight:700;color:#F8FAFC;' + (c.kind === 'yt' ? sep : '') + '">' + (v ? v : '') + '</td>';
+			tr += '<td style="' + tdC + 'background:#334155;font-weight:700;color:#F8FAFC;border-top:2px solid #475569;' + (c.kind === 'yt' ? sep : '') + sb + '">' + (v ? v : '') + '</td>';
 		});
 		h += tr + '</tr>\n</table></div>';
 		return h;
