@@ -516,13 +516,14 @@ export default {
 			(locTree[u] = locTree[u] || {}); locTree[u][loc] = (locTree[u][loc] || 0) + 1;
 		});
 		const data = Object.keys(tree).sort().map((u, i) => {
-			const children = Object.keys(tree[u]).sort().map(rc => ({ name: rc, value: tree[u][rc] }));
-			const total = children.reduce((s, c) => s + c.value, 0);
 			const color = utilColors[String(u).toUpperCase()] || palette[i % palette.length];
-			/* per-location breakdown stashed on the node so the tooltip can draw a pie (data
-			   survives serialization; closures don't). */
+			/* per-location breakdown stashed on EVERY node (parent + children) so the tooltip can
+			   draw the utility's location pie whether you hover the title strip OR the colored body
+			   — the body is occupied by the rate-code children. Data survives serialization. */
 			const locs = Object.keys(locTree[u]).map(l => ({ name: l, value: locTree[u][l] })).sort((a, b) => b.value - a.value);
-			return { name: u, value: total, itemStyle: { color: color }, children: children, _locs: locs };
+			const children = Object.keys(tree[u]).sort().map(rc => ({ name: rc, value: tree[u][rc], _locs: locs, _util: u }));
+			const total = children.reduce((s, c) => s + c.value, 0);
+			return { name: u, value: total, itemStyle: { color: color }, children: children, _locs: locs, _util: u };
 		});
 		return {
 			backgroundColor: '#1E293B',
@@ -557,8 +558,9 @@ export default {
 						leg += '<div style="display:flex;align-items:center;margin:1px 0;white-space:nowrap;"><span style="width:9px;height:9px;background:' + palette2[i % palette2.length] + ';display:inline-block;margin-right:5px;border-radius:2px;"></span>' + top[i].name + ': ' + top[i].value + ' (' + pct + '%)</div>';
 					}
 					if (locs.length > 10) leg += '<div style="color:#94A3B8;margin-top:2px;">+' + (locs.length - 10) + ' more…</div>';
+					var hdr = d._util || p.name;
 					return '<div style="display:flex;align-items:flex-start;">'
-						+ '<div style="text-align:center;"><div style="font-weight:700;color:#F1F5F9;margin-bottom:2px;">' + p.name + '</div><svg width="140" height="140" viewBox="0 0 140 140">' + paths + '</svg></div>'
+						+ '<div style="text-align:center;"><div style="font-weight:700;color:#F1F5F9;margin-bottom:2px;">' + hdr + '</div><svg width="140" height="140" viewBox="0 0 140 140">' + paths + '</svg></div>'
 						+ '<div style="margin-left:10px;font-size:11px;color:#E2E8F0;max-height:140px;overflow:auto;"><div style="color:#94A3B8;font-weight:700;margin-bottom:3px;">Location</div>' + leg + '</div></div>';
 				}
 			},
@@ -568,8 +570,8 @@ export default {
 				roam: false,
 				nodeClick: 'zoomToNode',
 				breadcrumb: { show: true, top: 22, textStyle: { color: '#94A3B8' } },
-				label: { show: true, color: '#FFFFFF', fontSize: 12, formatter: '{b}' },
-				upperLabel: { show: true, height: 22, color: '#FFFFFF', fontWeight: 600 },
+				label: { show: true, position: 'insideBottomLeft', color: '#FFFFFF', fontSize: 11, formatter: '{b}' },
+				upperLabel: { show: true, height: 22, color: '#FFFFFF', fontSize: 13, fontWeight: 700, align: 'left' },
 				levels: [
 					{ itemStyle: { borderColor: '#0F172A', borderWidth: 2, gapWidth: 2 } },
 					{ itemStyle: { borderColor: '#1E293B', borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
