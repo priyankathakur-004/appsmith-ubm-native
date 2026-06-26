@@ -112,8 +112,10 @@ export default {
 		/* Mirror the UBM matrix exactly (dark theme): group rows (Location > Utility > Meter) show
 		   a collapse icon + label with BLANK month cells; only the leaf (Bill Type) row carries the
 		   underlined, click-style bill counts. */
-		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;';
-		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;';
+		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;background:#334155;line-height:16px;';
+		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;background:#334155;line-height:16px;';
+		const s1 = 'position:sticky;top:0;z-index:6;';
+		const s2 = 'position:sticky;top:30px;z-index:6;';
 		const sep = 'border-left:1px solid #475569;';
 		const tdBlank = 'padding:5px 9px;border-bottom:1px solid #243140;';
 		const tdNum = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;';
@@ -124,14 +126,14 @@ export default {
 		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
 
 		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
-		/* header row 1: Service Year + year spans */
-		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
-		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
+		/* header row 1: Service Year + year spans (sticky to top of the scroll area) */
+		h += '<tr><th style="' + thL + s1 + '">Service Year</th>';
+		yearGroups.forEach(g => { h += '<th style="' + th + sep + s1 + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
 		h += '</tr>\n';
-		/* header row 2: Location + month abbreviations */
-		h += '<tr style="background:#334155;"><th style="' + thL + '">Location</th>';
+		/* header row 2: Location + month abbreviations (sticky below row 1) */
+		h += '<tr><th style="' + thL + s2 + '">Location</th>';
 		yearGroups.forEach(g => {
-			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + '">' + (mn[idx] || m) + '</th>'; });
+			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + s2 + '">' + (mn[idx] || m) + '</th>'; });
 		});
 		h += '</tr>\n';
 
@@ -306,20 +308,22 @@ export default {
 		});
 		const colVal = (mc, c) => c.kind === 'm' ? (mc[c.month] || 0) : c.months.reduce((s, m) => s + (mc[m] || 0), 0);
 
-		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;';
-		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;';
+		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;background:#334155;line-height:16px;';
+		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;background:#334155;line-height:16px;';
+		const s1 = 'position:sticky;top:0;z-index:6;';
+		const s2 = 'position:sticky;top:30px;z-index:6;';
 		const sep = 'border-left:1px solid #475569;';
 		const tdL = 'padding:5px 12px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;color:#E2E8F0;';
 		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;color:#E2E8F0;';
 
 		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
-		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
-		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
+		h += '<tr><th style="' + thL + s1 + '">Service Year</th>';
+		yearGroups.forEach(g => { h += '<th style="' + th + sep + s1 + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
 		h += '</tr>\n';
-		h += '<tr style="background:#334155;"><th style="' + thL + '">Location</th>';
+		h += '<tr><th style="' + thL + s2 + '">Location</th>';
 		yearGroups.forEach(g => {
-			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + '">' + (mn[idx] || m) + '</th>'; });
-			h += '<th style="' + th + sep + '">Total</th>';
+			g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + s2 + '">' + (mn[idx] || m) + '</th>'; });
+			h += '<th style="' + th + sep + s2 + '">Total</th>';
 		});
 		h += '</tr>\n';
 
