@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 94,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rcmatrixk1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 92,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 37,
+  "mobileTopRow": 8,
+  "originalBottomRow": 94,
+  "originalTopRow": 9,
+  "parentColumnSpace": 1,
+  "parentId": "rccanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 37,
+  "shouldScrollContents": false,
+  "shouldTruncate": false,
+  "text": "{{ ReceivedBillsHelper.getRateMatrixHtml() }}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 9,
+  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "rcmatrix01",
+  "widgetName": "RCMatrixText"
+}

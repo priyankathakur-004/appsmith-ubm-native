@@ -7,6 +7,7 @@ SELECT
     m.client_account as service_account,
     m.meter_serial as meter,
     m.vendor_name,
+    m.account_status,
     m.location_description,
     l.address,
     l.state,
@@ -33,7 +34,8 @@ SELECT
     COALESCE(amf.total_charges_consumption, 0) AS total_charges_consumption,
     m.total_cdd,
     m.total_hdd,
-    m.total_dd
+    m.total_dd,
+    COALESCE(dos.days_of_service, 0) AS days_of_service
 
 FROM bill_management_v2.reports_customer_monthly_usage m
 INNER JOIN bill_management_v2.locations l
@@ -54,33 +56,18 @@ LEFT JOIN LATERAL (
       AND a.utility_type = m.utility_type
 ) amf ON TRUE
 
+LEFT JOIN LATERAL (
+    SELECT MAX(COALESCE(a2.days_of_service, 0)) AS days_of_service
+    FROM bill_management_v2.analytics_monthly_feed a2
+    WHERE a2.customer_id = m.customer_id
+      AND a2.location_id = m.location_id
+      AND DATE_TRUNC('month', a2.time_period) = DATE_TRUNC('month', m.time_period)
+      AND a2.utility_type = m.utility_type
+      AND a2.bill_type = m.bill_type
+) dos ON TRUE
+
 WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
-{{ DateSelect.selectedOptionValues.filter(d => d.includes('-')).length > 0 ?
-    `AND m.time_period IN (${ DateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
-: "" }}
-
-{{ UtilityTypeSelect.selectedOptionValue ?
-`AND m.utility_type = '${UtilityTypeSelect.selectedOptionValue}'`
-: "" }}
-
-{{ BillTypeSelect.selectedOptionValue ?
-`AND m.bill_type = '${BillTypeSelect.selectedOptionValue}'`
-: "" }}
-
-{{ LocationSelect.selectedOptionValue ?
-`AND m.location_id = ${LocationSelect.selectedOptionValue}`
-: "" }}
-
-{{ LocationAttrSelect.selectedOptionValue && LocationAttrSelect.selectedOptionValue !== 'All' ?
-`AND EXISTS (
-    SELECT 1
-    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr
-    WHERE attr->>'id' = '${LocationAttrSelect.selectedOptionValue}'
-    ${AttrChoiceSelect.selectedOptionValue && AttrChoiceSelect.selectedOptionValue !== 'All'
-      ? `AND attr->>'value' = '${AttrChoiceSelect.selectedOptionValue}'`
-      : "" }
-)`
-: "" }}
+{{ AnalyticsFilters.analyticsWhere() }}
 
 ORDER BY m.location_description, m.time_period DESC;

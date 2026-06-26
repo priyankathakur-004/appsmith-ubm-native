@@ -1,0 +1,48 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Notifications' }}",
+  "key": "ntchatyrk1",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Last Chat Date",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "leftColumn": 40,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 40,
+  "mobileRightColumn": 53,
+  "mobileTopRow": 4,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "bhsetcanvas1",
+  "parentRowSpace": 10,
+  "placeholderText": "Select year",
+  "renderMode": "CANVAS",
+  "rightColumn": 53,
+  "sourceData": "{{ [{label:'All', value:'All'}].concat([...new Set((fetch_notifications.data||[]).map(r => String(r.last_chat_date||'').slice(-4)).filter(y => y && y.length===4))].sort().reverse().map(y => ({label:y, value:y}))) }}",
+  "topRow": 2,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "ntchatyr01",
+  "widgetName": "NTChatYearSelect"
+}

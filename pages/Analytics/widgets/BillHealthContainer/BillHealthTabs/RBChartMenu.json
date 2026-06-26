@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 8,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_rbcht_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rbcht_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_rbcht_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rbcht_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rbchtmenuk",
+  "leftColumn": 62,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_rbcht_exp": {
+      "id": "mi_rbcht_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'RB_Utility');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getUtilityChartTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getUtilityChartTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'received_bills_by_utility.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_rbcht_exp"
+    },
+    "mi_rbcht_tbl": {
+      "id": "mi_rbcht_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'RB_Utility');\nstoreValue('woTable', ReceivedBillsHelper.getUtilityChartTableData());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_rbcht_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 0,
+  "parentColumnSpace": 1,
+  "parentId": "rbcanvas001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 4,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "rbchtmenu01",
+  "widgetName": "RBChartMenu"
+}

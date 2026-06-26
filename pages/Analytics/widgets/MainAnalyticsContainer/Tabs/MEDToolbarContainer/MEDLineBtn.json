@@ -1,0 +1,45 @@
+{
+  "animateLoading": true,
+  "borderRadius": "0.375rem",
+  "bottomRow": 14,
+  "boxShadow": "none",
+  "buttonColor": "#22c55e",
+  "buttonVariant": "{{(appsmith.store.medChartType || 'scatter') === 'line' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "medbtnlnkey1",
+  "leftColumn": 56,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 59,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('medChartType', 'line')}}",
+  "parentColumnSpace": 15,
+  "parentId": "medtbcanv001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Line Chart",
+  "textColor": "{{(appsmith.store.medChartType || 'scatter') === 'line' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 10,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "medbtnln001",
+  "widgetName": "MEDLineBtn"
+}

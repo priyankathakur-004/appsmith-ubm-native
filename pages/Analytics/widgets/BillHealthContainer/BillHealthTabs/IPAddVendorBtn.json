@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "buttonColor": "#ffffff",
+  "buttonVariant": "SECONDARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "tooltip"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ipaddvkey01",
+  "leftColumn": 50,
+  "minWidth": 120,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 50,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('bhShowVendor', !appsmith.store.bhShowVendor)}}",
+  "parentColumnSpace": 15,
+  "parentId": "ipcanvas0001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 63,
+  "text": "{{appsmith.store.bhShowVendor ? 'Remove Vendor from table' : 'Add Vendor to table'}}",
+  "tooltip": "{{appsmith.store.bhShowVendor ? 'Hide Vendor Column in the table' : 'Show Vendor Column in the table'}}",
+  "topRow": 1,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "ipaddvbtn01",
+  "widgetName": "IPAddVendorBtn"
+}

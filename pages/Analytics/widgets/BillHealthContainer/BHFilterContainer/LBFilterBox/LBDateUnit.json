@@ -1,0 +1,53 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "defaultOptionValue": "Months",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "klbdtunit1",
+  "labelText": "\u00a0",
+  "leftColumn": 46,
+  "onOptionChange": "{{ fetch_late_bills.run() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "lbfcanvas01",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "rightColumn": 52,
+  "sourceData": "[{\"label\": \"Select\", \"value\": \"Select\"}, {\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Weeks (Calendar)\", \"value\": \"Weeks (Calendar)\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Months (Calendar)\", \"value\": \"Months (Calendar)\"}, {\"label\": \"Years\", \"value\": \"Years\"}, {\"label\": \"Years (Calendar)\", \"value\": \"Years (Calendar)\"}]",
+  "topRow": 2,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "lbdateunit1",
+  "widgetName": "LBDateUnit",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
+}

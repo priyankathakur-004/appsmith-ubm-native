@@ -1,0 +1,71 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultText": "12",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onBlur"
+    },
+    {
+      "key": "onSubmit"
+    }
+  ],
+  "iconAlign": "left",
+  "inputType": "NUMBER",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Notifications'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "bhdatenumk",
+  "label": "   ",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelStyle": "",
+  "labelText": "\u00a0",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 48,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 55,
+  "mobileRightColumn": 58,
+  "mobileTopRow": 4,
+  "needsErrorInfo": false,
+  "onBlur": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : (['Received Bills Details','Received Bills per Location','Rate Codes'].includes(BillHealthTabs.selectedTab) ? fetch_received_bills.run() : null) }}",
+  "onSubmit": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : (['Received Bills Details','Received Bills per Location','Rate Codes'].includes(BillHealthTabs.selectedTab) ? fetch_received_bills.run() : null) }}",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "bhsetcanvas1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "resetOnSubmit": true,
+  "responsiveBehavior": "fill",
+  "rightColumn": 53,
+  "shouldAllowAutofill": false,
+  "showStepArrows": true,
+  "topRow": 4,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "bhdatenum01",
+  "widgetName": "BHDateNumInput"
+}

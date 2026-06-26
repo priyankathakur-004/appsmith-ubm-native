@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 94,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ReceivedBillsHelper.getRateTreemapConfig() }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rctreek1",
+  "leftColumn": 37,
+  "mobileBottomRow": 92,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 8,
+  "originalBottomRow": 52,
+  "originalTopRow": 10,
+  "parentColumnSpace": 1,
+  "parentId": "rccanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 9,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "rctree0001",
+  "widgetName": "RCTreemap"
+}

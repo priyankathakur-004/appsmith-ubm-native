@@ -1,0 +1,42 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 72,
+  "bottomRowBeforeCollapse": 82,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{LateFeeHelper.getDonutConfig()}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": "{{ (appsmith.store.lfView || 'donut') === 'donut' }}",
+  "key": "lfdonutk1",
+  "leftColumn": 0,
+  "mobileBottomRow": 80,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 11,
+  "originalBottomRow": 68,
+  "originalTopRow": 14,
+  "parentColumnSpace": 1,
+  "parentId": "lfleftcanvas",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 18,
+  "topRowBeforeCollapse": 13,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "lfdonut001",
+  "widgetName": "LFDonutChart"
+}

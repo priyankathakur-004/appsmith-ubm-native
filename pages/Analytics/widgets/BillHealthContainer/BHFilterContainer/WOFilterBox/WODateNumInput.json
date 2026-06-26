@@ -1,0 +1,73 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "bottomRowBeforeCollapse": 9,
+  "boxShadow": "none",
+  "defaultText": "6",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onBlur"
+    },
+    {
+      "key": "onSubmit"
+    }
+  ],
+  "iconAlign": "left",
+  "inputType": "NUMBER",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "wodatenumk",
+  "label": " ",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelStyle": "",
+  "labelText": " ",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 55,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 55,
+  "mobileRightColumn": 58,
+  "mobileTopRow": 4,
+  "needsErrorInfo": false,
+  "onBlur": "{{ fetch_warnings.run() }}",
+  "onSubmit": "{{ fetch_warnings.run() }}",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "wofcanvas01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "resetOnSubmit": false,
+  "responsiveBehavior": "fill",
+  "rightColumn": 58,
+  "shouldAllowAutofill": false,
+  "showStepArrows": true,
+  "topRow": 4,
+  "topRowBeforeCollapse": 4,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "wodatenum01",
+  "widgetName": "WODateNumInput"
+}

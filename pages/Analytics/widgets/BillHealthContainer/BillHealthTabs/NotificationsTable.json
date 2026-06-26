@@ -1,0 +1,66 @@
+{
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 130,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ { rows: BillHealthHelper.getNotificationRows() } }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "nttblkey001",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 130,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 2,
+  "needsErrorInfo": false,
+  "originalBottomRow": 130,
+  "originalTopRow": 2,
+  "parentColumnSpace": 15,
+  "parentId": "ntcanvas0001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "srcDoc": {
+    "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.nt-wrap {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow: auto;\n  background: #1E293B;\n  border: 1px solid #334155;\n  border-radius: 6px;\n  font-family: system-ui;\n}\ntable.nt { border-collapse: collapse; width: max-content; min-width: 100%; background: #1E293B; }\ntable.nt th { padding: 10px 14px; font-size: 12px; font-weight: 700; color: #F1F5F9; white-space: nowrap; text-align: left; border-bottom: 2px solid #475569; background: #334155; position: sticky; top: 0; }\ntable.nt td { padding: 8px 14px; font-size: 12px; color: #E2E8F0; border-bottom: 1px solid #334155; vertical-align: top; }\ntable.nt td.nowrap { white-space: nowrap; }\ntable.nt td.chat { white-space: pre-line; min-width: 320px; max-width: 520px; }\ntable.nt a { color: #93c5fd; text-decoration: underline; }\n.empty { padding: 20px; color: #94A3B8; text-align: center; font-family: system-ui; }",
+    "html": "<div id=\"root\" class=\"nt-wrap\"></div>",
+    "js": "function esc(s) {\n  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');\n}\nvar COLS = [\n  { key: 'location',   label: 'Locations',          cls: 'nowrap' },\n  { key: 'billId',     label: 'Bill ID',            cls: 'nowrap' },\n  { key: 'workflow',   label: 'Workflow State',     cls: 'nowrap' },\n  { key: 'markedDate', label: 'Marked for Payment', cls: 'nowrap' },\n  { key: 'chatDate',   label: 'Last Chat Date',     cls: 'nowrap' },\n  { key: 'chatUser',   label: 'Last Chat User',     cls: 'nowrap' },\n  { key: 'chatTags',   label: 'Last Chat Tags',     cls: 'nowrap' },\n  { key: 'chatHistory',label: 'Chat History',       cls: 'chat' }\n];\nfunction render(model) {\n  var root = document.getElementById('root');\n  if (!root) return;\n  var rows = (model && model.rows) || [];\n  if (!rows.length) {\n    root.innerHTML = '<div class=\"empty\">No data available</div>';\n    return;\n  }\n  var h = '<table class=\"nt\"><thead><tr>';\n  COLS.forEach(function(c){ h += '<th>' + c.label + '</th>'; });\n  h += '</tr></thead><tbody>';\n  rows.forEach(function(r){\n    h += '<tr>';\n    COLS.forEach(function(c){\n      h += '<td class=\"' + c.cls + '\">' + esc(r[c.key]) + '</td>';\n    });\n    h += '</tr>';\n  });\n  h += '</tbody></table>';\n  root.innerHTML = h;\n}\nappsmith.onReady(function(){\n  render(appsmith.model);\n  appsmith.onModelChange(function(m){ render(m); });\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 2,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.nt-wrap {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow: auto;\n  background: #1E293B;\n  border: 1px solid #334155;\n  border-radius: 6px;\n  font-family: system-ui;\n}\ntable.nt { border-collapse: collapse; width: max-content; min-width: 100%; background: #1E293B; }\ntable.nt th { padding: 10px 14px; font-size: 12px; font-weight: 700; color: #F1F5F9; white-space: nowrap; text-align: left; border-bottom: 2px solid #475569; background: #334155; position: sticky; top: 0; }\ntable.nt td { padding: 8px 14px; font-size: 12px; color: #E2E8F0; border-bottom: 1px solid #334155; vertical-align: top; }\ntable.nt td.nowrap { white-space: nowrap; }\ntable.nt td.chat { white-space: pre-line; min-width: 320px; max-width: 520px; }\ntable.nt a { color: #93c5fd; text-decoration: underline; }\n.empty { padding: 20px; color: #94A3B8; text-align: center; font-family: system-ui; }",
+    "html": "<div id=\"root\" class=\"nt-wrap\"></div>",
+    "js": "function esc(s) {\n  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');\n}\nvar COLS = [\n  { key: 'location',   label: 'Locations',          cls: 'nowrap' },\n  { key: 'billId',     label: 'Bill ID',            cls: 'nowrap' },\n  { key: 'workflow',   label: 'Workflow State',     cls: 'nowrap' },\n  { key: 'markedDate', label: 'Marked for Payment', cls: 'nowrap' },\n  { key: 'chatDate',   label: 'Last Chat Date',     cls: 'nowrap' },\n  { key: 'chatUser',   label: 'Last Chat User',     cls: 'nowrap' },\n  { key: 'chatTags',   label: 'Last Chat Tags',     cls: 'nowrap' },\n  { key: 'chatHistory',label: 'Chat History',       cls: 'chat' }\n];\nfunction render(model) {\n  var root = document.getElementById('root');\n  if (!root) return;\n  var rows = (model && model.rows) || [];\n  if (!rows.length) {\n    root.innerHTML = '<div class=\"empty\">No data available</div>';\n    return;\n  }\n  var h = '<table class=\"nt\"><thead><tr>';\n  COLS.forEach(function(c){ h += '<th>' + c.label + '</th>'; });\n  h += '</tr></thead><tbody>';\n  rows.forEach(function(r){\n    h += '<tr>';\n    COLS.forEach(function(c){\n      h += '<td class=\"' + c.cls + '\">' + esc(r[c.key]) + '</td>';\n    });\n    h += '</tr>';\n  });\n  h += '</tbody></table>';\n  root.innerHTML = h;\n}\nappsmith.onReady(function(){\n  render(appsmith.model);\n  appsmith.onModelChange(function(m){ render(m); });\n});"
+  },
+  "version": 1,
+  "widgetId": "nttable0001",
+  "widgetName": "NotificationsTable"
+}

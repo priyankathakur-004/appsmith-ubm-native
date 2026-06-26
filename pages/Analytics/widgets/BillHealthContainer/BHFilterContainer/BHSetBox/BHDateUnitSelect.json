@@ -1,0 +1,57 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "defaultOptionValue": "Months",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Notifications'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "bhdateunik",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "\u00a0",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "leftColumn": 53,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 58,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 4,
+  "onOptionChange": "{{ fetch_analytics_data.run(); BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : (['Received Bills Details','Received Bills per Location','Rate Codes'].includes(BillHealthTabs.selectedTab) ? fetch_received_bills.run() : null) }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "bhsetcanvas1",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "rightColumn": 61,
+  "sourceData": "[{\"label\": \"Select\", \"value\": \"Select\"}, {\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Weeks (Calendar)\", \"value\": \"Weeks (Calendar)\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Months (Calendar)\", \"value\": \"Months (Calendar)\"}, {\"label\": \"Years\", \"value\": \"Years\"}, {\"label\": \"Years (Calendar)\", \"value\": \"Years (Calendar)\"}]",
+  "topRow": 2,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "bhdateunit1",
+  "widgetName": "BHDateUnitSelect"
+}

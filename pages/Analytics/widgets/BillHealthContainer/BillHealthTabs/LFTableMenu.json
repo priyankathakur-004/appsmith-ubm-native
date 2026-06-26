@@ -1,0 +1,71 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_lftb_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_lftb_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_lftb_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_lftb_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lftblmenuk",
+  "leftColumn": 60,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_lftb_exp": {
+      "id": "mi_lftb_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'LF_Bills');\ndownload(\n  [Object.keys((LateFeeHelper.getBillsTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((LateFeeHelper.getBillsTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'late_fee_bills.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_lftb_exp"
+    },
+    "mi_lftb_tbl": {
+      "id": "mi_lftb_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'LF_Bills');\nstoreValue('woTable', LateFeeHelper.getBillsTableData());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_lftb_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 2,
+  "parentColumnSpace": 1,
+  "parentId": "lfcanvas001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 2,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lftblmenu01",
+  "widgetName": "LFTableMenu"
+}

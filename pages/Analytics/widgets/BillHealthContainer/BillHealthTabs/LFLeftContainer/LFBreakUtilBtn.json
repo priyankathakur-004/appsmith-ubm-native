@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "buttonColor": "#3B82F6",
+  "buttonVariant": "{{ (appsmith.store.lfBreakdown || 'utility') === 'utility' ? 'PRIMARY' : 'SECONDARY' }}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": "{{ appsmith.store.lfView !== 'tabular' }}",
+  "key": "lfbuk",
+  "leftColumn": 12,
+  "minWidth": 120,
+  "mobileBottomRow": 10,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 27,
+  "mobileTopRow": 6,
+  "onClick": "{{ LateFeeHelper.setBreakdown('utility') }}",
+  "parentColumnSpace": 1,
+  "parentId": "lfleftcanvas",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 27,
+  "text": "Utilities",
+  "topRow": 6,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfbu001",
+  "widgetName": "LFBreakUtilBtn"
+}

@@ -1,0 +1,73 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_rcmtx_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rcmtx_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_rcmtx_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_rcmtx_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rcmtxmenuk",
+  "leftColumn": 35,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_rcmtx_exp": {
+      "id": "mi_rcmtx_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'RC_Matrix');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getRateMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getRateMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'rate_codes.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_rcmtx_exp"
+    },
+    "mi_rcmtx_tbl": {
+      "id": "mi_rcmtx_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'RC_Matrix');\nstoreValue('woTable', ReceivedBillsHelper.getRateMatrixTableData());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_rcmtx_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 33,
+  "mobileRightColumn": 37,
+  "mobileTopRow": 0,
+  "originalBottomRow": 9,
+  "originalTopRow": 5,
+  "parentColumnSpace": 1,
+  "parentId": "rccanvas01",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 37,
+  "topRow": 5,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "rcmtxmenu1",
+  "widgetName": "RCMatrixMenu"
+}

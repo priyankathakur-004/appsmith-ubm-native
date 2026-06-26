@@ -1,0 +1,49 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 99,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bnicdqnlwb",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 84,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 56,
+  "originalBottomRow": 95,
+  "originalTopRow": 51,
+  "parentColumnSpace": 8.7841796875,
+  "parentId": "cflcanv0001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "{{ChargesForecastHelper.getPivotHtml()}}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 51,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "oyr1y4vc4r",
+  "widgetName": "CFPivotTable"
+}

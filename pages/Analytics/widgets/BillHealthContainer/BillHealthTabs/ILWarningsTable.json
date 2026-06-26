@@ -1,0 +1,66 @@
+{
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 97,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ { rows: BillHealthHelper.getWarningRows() } }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "ilwtablek1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 130,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 39,
+  "mobileTopRow": 2,
+  "needsErrorInfo": false,
+  "originalBottomRow": 130,
+  "originalTopRow": 2,
+  "parentColumnSpace": 15,
+  "parentId": "ilcanvas001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 39,
+  "srcDoc": {
+    "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.wo-wrap {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow: auto;\n  background: #1E293B;\n  border: 1px solid #334155;\n  border-radius: 6px;\n  font-family: system-ui;\n}\n.wo-hint { padding: 8px 14px; font-size: 12px; color: #94A3B8; border-bottom: 1px solid #334155; }\ntable.wo { border-collapse: collapse; width: max-content; min-width: 100%; background: #1E293B; }\ntable.wo th { padding: 10px 14px; font-size: 12px; font-weight: 700; color: #F1F5F9; white-space: nowrap; text-align: left; border-bottom: 2px solid #475569; background: #334155; position: sticky; top: 0; }\ntable.wo td { padding: 8px 14px; font-size: 12px; color: #E2E8F0; border-bottom: 1px solid #334155; vertical-align: top; }\ntable.wo td.num { text-align: right; white-space: nowrap; }\ntable.wo td.nowrap { white-space: nowrap; }\ntable.wo td.warning { min-width: 360px; max-width: 560px; }\ntable.wo a { color: #93c5fd; text-decoration: underline; cursor: pointer; }\n.empty { padding: 20px; color: #94A3B8; text-align: center; font-family: system-ui; }",
+    "html": "<div id=\"root\" class=\"wo-wrap\"></div>",
+    "js": "function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }\nfunction fmtAmt(v){ var n=Number(v); return isNaN(n)?'' : n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }\nfunction render(model){\n  var root = document.getElementById('root');\n  if (!root) return;\n  var rows = (model && model.rows) || [];\n  if (!rows.length){ root.innerHTML = '<div class=\"empty\">No data available</div>'; return; }\n  var h = '<div class=\"wo-hint\">\\u24D8 To see the bill, click on the Pear ID.</div>';\n  h += '<table class=\"wo\"><thead><tr>';\n  ['Total Amount','Invoice Date','Bill Warning','Pear ID','Location','Vendor','Utility Type','Resolved'].forEach(function(c){ h += '<th>' + c + '</th>'; });\n  h += '</tr></thead><tbody>';\n  rows.forEach(function(r){\n    h += '<tr>';\n    h += '<td class=\"num\">' + fmtAmt(r.totalAmount) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.invoiceDate) + '</td>';\n    h += '<td class=\"warning\">' + esc(r.warning) + '</td>';\n    h += '<td class=\"nowrap\"><a>' + esc(r.pearId) + '</a></td>';\n    h += '<td class=\"nowrap\">' + esc(r.location) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.vendor) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.utility) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.resolved) + '</td>';\n    h += '</tr>';\n  });\n  h += '</tbody></table>';\n  root.innerHTML = h;\n}\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(function(m){ render(m); }); });"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 3,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "* { box-sizing: border-box; }\nhtml, body { margin: 0; padding: 0; }\n.wo-wrap {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow: auto;\n  background: #1E293B;\n  border: 1px solid #334155;\n  border-radius: 6px;\n  font-family: system-ui;\n}\n.wo-hint { padding: 8px 14px; font-size: 12px; color: #94A3B8; border-bottom: 1px solid #334155; }\ntable.wo { border-collapse: collapse; width: max-content; min-width: 100%; background: #1E293B; }\ntable.wo th { padding: 10px 14px; font-size: 12px; font-weight: 700; color: #F1F5F9; white-space: nowrap; text-align: left; border-bottom: 2px solid #475569; background: #334155; position: sticky; top: 0; }\ntable.wo td { padding: 8px 14px; font-size: 12px; color: #E2E8F0; border-bottom: 1px solid #334155; vertical-align: top; }\ntable.wo td.num { text-align: right; white-space: nowrap; }\ntable.wo td.nowrap { white-space: nowrap; }\ntable.wo td.warning { min-width: 360px; max-width: 560px; }\ntable.wo a { color: #93c5fd; text-decoration: underline; cursor: pointer; }\n.empty { padding: 20px; color: #94A3B8; text-align: center; font-family: system-ui; }",
+    "html": "<div id=\"root\" class=\"wo-wrap\"></div>",
+    "js": "function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }\nfunction fmtAmt(v){ var n=Number(v); return isNaN(n)?'' : n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }\nfunction render(model){\n  var root = document.getElementById('root');\n  if (!root) return;\n  var rows = (model && model.rows) || [];\n  if (!rows.length){ root.innerHTML = '<div class=\"empty\">No data available</div>'; return; }\n  var h = '<div class=\"wo-hint\">\\u24D8 To see the bill, click on the Pear ID.</div>';\n  h += '<table class=\"wo\"><thead><tr>';\n  ['Total Amount','Invoice Date','Bill Warning','Pear ID','Location','Vendor','Utility Type','Resolved'].forEach(function(c){ h += '<th>' + c + '</th>'; });\n  h += '</tr></thead><tbody>';\n  rows.forEach(function(r){\n    h += '<tr>';\n    h += '<td class=\"num\">' + fmtAmt(r.totalAmount) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.invoiceDate) + '</td>';\n    h += '<td class=\"warning\">' + esc(r.warning) + '</td>';\n    h += '<td class=\"nowrap\"><a>' + esc(r.pearId) + '</a></td>';\n    h += '<td class=\"nowrap\">' + esc(r.location) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.vendor) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.utility) + '</td>';\n    h += '<td class=\"nowrap\">' + esc(r.resolved) + '</td>';\n    h += '</tr>';\n  });\n  h += '</tbody></table>';\n  root.innerHTML = h;\n}\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(function(m){ render(m); }); });"
+  },
+  "version": 1,
+  "widgetId": "ilwtable001",
+  "widgetName": "ILWarningsTable"
+}

@@ -1,0 +1,58 @@
+SELECT
+    w.warning_id                            AS warning_id,
+    w.bill_warning                          AS bill_warning,
+    w.bill_warning_severity                 AS severity,
+    w.pear_id                               AS pear_id,
+    w.billing_id                            AS billing_id,
+    w.vendor                                AS vendor,
+    w.invoice_date                          AS invoice_date_raw,
+    TO_CHAR(w.invoice_date, 'MM/DD/YYYY')   AS invoice_date,
+    w.total_amount                          AS total_amount,
+    d.category                              AS category,
+    d.workflow_state                        AS workflow_state,
+    d.resolvable                            AS resolvable,
+    m.location_description                  AS location,
+    m.utility_type                          AS utility_type,
+    l.latitude                              AS latitude,
+    l.longitude                             AS longitude
+FROM bill_management_v2.bill_warnings w
+LEFT JOIN (
+    SELECT DISTINCT ON (warning_id)
+           warning_id, category, workflow_state, resolvable
+    FROM bill_management_v2.bill_warning_definitions_view
+    ORDER BY warning_id, last_updated DESC NULLS LAST
+) d ON d.warning_id = w.warning_id
+LEFT JOIN (
+    SELECT DISTINCT ON (client_account, utility_type)
+           client_account, utility_type, location_description, location_id
+    FROM bill_management_v2.reports_customer_monthly_usage
+    WHERE customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+    ORDER BY client_account, utility_type, location_id
+) m ON m.client_account = w.billing_id
+LEFT JOIN bill_management_v2.locations l
+    ON l.id = m.location_id
+WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND COALESCE(w.total_amount, 0) <> 0
+  AND w.bill_warning_severity = (
+      SELECT MAX(hw.bill_warning_severity)
+      FROM bill_management_v2.bill_warnings hw
+      WHERE hw.pear_id = w.pear_id
+        AND hw.customer_id = w.customer_id
+  )
+  {{ BillHealthHelper.warnSeveritySql() }}
+  AND (
+      w.bill_warning_severity <> 30
+      OR m.utility_type IS NULL
+      OR m.utility_type IN (
+          SELECT UPPER(TRIM(REGEXP_REPLACE(
+                     SUBSTRING(cw.bill_warning FROM '\[[^\]]*/([^/\]]+)\]'),
+                     '\(.*', '')))
+          FROM bill_management_v2.bill_warnings cw
+          WHERE cw.pear_id = w.pear_id
+            AND cw.customer_id = w.customer_id
+            AND cw.bill_warning_severity = 30
+      )
+  )
+{{ BillHealthHelper.warnDateSql() }}
+ORDER BY w.total_amount DESC, w.warning_id
+LIMIT 1000

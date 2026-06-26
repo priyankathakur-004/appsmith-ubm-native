@@ -1,0 +1,60 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "defaultOptionValue": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Received Bills Details','Received Bills per Location','Rate Codes','Notifications'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "bhvendselk",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Vendor",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "leftColumn": 8,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 9,
+  "mobileRightColumn": 20,
+  "mobileTopRow": 4,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "bhsetcanvas1",
+  "parentRowSpace": 10,
+  "placeholderText": "All",
+  "renderMode": "CANVAS",
+  "rightColumn": 16,
+  "serverSideFiltering": false,
+  "sourceData": "{{ BillHealthHelper.getVendorOptions() }}",
+  "topRow": 2,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 1,
+  "widgetId": "bhvendsel01",
+  "widgetName": "BHVendorSelect"
+}

@@ -1,0 +1,73 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 14,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.mi_lf_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_lf_tbl.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.mi_lf_exp.onClick"
+    },
+    {
+      "key": "menuItems.mi_lf_tbl.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lfmenuk1",
+  "leftColumn": 55,
+  "menuColor": "#E2E8F0",
+  "menuItems": {
+    "mi_lf_exp": {
+      "id": "mi_lf_exp",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export",
+      "onClick": "{{\nstoreValue('chartName', 'LF_LateFees');\ndownload(\n  [Object.keys((LateFeeHelper.getMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((LateFeeHelper.getMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'late_fees.csv', 'text/csv'\n);\n}}",
+      "widgetId": "mi_lf_exp"
+    },
+    "mi_lf_tbl": {
+      "id": "mi_lf_tbl",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', 'LF_LateFees');\nstoreValue('woTable', LateFeeHelper.getMatrixTableData());\nshowModal(showTable.name);\n}}",
+      "widgetId": "mi_lf_tbl"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 55,
+  "mobileRightColumn": 62,
+  "mobileTopRow": 11,
+  "originalBottomRow": 16,
+  "originalTopRow": 13,
+  "parentColumnSpace": 1,
+  "parentId": "lfleftcanvas",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 62,
+  "topRow": 11,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfmenu0001",
+  "widgetName": "LFDonutMenu"
+}

@@ -1,0 +1,71 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "defaultOptionValue": [
+    "<=5",
+    "6-10",
+    ">10"
+  ],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "kbhdaystonx1",
+  "labelText": "Days to Next Due Date",
+  "leftColumn": 58,
+  "onOptionChange": "",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "lbfcanvas01",
+  "parentRowSpace": 10,
+  "placeholderText": "All",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "serverSideFiltering": false,
+  "sourceData": [
+    {
+      "label": "5 days or less",
+      "value": "<=5"
+    },
+    {
+      "label": "6 - 10 days",
+      "value": "6-10"
+    },
+    {
+      "label": "More than 10 Days",
+      "value": ">10"
+    }
+  ],
+  "topRow": 2,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 1,
+  "widgetId": "bhdaystonext1",
+  "widgetName": "BHDaysToNextSelect",
+  "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelAlignment": "left"
+}

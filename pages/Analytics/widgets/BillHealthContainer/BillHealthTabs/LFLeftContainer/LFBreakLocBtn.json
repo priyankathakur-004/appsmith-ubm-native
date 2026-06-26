@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "buttonColor": "#3B82F6",
+  "buttonVariant": "{{ appsmith.store.lfBreakdown === 'location' ? 'PRIMARY' : 'SECONDARY' }}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": "{{ appsmith.store.lfView !== 'tabular' }}",
+  "key": "lfblk",
+  "leftColumn": 41,
+  "minWidth": 120,
+  "mobileBottomRow": 10,
+  "mobileLeftColumn": 41,
+  "mobileRightColumn": 55,
+  "mobileTopRow": 6,
+  "onClick": "{{ LateFeeHelper.setBreakdown('location') }}",
+  "parentColumnSpace": 1,
+  "parentId": "lfleftcanvas",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 55,
+  "text": "Locations",
+  "topRow": 6,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfbl001",
+  "widgetName": "LFBreakLocBtn"
+}

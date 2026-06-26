@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "buttonColor": "#3B82F6",
+  "buttonVariant": "{{ (appsmith.store.lfView || 'donut') === 'donut' ? 'PRIMARY' : 'SECONDARY' }}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "lfvdonk",
+  "leftColumn": 12,
+  "minWidth": 120,
+  "mobileBottomRow": 4,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 30,
+  "mobileTopRow": 0,
+  "onClick": "{{ LateFeeHelper.setView('donut') }}",
+  "parentColumnSpace": 1,
+  "parentId": "lfleftcanvas",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 30,
+  "text": "Donut Chart",
+  "topRow": 0,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "lfvdon001",
+  "widgetName": "LFViewDonutBtn"
+}

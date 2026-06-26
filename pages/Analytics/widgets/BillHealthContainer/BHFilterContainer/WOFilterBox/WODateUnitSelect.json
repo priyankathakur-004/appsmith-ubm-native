@@ -1,0 +1,59 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "bottomRowBeforeCollapse": 9,
+  "boxShadow": "none",
+  "defaultOptionValue": "Months",
+  "dynamicBindingPathList": [
+    {
+      "key": "isVisible"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ ['Warnings Overview','Warnings over Time','Impacted Locations'].includes(BillHealthTabs.selectedTab) }}",
+  "key": "wodateunik",
+  "labelText": " ",
+  "leftColumn": 58,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 58,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 4,
+  "onOptionChange": "{{ fetch_warnings.run() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "wofcanvas01",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "sourceData": "[{\"label\": \"Days\", \"value\": \"Days\"}, {\"label\": \"Weeks\", \"value\": \"Weeks\"}, {\"label\": \"Months\", \"value\": \"Months\"}, {\"label\": \"Years\", \"value\": \"Years\"}]",
+  "topRow": 2,
+  "topRowBeforeCollapse": 4,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "wodateunit1",
+  "widgetName": "WODateUnitSelect",
+  "labelPosition": "Top",
+  "labelAlignment": "left",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem"
+}

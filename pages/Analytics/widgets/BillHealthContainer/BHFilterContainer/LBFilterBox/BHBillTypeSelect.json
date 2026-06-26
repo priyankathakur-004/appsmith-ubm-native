@@ -1,0 +1,63 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 10,
+  "boxShadow": "none",
+  "defaultOptionValue": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ BillHealthTabs.selectedTab === 'Late Bills' }}",
+  "key": "kbhbilltype1",
+  "labelText": "Bill Type",
+  "leftColumn": 29,
+  "onOptionChange": "",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "originalBottomRow": 9,
+  "originalTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "lbfcanvas01",
+  "parentRowSpace": 10,
+  "placeholderText": "All",
+  "renderMode": "CANVAS",
+  "rightColumn": 36,
+  "serverSideFiltering": false,
+  "sourceData": [
+    {
+      "label": "live",
+      "value": "live"
+    },
+    {
+      "label": "historical",
+      "value": "historical"
+    }
+  ],
+  "topRow": 2,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 1,
+  "widgetId": "bhbilltypesel",
+  "widgetName": "BHBillTypeSelect",
+  "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelAlignment": "left"
+}

@@ -1,0 +1,48 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 7,
+  "boxShadow": "none",
+  "buttonColor": "{{(appsmith.store.medViewBy || 'Demand') === 'Demand' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{(appsmith.store.medViewBy || 'Demand') === 'Demand' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "medbtndmkey1",
+  "leftColumn": 10,
+  "minWidth": 80,
+  "mobileBottomRow": 7,
+  "mobileLeftColumn": 11,
+  "mobileRightColumn": 19,
+  "mobileTopRow": 1,
+  "onClick": "{{storeValue('medViewBy', 'Demand')}}",
+  "parentColumnSpace": 15,
+  "parentId": "medtbcanv001",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 22,
+  "text": "Demand (kW)",
+  "textColor": "{{(appsmith.store.medViewBy || 'Demand') === 'Demand' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 3,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "medbtndmd001",
+  "widgetName": "MEDDemandBtn"
+}

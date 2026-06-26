@@ -1,0 +1,1 @@
+SELECT DISTINCT account_status FROM bill_management_v2."reports_customer_monthly_usage"
