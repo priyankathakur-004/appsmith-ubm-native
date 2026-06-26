@@ -20,7 +20,17 @@ va AS (   -- one row per virtual account (service) for this customer
         rnva.meter_id, rnva.service_account_id AS said, rnva.vendor,
         l.building_type,
         abi.last_bill_type, abi.due_date, abi.days_of_service, abi.expected_next_bill_date,
-        (CURRENT_DATE - abi.expected_next_bill_date::date)  AS days_late
+        -- UBM "Days Late" counts WEEKDAYS (business days), not calendar days, between the
+        -- expected bill arrival and today. Non-late (future/today) keeps the calendar value
+        -- (<= 0) so the `days_late >= 0` filter below still excludes not-yet-late accounts.
+        CASE
+            WHEN abi.expected_next_bill_date IS NULL THEN NULL
+            WHEN abi.expected_next_bill_date::date >= CURRENT_DATE
+                THEN (CURRENT_DATE - abi.expected_next_bill_date::date)
+            ELSE (SELECT COUNT(*)::int
+                  FROM generate_series(abi.expected_next_bill_date::date + 1, CURRENT_DATE, INTERVAL '1 day') gs
+                  WHERE EXTRACT(DOW FROM gs) BETWEEN 1 AND 5)
+        END                                                 AS days_late
     FROM bill_management_v2.reports_new_virtual_accounts rnva
     LEFT JOIN abi                            ON abi.virtual_account_id = rnva.virtual_account_id
     LEFT JOIN bill_management_v2.locations l ON l.id = rnva.location_id
@@ -33,14 +43,18 @@ rep AS (   -- representative = the account's latest bill (one row per billing ac
     FROM va
     ORDER BY billing_account, date_of_last_bill DESC NULLS LAST, expected_next_bill_date DESC NULLS LAST
 ),
-agg AS (   -- combine services per account (UBM shows e.g. "SEWER, WATER")
+agg AS (   -- combine only the LATE, in-window services per account (UBM shows e.g. "SEWER, WATER")
     SELECT billing_account,
         string_agg(DISTINCT location,      ', ' ORDER BY location)      AS locations,
         string_agg(DISTINCT utility_type,  ', ' ORDER BY utility_type)  AS utilities,
         string_agg(DISTINCT meter_id,      ', ' ORDER BY meter_id)      AS meters,
         string_agg(DISTINCT vendor,        ', ' ORDER BY vendor)        AS vendors,
         string_agg(DISTINCT building_type, ', ' ORDER BY building_type) AS building_types
-    FROM va GROUP BY billing_account
+    FROM va
+    WHERE va.days_late >= 0
+      AND va.date_of_last_bill >= '{{ LBDateHelper.start() }}'
+      AND va.date_of_last_bill <  '{{ LBDateHelper.end() }}'
+    GROUP BY billing_account
 )
 SELECT
     r.days_late                                                         AS days_late,
@@ -54,6 +68,7 @@ SELECT
     r.days_of_service,
     TO_CHAR(r.expected_next_bill_date, 'DD/MM/YYYY')                   AS expected_bill_arrival,
     TO_CHAR(r.due_date + INTERVAL '30 days', 'DD/MM/YYYY')             AS expected_bill_due_date,
+    -- Days To Next Expected Due Date is CALENDAR days in UBM (unlike Days Late which is weekdays).
     ((r.due_date + INTERVAL '30 days')::date - CURRENT_DATE)           AS days_to_next_expected_due_date,
     a.meters                                                           AS meter_id,
     r.said,
