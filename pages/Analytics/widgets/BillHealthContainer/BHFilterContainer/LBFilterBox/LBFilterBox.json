@@ -5,7 +5,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
   "bottomRow": 24,
-  "bottomRowBeforeCollapse": 12,
+  "bottomRowBeforeCollapse": 24,
   "boxShadow": "none",
   "children": [
     {
@@ -73,8 +73,8 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "originalBottomRow": 12,
-  "originalTopRow": 0,
+  "originalBottomRow": 24,
+  "originalTopRow": 12,
   "parentColumnSpace": 7.375,
   "parentId": "bhfcanvas01",
   "parentRowSpace": 10,
@@ -83,7 +83,7 @@
   "rightColumn": 64,
   "shouldScrollContents": false,
   "topRow": 12,
-  "topRowBeforeCollapse": 0,
+  "topRowBeforeCollapse": 12,
   "type": "CONTAINER_WIDGET",
   "version": 1,
   "widgetId": "lbfilterbox1",

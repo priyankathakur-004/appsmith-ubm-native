@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 7,
+  "bottomRow": 8,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -63,7 +63,7 @@
   "placement": "CENTER",
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 3,
+  "topRow": 4,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "rbchtmenu01",

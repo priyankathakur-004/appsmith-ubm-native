@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 92,
+  "bottomRow": 94,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{ ReceivedBillsHelper.getUtilityChartConfig() }}",
@@ -29,7 +29,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 8,
+  "topRow": 9,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "rbchart0001",

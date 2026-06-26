@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 7,
+  "bottomRow": 9,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -29,7 +29,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "rbmtxmenuk",
-  "leftColumn": 34,
+  "leftColumn": 35,
   "menuColor": "#E2E8F0",
   "menuItems": {
     "mi_rbmtx_exp": {
@@ -57,13 +57,15 @@
   "mobileLeftColumn": 33,
   "mobileRightColumn": 37,
   "mobileTopRow": 0,
+  "originalBottomRow": 9,
+  "originalTopRow": 5,
   "parentColumnSpace": 1,
   "parentId": "rbcanvas001",
   "parentRowSpace": 10,
   "placement": "CENTER",
   "renderMode": "CANVAS",
-  "rightColumn": 36,
-  "topRow": 3,
+  "rightColumn": 37,
+  "topRow": 5,
   "type": "MENU_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "rbmtxmenu01",
