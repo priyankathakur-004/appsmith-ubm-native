@@ -507,28 +507,59 @@ export default {
 		const utilColors = this._utilColors();
 		const palette = ['#3E6FB5', '#6BA644', '#3AAFA9', '#E0B93C', '#9B6FB0', '#C0584B', '#5B9BD5', '#1F9E89'];
 		const tree = {};
+		const locTree = {};
 		this._allBills().forEach(r => {
 			const u = r.utility || '(none)';
 			const rc = r.rateCode || '(no rate)';
-			(tree[u] = tree[u] || {});
-			tree[u][rc] = (tree[u][rc] || 0) + 1;
+			const loc = r.location || '(none)';
+			(tree[u] = tree[u] || {}); tree[u][rc] = (tree[u][rc] || 0) + 1;
+			(locTree[u] = locTree[u] || {}); locTree[u][loc] = (locTree[u][loc] || 0) + 1;
 		});
 		const data = Object.keys(tree).sort().map((u, i) => {
 			const children = Object.keys(tree[u]).sort().map(rc => ({ name: rc, value: tree[u][rc] }));
 			const total = children.reduce((s, c) => s + c.value, 0);
 			const color = utilColors[String(u).toUpperCase()] || palette[i % palette.length];
-			return { name: u, value: total, itemStyle: { color: color }, children: children };
+			/* per-location breakdown stashed on the node so the tooltip can draw a pie (data
+			   survives serialization; closures don't). */
+			const locs = Object.keys(locTree[u]).map(l => ({ name: l, value: locTree[u][l] })).sort((a, b) => b.value - a.value);
+			return { name: u, value: total, itemStyle: { color: color }, children: children, _locs: locs };
 		});
 		return {
 			backgroundColor: '#1E293B',
 			title: { text: 'Decomposition of bill numbers by utility type and rate codes', left: 12, top: 8, textStyle: { color: '#F1F5F9', fontSize: 14, fontWeight: 600 } },
 			tooltip: {
 				backgroundColor: '#0F172A', borderColor: '#334155', textStyle: { color: '#E2E8F0' },
+				enterable: true,
+				extraCssText: 'max-width:none;box-shadow:0 8px 20px rgba(0,0,0,0.55);',
 				formatter: function (p) {
-					var name = p.name;
-					var val = p.value;
-					var path = (p.treePathInfo || []).map(function (t) { return t.name; }).filter(Boolean).join(' › ');
-					return '<b>' + name + '</b><br/>Bills: ' + val + (path ? '<br/>' + path : '');
+					var d = p.data || {};
+					var locs = d._locs;
+					if (!locs || !locs.length) {
+						return '<b>' + p.name + '</b><br/>Bills: ' + p.value;
+					}
+					var palette2 = ['#3E6FB5', '#6BA644', '#3AAFA9', '#E0B93C', '#9B6FB0', '#C0584B', '#5B9BD5', '#1F9E89', '#E07B39', '#7F8C8D', '#B5495B', '#4DB6AC', '#C084FC', '#FACC15', '#22D3EE', '#F472B6'];
+					var total = 0, i; for (i = 0; i < locs.length; i++) total += locs[i].value;
+					var cx = 70, cy = 70, R = 60, ang = -Math.PI / 2, paths = '';
+					for (i = 0; i < locs.length; i++) {
+						var frac = total ? locs[i].value / total : 0;
+						var col = palette2[i % palette2.length];
+						if (locs.length === 1) { paths += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="' + col + '"/>'; break; }
+						var a2 = ang + frac * 2 * Math.PI;
+						var x1 = (cx + R * Math.cos(ang)).toFixed(2), y1 = (cy + R * Math.sin(ang)).toFixed(2);
+						var x2 = (cx + R * Math.cos(a2)).toFixed(2), y2 = (cy + R * Math.sin(a2)).toFixed(2);
+						var large = frac > 0.5 ? 1 : 0;
+						paths += '<path d="M' + cx + ',' + cy + ' L' + x1 + ',' + y1 + ' A' + R + ',' + R + ' 0 ' + large + ',1 ' + x2 + ',' + y2 + ' Z" fill="' + col + '"/>';
+						ang = a2;
+					}
+					var leg = '', top = locs.slice(0, 10);
+					for (i = 0; i < top.length; i++) {
+						var pct = total ? (top[i].value / total * 100).toFixed(1) : '0';
+						leg += '<div style="display:flex;align-items:center;margin:1px 0;white-space:nowrap;"><span style="width:9px;height:9px;background:' + palette2[i % palette2.length] + ';display:inline-block;margin-right:5px;border-radius:2px;"></span>' + top[i].name + ': ' + top[i].value + ' (' + pct + '%)</div>';
+					}
+					if (locs.length > 10) leg += '<div style="color:#94A3B8;margin-top:2px;">+' + (locs.length - 10) + ' more…</div>';
+					return '<div style="display:flex;align-items:flex-start;">'
+						+ '<div style="text-align:center;"><div style="font-weight:700;color:#F1F5F9;margin-bottom:2px;">' + p.name + '</div><svg width="140" height="140" viewBox="0 0 140 140">' + paths + '</svg></div>'
+						+ '<div style="margin-left:10px;font-size:11px;color:#E2E8F0;max-height:140px;overflow:auto;"><div style="color:#94A3B8;font-weight:700;margin-bottom:3px;">Location</div>' + leg + '</div></div>';
 				}
 			},
 			series: [{
