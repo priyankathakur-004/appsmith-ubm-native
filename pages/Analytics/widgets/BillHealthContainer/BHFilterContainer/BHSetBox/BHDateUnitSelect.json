@@ -25,7 +25,7 @@
   ],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Notifications'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhdateunik",
   "labelAlignment": "left",
   "labelPosition": "Top",

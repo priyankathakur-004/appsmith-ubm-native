@@ -31,7 +31,7 @@
   "isDisabled": false,
   "isLoading": false,
   "isRequired": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills'].includes(BillHealthTabs.selectedTab) }}",
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Notifications'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhdatenumk",
   "label": "   ",
   "labelAlignment": "left",

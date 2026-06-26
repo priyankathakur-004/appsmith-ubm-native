@@ -237,7 +237,25 @@ export default {
 	   mapping below to the query's actual column names. */
 	getNotificationRows() {
 		const data = (typeof fetch_notifications !== 'undefined' && Array.isArray(fetch_notifications.data)) ? fetch_notifications.data : [];
-		return data.map(r => {
+
+		/* Page filters applied JS-side (the query returns all chats, customer-scoped):
+		   Account Status / Utility / Location (shared BHSetBox multi-selects) + Last Chat Date year. */
+		const multi = (w) => { try { const v = w && w.selectedOptionValues; return Array.isArray(v) ? v : []; } catch (e) { return []; } };
+		const acct = multi(typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null);
+		const util = multi(typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null);
+		const loc = multi(typeof BHLocationSelect !== 'undefined' ? BHLocationSelect : null);
+		let year = ''; try { year = (typeof NTChatYearSelect !== 'undefined' && NTChatYearSelect.selectedOptionValue) || ''; } catch (e) { }
+		const inSet = (sel, agg) => { if (!sel.length) return true; const set = String(agg || '').split(', '); return sel.some(s => set.indexOf(s) !== -1); };
+
+		const filtered = data.filter(r => {
+			if (!inSet(acct, r.statuses_all)) return false;
+			if (!inSet(util, r.utilities_all)) return false;
+			if (!inSet(loc, r.locations_all)) return false;
+			if (year && year !== 'All' && String(r.last_chat_date || '').slice(-4) !== String(year)) return false;
+			return true;
+		});
+
+		return filtered.map(r => {
 			// "Last Chat Tags" = the @mention at the start of the latest message (heuristic).
 			const text = r.last_chat_text || '';
 			const m = text.match(/@[^,\n]+/);
