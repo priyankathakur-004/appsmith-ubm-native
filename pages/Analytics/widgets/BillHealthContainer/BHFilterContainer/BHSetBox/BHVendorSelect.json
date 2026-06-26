@@ -28,7 +28,7 @@
   "dynamicTriggerPathList": [],
   "isFilterable": true,
   "isLoading": false,
-  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Received Bills Details','Received Bills per Location'].includes(BillHealthTabs.selectedTab) }}",
+  "isVisible": "{{ !['Warnings Overview','Warnings over Time','Impacted Locations','Late Bills','Received Bills Details','Received Bills per Location','Rate Codes'].includes(BillHealthTabs.selectedTab) }}",
   "key": "bhvendselk",
   "labelAlignment": "left",
   "labelPosition": "Top",

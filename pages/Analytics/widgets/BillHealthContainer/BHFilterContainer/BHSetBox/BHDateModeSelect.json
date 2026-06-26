@@ -37,7 +37,7 @@
   "mobileLeftColumn": 50,
   "mobileRightColumn": 55,
   "mobileTopRow": 4,
-  "onOptionChange": "{{ BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : (['Received Bills Details','Received Bills per Location'].includes(BillHealthTabs.selectedTab) ? fetch_received_bills.run() : null) }}",
+  "onOptionChange": "{{ BillHealthTabs.selectedTab === 'Late Fees' ? fetch_late_fees.run() : (['Received Bills Details','Received Bills per Location','Rate Codes'].includes(BillHealthTabs.selectedTab) ? fetch_received_bills.run() : null) }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 9,

@@ -10,12 +10,14 @@ WITH bt AS (
 )
 SELECT DISTINCT
     bm.id                                              AS bill_id,
+    bm.customer_id                                     AS customer_id,
     l.name                                             AS location,
     bi.commodity                                       AS utility_type,
     bi.meter_serial                                    AS meter_id,
     COALESCE(bt.bill_type, '(unspecified)')            AS bill_type,
     COALESCE(bt.account_status, '')                    AS account_status,
     COALESCE(NULLIF(BTRIM(cvpn.pretty_name), ''), pvn.pretty_name, br.vendor_code) AS vendor,
+    COALESCE(NULLIF(BTRIM(bi.rate_code::text), ''), bi.commodity) AS rate_code,
     br.statement_date::date                            AS invoice_date_raw,
     TO_CHAR(br.statement_date, 'YYYY-MM')              AS invoice_month
 FROM bill_management_v2.bill_metas bm

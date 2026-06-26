@@ -30,6 +30,9 @@ export default {
 			billType: r.bill_type || '(no type)',
 			accountStatus: r.account_status || '',
 			vendor: r.vendor || '',
+			rateCode: r.rate_code || '(no rate)',
+			billId: r.bill_id,
+			customerId: r.customer_id,
 			month: r.invoice_month || ''
 		})).filter(r => r.month);
 	},
@@ -366,5 +369,200 @@ export default {
 			row.Total = total;
 			return row;
 		});
+	},
+
+	/* ── Rate Codes ───────────────────────────────────────────────────────────
+	   Same Location > Utility > Meter > Bill Type hierarchy as the Details matrix,
+	   but each month cell shows the bill's RATE CODE as a link to the bill in
+	   Constellation Navigator. Plus a treemap decomposing bill counts by utility
+	   type and rate code. Same fetch_received_bills data + shared filters. */
+	_billUrl(customerId, billId) {
+		if (billId == null) return '';
+		return 'https://ubm.constellationnavigator.com/' + (customerId != null ? customerId : '') + '/bills/' + billId;
+	},
+
+	getRateMatrixHtml() {
+		const months = this.getMonths();
+		if (!months.length) {
+			return '<div style="padding:24px;color:#94A3B8;font-size:13px;">No received bills for the current filters.</div>';
+		}
+		const mn = this._monthNames();
+		const self = this;
+
+		/* tree[loc][util][meter][bt][month] = { code, url } */
+		const tree = {};
+		this._allBills().forEach(r => {
+			const L = tree[r.location] || (tree[r.location] = {});
+			const U = L[r.utility] || (L[r.utility] = {});
+			const M = U[r.meterId] || (U[r.meterId] = {});
+			const B = M[r.billType] || (M[r.billType] = {});
+			if (!B[r.month]) B[r.month] = { code: r.rateCode, url: self._billUrl(r.customerId, r.billId) };
+			else if (B[r.month].code.indexOf(r.rateCode) === -1) B[r.month].code += ', ' + r.rateCode;
+		});
+
+		const yearGroups = [];
+		months.forEach(m => {
+			const y = m.split('-')[0];
+			let g = yearGroups[yearGroups.length - 1];
+			if (!g || g.year !== y) { g = { year: y, months: [] }; yearGroups.push(g); }
+			g.months.push(m);
+		});
+		const cols = [];
+		yearGroups.forEach(g => { g.months.forEach(m => cols.push({ month: m })); });
+
+		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;background:#334155;line-height:16px;';
+		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;background:#334155;line-height:16px;';
+		const s1 = 'position:sticky;top:0;z-index:6;';
+		const s2 = 'position:sticky;top:30px;z-index:6;';
+		const sep = 'border-left:1px solid #475569;';
+		const tdBlank = 'padding:5px 9px;border-bottom:1px solid #243140;';
+		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;';
+		const lvlPad = [10, 26, 44, 66];
+		const lvlBg = ['#2B3B53', '#24344A', '#1E2A3C', '#172131'];
+		const lvlText = ['color:#FFFFFF;font-weight:700;', 'color:#E2E8F0;font-weight:600;', 'color:#C7D2E0;font-weight:600;', 'color:#D7DEE8;'];
+		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:#9FB0C4;margin-right:8px;vertical-align:middle;">-</span>';
+		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
+		const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+
+		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
+		h += '<tr><th style="' + thL + s1 + '">Service Year</th>';
+		yearGroups.forEach(g => { h += '<th style="' + th + sep + s1 + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
+		h += '</tr>\n';
+		h += '<tr><th style="' + thL + s2 + '">Location</th>';
+		yearGroups.forEach(g => { g.months.forEach(m => { const idx = parseInt(m.split('-')[1], 10) - 1; h += '<th style="' + th + s2 + '">' + (mn[idx] || m) + '</th>'; }); });
+		h += '</tr>\n';
+
+		const sortK = (o) => Object.keys(o).sort();
+		const groupRow = (label, lvl) => {
+			let r = '<tr><td style="' + labelStyle(lvl) + '">' + icon + label + '</td>';
+			cols.forEach(() => { r += '<td style="' + tdBlank + 'background:' + lvlBg[lvl] + ';"></td>'; });
+			return r + '</tr>\n';
+		};
+		const leafRow = (loc, util, meter, label, cells) => {
+			let r = '<tr><td style="' + labelStyle(3) + '">' + label + '</td>';
+			cols.forEach(c => {
+				const cell = cells[c.month];
+				const idx = parseInt(c.month.split('-')[1], 10) - 1;
+				const yr = c.month.split('-')[0];
+				const tip = esc('Location: ' + loc + '\nUtility Type: ' + util + '\nMeter ID: ' + meter
+					+ '\nBill Type: ' + label + '\nService Year Service Month: ' + yr + ' ' + (mn[idx] || c.month)
+					+ '\nRate Code: ' + (cell ? cell.code : '(Blank)')).replace(/\n/g, '&#10;');
+				const inner = cell
+					? '<a href="' + esc(cell.url) + '" target="_blank" rel="noopener" style="color:#7FB2F0;text-decoration:underline;">' + cell.code + '</a>'
+					: '';
+				r += '<td title="' + tip + '" style="' + tdC + 'background:' + lvlBg[3] + ';">' + inner + '</td>';
+			});
+			return r + '</tr>\n';
+		};
+
+		sortK(tree).forEach(loc => {
+			h += groupRow(loc, 0);
+			const U = tree[loc];
+			sortK(U).forEach(util => {
+				h += groupRow(util, 1);
+				const M = U[util];
+				sortK(M).forEach(meter => {
+					h += groupRow(meter, 2);
+					const B = M[meter];
+					sortK(B).forEach(bt => { h += leafRow(loc, util, meter, bt, B[bt]); });
+				});
+			});
+		});
+		h += '</table></div>';
+		return h;
+	},
+
+	/* Rate-code matrix rows for "Show as a Table" / Export (leaf rows, a column per month). */
+	getRateMatrixTableData() {
+		const months = this.getMonths();
+		const tree = {};
+		this._allBills().forEach(r => {
+			const L = tree[r.location] || (tree[r.location] = {});
+			const U = L[r.utility] || (L[r.utility] = {});
+			const M = U[r.meterId] || (U[r.meterId] = {});
+			const B = M[r.billType] || (M[r.billType] = {});
+			if (!B[r.month]) B[r.month] = r.rateCode;
+			else if (B[r.month].indexOf(r.rateCode) === -1) B[r.month] += ', ' + r.rateCode;
+		});
+		const out = [];
+		Object.keys(tree).sort().forEach(loc => {
+			const U = tree[loc];
+			Object.keys(U).sort().forEach(util => {
+				const M = U[util];
+				Object.keys(M).sort().forEach(meter => {
+					const B = M[meter];
+					Object.keys(B).sort().forEach(bt => {
+						const row = { Location: loc, 'Utility Type': util, 'Meter ID': meter, 'Bill Type': bt };
+						months.forEach(m => { row[this._monthLabel(m)] = B[bt][m] || ''; });
+						out.push(row);
+					});
+				});
+			});
+		});
+		return out;
+	},
+
+	/* ── Treemap: bill counts by Utility Type, drillable to Rate Code ── */
+	getRateTreemapConfig() {
+		const utilColors = this._utilColors();
+		const palette = ['#3E6FB5', '#6BA644', '#3AAFA9', '#E0B93C', '#9B6FB0', '#C0584B', '#5B9BD5', '#1F9E89'];
+		const tree = {};
+		this._allBills().forEach(r => {
+			const u = r.utility || '(none)';
+			const rc = r.rateCode || '(no rate)';
+			(tree[u] = tree[u] || {});
+			tree[u][rc] = (tree[u][rc] || 0) + 1;
+		});
+		const data = Object.keys(tree).sort().map((u, i) => {
+			const children = Object.keys(tree[u]).sort().map(rc => ({ name: rc, value: tree[u][rc] }));
+			const total = children.reduce((s, c) => s + c.value, 0);
+			const color = utilColors[String(u).toUpperCase()] || palette[i % palette.length];
+			return { name: u, value: total, itemStyle: { color: color }, children: children };
+		});
+		return {
+			backgroundColor: '#1E293B',
+			title: { text: 'Decomposition of bill numbers by utility type and rate codes', left: 12, top: 8, textStyle: { color: '#F1F5F9', fontSize: 14, fontWeight: 600 } },
+			tooltip: {
+				backgroundColor: '#0F172A', borderColor: '#334155', textStyle: { color: '#E2E8F0' },
+				formatter: function (p) {
+					var name = p.name;
+					var val = p.value;
+					var path = (p.treePathInfo || []).map(function (t) { return t.name; }).filter(Boolean).join(' › ');
+					return '<b>' + name + '</b><br/>Bills: ' + val + (path ? '<br/>' + path : '');
+				}
+			},
+			series: [{
+				type: 'treemap',
+				top: 44, left: 6, right: 6, bottom: 6,
+				roam: false,
+				nodeClick: 'zoomToNode',
+				breadcrumb: { show: true, top: 22, textStyle: { color: '#94A3B8' } },
+				label: { show: true, color: '#FFFFFF', fontSize: 12, formatter: '{b}' },
+				upperLabel: { show: true, height: 22, color: '#FFFFFF', fontWeight: 600 },
+				levels: [
+					{ itemStyle: { borderColor: '#0F172A', borderWidth: 2, gapWidth: 2 } },
+					{ itemStyle: { borderColor: '#1E293B', borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
+				],
+				data: data
+			}]
+		};
+	},
+
+	/* Treemap data as plain rows for "Show as a Table" / Export (Utility Type, Rate Code, Bills). */
+	getRateTreemapTableData() {
+		const tree = {};
+		this._allBills().forEach(r => {
+			const u = r.utility || '(none)';
+			const rc = r.rateCode || '(no rate)';
+			(tree[u] = tree[u] || {});
+			tree[u][rc] = (tree[u][rc] || 0) + 1;
+		});
+		const out = [];
+		Object.keys(tree).sort().forEach(u => {
+			Object.keys(tree[u]).sort().forEach(rc => {
+				out.push({ 'Utility Type': u, 'Rate Code': rc, 'Bills': tree[u][rc] });
+			});
+		});
+		return out;
 	}
 }
