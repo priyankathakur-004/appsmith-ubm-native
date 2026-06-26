@@ -123,19 +123,7 @@ export default {
 		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:#9FB0C4;margin-right:8px;vertical-align:middle;">-</span>';
 		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
 
-		/* Dark, Power-BI-style hover tooltip via a scoped <style> block (native title attr can't be
-		   themed). The tip opens below the cell; it can clip on the very bottom rows because the
-		   scroll container must hide overflow. */
-		const tipCss = '<style>'
-			+ '.rbmtx td.cell{position:relative;}'
-			+ '.rbmtx .tip{display:none;position:absolute;z-index:99;left:50%;top:130%;transform:translateX(-50%);'
-			+ 'background:#0B1220;color:#F8FAFC;border:1px solid #475569;border-radius:6px;padding:9px 13px;'
-			+ 'text-align:left;white-space:nowrap;font-size:12px;line-height:1.6;font-weight:400;'
-			+ 'box-shadow:0 8px 20px rgba(0,0,0,0.55);}'
-			+ '.rbmtx td.cell:hover .tip{display:block;}'
-			+ '.rbmtx .tip .k{color:#9FB0C4;}'
-			+ '</style>';
-		let h = tipCss + '<div class="rbmtx" style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#172131;min-width:100%;">\n';
+		let h = '<div style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#172131;min-width:100%;">\n';
 		/* header row 1: Service Year + year spans */
 		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
@@ -152,26 +140,19 @@ export default {
 			cols.forEach(() => { r += '<td style="' + tdBlank + 'background:' + lvlBg[lvl] + ';"></td>'; });
 			return r + '</tr>\n';
 		};
-		/* UBM-style dark hover tooltip on every leaf cell (rendered by the <style> block above). */
-		const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-		const kv = (k, val) => '<span class="k">' + esc(k) + '</span> ' + esc(val);
+		/* Hover tooltip on every leaf cell via the native title attribute (Appsmith's Text widget
+		   strips <style>, so a themed CSS tooltip isn't possible — title is the only option). */
+		const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 		const leafRow = (loc, util, meter, label, counts) => {
-			let r = '<tr><td style="' + labelStyle(3) + '">' + esc(label) + '</td>';
+			let r = '<tr><td style="' + labelStyle(3) + '">' + label + '</td>';
 			cols.forEach(c => {
 				const v = counts[c.month] || 0;
 				const idx = parseInt(c.month.split('-')[1], 10) - 1;
 				const yr = c.month.split('-')[0];
-				const tip = '<span class="tip">'
-					+ kv('Location:', loc) + '<br>'
-					+ kv('Utility Type:', util) + '<br>'
-					+ kv('Meter ID:', meter) + '<br>'
-					+ kv('Bill Type:', label) + '<br>'
-					+ kv('Service Year Service Month:', yr + ' ' + (mn[idx] || c.month)) + '<br>'
-					+ kv('Received Bills Count:', v ? String(v) : '(Blank)')
-					+ '</span>';
-				r += '<td class="cell" style="' + tdNum + 'background:' + lvlBg[3] + ';">'
-					+ (v ? '<span style="color:#7FB2F0;text-decoration:underline;cursor:pointer;">' + v + '</span>' : '')
-					+ tip + '</td>';
+				const tip = esc('Location: ' + loc + '\nUtility Type: ' + util + '\nMeter ID: ' + meter
+					+ '\nBill Type: ' + label + '\nService Year Service Month: ' + yr + ' ' + (mn[idx] || c.month)
+					+ '\nReceived Bills Count: ' + (v ? v : '(Blank)')).replace(/\n/g, '&#10;');
+				r += '<td title="' + tip + '" style="' + tdNum + 'background:' + lvlBg[3] + ';">' + (v ? '<span style="color:#7FB2F0;text-decoration:underline;cursor:pointer;">' + v + '</span>' : '') + '</td>';
 			});
 			return r + '</tr>\n';
 		};
