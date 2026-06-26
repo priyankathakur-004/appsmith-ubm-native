@@ -2,14 +2,14 @@
   "animateLoading": true,
   "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 791,
+  "bottomRow": 671,
   "boxShadow": "none",
   "canEscapeKeyClose": true,
   "canOutsideClickClose": true,
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 790,
+      "bottomRow": 670,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -30,7 +30,7 @@
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
-      "minHeight": 990,
+      "minHeight": 670,
       "minWidth": 450,
       "mobileBottomRow": 240,
       "mobileLeftColumn": 0,
@@ -67,14 +67,14 @@
       "key": "onClose"
     }
   ],
-  "height": 790,
+  "height": 670,
   "isCanvas": true,
   "isLoading": false,
   "key": "plveskyfor",
   "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 24,
-  "minHeight": 790,
+  "minHeight": 670,
   "mobileBottomRow": 25,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 12,
@@ -92,5 +92,5 @@
   "version": 2,
   "widgetId": "nk7fd6l4ue",
   "widgetName": "showTable",
-  "width": 1030.75
+  "width": 1827.8
 }

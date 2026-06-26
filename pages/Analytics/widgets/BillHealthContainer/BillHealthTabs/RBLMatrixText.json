@@ -26,6 +26,8 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 8,
+  "originalBottomRow": 92,
+  "originalTopRow": 8,
   "parentColumnSpace": 1,
   "parentId": "rblcanvas01",
   "parentRowSpace": 10,

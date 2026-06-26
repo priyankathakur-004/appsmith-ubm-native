@@ -5,12 +5,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 217,
+  "bottomRow": 140,
   "boxShadow": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 1750,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -55,7 +55,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -100,7 +100,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -145,7 +145,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -190,7 +190,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 1300,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -235,7 +235,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 970,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -280,7 +280,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 940,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -325,7 +325,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 940,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -370,7 +370,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 940,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -415,7 +415,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1710,
+      "bottomRow": 940,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -493,7 +493,7 @@
   "mobileTopRow": 33,
   "needsErrorInfo": false,
   "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
-  "originalBottomRow": 217,
+  "originalBottomRow": 140,
   "originalTopRow": 42,
   "parentColumnSpace": 16.453125,
   "parentId": "bhcanvas0001",
@@ -546,6 +546,13 @@
       "label": "Notifications",
       "widgetId": "ntcanvas0001"
     },
+    "tabrbloc001": {
+      "id": "tabrbloc001",
+      "index": 9,
+      "isVisible": true,
+      "label": "Received Bills per Location",
+      "widgetId": "rblcanvas01"
+    },
     "tabrecvbill1": {
       "id": "tabrecvbill1",
       "index": 8,
@@ -566,13 +573,6 @@
       "isVisible": true,
       "label": "Warnings over Time",
       "widgetId": "wotcanvas001"
-    },
-    "tabrbloc001": {
-      "id": "tabrbloc001",
-      "index": 9,
-      "isVisible": true,
-      "label": "Received Bills per Location",
-      "widgetId": "rblcanvas01"
     }
   },
   "topRow": 42,
