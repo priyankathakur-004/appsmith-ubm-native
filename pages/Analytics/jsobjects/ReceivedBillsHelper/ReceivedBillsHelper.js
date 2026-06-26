@@ -107,33 +107,23 @@ export default {
 			g.months.forEach(m => cols.push({ kind: 'm', month: m }));
 		});
 
-		/* Aggregate month -> count for any subtree (leaves carry numbers, groups carry children). */
-		const aggOf = (node) => {
-			const out = {};
-			for (const k in node) {
-				const v = node[k];
-				if (typeof v === 'number') { out[k] = (out[k] || 0) + v; }
-				else { const sub = aggOf(v); for (const mm in sub) out[mm] = (out[mm] || 0) + sub[mm]; }
-			}
-			return out;
-		};
-		const colVal = (agg, c) => {
-			if (c.kind === 'm') return agg[c.month] || 0;
-			if (c.kind === 'yt') return c.months.reduce((s, m) => s + (agg[m] || 0), 0);
-			let s = 0; for (const m in agg) s += agg[m]; return s;
-		};
+		const sortK = (o) => Object.keys(o).sort();
 
+		/* Mirror the UBM matrix exactly (dark theme): group rows (Location > Utility > Meter) show
+		   a collapse icon + label with BLANK month cells; only the leaf (Bill Type) row carries the
+		   underlined, click-style bill counts. */
 		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;';
 		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;';
 		const sep = 'border-left:1px solid #475569;';
-		const tdBase = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:center;white-space:nowrap;';
-		const lvlPad = [12, 28, 44, 60];
-		const lvlColor = ['color:#F8FAFC;font-weight:700;', 'color:#CBD5E1;font-weight:600;', 'color:#E2E8F0;', 'color:#CBD5E1;'];
-		const lvlBg = ['background:#243043;', '', '', 'background:#1B2738;'];
-		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #2B3A4F;text-align:left;white-space:nowrap;' + lvlColor[lvl] + lvlBg[lvl];
-		const cellStyle = (c, lvl) => tdBase + (lvl <= 1 ? 'color:#F1F5F9;font-weight:600;' : 'color:#E2E8F0;') + lvlBg[lvl] + (c.kind !== 'm' ? sep + 'font-weight:700;color:#F8FAFC;' : '');
+		const tdBlank = 'padding:5px 9px;border-bottom:1px solid #243140;';
+		const tdNum = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;';
+		const lvlPad = [10, 26, 44, 66];
+		const lvlBg = ['#2B3B53', '#24344A', '#1E2A3C', '#172131'];
+		const lvlText = ['color:#FFFFFF;font-weight:700;', 'color:#E2E8F0;font-weight:600;', 'color:#C7D2E0;font-weight:600;', 'color:#D7DEE8;'];
+		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:#9FB0C4;margin-right:8px;vertical-align:middle;">-</span>';
+		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
 
-		let h = '<div style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#1E293B;min-width:100%;">\n';
+		let h = '<div style="width:100%;max-height:840px;overflow:auto;"><table style="border-collapse:collapse;background:#172131;min-width:100%;">\n';
 		/* header row 1: Service Year + year spans */
 		h += '<tr style="background:#334155;"><th style="' + thL + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
@@ -145,24 +135,37 @@ export default {
 		});
 		h += '</tr>\n';
 
-		const sortK = (o) => Object.keys(o).sort();
-		const renderRow = (label, lvl, agg) => {
-			let r = '<tr><td style="' + labelStyle(lvl) + '">' + label + '</td>';
-			cols.forEach(c => { const v = colVal(agg, c); r += '<td style="' + cellStyle(c, lvl) + '">' + (v ? v : '') + '</td>'; });
+		const groupRow = (label, lvl) => {
+			let r = '<tr><td style="' + labelStyle(lvl) + '">' + icon + label + '</td>';
+			cols.forEach(() => { r += '<td style="' + tdBlank + 'background:' + lvlBg[lvl] + ';"></td>'; });
+			return r + '</tr>\n';
+		};
+		/* Native hover tooltip (UBM-style) on every leaf cell — multi-line via &#10;. */
+		const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+		const leafRow = (loc, util, meter, label, counts) => {
+			let r = '<tr><td style="' + labelStyle(3) + '">' + label + '</td>';
+			cols.forEach(c => {
+				const v = counts[c.month] || 0;
+				const idx = parseInt(c.month.split('-')[1], 10) - 1;
+				const yr = c.month.split('-')[0];
+				const tip = esc('Location: ' + loc + '\nUtility Type: ' + util + '\nMeter ID: ' + meter
+					+ '\nBill Type: ' + label + '\nService Year Service Month: ' + yr + ' ' + (mn[idx] || c.month)
+					+ '\nReceived Bills Count: ' + (v ? v : '(Blank)')).replace(/\n/g, '&#10;');
+				r += '<td title="' + tip + '" style="' + tdNum + 'background:' + lvlBg[3] + ';">' + (v ? '<span style="color:#7FB2F0;text-decoration:underline;cursor:pointer;">' + v + '</span>' : '') + '</td>';
+			});
 			return r + '</tr>\n';
 		};
 
-		/* Every level shows its rolled-up counts (Location > Utility > Meter > Bill Type). */
 		sortK(tree).forEach(loc => {
-			h += renderRow(loc, 0, aggOf(tree[loc]));
+			h += groupRow(loc, 0);
 			const U = tree[loc];
 			sortK(U).forEach(util => {
-				h += renderRow(util, 1, aggOf(U[util]));
+				h += groupRow(util, 1);
 				const M = U[util];
 				sortK(M).forEach(meter => {
-					h += renderRow(meter, 2, aggOf(M[meter]));
+					h += groupRow(meter, 2);
 					const B = M[meter];
-					sortK(B).forEach(bt => { h += renderRow(bt, 3, B[bt]); });
+					sortK(B).forEach(bt => { h += leafRow(loc, util, meter, bt, B[bt]); });
 				});
 			});
 		});
