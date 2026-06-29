@@ -25,7 +25,7 @@
     "fullyQualifiedName": "RateClassData.initPage",
     "name": "initPage",
     "pageId": "Rate Class Analysis",
-    "runBehaviour": "MANUAL",
-    "userSetOnLoad": false
+    "runBehaviour": "AUTOMATIC",
+    "userSetOnLoad": true
   }
 }

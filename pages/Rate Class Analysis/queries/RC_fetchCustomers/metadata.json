@@ -29,7 +29,7 @@
     ],
     "name": "RC_fetchCustomers",
     "pageId": "Rate Class Analysis",
-    "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": true
+    "runBehaviour": "MANUAL",
+    "userSetOnLoad": false
   }
 }
