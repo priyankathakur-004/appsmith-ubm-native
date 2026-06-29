@@ -84,6 +84,10 @@
     {
       "id": "Reports",
       "isDefault": false
+    },
+    {
+      "id": "Rate Class Analysis",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {

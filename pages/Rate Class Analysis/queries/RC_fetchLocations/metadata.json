@@ -1,11 +1,11 @@
 {
-  "gitSyncId": "68f08f3128a92f6fcd2cb504_ba000000-0000-4000-8000-000000000000",
-  "id": "Analytics_fetch_bill_accounts",
+  "gitSyncId": "6a42383420f165a7650f6c4d_affcfc36-9916-40ff-9cfe-d489bebcbed5",
+  "id": "Rate Class Analysis_RC_fetchLocations",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT\n    m.location_description,\n    m.client_account AS service_account,\n    m.meter_serial AS meter,\n    m.utility_type,\n    m.bill_type,\n    m.vendor_name,\n    m.account_status\nFROM bill_management_v2.reports_customer_monthly_usage m\nWHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}\nORDER BY m.location_description",
+      "body": "SELECT DISTINCT ON (l.name)\n    l.id,\n    l.name,\n    l.postcode\nFROM bill_management_v2.analytics_billing_line_items abli\nLEFT JOIN bill_management_v2.locations l\n    ON abli.location_id = l.id\nWHERE abli.customer_id = {{ RC_CustomerSelect.selectedOptionValue || 76013 }}\nORDER BY l.name;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -13,7 +13,7 @@
           "value": false
         }
       ],
-      "timeoutInMillisecond": 3000000
+      "timeoutInMillisecond": 300000
     },
     "confirmBeforeExecute": false,
     "datasource": {
@@ -27,8 +27,8 @@
         "key": "body"
       }
     ],
-    "name": "fetch_bill_accounts",
-    "pageId": "Analytics",
+    "name": "RC_fetchLocations",
+    "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }

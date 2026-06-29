@@ -1,0 +1,28 @@
+{
+  "gitSyncId": "6a42383420f165a7650f6c4d_c4dc74bd-a064-4a4c-87ff-507e9f1d38f8",
+  "id": "Rate Class Analysis_RateClassData",
+  "unpublishedCollection": {
+    "name": "RateClassData",
+    "pageId": "Rate Class Analysis",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "_GENABILITY_BASE",
+        "value": "\"https://api.genability.com\""
+      },
+      {
+        "name": "_GENABILITY_AUTH",
+        "value": "\"Basic ZjVjOGRlNmYtZTYyMi00ZTY3LTljNjctN2Y0MDg3ODFmMDQ5OmNkZTk1ZTQwLWYxNDUtNGQzNy05ZTdiLWNhYzFkY2M1ZmRkYw==\""
+      },
+      {
+        "name": "_MAX_TARIFFS",
+        "value": "80"
+      },
+      {
+        "name": "_CALC_CONCURRENCY",
+        "value": "6"
+      }
+    ]
+  }
+}

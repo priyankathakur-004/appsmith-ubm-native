@@ -1,0 +1,49 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "",
+  "bottomRow": 27,
+  "bottomRowBeforeCollapse": 27,
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "fontSize": "0.875rem",
+  "fontStyle": "ITALIC",
+  "isLoading": false,
+  "isVisible": "{{ !!appsmith.store.rc_loading || !!appsmith.store.rc_status }}",
+  "key": "rcprogress01",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 37,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 33,
+  "needsErrorInfo": false,
+  "originalBottomRow": 27,
+  "originalTopRow": 23,
+  "overflow": "NONE",
+  "parentColumnSpace": 13.83349609375,
+  "parentId": "zbxesfkigw",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 21,
+  "shouldTruncate": false,
+  "text": "{{ appsmith.store.rc_loading ? (appsmith.store.rc_progress || 'Working…') : (appsmith.store.rc_status || '') }}",
+  "textAlign": "LEFT",
+  "textColor": "#3b82f6",
+  "topRow": 23,
+  "topRowBeforeCollapse": 23,
+  "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "0r82w4n0jg",
+  "widgetName": "Txt_RC_progress"
+}
