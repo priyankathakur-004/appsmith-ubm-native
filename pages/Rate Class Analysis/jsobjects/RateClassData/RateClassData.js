@@ -87,6 +87,7 @@ export default {
 			await storeValue("rc_usage", cache[cacheKey].usage);
 			await storeValue("rc_results", cache[cacheKey].results);
 			await storeValue("rc_meta", cache[cacheKey].meta);
+			await storeValue("rc_all_tariffs", cache[cacheKey].allTariffs || []);
 			await storeValue("rc_screen", 2);
 			return;
 		}
@@ -158,11 +159,15 @@ export default {
 			// schedules AND riders/surcharges/add-ons (TCJA credit, smart-meter
 			// rider, transmission service charge, etc.). Modeling a rider alone is
 			// meaningless (it's one line, sometimes a credit → negative "bill"),
-			// so keep only actual rate classes: tariffType DEFAULT (standard rate)
-			// or ALTERNATE (optional schedules a customer could switch to).
+			// so keep only actual rate classes: DEFAULT (the standard rate) and
+			// ALTERNATIVE (optional schedules a customer could switch to — these
+			// are the commercial / General Power / large-power rates). NOTE:
+			// Genability spells it "ALTERNATIVE", not "ALTERNATE"; matching the
+			// wrong spelling silently drops every commercial rate and leaves only
+			// the single Residential DEFAULT. RIDER / OPTIONAL_EXTRA are surcharges.
 			const rateClasses = allTariffs.filter(t => {
 				const tt = String(t && t.tariffType || "").toUpperCase();
-				return tt === "DEFAULT" || tt === "ALTERNATE";
+				return tt === "DEFAULT" || tt === "ALTERNATIVE" || tt === "ALTERNATE";
 			});
 			const ridersDropped = allTariffs.length - rateClasses.length;
 
@@ -182,6 +187,31 @@ export default {
 				return;
 			}
 			await storeValue("rc_status", `Step 3 OK: ${tariffs.length} rate class(es) to model (dropped ${ridersDropped} riders/surcharges).`);
+
+			// Tag the FULL returned set for the "all tariffs" view (Sunny wants to
+			// see everything Arcadia returned, not just what we model). Ranking
+			// still uses only the modeled rate classes; this list is display-only.
+			const modeledIds = {};
+			for (const t of tariffs) modeledIds[t.masterTariffId] = true;
+			const allTariffsTagged = allTariffs.map(t => {
+				const tt = String(t && t.tariffType || "").toUpperCase();
+				const isRateClass = (tt === "DEFAULT" || tt === "ALTERNATIVE" || tt === "ALTERNATE");
+				return {
+					utility: t.lseName || "",
+					code: t.tariffCode || "",
+					name: t.tariffName || "",
+					type: t.tariffType || "",
+					category: isRateClass ? "Rate Class" : (tt === "RIDER" ? "Rider/Surcharge" : (t.tariffType || "Other")),
+					customerClass: t.customerClass || "",
+					modeled: !!modeledIds[t.masterTariffId]
+				};
+			}).sort((a, b) => {
+				// Rate classes first, modeled ones at the very top, then by name.
+				const rank = (r) => (r.category === "Rate Class" ? (r.modeled ? 0 : 1) : 2);
+				const d = rank(a) - rank(b);
+				return d !== 0 ? d : String(a.name).localeCompare(String(b.name));
+			});
+			await storeValue("rc_all_tariffs", allTariffsTagged);
 
 			// --- 4. Model an annual bill for each tariff (1 call each, throttled) ---
 			let done = 0;
@@ -227,6 +257,7 @@ export default {
 				tariffCount: ranked.length,
 				modeledCount: ok.length,
 				ridersDropped,
+				totalReturned: allTariffs.length,
 				truncated,
 				lseNames: lses.map(l => l.name).filter(Boolean)
 			};
@@ -238,7 +269,7 @@ export default {
 
 			// Cache for instant re-selection.
 			const newCache = Object.assign({}, appsmith.store.rc_cache || {});
-			newCache[cacheKey] = { usage, results: ranked, meta };
+			newCache[cacheKey] = { usage, results: ranked, meta, allTariffs: allTariffsTagged };
 			await storeValue("rc_cache", newCache);
 		} catch (e) {
 			const msg = "Analysis failed: " + ((e && e.message) || e);
@@ -426,6 +457,13 @@ export default {
 
 	usageRows() {
 		const arr = appsmith.store.rc_usage;
+		return Array.isArray(arr) ? arr : [];
+	},
+
+	// Every tariff Arcadia returned for the location, tagged by type and whether
+	// it was modeled — feeds the "all tariffs returned" view.
+	allTariffsRows() {
+		const arr = appsmith.store.rc_all_tariffs;
 		return Array.isArray(arr) ? arr : [];
 	},
 
