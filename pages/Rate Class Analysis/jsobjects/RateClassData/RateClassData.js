@@ -207,6 +207,7 @@ export default {
 					type: t.tariffType || "",
 					category: isRateClass ? "Rate Class" : (tt === "RIDER" ? "Rider/Surcharge" : (t.tariffType || "Other")),
 					customerClass: t.customerClass || "",
+					tou: !!t.hasTimeOfUseRates,
 					modeled: !!modeledIds[t.masterTariffId]
 				};
 			}).sort((a, b) => {
@@ -235,7 +236,11 @@ export default {
 					tariffName: t.tariffName || "",
 					lseName: t.lseName || "",
 					serviceType: RateClassData._serviceLabel(t.serviceType),
+					isTOU: !!t.hasTimeOfUseRates,
 					modeledAnnualCost: modeled,
+					modeledEnergy: block.error ? null : Number(block.energyCost || 0),
+					modeledDemand: block.error ? null : Number(block.demandCost || 0),
+					modeledOther: block.error ? null : Number(block.otherCost || 0),
 					actualAnnualCost: actualAnnual,
 					annualSavings: savings,
 					savingsPct: (savings == null || actualAnnual === 0) ? null : (savings / actualAnnual) * 100,
@@ -308,26 +313,47 @@ export default {
 		}
 	},
 
+	// Pull every active electric tariff for the LSE. Genability caps a page at
+	// 100, and large IOUs have far more (PG&E ~600 active, ConEd ~200), so we
+	// paginate via pageStart until a short page comes back — otherwise we'd
+	// silently miss rate classes for big utilities. effectiveOn=today restricts
+	// to currently-active schedules (excludes the thousands of historical ones).
 	async _fetchTariffs(lseId, zip) {
-		try {
+		const pageSize = 100;
+		const maxPages = 12; // safety backstop (~1200 tariffs/LSE)
+		const today = moment().format("YYYY-MM-DD");
+		const all = [];
+		for (let page = 0; page < maxPages; page++) {
 			const params = [
 				`lseId=${encodeURIComponent(lseId)}`,
 				`zipCode=${encodeURIComponent(zip)}`,
 				`serviceTypes=ELECTRICITY`,
-				`effectiveOn=${moment().format("YYYY-MM-DD")}`,
+				`effectiveOn=${today}`,
 				`populateProperties=true`,
-				`pageCount=100`
+				`pageStart=${page * pageSize}`,
+				`pageCount=${pageSize}`
 			].join("&");
-			const res = await fetch(`${RateClassData._GENABILITY_BASE}/rest/public/tariffs?${params}`, {
-				method: "GET",
-				headers: { "Authorization": RateClassData._GENABILITY_AUTH, "Accept": "application/json" }
-			});
-			const data = await res.json();
-			const arr = (data && (data.results || data.data)) || [];
-			return Array.isArray(arr) ? arr : [];
-		} catch (e) {
-			return [];
+			let arr;
+			try {
+				const res = await fetch(`${RateClassData._GENABILITY_BASE}/rest/public/tariffs?${params}`, {
+					method: "GET",
+					headers: { "Authorization": RateClassData._GENABILITY_AUTH, "Accept": "application/json" }
+				});
+				if (!res.ok) {
+					await storeValue("rc_last_fetch_err", `HTTP ${res.status} from /tariffs (lse ${lseId})`);
+					break;
+				}
+				const data = await res.json();
+				arr = (data && (data.results || data.data)) || [];
+			} catch (e) {
+				await storeValue("rc_last_fetch_err", (e && e.message) || "network/CORS error on /tariffs");
+				break;
+			}
+			if (!Array.isArray(arr) || arr.length === 0) break;
+			for (const t of arr) all.push(t);
+			if (arr.length < pageSize) break; // last page
 		}
+		return all;
 	},
 
 	async _calcTariff(tariff, body) {
@@ -444,7 +470,10 @@ export default {
 			utility: r.lseName,
 			tariff: r.tariffName,
 			code: r.tariffCode,
+			tou: !!r.isTOU,
 			modeled_annual: r.modeledAnnualCost == null ? null : Number(r.modeledAnnualCost.toFixed(2)),
+			modeled_energy: r.modeledEnergy == null ? null : Number(r.modeledEnergy.toFixed(2)),
+			modeled_demand: r.modeledDemand == null ? null : Number(r.modeledDemand.toFixed(2)),
 			actual_annual: r.actualAnnualCost == null ? null : Number(r.actualAnnualCost.toFixed(2)),
 			annual_savings: r.annualSavings == null ? null : Number(r.annualSavings.toFixed(2)),
 			savings_pct: r.savingsPct == null ? null : Number(r.savingsPct.toFixed(1)),
@@ -527,6 +556,10 @@ export default {
 		const result = (res && res.results && res.results[0]) || res || {};
 		const items = Array.isArray(result.items) ? result.items : [];
 		const groups = new Map();
+		// Split the bill into energy / demand / other so the comparison can show
+		// WHERE a rate's cost comes from (demand charges are usually the swing
+		// factor vs. a customer's actual/negotiated rate).
+		let energyCost = 0, demandCost = 0, otherCost = 0;
 		for (const it of items) {
 			const name = RateClassData._pickStr(it, ["chargeName", "rateGroupName", "name"]);
 			if (!name) continue;
@@ -536,6 +569,14 @@ export default {
 			const qtyKey = RateClassData._pickStr(it, ["quantityKey", "chargePeriodKey"]);
 			const unit = RateClassData._displayUnitFor(rawUnit, qtyKey);
 			const rate = RateClassData._pickNum(it, ["rate", "itemRate", "chargePeriodRate", "unitCost", "rateValue"]);
+
+			// Classify by the charge's billing basis.
+			const k = (qtyKey || "").toLowerCase();
+			const u = (unit || "").toLowerCase();
+			if (k === "consumption" || u === "kwh") energyCost += cost;
+			else if (k.indexOf("demand") >= 0 || u === "kw") demandCost += cost;
+			else otherCost += cost;
+
 			const groupKey = name + "|" + (qtyKey || unit || "");
 			const g = groups.get(groupKey) || { name, qty: 0, qty_unit: unit, cost: 0, rateSum: 0, rateCount: 0 };
 			g.qty += qty;
@@ -559,6 +600,9 @@ export default {
 			adjustedTotalCost: Number(result.totalCost != null ? result.totalCost : (result.adjustedTotalCost || 0)),
 			subTotalCost: Number(result.subTotalCost != null ? result.subTotalCost : (result.totalCost || 0)),
 			taxCost: Number(result.taxCost || 0),
+			energyCost: energyCost,
+			demandCost: demandCost,
+			otherCost: otherCost,
 			lines: lines,
 			error: res && res.__error ? res.__error : null
 		};
