@@ -121,9 +121,24 @@ export default {
 			}));
 			const zip = RateClassData._pickStr(usage[0], ["postcode"]);
 			const locationName = RateClassData._pickStr(usage[0], ["location_name"]);
+			const country = RateClassData._pickStr(usage[0], ["country"]);
+			const state = RateClassData._pickStr(usage[0], ["state"]);
 			const actualAnnual = months.reduce((s, m) => s + m.actual, 0);
 			const monthCount = months.length;
 			await storeValue("rc_usage", usage);
+
+			// Guard: Genability/Arcadia only covers U.S. utilities. A non-U.S.
+			// postal code (e.g. a Mexican CP) collides with a 5-digit U.S. ZIP and
+			// resolves to the wrong utility (e.g. Aguascalientes CP 20355 → Pepco
+			// in Washington DC), producing a meaningless comparison. Refuse rather
+			// than model it. Empty/US country is allowed through.
+			if (country && !RateClassData._isUSCountry(country)) {
+				const msg = `This location is in ${country}${state ? ", " + state : ""}. The Arcadia/Genability tariff database only covers U.S. utilities, so rate-class modeling isn't available here (a non-U.S. postcode would be mis-matched to a U.S. ZIP).`;
+				showAlert("Non-U.S. location — tariff modeling not available", "warning");
+				await storeValue("rc_status", msg);
+				await storeValue("rc_loading", false);
+				return;
+			}
 
 			if (!zip || String(zip).trim().length < 3) {
 				const msg = "Step 1: usage loaded but the location has no postcode — cannot look up tariffs.";
@@ -403,13 +418,20 @@ export default {
 	// =====================================================================
 	// Keep tariffs whose monthly kWh / kW applicability windows contain this
 	// location's average monthly consumption and peak demand. Tariffs with no
-	// declared range are always kept (can't rule them out).
+	// declared range are always kept (can't rule them out). Also drop RESIDENTIAL
+	// rate classes for a clearly-commercial load — a site that's demand-metered at
+	// thousands of kW can't be on a residential rate, and including them produces
+	// nonsense rows (e.g. a residential rate "modeled" against 2 GWh/month).
 	_filterApplicable(rows, months) {
 		const n = months.length || 1;
 		const avgKwh = months.reduce((s, m) => s + m.kwh, 0) / n;
 		const peakKw = months.reduce((mx, m) => Math.max(mx, m.kw), 0);
+		// Residential service is essentially never demand-metered above ~50 kW or
+		// over ~25,000 kWh/month, so either signal means "commercial".
+		const isCommercial = peakKw > 50 || avgKwh > 25000;
 		return (rows || []).filter(t => {
 			if (t.serviceType && t.serviceType !== "ELECTRICITY") return false;
+			if (isCommercial && String(t.customerClass || "").toUpperCase() === "RESIDENTIAL") return false;
 			const r = RateClassData._readApplicabilityRanges(t);
 			if (r.minKWh != null && avgKwh < r.minKWh) return false;
 			if (r.maxKWh != null && avgKwh > r.maxKWh) return false;
@@ -542,6 +564,15 @@ export default {
 		if (!s) return "";
 		const m = { ELECTRICITY: "Electricity", GAS: "Gas", SOLAR_PV: "Solar" };
 		return m[s] || s;
+	},
+
+	// Is this country value the United States? (Genability only covers U.S.)
+	// Empty/unknown is treated as U.S. so we don't block legacy rows with no
+	// country set. Normalizes "U.S.A.", "United States", etc.
+	_isUSCountry(c) {
+		const v = String(c || "").trim().toUpperCase().replace(/\./g, "").replace(/\s+/g, " ");
+		if (!v) return true;
+		return ["US", "USA", "U S", "U S A", "UNITED STATES", "UNITED STATES OF AMERICA", "AMERICA"].indexOf(v) >= 0;
 	},
 	_displayUnitFor(quantityUnit, quantityKey) {
 		if (quantityUnit) return String(quantityUnit);

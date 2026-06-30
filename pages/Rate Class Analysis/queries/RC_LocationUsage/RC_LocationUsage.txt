@@ -43,11 +43,13 @@ SELECT
     ROUND(cons.actual_charges::numeric, 2) AS actual_charges,
     cons.uom,
     loc.postcode,
+    loc.state,
+    loc.country,
     loc.name                               AS location_name
 FROM cons
 LEFT JOIN dem ON dem.month = cons.month
 CROSS JOIN (
-    SELECT postcode, name
+    SELECT postcode, name, state, country
     FROM bill_management_v2.locations
     WHERE id = {{ RC_LocationSelect.selectedOptionValue || 0 }}
 ) loc
