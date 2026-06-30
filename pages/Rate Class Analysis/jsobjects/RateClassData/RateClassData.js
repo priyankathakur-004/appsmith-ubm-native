@@ -196,9 +196,25 @@ export default {
 			});
 			const ridersDropped = allTariffs.length - rateClasses.length;
 
+			// Collapse NEM 2.0 / NEM 3.0 (net-energy-metering / solar) variants of
+			// the same rate. Without on-site generation data they model identically,
+			// so they're pure duplicate rows that also burn calc calls and crowd out
+			// distinct rates under the cap. Key = tariff name with the NEM token
+			// stripped (keeps "Direct Access" etc. distinct — those DO differ in cost).
+			const seenNorm = {};
+			const dedupedClasses = [];
+			for (const t of rateClasses) {
+				const norm = String(t && t.tariffName || "")
+					.replace(/\(?\s*NEM\s*\d(?:\.\d)?\s*\)?/gi, "")
+					.replace(/\s+/g, " ").trim().toLowerCase();
+				if (seenNorm[norm]) continue;
+				seenNorm[norm] = true;
+				dedupedClasses.push(t);
+			}
+
 			// Then keep only those whose applicability ranges fit this location's
 			// typical monthly usage (drops e.g. large-demand-only rates).
-			let tariffs = RateClassData._filterApplicable(rateClasses, months);
+			let tariffs = RateClassData._filterApplicable(dedupedClasses, months);
 			// Sort by customerCount (how many customers are actually on the rate)
 			// so when we cap we model the MAINSTREAM rates, not an arbitrary first-N.
 			// Big IOUs can still have >80 applicable rate classes after filtering.
@@ -233,6 +249,7 @@ export default {
 					category: isRateClass ? "Rate Class" : (tt === "RIDER" ? "Rider/Surcharge" : (t.tariffType || "Other")),
 					customerClass: t.customerClass || "",
 					tou: !!t.hasTimeOfUseRates,
+					da: /direct access/i.test(String(t.tariffName || "")),
 					modeled: !!modeledIds[t.masterTariffId]
 				};
 			}).sort((a, b) => {
@@ -262,6 +279,7 @@ export default {
 					lseName: t.lseName || "",
 					serviceType: RateClassData._serviceLabel(t.serviceType),
 					isTOU: !!t.hasTimeOfUseRates,
+					isDA: /direct access/i.test(String(t.tariffName || "")),
 					modeledAnnualCost: modeled,
 					modeledEnergy: block.error ? null : Number(block.energyCost || 0),
 					modeledDemand: block.error ? null : Number(block.demandCost || 0),
@@ -508,6 +526,7 @@ export default {
 			tariff: r.tariffName,
 			code: r.tariffCode,
 			tou: !!r.isTOU,
+			da: !!r.isDA,
 			modeled_annual: r.modeledAnnualCost == null ? null : Number(r.modeledAnnualCost.toFixed(2)),
 			modeled_energy: r.modeledEnergy == null ? null : Number(r.modeledEnergy.toFixed(2)),
 			modeled_demand: r.modeledDemand == null ? null : Number(r.modeledDemand.toFixed(2)),
