@@ -81,7 +81,11 @@ export default {
 		}
 
 		// Cache: skip the whole pipeline if we've already analysed this location.
-		const cacheKey = `${customerId}:${locationId}`;
+		// The version prefix invalidates entries from older builds whose result
+		// shape differs (e.g. before the ALTERNATIVE rate-class fix) — appsmith
+		// store persists across reloads, so without this an old cached result
+		// would keep showing after a code change.
+		const cacheKey = `v3:${customerId}:${locationId}`;
 		const cache = appsmith.store.rc_cache || {};
 		if (cache[cacheKey]) {
 			await storeValue("rc_usage", cache[cacheKey].usage);
@@ -576,7 +580,13 @@ export default {
 		await storeValue("rc_screen", 1);
 		await storeValue("rc_results", []);
 		await storeValue("rc_usage", []);
+		await storeValue("rc_all_tariffs", []);
+		await storeValue("rc_status", "");
 		await storeValue("rc_loading", false);
+		// Drop any cached analyses from a previous session/build so a code change
+		// can't keep serving a stale result. Re-selecting within this session
+		// still caches normally.
+		await storeValue("rc_cache", {});
 		const res = await RC_fetchCustomers.run();
 		const arr = Array.isArray(res) ? res : ((res && (res.data || res.body)) || []);
 		await storeValue("rc_customer_opts", Array.isArray(arr) ? arr : []);
