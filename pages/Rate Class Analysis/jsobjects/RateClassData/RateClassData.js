@@ -196,16 +196,22 @@ export default {
 			});
 			const ridersDropped = allTariffs.length - rateClasses.length;
 
-			// Collapse NEM 2.0 / NEM 3.0 (net-energy-metering / solar) variants of
-			// the same rate. Without on-site generation data they model identically,
-			// so they're pure duplicate rows that also burn calc calls and crowd out
-			// distinct rates under the cap. Key = tariff name with the NEM token
-			// stripped (keeps "Direct Access" etc. distinct — those DO differ in cost).
+			// Collapse economically-identical variants of the same rate: net-metering
+			// (NEM 2.0/3.0, "Net Metering") and fuel-mix labels ("Renewable and
+			// Non-Renewable Resources"/-RNR). Without on-site generation these model
+			// the same, so they're duplicate rows that burn calc calls and crowd out
+			// distinct rates under the cap. Key = tariff name with those qualifier
+			// phrases stripped (keeps "Direct Access", "Time of Use", voltage tiers,
+			// etc. distinct — those genuinely change the cost).
 			const seenNorm = {};
 			const dedupedClasses = [];
 			for (const t of rateClasses) {
 				const norm = String(t && t.tariffName || "")
-					.replace(/\(?\s*NEM\s*\d(?:\.\d)?\s*\)?/gi, "")
+					.replace(/\bnet metering\b/gi, "")
+					.replace(/\brenewable and non-?renewable resources\b/gi, "")
+					.replace(/\(?\s*NEM\s*\d?(?:\.\d)?\s*\)?/gi, "")
+					.replace(/[,\-]\s*(?:RNR|NEM)\b/gi, "")
+					.replace(/[\s,\-]+$/g, "")
 					.replace(/\s+/g, " ").trim().toLowerCase();
 				if (seenNorm[norm]) continue;
 				seenNorm[norm] = true;
@@ -295,11 +301,27 @@ export default {
 			const results = await RateClassData._mapLimit(tariffs, RateClassData._CALC_CONCURRENCY, modelOne);
 
 			// --- 5. Rank by savings (highest first); flag the best positive saver ---
-			const ok = results.filter(r => r.annualSavings != null);
+			// First weed out "rates" that aren't full-requirements service. Some
+			// GENERAL-class schedules are supplemental — Parallel Generation (for
+			// on-site generators), Hourly Pricing for Incremental Load (prices only
+			// load above a baseline), standby/buyback — and model a whole facility's
+			// usage at a near-zero bill, producing fake 90–100% "savings". A real
+			// full-service rate must bill a credible $/kWh; below this floor it's
+			// structurally not comparable. (~$0.02/kWh is well under any real all-in
+			// retail rate, so this only catches the degenerate ones.)
+			const annualKwh = months.reduce((s, m) => s + m.kwh, 0);
+			const MIN_EFFECTIVE_RATE = 0.02; // $/kWh
+			results.forEach(r => {
+				r.nonService = (r.annualSavings != null && annualKwh > 0
+					&& (Number(r.modeledAnnualCost) / annualKwh) < MIN_EFFECTIVE_RATE);
+			});
+			const ok = results.filter(r => r.annualSavings != null && !r.nonService);
+			const nonService = results.filter(r => r.nonService);
 			const failed = results.filter(r => r.annualSavings == null);
 			ok.sort((a, b) => b.annualSavings - a.annualSavings);
 			ok.forEach((r, i) => { r.rank = i + 1; r.isBest = (i === 0 && r.annualSavings > 0); });
-			const ranked = ok.concat(failed);
+			// Non-service rates and errored rates go to the bottom, unranked.
+			const ranked = ok.concat(nonService, failed);
 
 			const meta = {
 				zip,
@@ -308,9 +330,12 @@ export default {
 				monthCount,
 				tariffCount: ranked.length,
 				modeledCount: ok.length,
+				nonServiceCount: nonService.length,
 				ridersDropped,
 				totalReturned: allTariffs.length,
 				truncated,
+				dataThrough: usage[0] ? usage[0].month : null,
+				stale: usage[0] ? (moment().diff(moment(usage[0].month), "months") > 3) : false,
 				lseNames: lses.map(l => l.name).filter(Boolean)
 			};
 
@@ -531,9 +556,11 @@ export default {
 			modeled_energy: r.modeledEnergy == null ? null : Number(r.modeledEnergy.toFixed(2)),
 			modeled_demand: r.modeledDemand == null ? null : Number(r.modeledDemand.toFixed(2)),
 			actual_annual: r.actualAnnualCost == null ? null : Number(r.actualAnnualCost.toFixed(2)),
-			annual_savings: r.annualSavings == null ? null : Number(r.annualSavings.toFixed(2)),
-			savings_pct: r.savingsPct == null ? null : Number(r.savingsPct.toFixed(1)),
-			status: r.error ? "Error" : "OK",
+			// Suppress savings for non-full-service rates — the numbers are real but
+			// not comparable (a near-zero supplemental bill isn't a switchable rate).
+			annual_savings: (r.nonService || r.annualSavings == null) ? null : Number(r.annualSavings.toFixed(2)),
+			savings_pct: (r.nonService || r.savingsPct == null) ? null : Number(r.savingsPct.toFixed(1)),
+			status: r.error ? "Error" : (r.nonService ? "Not full-service" : "OK"),
 			masterTariffId: r.masterTariffId
 		}));
 	},
@@ -569,7 +596,9 @@ export default {
 		} else {
 			parts.push("No rate beats the current cost");
 		}
+		if (m.nonServiceCount) parts.push(`${m.nonServiceCount} non-full-service rate(s) excluded`);
 		if (m.truncated) parts.push(`(capped at ${RateClassData._MAX_TARIFFS} tariffs)`);
+		if (m.stale && m.dataThrough) parts.push(`⚠ usage data ends ${m.dataThrough} — stale, modeled on current rates`);
 		return parts.join("  •  ");
 	},
 
