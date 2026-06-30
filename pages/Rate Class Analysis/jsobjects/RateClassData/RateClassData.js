@@ -186,13 +186,23 @@ export default {
 			// the single Residential DEFAULT. RIDER / OPTIONAL_EXTRA are surcharges.
 			const rateClasses = allTariffs.filter(t => {
 				const tt = String(t && t.tariffType || "").toUpperCase();
-				return tt === "DEFAULT" || tt === "ALTERNATIVE" || tt === "ALTERNATE";
+				if (tt !== "DEFAULT" && tt !== "ALTERNATIVE" && tt !== "ALTERNATE") return false;
+				// Drop rates closed to new enrollment — not options a customer could
+				// switch to. Large IOUs carry hundreds of legacy "(Closed)" rates.
+				const nm = String(t && t.tariffName || "").toLowerCase();
+				if (nm.indexOf("closed") >= 0) return false;
+				if (t && t.isActive === false) return false;
+				return true;
 			});
 			const ridersDropped = allTariffs.length - rateClasses.length;
 
 			// Then keep only those whose applicability ranges fit this location's
-			// typical monthly usage (drops e.g. large-demand-only rates), and cap.
+			// typical monthly usage (drops e.g. large-demand-only rates).
 			let tariffs = RateClassData._filterApplicable(rateClasses, months);
+			// Sort by customerCount (how many customers are actually on the rate)
+			// so when we cap we model the MAINSTREAM rates, not an arbitrary first-N.
+			// Big IOUs can still have >80 applicable rate classes after filtering.
+			tariffs.sort((a, b) => (Number(b.customerCount) || 0) - (Number(a.customerCount) || 0));
 			let truncated = false;
 			if (tariffs.length > RateClassData._MAX_TARIFFS) {
 				truncated = true;
@@ -205,7 +215,7 @@ export default {
 				await storeValue("rc_loading", false);
 				return;
 			}
-			await storeValue("rc_status", `Step 3 OK: ${tariffs.length} rate class(es) to model (dropped ${ridersDropped} riders/surcharges).`);
+			await storeValue("rc_status", `Step 3 OK: ${tariffs.length} rate class(es) to model (dropped ${ridersDropped} riders/surcharges/closed & off-class rates).`);
 
 			// Tag the FULL returned set for the "all tariffs" view (Sunny wants to
 			// see everything Arcadia returned, not just what we model). Ranking
@@ -418,10 +428,12 @@ export default {
 	// =====================================================================
 	// Keep tariffs whose monthly kWh / kW applicability windows contain this
 	// location's average monthly consumption and peak demand. Tariffs with no
-	// declared range are always kept (can't rule them out). Also drop RESIDENTIAL
-	// rate classes for a clearly-commercial load — a site that's demand-metered at
-	// thousands of kW can't be on a residential rate, and including them produces
-	// nonsense rows (e.g. a residential rate "modeled" against 2 GWh/month).
+	// declared range are always kept (can't rule them out). For a clearly-
+	// commercial load we also keep ONLY the GENERAL customer class: dropping
+	// RESIDENTIAL (can't serve a demand-metered site) and SPECIAL_USE (street
+	// lighting, agricultural pumping, EV charging, standby) — these are niche
+	// rates that otherwise pollute the ranking with nonsense "best" picks like an
+	// Outdoor-Area-Lighting rate "saving" 89% against a building's bill.
 	_filterApplicable(rows, months) {
 		const n = months.length || 1;
 		const avgKwh = months.reduce((s, m) => s + m.kwh, 0) / n;
@@ -431,7 +443,10 @@ export default {
 		const isCommercial = peakKw > 50 || avgKwh > 25000;
 		return (rows || []).filter(t => {
 			if (t.serviceType && t.serviceType !== "ELECTRICITY") return false;
-			if (isCommercial && String(t.customerClass || "").toUpperCase() === "RESIDENTIAL") return false;
+			if (isCommercial) {
+				const cc = String(t.customerClass || "").toUpperCase();
+				if (cc && cc !== "GENERAL") return false; // drop RESIDENTIAL + SPECIAL_USE
+			}
 			const r = RateClassData._readApplicabilityRanges(t);
 			if (r.minKWh != null && avgKwh < r.minKWh) return false;
 			if (r.maxKWh != null && avgKwh > r.maxKWh) return false;
