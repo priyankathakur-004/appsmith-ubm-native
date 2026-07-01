@@ -99,18 +99,33 @@ export default {
 		await storeValue("rc_loading", true);
 		await storeValue("rc_progress", "Loading 12 months of usage…");
 		await storeValue("rc_status", "");
+		// Clear any prior analysis up front so an early exit (no usage, non-US, no
+		// tariffs…) shows only its status message — not the previous location's
+		// results/summary lingering below. Success sets rc_screen back to 2.
 		await storeValue("rc_results", []);
+		await storeValue("rc_meta", {});
+		await storeValue("rc_all_tariffs", []);
+		await storeValue("rc_screen", 1);
 
 		try {
 			// --- 1. Load the location's last 12 months of usage + actual cost ---
 			const usageRaw = await RC_LocationUsage.run();
-			const usage = Array.isArray(usageRaw) ? usageRaw : [];
+			let usage = Array.isArray(usageRaw) ? usageRaw : [];
 			if (!usage.length) {
 				const msg = "Step 1: RC_LocationUsage returned 0 rows for this customer/location. The location may have no ELECTRIC bills, or utility_type isn't 'ELECTRIC'. Run RC_LocationUsage manually to check.";
 				showAlert("No electric usage found for this location", "warning");
 				await storeValue("rc_status", msg);
 				await storeValue("rc_loading", false);
 				return;
+			}
+			// Drop stray ancient months. A data gap can make "the latest 12 rows"
+			// span years (e.g. 10 recent months + two rows from 2020–21), which
+			// builds a multi-year /calculate window Genability rejects — every rate
+			// then errors. Keep only months within 13 months of the most recent.
+			{
+				const desc = usage.slice().sort((a, b) => (a.month < b.month ? 1 : -1));
+				const newest = moment(desc[0].month);
+				usage = desc.filter(r => newest.diff(moment(r.month), "months") <= 13);
 			}
 			await storeValue("rc_status", `Step 1 OK: ${usage.length} months of usage loaded.`);
 			const months = usage.map(r => ({
@@ -187,10 +202,16 @@ export default {
 			const rateClasses = allTariffs.filter(t => {
 				const tt = String(t && t.tariffType || "").toUpperCase();
 				if (tt !== "DEFAULT" && tt !== "ALTERNATIVE" && tt !== "ALTERNATE") return false;
-				// Drop rates closed to new enrollment — not options a customer could
-				// switch to. Large IOUs carry hundreds of legacy "(Closed)" rates.
+				// Drop rates not open to new enrollment — not options a customer could
+				// switch to. Large IOUs carry hundreds of legacy "(Closed)" rates, and
+				// "Grandfathered" rates are only kept by existing customers.
 				const nm = String(t && t.tariffName || "").toLowerCase();
-				if (nm.indexOf("closed") >= 0) return false;
+				if (nm.indexOf("closed") >= 0 || nm.indexOf("grandfathered") >= 0) return false;
+				// Drop special-purpose EV-charging-infrastructure rates. These come
+				// back GENERAL-classed (so the customerClass filter misses them) but a
+				// hospital/office/plant can't take a "Public Electric Vehicle Charging"
+				// rate — it models cheap (no demand) and would win as a bogus "best".
+				if (nm.indexOf("electric vehicle") >= 0 || nm.indexOf("vehicle charging") >= 0) return false;
 				if (t && t.isActive === false) return false;
 				return true;
 			});
@@ -314,14 +335,23 @@ export default {
 			results.forEach(r => {
 				r.nonService = (r.annualSavings != null && annualKwh > 0
 					&& (Number(r.modeledAnnualCost) / annualKwh) < MIN_EFFECTIVE_RATE);
+				// ERCOT / Texas delivery-only "wires" utilities (Oncor, AEP Texas,
+				// TNMP, CenterPoint Houston) model DELIVERY charges only — the energy
+				// comes from a competitive retailer Genability doesn't have — so their
+				// bill isn't comparable to a bundled actual bill (it shows fake positive
+				// savings). TX co-ops / munis are full-service and stay comparable.
+				r.deliveryOnly = RateClassData._isDeliveryOnlyTDU(r.lseName);
 			});
-			const ok = results.filter(r => r.annualSavings != null && !r.nonService);
-			const nonService = results.filter(r => r.nonService);
+			const ok = results.filter(r => r.annualSavings != null && !r.nonService && !r.deliveryOnly);
+			const flagged = results.filter(r => r.annualSavings != null && (r.nonService || r.deliveryOnly));
 			const failed = results.filter(r => r.annualSavings == null);
 			ok.sort((a, b) => b.annualSavings - a.annualSavings);
 			ok.forEach((r, i) => { r.rank = i + 1; r.isBest = (i === 0 && r.annualSavings > 0); });
-			// Non-service rates and errored rates go to the bottom, unranked.
-			const ranked = ok.concat(nonService, failed);
+			// Non-comparable (non-service / delivery-only) and errored rates go to the
+			// bottom, unranked.
+			const ranked = ok.concat(flagged, failed);
+			const deliveryOnlyCount = results.filter(r => r.annualSavings != null && r.deliveryOnly).length;
+			const nonServiceCount = results.filter(r => r.annualSavings != null && r.nonService && !r.deliveryOnly).length;
 
 			const meta = {
 				zip,
@@ -330,7 +360,8 @@ export default {
 				monthCount,
 				tariffCount: ranked.length,
 				modeledCount: ok.length,
-				nonServiceCount: nonService.length,
+				nonServiceCount: nonServiceCount,
+				deliveryOnlyCount: deliveryOnlyCount,
 				ridersDropped,
 				totalReturned: allTariffs.length,
 				truncated,
@@ -471,25 +502,23 @@ export default {
 	// =====================================================================
 	// Keep tariffs whose monthly kWh / kW applicability windows contain this
 	// location's average monthly consumption and peak demand. Tariffs with no
-	// declared range are always kept (can't rule them out). For a clearly-
-	// commercial load we also keep ONLY the GENERAL customer class: dropping
-	// RESIDENTIAL (can't serve a demand-metered site) and SPECIAL_USE (street
-	// lighting, agricultural pumping, EV charging, standby) — these are niche
-	// rates that otherwise pollute the ranking with nonsense "best" picks like an
-	// Outdoor-Area-Lighting rate "saving" 89% against a building's bill.
+	// declared range are always kept (can't rule them out). We also keep ONLY the
+	// GENERAL customer class and drop RESIDENTIAL + SPECIAL_USE — regardless of how
+	// small the site's usage is. Every UBM customer is a commercial/industrial
+	// account, so a business can't enroll on a residential tariff (incl.
+	// low-income/assistance rates like "Residential - Low Income", which are
+	// income-qualified and would otherwise show as a bogus "best" for a tiny
+	// telecom site) or on special-use rates (street lighting, agricultural, EV,
+	// standby). A usage threshold misclassifies small commercial sites (telecom
+	// cabinets, small offices) as residential-eligible, so we don't gate on it.
 	_filterApplicable(rows, months) {
 		const n = months.length || 1;
 		const avgKwh = months.reduce((s, m) => s + m.kwh, 0) / n;
 		const peakKw = months.reduce((mx, m) => Math.max(mx, m.kw), 0);
-		// Residential service is essentially never demand-metered above ~50 kW or
-		// over ~25,000 kWh/month, so either signal means "commercial".
-		const isCommercial = peakKw > 50 || avgKwh > 25000;
 		return (rows || []).filter(t => {
 			if (t.serviceType && t.serviceType !== "ELECTRICITY") return false;
-			if (isCommercial) {
-				const cc = String(t.customerClass || "").toUpperCase();
-				if (cc && cc !== "GENERAL") return false; // drop RESIDENTIAL + SPECIAL_USE
-			}
+			const cc = String(t.customerClass || "").toUpperCase();
+			if (cc && cc !== "GENERAL") return false; // drop RESIDENTIAL + SPECIAL_USE
 			const r = RateClassData._readApplicabilityRanges(t);
 			if (r.minKWh != null && avgKwh < r.minKWh) return false;
 			if (r.maxKWh != null && avgKwh > r.maxKWh) return false;
@@ -556,11 +585,12 @@ export default {
 			modeled_energy: r.modeledEnergy == null ? null : Number(r.modeledEnergy.toFixed(2)),
 			modeled_demand: r.modeledDemand == null ? null : Number(r.modeledDemand.toFixed(2)),
 			actual_annual: r.actualAnnualCost == null ? null : Number(r.actualAnnualCost.toFixed(2)),
-			// Suppress savings for non-full-service rates — the numbers are real but
-			// not comparable (a near-zero supplemental bill isn't a switchable rate).
-			annual_savings: (r.nonService || r.annualSavings == null) ? null : Number(r.annualSavings.toFixed(2)),
-			savings_pct: (r.nonService || r.savingsPct == null) ? null : Number(r.savingsPct.toFixed(1)),
-			status: r.error ? "Error" : (r.nonService ? "Not full-service" : "OK"),
+			// Suppress savings for non-comparable rates — the numbers are real but not
+			// comparable (a near-zero supplemental bill, or a TX delivery-only tariff
+			// missing its competitive energy component, isn't a switchable full bill).
+			annual_savings: (r.nonService || r.deliveryOnly || r.annualSavings == null) ? null : Number(r.annualSavings.toFixed(2)),
+			savings_pct: (r.nonService || r.deliveryOnly || r.savingsPct == null) ? null : Number(r.savingsPct.toFixed(1)),
+			status: r.error ? "Error" : (r.deliveryOnly ? "Delivery only" : (r.nonService ? "Not full-service" : "OK")),
 			masterTariffId: r.masterTariffId
 		}));
 	},
@@ -597,6 +627,7 @@ export default {
 			parts.push("No rate beats the current cost");
 		}
 		if (m.nonServiceCount) parts.push(`${m.nonServiceCount} non-full-service rate(s) excluded`);
+		if (m.deliveryOnlyCount) parts.push(`${m.deliveryOnlyCount} delivery-only (deregulated) rate(s) excluded`);
 		if (m.truncated) parts.push(`(capped at ${RateClassData._MAX_TARIFFS} tariffs)`);
 		if (m.stale && m.dataThrough) parts.push(`⚠ usage data ends ${m.dataThrough} — stale, modeled on current rates`);
 		return parts.join("  •  ");
@@ -636,6 +667,20 @@ export default {
 		const v = String(c || "").trim().toUpperCase().replace(/\./g, "").replace(/\s+/g, " ");
 		if (!v) return true;
 		return ["US", "USA", "U S", "U S A", "UNITED STATES", "UNITED STATES OF AMERICA", "AMERICA"].indexOf(v) >= 0;
+	},
+	// Is this a Texas/ERCOT delivery-only "wires" utility (TDU)? Their published
+	// tariffs are delivery charges only — in a deregulated market the customer buys
+	// energy from a competitive retailer, which Genability doesn't have — so their
+	// modeled bill isn't comparable to a bundled actual bill. Matched by name
+	// precisely so full-service same-name utilities elsewhere aren't caught (e.g.
+	// "CenterPoint Energy Indiana" is full-service; only the Houston TDU is wires-only).
+	_isDeliveryOnlyTDU(lseName) {
+		const n = String(lseName || "").toLowerCase();
+		if (n.indexOf("oncor") >= 0) return true;
+		if (n.indexOf("aep texas") >= 0) return true;
+		if (n.indexOf("texas-new mexico") >= 0 || n.indexOf("texas new mexico") >= 0 || /\btnmp\b/.test(n)) return true;
+		if (n.indexOf("centerpoint") >= 0 && n.indexOf("houston") >= 0) return true;
+		return false;
 	},
 	_displayUnitFor(quantityUnit, quantityKey) {
 		if (quantityUnit) return String(quantityUnit);
