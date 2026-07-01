@@ -85,7 +85,7 @@ export default {
 		// shape differs (e.g. before the ALTERNATIVE rate-class fix) — appsmith
 		// store persists across reloads, so without this an old cached result
 		// would keep showing after a code change.
-		const cacheKey = `v3:${customerId}:${locationId}`;
+		const cacheKey = `v5:${customerId}:${locationId}`;
 		const cache = appsmith.store.rc_cache || {};
 		if (cache[cacheKey]) {
 			await storeValue("rc_usage", cache[cacheKey].usage);
@@ -211,7 +211,14 @@ export default {
 				// back GENERAL-classed (so the customerClass filter misses them) but a
 				// hospital/office/plant can't take a "Public Electric Vehicle Charging"
 				// rate — it models cheap (no demand) and would win as a bogus "best".
-				if (nm.indexOf("electric vehicle") >= 0 || nm.indexOf("vehicle charging") >= 0) return false;
+				// Utilities name these several ways: "Public Electric Vehicle Charging",
+				// "EV Public Charging", "EV Level 3 DC Fast Charger", etc. Match the "EV"
+				// abbreviation only as a whole word AND alongside a charging context, so
+				// legitimate rates ("Level"/"Development") aren't caught by accident.
+				const isEvCharging = nm.indexOf("electric vehicle") >= 0
+					|| nm.indexOf("vehicle charging") >= 0
+					|| (/\bev\b/.test(nm) && (/charg/.test(nm) || /\bdc fast\b/.test(nm) || /fast charger/.test(nm)));
+				if (isEvCharging) return false;
 				if (t && t.isActive === false) return false;
 				return true;
 			});
@@ -277,6 +284,7 @@ export default {
 					customerClass: t.customerClass || "",
 					tou: !!t.hasTimeOfUseRates,
 					da: /direct access/i.test(String(t.tariffName || "")),
+					rtp: /hourly pricing|real[\s-]?time|day[\s-]?ahead|\brtp\b/i.test(String(t.tariffName || "")),
 					modeled: !!modeledIds[t.masterTariffId]
 				};
 			}).sort((a, b) => {
@@ -307,6 +315,10 @@ export default {
 					serviceType: RateClassData._serviceLabel(t.serviceType),
 					isTOU: !!t.hasTimeOfUseRates,
 					isDA: /direct access/i.test(String(t.tariffName || "")),
+					// Hourly / real-time / day-ahead pricing: like TOU, savings depend on
+					// shifting load to cheap hours and are modeled on a default profile —
+					// even more profile-sensitive than TOU, so flag it as an estimate.
+					isRTP: /hourly pricing|real[\s-]?time|day[\s-]?ahead|\brtp\b/i.test(String(t.tariffName || "")),
 					modeledAnnualCost: modeled,
 					modeledEnergy: block.error ? null : Number(block.energyCost || 0),
 					modeledDemand: block.error ? null : Number(block.demandCost || 0),
@@ -331,7 +343,32 @@ export default {
 			// structurally not comparable. (~$0.02/kWh is well under any real all-in
 			// retail rate, so this only catches the degenerate ones.)
 			const annualKwh = months.reduce((s, m) => s + m.kwh, 0);
+			const peakKw = months.reduce((mx, m) => Math.max(mx, m.kw), 0);
+			// Detect a broken demand (kW) feed. A month with real consumption but
+			// 0 kW is physically impossible (5,000 kWh/mo ⇒ ≥7 kW average), so it's
+			// missing source data, not a genuinely demand-free month. When demand is
+			// missing, demand charges are under-modeled: every rate looks cheaper
+			// than it is (inflated savings) and — worse — with peakKw stuck near 0
+			// the "no-demand-charge" exclusion below can't fire, so a low-demand /
+			// transmission-voltage rate wins as a bogus "best" (e.g. Ross Park Mall,
+			// both months 0 kW → "General - Transmission" +49.5%). Small telecom-type
+			// sites (a few hundred kWh, genuinely ~0 kW) stay under the floor.
+			const demandMissingMonths = months.filter(m => m.kwh >= 5000 && (Number(m.kw) || 0) <= 0).length;
+			// Spurious HIGH demand: a kW reading so large the implied monthly load
+			// factor is physically impossible. LF = kWh / (kW × ~730 h/mo); below ~2%
+			// the peak is >50× the average, which is a metering error, not real load
+			// (e.g. 842 Margery 3,808 kWh @ 3,450 kW = 0.15%). These inflate demand
+			// charges wildly and make every rate's cost meaningless. Require kW > 50 so
+			// genuinely tiny/peaky small sites aren't caught.
+			const demandSpikeMonths = months.filter(m => (Number(m.kw) || 0) > 50 && m.kwh > 0
+				&& (m.kwh / ((Number(m.kw) || 1) * 730)) < 0.02).length;
+			const demandMissing = demandMissingMonths > 0;
+			// Either failure mode means demand can't be trusted — withhold the pick.
+			const demandSuspect = demandMissing || demandSpikeMonths > 0;
 			const MIN_EFFECTIVE_RATE = 0.02; // $/kWh
+			// Below this modeled demand $/kW-year a rate effectively doesn't bill
+			// demand (~$0.50/kW-mo; real demand charges are $2–25/kW-mo).
+			const MIN_DEMAND_PER_KW_YR = 6;
 			results.forEach(r => {
 				r.nonService = (r.annualSavings != null && annualKwh > 0
 					&& (Number(r.modeledAnnualCost) / annualKwh) < MIN_EFFECTIVE_RATE);
@@ -341,17 +378,29 @@ export default {
 				// bill isn't comparable to a bundled actual bill (it shows fake positive
 				// savings). TX co-ops / munis are full-service and stay comparable.
 				r.deliveryOnly = RateClassData._isDeliveryOnlyTDU(r.lseName);
+				// A demand-metered site (peak > 500 kW) can't be on a rate that bills
+				// ~no demand — those are small-customer rates that model cheap only
+				// because they omit demand charges (e.g. "Small General" $0 demand
+				// winning for a 16 MW plant). A real full-requirements rate for a large
+				// load always bills demand.
+				r.demandIncomplete = (r.annualSavings != null && peakKw > 500
+					&& (Number(r.modeledDemand) || 0) < peakKw * MIN_DEMAND_PER_KW_YR);
 			});
-			const ok = results.filter(r => r.annualSavings != null && !r.nonService && !r.deliveryOnly);
-			const flagged = results.filter(r => r.annualSavings != null && (r.nonService || r.deliveryOnly));
+			const isComparable = (r) => r.annualSavings != null && !r.nonService && !r.deliveryOnly && !r.demandIncomplete;
+			const ok = results.filter(isComparable);
+			const flagged = results.filter(r => r.annualSavings != null && !isComparable(r));
 			const failed = results.filter(r => r.annualSavings == null);
 			ok.sort((a, b) => b.annualSavings - a.annualSavings);
-			ok.forEach((r, i) => { r.rank = i + 1; r.isBest = (i === 0 && r.annualSavings > 0); });
-			// Non-comparable (non-service / delivery-only) and errored rates go to the
-			// bottom, unranked.
+			// Only crown a "best" when we trust the inputs. With demand data missing
+			// OR a spurious spike, the top rate is unreliable (under- or over-modeled
+			// demand) — rank the list for reference but withhold the recommendation.
+			ok.forEach((r, i) => { r.rank = i + 1; r.isBest = (!demandSuspect && i === 0 && r.annualSavings > 0); });
+			// Non-comparable (non-service / delivery-only / demand-incomplete) and
+			// errored rates go to the bottom, unranked.
 			const ranked = ok.concat(flagged, failed);
 			const deliveryOnlyCount = results.filter(r => r.annualSavings != null && r.deliveryOnly).length;
 			const nonServiceCount = results.filter(r => r.annualSavings != null && r.nonService && !r.deliveryOnly).length;
+			const demandIncompleteCount = results.filter(r => r.annualSavings != null && r.demandIncomplete && !r.nonService && !r.deliveryOnly).length;
 
 			const meta = {
 				zip,
@@ -362,6 +411,12 @@ export default {
 				modeledCount: ok.length,
 				nonServiceCount: nonServiceCount,
 				deliveryOnlyCount: deliveryOnlyCount,
+				demandIncompleteCount: demandIncompleteCount,
+				demandMissing: demandMissing,
+				demandMissingMonths: demandMissingMonths,
+				demandSpikeMonths: demandSpikeMonths,
+				demandSuspect: demandSuspect,
+				peakKw: peakKw,
 				ridersDropped,
 				totalReturned: allTariffs.length,
 				truncated,
@@ -581,6 +636,7 @@ export default {
 			code: r.tariffCode,
 			tou: !!r.isTOU,
 			da: !!r.isDA,
+			rtp: !!r.isRTP,
 			modeled_annual: r.modeledAnnualCost == null ? null : Number(r.modeledAnnualCost.toFixed(2)),
 			modeled_energy: r.modeledEnergy == null ? null : Number(r.modeledEnergy.toFixed(2)),
 			modeled_demand: r.modeledDemand == null ? null : Number(r.modeledDemand.toFixed(2)),
@@ -588,9 +644,9 @@ export default {
 			// Suppress savings for non-comparable rates — the numbers are real but not
 			// comparable (a near-zero supplemental bill, or a TX delivery-only tariff
 			// missing its competitive energy component, isn't a switchable full bill).
-			annual_savings: (r.nonService || r.deliveryOnly || r.annualSavings == null) ? null : Number(r.annualSavings.toFixed(2)),
-			savings_pct: (r.nonService || r.deliveryOnly || r.savingsPct == null) ? null : Number(r.savingsPct.toFixed(1)),
-			status: r.error ? "Error" : (r.deliveryOnly ? "Delivery only" : (r.nonService ? "Not full-service" : "OK")),
+			annual_savings: (r.nonService || r.deliveryOnly || r.demandIncomplete || r.annualSavings == null) ? null : Number(r.annualSavings.toFixed(2)),
+			savings_pct: (r.nonService || r.deliveryOnly || r.demandIncomplete || r.savingsPct == null) ? null : Number(r.savingsPct.toFixed(1)),
+			status: r.error ? "Error" : (r.deliveryOnly ? "Delivery only" : (r.nonService ? "Not full-service" : (r.demandIncomplete ? "No demand charge" : "OK"))),
 			masterTariffId: r.masterTariffId
 		}));
 	},
@@ -623,11 +679,16 @@ export default {
 		parts.push(`${m.modeledCount}/${m.tariffCount} rate classes modeled`);
 		if (best) {
 			parts.push(`Best: ${best.tariffName} — save $${best.annualSavings.toFixed(2)} (${best.savingsPct.toFixed(1)}%)`);
+		} else if (m.demandSuspect) {
+			parts.push("Recommendation withheld — demand (kW) data unreliable");
 		} else {
 			parts.push("No rate beats the current cost");
 		}
 		if (m.nonServiceCount) parts.push(`${m.nonServiceCount} non-full-service rate(s) excluded`);
 		if (m.deliveryOnlyCount) parts.push(`${m.deliveryOnlyCount} delivery-only (deregulated) rate(s) excluded`);
+		if (m.demandIncompleteCount) parts.push(`${m.demandIncompleteCount} no-demand-charge rate(s) excluded (load is demand-metered)`);
+		if (m.demandMissing) parts.push(`⚠ ${m.demandMissingMonths} month(s) show 0 kW despite significant usage — demand charges under-modeled, so modeled costs & savings are unreliable (informational only)`);
+		if (m.demandSpikeMonths) parts.push(`⚠ ${m.demandSpikeMonths} month(s) show an impossibly high kW vs. usage (bad demand reading) — demand charges over-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.truncated) parts.push(`(capped at ${RateClassData._MAX_TARIFFS} tariffs)`);
 		if (m.stale && m.dataThrough) parts.push(`⚠ usage data ends ${m.dataThrough} — stale, modeled on current rates`);
 		return parts.join("  •  ");
