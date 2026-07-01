@@ -85,7 +85,7 @@ export default {
 		// shape differs (e.g. before the ALTERNATIVE rate-class fix) — appsmith
 		// store persists across reloads, so without this an old cached result
 		// would keep showing after a code change.
-		const cacheKey = `v5:${customerId}:${locationId}`;
+		const cacheKey = `v6:${customerId}:${locationId}`;
 		const cache = appsmith.store.rc_cache || {};
 		if (cache[cacheKey]) {
 			await storeValue("rc_usage", cache[cacheKey].usage);
@@ -362,9 +362,16 @@ export default {
 			// genuinely tiny/peaky small sites aren't caught.
 			const demandSpikeMonths = months.filter(m => (Number(m.kw) || 0) > 50 && m.kwh > 0
 				&& (m.kwh / ((Number(m.kw) || 1) * 730)) < 0.02).length;
+			// Under-reported demand: a NONZERO kW so low the implied load factor exceeds
+			// 100% — impossible, since average demand can't exceed the peak (e.g. La Plaza
+			// 1,521,793 kWh @ 391 kW = 533% LF). The demand reading is undercounted, so
+			// demand-based rates are under-modeled exactly like the 0-kW case. Using >1.0
+			// (100%) makes this a zero-false-positive signal.
+			const demandUnderMonths = months.filter(m => (Number(m.kw) || 0) > 0
+				&& (m.kwh / ((Number(m.kw) || 1) * 730)) > 1.0).length;
 			const demandMissing = demandMissingMonths > 0;
-			// Either failure mode means demand can't be trusted — withhold the pick.
-			const demandSuspect = demandMissing || demandSpikeMonths > 0;
+			// Any of these failure modes means demand can't be trusted — withhold the pick.
+			const demandSuspect = demandMissing || demandSpikeMonths > 0 || demandUnderMonths > 0;
 			const MIN_EFFECTIVE_RATE = 0.02; // $/kWh
 			// Below this modeled demand $/kW-year a rate effectively doesn't bill
 			// demand (~$0.50/kW-mo; real demand charges are $2–25/kW-mo).
@@ -415,6 +422,7 @@ export default {
 				demandMissing: demandMissing,
 				demandMissingMonths: demandMissingMonths,
 				demandSpikeMonths: demandSpikeMonths,
+				demandUnderMonths: demandUnderMonths,
 				demandSuspect: demandSuspect,
 				peakKw: peakKw,
 				ridersDropped,
@@ -689,6 +697,7 @@ export default {
 		if (m.demandIncompleteCount) parts.push(`${m.demandIncompleteCount} no-demand-charge rate(s) excluded (load is demand-metered)`);
 		if (m.demandMissing) parts.push(`⚠ ${m.demandMissingMonths} month(s) show 0 kW despite significant usage — demand charges under-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.demandSpikeMonths) parts.push(`⚠ ${m.demandSpikeMonths} month(s) show an impossibly high kW vs. usage (bad demand reading) — demand charges over-modeled, so modeled costs & savings are unreliable (informational only)`);
+		if (m.demandUnderMonths) parts.push(`⚠ ${m.demandUnderMonths} month(s) show a kW far too low for the usage (load factor > 100%, bad reading) — demand charges under-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.truncated) parts.push(`(capped at ${RateClassData._MAX_TARIFFS} tariffs)`);
 		if (m.stale && m.dataThrough) parts.push(`⚠ usage data ends ${m.dataThrough} — stale, modeled on current rates`);
 		return parts.join("  •  ");
