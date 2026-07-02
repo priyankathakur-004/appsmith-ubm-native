@@ -1,5 +1,5 @@
 {
-  "accentColor": "#3b82f6",
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "alignWidget": "LEFT",
   "animateLoading": true,
   "bottomRow": 19,
@@ -7,7 +7,6 @@
   "defaultSwitchState": false,
   "dynamicBindingPathList": [],
   "dynamicHeight": "AUTO_HEIGHT",
-  "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [
     {
       "key": "onChange"
@@ -36,7 +35,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 40,
+  "rightColumn": 48,
   "topRow": 15,
   "type": "SWITCH_WIDGET",
   "version": 1,
