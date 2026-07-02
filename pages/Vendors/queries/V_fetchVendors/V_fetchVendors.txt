@@ -1,21 +1,11 @@
 {{
-(function() {
-	const s = (V_SearchInput.text || '').trim().replace(/'/g, "''");
-	const prov = (V_ProviderInput.text || '').trim().replace(/'/g, "''");
-	const blankOnly = V_BlankToggle.isSwitchedOn;
-	let q = `SELECT v.id, v.code, COALESCE(v.pretty_name, '') AS pretty_name
-	FROM bill_management_v2.vendors v
-	WHERE 1=1`;
-	if (s !== '') {
-		q += ` AND (CAST(v.id AS text) ILIKE '%${s}%' OR v.code ILIKE '%${s}%' OR COALESCE(v.pretty_name, '') ILIKE '%${s}%')`;
-	}
-	if (blankOnly) {
-		q += ` AND (v.pretty_name IS NULL OR v.pretty_name = '')`;
-	}
-	if (prov !== '') {
-		q += ` AND EXISTS (SELECT 1 FROM bill_management_v2.providers_vendors pv WHERE pv.vendor_id = v.id AND CAST(pv.provider_id AS text) LIKE '${prov}%')`;
-	}
-	q += ` ORDER BY v.id LIMIT 10000`;
-	return q;
-})()
+`SELECT v.id,
+       v.code,
+       COALESCE(v.pretty_name, '') AS pretty_name,
+       string_agg(DISTINCT pv.provider_id::text, ',') AS provider_ids
+FROM bill_management_v2.vendors v
+LEFT JOIN bill_management_v2.providers_vendors pv ON pv.vendor_id = v.id
+GROUP BY v.id, v.code, v.pretty_name
+ORDER BY v.id
+LIMIT 10000`
 }}

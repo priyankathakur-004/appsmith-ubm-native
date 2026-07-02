@@ -15,7 +15,8 @@ export default {
 	// Re-run the list + count for the current filters, resetting the table to page 1
 	// (resetWidget clears pageNo/searchText/selection so the new result starts clean).
 	async applyFilters() {
-		await V_fetchVendors.run();
+		// Filtering is client-side in V_VendorsTable (it reads search / provider /
+		// blank values from its model), so there is nothing to re-query here.
 	},
 
 	// Clear the search box, the provider filter and the blank-only toggle, then refetch.
@@ -23,7 +24,6 @@ export default {
 		await resetWidget("V_SearchInput", true);
 		await resetWidget("V_ProviderInput", true);
 		await resetWidget("V_BlankToggle", true);
-		await V_fetchVendors.run();
 	},
 
 	// Row click -> load the vendor's provider mappings and switch to the detail screen.
