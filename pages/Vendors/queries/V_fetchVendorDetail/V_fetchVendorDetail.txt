@@ -14,5 +14,5 @@ SELECT v.id,
        pv.emergency_phone
 FROM bill_management_v2.vendors v
 LEFT JOIN bill_management_v2.providers_vendors pv ON pv.vendor_id = v.id
-WHERE v.id = {{ appsmith.store.v_detail_id || 0 }}
+WHERE v.id = {{ V_VendorsTable.model.selectedVendorId || 0 }}
 ORDER BY pv.provider_id NULLS LAST;

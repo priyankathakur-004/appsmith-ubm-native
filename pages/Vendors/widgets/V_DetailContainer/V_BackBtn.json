@@ -30,7 +30,7 @@
   "mobileRightColumn": 10,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "onClick": "{{ VendorsData.goBack() }}",
+  "onClick": "{{ resetWidget(\"V_VendorsTable\") }}",
   "parentColumnSpace": 13.83,
   "parentId": "vdetlcnv01",
   "parentRowSpace": 10,

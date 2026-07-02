@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT v.id,\n       v.code,\n       COALESCE(v.pretty_name, '') AS pretty_name,\n       pv.provider,\n       pv.provider_id,\n       pv.name             AS pv_name,\n       pv.code             AS pv_code,\n       pv.remittance_name,\n       pv.remittance_address::text AS remittance_address,\n       pv.main_phone,\n       pv.custsvc_phone,\n       pv.web_address,\n       pv.priority_phone,\n       pv.emergency_phone\nFROM bill_management_v2.vendors v\nLEFT JOIN bill_management_v2.providers_vendors pv ON pv.vendor_id = v.id\nWHERE v.id = {{ appsmith.store.v_detail_id || 0 }}\nORDER BY pv.provider_id NULLS LAST;\n",
+      "body": "SELECT v.id,\n       v.code,\n       COALESCE(v.pretty_name, '') AS pretty_name,\n       pv.provider,\n       pv.provider_id,\n       pv.name             AS pv_name,\n       pv.code             AS pv_code,\n       pv.remittance_name,\n       pv.remittance_address::text AS remittance_address,\n       pv.main_phone,\n       pv.custsvc_phone,\n       pv.web_address,\n       pv.priority_phone,\n       pv.emergency_phone\nFROM bill_management_v2.vendors v\nLEFT JOIN bill_management_v2.providers_vendors pv ON pv.vendor_id = v.id\nWHERE v.id = {{ V_VendorsTable.model.selectedVendorId || 0 }}\nORDER BY pv.provider_id NULLS LAST;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -29,7 +29,7 @@
     ],
     "name": "V_fetchVendorDetail",
     "pageId": "Vendors",
-    "runBehaviour": "MANUAL",
-    "userSetOnLoad": false
+    "runBehaviour": "AUTOMATIC",
+    "userSetOnLoad": true
   }
 }

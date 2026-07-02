@@ -73,7 +73,7 @@
   "flexVerticalAlignment": "stretch",
   "isCanvas": true,
   "isLoading": false,
-  "isVisible": "{{ (appsmith.store.v_screen || 1) === 2 }}",
+  "isVisible": "{{ !!V_VendorsTable.model.selectedVendorId }}",
   "key": "vdetlc0001",
   "leftColumn": 0,
   "maxDynamicHeight": 9000,

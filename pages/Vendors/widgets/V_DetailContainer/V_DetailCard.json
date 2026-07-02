@@ -5,7 +5,7 @@
   "borderWidth": "0",
   "bottomRow": 108,
   "boxShadow": "none",
-  "defaultModel": "{{ ({ header: VendorsData.detailHeader(), providers: VendorsData.detailProviders() }) }}",
+  "defaultModel": "{{ (function(){var rows=V_fetchVendorDetail.data||[];var r=rows[0];var header=r?{id:r.id,code:r.code,pretty_name:r.pretty_name||''}:{};var providers=rows.filter(function(x){return x&&(x.provider||x.provider_id||x.pv_code||x.pv_name);}).map(function(x){return {provider:x.provider||'',provider_id:(x.provider_id==null?'':x.provider_id),name:x.pv_name||'',code:x.pv_code||'',remittance_name:x.remittance_name||'',remittance_address:x.remittance_address||'',main_phone:x.main_phone||'',custsvc_phone:x.custsvc_phone||'',web_address:x.web_address||'',priority_phone:x.priority_phone||'',emergency_phone:x.emergency_phone||''};});return {header:header,providers:providers};})() }}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"
