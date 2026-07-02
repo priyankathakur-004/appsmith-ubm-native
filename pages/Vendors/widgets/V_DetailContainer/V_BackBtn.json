@@ -37,7 +37,7 @@
   "parentColumnSpace": 13.83,
   "parentId": "vdetlcnv01",
   "parentRowSpace": 10,
-  "placement": "CENTER",
+  "placement": "LEFT",
   "recaptchaType": "V3",
   "renderMode": "CANVAS",
   "resetFormOnClick": false,

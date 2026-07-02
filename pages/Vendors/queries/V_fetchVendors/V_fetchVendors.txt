@@ -15,7 +15,7 @@
 		q += ` AND (v.pretty_name IS NULL OR v.pretty_name = '')`;
 	}
 	if (prov !== '') {
-		q += ` AND EXISTS (SELECT 1 FROM bill_management_v2.providers_vendors pv WHERE pv.vendor_id = v.id AND CAST(pv.provider_id AS text) = '${prov}')`;
+		q += ` AND EXISTS (SELECT 1 FROM bill_management_v2.providers_vendors pv WHERE pv.vendor_id = v.id AND CAST(pv.provider_id AS text) LIKE '${prov}%')`;
 	}
 	q += ` ORDER BY v.id LIMIT ${pageSize} OFFSET ${(pageNo - 1) * pageSize}`;
 	return q;
