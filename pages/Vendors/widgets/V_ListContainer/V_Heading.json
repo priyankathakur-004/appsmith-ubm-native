@@ -36,7 +36,7 @@
   "shouldTruncate": false,
   "text": "Vendors",
   "textAlign": "LEFT",
-  "textColor": "#111827",
+  "textColor": "#f4f4f5",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
