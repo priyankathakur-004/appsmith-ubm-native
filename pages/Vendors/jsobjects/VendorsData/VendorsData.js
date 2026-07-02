@@ -16,7 +16,6 @@ export default {
 	// (resetWidget clears pageNo/searchText/selection so the new result starts clean).
 	async applyFilters() {
 		await resetWidget("V_table", true);
-		await V_countVendors.run();
 		await V_fetchVendors.run();
 	},
 
@@ -26,7 +25,6 @@ export default {
 		await resetWidget("V_ProviderInput", true);
 		await resetWidget("V_BlankToggle", true);
 		await resetWidget("V_table", true);
-		await V_countVendors.run();
 		await V_fetchVendors.run();
 	},
 
