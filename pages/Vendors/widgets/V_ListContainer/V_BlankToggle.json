@@ -1,11 +1,15 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
-  "alignWidget": "LEFT",
+  "alignWidget": "RIGHT",
   "animateLoading": true,
   "bottomRow": 19,
   "boxShadow": "none",
   "defaultSwitchState": false,
-  "dynamicBindingPathList": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    }
+  ],
   "dynamicHeight": "AUTO_HEIGHT",
   "dynamicTriggerPathList": [
     {
@@ -28,14 +32,14 @@
   "mobileTopRow": 15,
   "needsErrorInfo": false,
   "onChange": "{{ VendorsData.applyFilters() }}",
-  "originalBottomRow": 19,
+  "originalBottomRow": 20,
   "originalTopRow": 15,
   "parentColumnSpace": 13.83,
   "parentId": "vlistcnv01",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 48,
+  "rightColumn": 42,
   "topRow": 15,
   "type": "SWITCH_WIDGET",
   "version": 1,
