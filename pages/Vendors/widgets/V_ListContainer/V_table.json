@@ -4,11 +4,11 @@
   "borderColor": "#E0DEDE",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 105,
+  "bottomRow": 84,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "cachedTableData": {},
   "canFreezeColumn": true,
-  "cellBackground": "",
+  "cellBackground": "#0f172a",
   "columnOrder": [
     "id",
     "code",
@@ -27,24 +27,6 @@
   "delimiter": ",",
   "dynamicBindingPathList": [
     {
-      "key": "tableData"
-    },
-    {
-      "key": "primaryColumns.pretty_name.computedValue"
-    },
-    {
-      "key": "primaryColumns.code.computedValue"
-    },
-    {
-      "key": "primaryColumns.total_count.computedValue"
-    },
-    {
-      "key": "primaryColumns.id.computedValue"
-    },
-    {
-      "key": "totalRecordsCount"
-    },
-    {
       "key": "accentColor"
     },
     {
@@ -54,19 +36,22 @@
       "key": "boxShadow"
     },
     {
-      "key": "textColor"
+      "key": "tableData"
     },
     {
-      "key": "primaryColumns.pretty_name.textColor"
+      "key": "primaryColumns.id.computedValue"
     },
     {
-      "key": "primaryColumns.code.textColor"
+      "key": "primaryColumns.code.computedValue"
     },
     {
-      "key": "primaryColumns.total_count.textColor"
+      "key": "primaryColumns.pretty_name.computedValue"
     },
     {
-      "key": "primaryColumns.id.textColor"
+      "key": "primaryColumns.total_count.computedValue"
+    },
+    {
+      "key": "totalRecordsCount"
     }
   ],
   "dynamicPropertyPathList": [
@@ -107,54 +92,19 @@
   "mobileTopRow": 22,
   "multiRowSelection": false,
   "needsErrorInfo": false,
-  "oddRowColor": "#e3e5ea",
   "onPageChange": "{{ V_fetchVendors.run() }}",
   "onRowSelected": "{{ VendorsData.openDetail(V_table.selectedRow.id) }}",
-  "originalBottomRow": 105,
+  "originalBottomRow": 84,
   "originalTopRow": 22,
   "parentColumnSpace": 13.83,
   "parentId": "vlistcnv01",
   "parentRowSpace": 10,
   "primaryColumns": {
-    "code": {
-      "alias": "Code",
-      "allowCellWrapping": false,
-      "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
-      "columnType": "text",
-      "computedValue": "{{V_table.processedTableData.map((currentRow, currentIndex) => ( currentRow.code))}}",
-      "currencyCode": "USD",
-      "decimals": 0,
-      "enableFilter": true,
-      "enableSort": true,
-      "fontStyle": "",
-      "horizontalAlignment": "LEFT",
-      "id": "code",
-      "index": 1,
-      "isCellEditable": false,
-      "isCellVisible": true,
-      "isDerived": false,
-      "isDisabled": false,
-      "isDiscardVisible": true,
-      "isEditable": false,
-      "isSaveVisible": true,
-      "isVisible": true,
-      "label": "Code",
-      "notation": "standard",
-      "originalId": "code",
-      "sticky": "",
-      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
-      "textSize": "0.875rem",
-      "thousandSeparator": false,
-      "validation": {},
-      "verticalAlignment": "CENTER",
-      "width": 220
-    },
     "id": {
       "alias": "ID",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
+      "cellBackground": "#0f172a",
       "columnType": "number",
       "computedValue": "{{V_table.processedTableData.map((currentRow, currentIndex) => ( currentRow.id))}}",
       "currencyCode": "USD",
@@ -177,18 +127,52 @@
       "notation": "standard",
       "originalId": "id",
       "sticky": "",
-      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textColor": "#e2e8f0",
       "textSize": "0.875rem",
       "thousandSeparator": false,
       "validation": {},
       "verticalAlignment": "CENTER",
       "width": 110
     },
+    "code": {
+      "alias": "Code",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "cellBackground": "#0f172a",
+      "columnType": "text",
+      "computedValue": "{{V_table.processedTableData.map((currentRow, currentIndex) => ( currentRow.code))}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "",
+      "horizontalAlignment": "LEFT",
+      "id": "code",
+      "index": 1,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Code",
+      "notation": "standard",
+      "originalId": "code",
+      "sticky": "",
+      "textColor": "#e2e8f0",
+      "textSize": "0.875rem",
+      "thousandSeparator": false,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 220
+    },
     "pretty_name": {
       "alias": "Pretty Name",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
+      "cellBackground": "#0f172a",
       "columnType": "text",
       "computedValue": "{{V_table.processedTableData.map((currentRow, currentIndex) => ( currentRow.pretty_name))}}",
       "currencyCode": "USD",
@@ -211,7 +195,7 @@
       "notation": "standard",
       "originalId": "pretty_name",
       "sticky": "",
-      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textColor": "#e2e8f0",
       "textSize": "0.875rem",
       "thousandSeparator": false,
       "validation": {},
@@ -222,7 +206,7 @@
       "alias": "total_count",
       "allowCellWrapping": false,
       "allowSameOptionsInNewRow": true,
-      "cellBackground": "",
+      "cellBackground": "#0f172a",
       "columnType": "number",
       "computedValue": "{{V_table.processedTableData.map((currentRow, currentIndex) => ( currentRow.total_count))}}",
       "currencyCode": "USD",
@@ -245,7 +229,7 @@
       "notation": "standard",
       "originalId": "total_count",
       "sticky": "",
-      "textColor": "{{appsmith.theme.colors.backgroundColor}}",
+      "textColor": "#e2e8f0",
       "textSize": "0.875rem",
       "thousandSeparator": false,
       "validation": {},
@@ -260,7 +244,6 @@
   "serverSidePaginationEnabled": true,
   "showInlineEditingOptionDropdown": true,
   "tableData": "{{ V_fetchVendors.data }}",
-  "textColor": "{{appsmith.theme.colors.backgroundColor}}",
   "textSize": "0.875rem",
   "topRow": 22,
   "totalRecordsCount": "{{ (V_fetchVendors.data && V_fetchVendors.data[0]) ? V_fetchVendors.data[0].total_count : 0 }}",

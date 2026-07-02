@@ -4,12 +4,12 @@
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 218,
+  "bottomRow": 92,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1100,
+      "bottomRow": 820,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": false,
       "containerStyle": "none",
@@ -53,9 +53,6 @@
   "containerStyle": "card",
   "dynamicBindingPathList": [
     {
-      "key": "isVisible"
-    },
-    {
       "key": "backgroundColor"
     },
     {
@@ -66,6 +63,9 @@
     },
     {
       "key": "boxShadow"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -84,8 +84,8 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "originalBottomRow": 218,
-  "originalTopRow": 108,
+  "originalBottomRow": 92,
+  "originalTopRow": 1,
   "parentColumnSpace": 16.76,
   "parentId": "0",
   "parentRowSpace": 10,
@@ -93,7 +93,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 64,
   "shouldScrollContents": true,
-  "topRow": 108,
+  "topRow": 1,
   "topRowBeforeCollapse": 0,
   "type": "CONTAINER_WIDGET",
   "version": 1,

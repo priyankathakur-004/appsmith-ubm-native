@@ -1,16 +1,12 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_ffd9c8e7-d34b-4a16-8b68-dee9b3906c49",
+  "gitSyncId": "6a42383420f165a7650f6c4d_760a0a09-4fa1-44b8-a147-2f3c3a640bcc",
   "id": "Vendors_VendorsData.openDetail",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
     "actionConfiguration": {
       "encodeParamsToggle": true,
-      "jsArguments": [
-        {
-          "name": "vendorId"
-        }
-      ],
+      "jsArguments": [],
       "paginationType": "NONE",
       "timeoutInMillisecond": 10000
     },
