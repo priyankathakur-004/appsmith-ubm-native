@@ -47,15 +47,19 @@ export default {
 		return ids;
 	},
 
-	// Only attributes that actually have numeric values for a loaded location.
+	// Attributes that have numeric values. When usage data is loaded we narrow to
+	// attributes available for a loaded location; if usage data hasn't loaded yet
+	// we fall back to every attribute so the picker is never empty.
 	getAttributeOptions() {
 		const attrs = fetch_monthly_attributes.data || [];
 		const baseIds = this._baseLocationIds();
+		const useBase = baseIds.size > 0;
 		const names = new Set();
 		attrs.forEach(a => {
-			if (!baseIds.has(String(a.location_id))) return;
+			if (!a.attribute_name) return;
 			if (!Number(a.attribute_value)) return;
-			if (a.attribute_name) names.add(a.attribute_name);
+			if (useBase && !baseIds.has(String(a.location_id))) return;
+			names.add(a.attribute_name);
 		});
 		return Array.from(names).sort().map(n => ({ label: n, value: n }));
 	},
@@ -68,8 +72,9 @@ export default {
 	   LOCATION OPTIONS
 	=============================== */
 
-	// Only locations that have monthly-attribute values (for the selected attribute,
-	// or for any attribute when none is selected yet).
+	// Locations that have monthly-attribute values (for the selected attribute, or any
+	// attribute when none is selected). Falls back to all loaded locations if the
+	// attribute join resolves to nothing, so the list is never needlessly empty.
 	getLocationOptions() {
 		const raw = fetch_analytics_data.data || [];
 		const attrs = fetch_monthly_attributes.data || [];
@@ -80,12 +85,15 @@ export default {
 			if (!Number(a.attribute_value)) return;
 			attrLocIds.add(String(a.location_id));
 		});
-		const locs = new Set();
+		const filtered = new Set();
+		const all = new Set();
 		raw.forEach(r => {
-			if (!attrLocIds.has(String(r.location_id))) return;
-			locs.add(r.location_description || 'Unknown');
+			const name = r.location_description || 'Unknown';
+			all.add(name);
+			if (attrLocIds.has(String(r.location_id))) filtered.add(name);
 		});
-		return Array.from(locs).sort().map(loc => ({ label: loc, value: loc }));
+		const use = filtered.size > 0 ? filtered : all;
+		return Array.from(use).sort().map(loc => ({ label: loc, value: loc }));
 	},
 
 	getSelectedLocations() {
