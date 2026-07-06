@@ -8,7 +8,7 @@
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 1000,
+      "bottomRow": 990,
       "boxShadow": "none",
       "canExtend": false,
       "dynamicBindingPathList": [],
@@ -45,7 +45,7 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicHeight": "FIXED",
   "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "start",
   "isCanvas": true,

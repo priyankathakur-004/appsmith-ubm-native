@@ -8,7 +8,7 @@
   "boxShadow": "none",
   "children": [
     {
-      "bottomRow": 1000,
+      "bottomRow": 100,
       "boxShadow": "none",
       "canExtend": false,
       "dynamicBindingPathList": [],
