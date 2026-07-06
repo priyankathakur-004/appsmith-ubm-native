@@ -39,11 +39,23 @@ export default {
 	   MONTHLY ATTRIBUTE OPTIONS
 	=============================== */
 
+	// location_ids present in the currently-loaded usage data (respects the filter bar).
+	_baseLocationIds() {
+		const raw = fetch_analytics_data.data || [];
+		const ids = new Set();
+		raw.forEach(r => ids.add(String(r.location_id)));
+		return ids;
+	},
+
+	// Only attributes that actually have numeric values for a loaded location.
 	getAttributeOptions() {
-		const raw = fetch_monthly_attributes.data || [];
+		const attrs = fetch_monthly_attributes.data || [];
+		const baseIds = this._baseLocationIds();
 		const names = new Set();
-		raw.forEach(r => {
-			if (r.attribute_name) names.add(r.attribute_name);
+		attrs.forEach(a => {
+			if (!baseIds.has(String(a.location_id))) return;
+			if (!Number(a.attribute_value)) return;
+			if (a.attribute_name) names.add(a.attribute_name);
 		});
 		return Array.from(names).sort().map(n => ({ label: n, value: n }));
 	},
@@ -56,10 +68,21 @@ export default {
 	   LOCATION OPTIONS
 	=============================== */
 
+	// Only locations that have monthly-attribute values (for the selected attribute,
+	// or for any attribute when none is selected yet).
 	getLocationOptions() {
 		const raw = fetch_analytics_data.data || [];
+		const attrs = fetch_monthly_attributes.data || [];
+		const attrName = this.getSelectedAttribute();
+		const attrLocIds = new Set();
+		attrs.forEach(a => {
+			if (attrName && a.attribute_name !== attrName) return;
+			if (!Number(a.attribute_value)) return;
+			attrLocIds.add(String(a.location_id));
+		});
 		const locs = new Set();
 		raw.forEach(r => {
+			if (!attrLocIds.has(String(r.location_id))) return;
 			locs.add(r.location_description || 'Unknown');
 		});
 		return Array.from(locs).sort().map(loc => ({ label: loc, value: loc }));
@@ -270,22 +293,22 @@ export default {
 		const yLabel = this._getYLabel(view, uomLabel);
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: '#ffffff',
 			tooltip: {
 				trigger: 'axis',
-				backgroundColor: '#0F172A',
-				borderColor: '#334155',
-				textStyle: { color: '#E2E8F0' }
+				backgroundColor: '#ffffff',
+				borderColor: '#e2e8f0',
+				textStyle: { color: '#1e293b' }
 			},
 			legend: {
 				type: 'scroll',
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#E2E8F0', fontSize: 11 },
-				pageTextStyle: { color: '#94A3B8' },
-				pageIconColor: '#94A3B8',
-				pageIconInactiveColor: '#334155',
+				textStyle: { color: '#334155', fontSize: 11 },
+				pageTextStyle: { color: '#64748b' },
+				pageIconColor: '#64748b',
+				pageIconInactiveColor: '#cbd5e1',
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
@@ -294,8 +317,8 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: '#CBD5E1', fontSize: 11 },
-				axisLine: { lineStyle: { color: '#475569' } },
+				axisLabel: { color: '#475569', fontSize: 11 },
+				axisLine: { lineStyle: { color: '#cbd5e1' } },
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -303,10 +326,10 @@ export default {
 				name: yLabel,
 				nameLocation: 'middle',
 				nameGap: 65,
-				nameTextStyle: { color: '#CBD5E1', fontSize: 12 },
-				axisLabel: { color: '#CBD5E1' },
-				axisLine: { lineStyle: { color: '#475569' } },
-				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
+				nameTextStyle: { color: '#475569', fontSize: 12 },
+				axisLabel: { color: '#475569' },
+				axisLine: { lineStyle: { color: '#cbd5e1' } },
+				splitLine: { lineStyle: { color: '#e2e8f0', type: 'dashed' } }
 			},
 			series: series
 		};

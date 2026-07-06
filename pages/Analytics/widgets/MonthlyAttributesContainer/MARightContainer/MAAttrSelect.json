@@ -42,7 +42,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "sourceData": "{{ [...new Set((fetch_monthly_attributes.data || []).map(d => d.attribute_name).filter(Boolean))].sort().map(n => ({label: n, value: n})) }}",
+  "sourceData": "{{ MonthlyAttributesHelper.getAttributeOptions() }}",
   "topRow": 4,
   "type": "SELECT_WIDGET",
   "version": 1,

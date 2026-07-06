@@ -31,7 +31,7 @@
   "shouldTruncate": false,
   "text": "{{MonthlyAttributesHelper.getChartTitle()}}",
   "textAlign": "LEFT",
-  "textColor": "#e2e8f0",
+  "textColor": "#1e293b",
   "topRow": 10,
   "type": "TEXT_WIDGET",
   "version": 1,
