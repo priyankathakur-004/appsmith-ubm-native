@@ -1,0 +1,52 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 8,
+  "boxShadow": "none",
+  "defaultOptionValue": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ma_attr_sel",
+  "labelText": "",
+  "leftColumn": 0,
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 9,
+  "onOptionChange": "{{ storeValue('maAttribute', MAAttrSelect.selectedOptionValue) }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "marghtcanv1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "sourceData": "{{ MonthlyAttributesHelper.getAttributeOptions() }}",
+  "topRow": 4,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "marsel00001",
+  "widgetName": "MAAttrSelect",
+  "placeholderText": "Select attribute"
+}

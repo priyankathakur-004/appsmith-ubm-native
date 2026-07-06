@@ -1,0 +1,51 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ma_sel_loc",
+  "labelText": "",
+  "leftColumn": 49,
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 9,
+  "onOptionChange": "{{ fetch_analytics_data.run() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "mafiltcanv1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "sourceData": "{{fetch_locations.data.map( (obj) =>{ return  {'label': obj.name, 'value': obj.name } })}}",
+  "topRow": 4,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "maflsel0001",
+  "widgetName": "MALocationSelect"
+}

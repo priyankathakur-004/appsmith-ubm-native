@@ -1,0 +1,57 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 17,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": "{{ !MALocationAttrSelect.selectedOptionValue }}",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ma_sel_attrchoice",
+  "labelText": "",
+  "leftColumn": 17,
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 9,
+  "onOptionChange": "{{ fetch_analytics_data.run() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "mafiltcanv1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 32,
+  "sourceData": "{{ (fetch_attribute_values.data || []).map(d => ({\n  label: d.attribute_value,\n  value: d.attribute_value\n})) }}",
+  "topRow": 12,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "mafcsel0001",
+  "widgetName": "MAAttrChoiceSelect"
+}

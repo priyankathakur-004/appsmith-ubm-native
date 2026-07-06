@@ -38,6 +38,27 @@ export default {
 			// are applied client-side in BillHealthHelper.getRows so their option lists stay complete.
 			const acct = (typeof BHAcctStatusSelect !== 'undefined') ? this._multiVals(BHAcctStatusSelect) : [];
 			if (acct.length) c.push(`AND m.account_status IN (${acct.map(q).join(',')})`);
+		} else if (report === 'Monthly Attributes Report') {
+			// Monthly Attributes Report has its own filter bar (MA* widgets) so its
+			// selections never leak into the Main report and vice versa.
+			const dates = (typeof MADateSelect !== 'undefined' && Array.isArray(MADateSelect.selectedOptionValues))
+				? MADateSelect.selectedOptionValues.filter(d => d.includes('-')) : [];
+			if (dates.length) c.push(`AND m.time_period IN (${dates.map(q).join(',')})`);
+
+			if (typeof MAUtilityTypeSelect !== 'undefined' && MAUtilityTypeSelect.selectedOptionValue && MAUtilityTypeSelect.selectedOptionValue !== 'All')
+				c.push(`AND m.utility_type = ${q(MAUtilityTypeSelect.selectedOptionValue)}`);
+
+			if (typeof MABillTypeSelect !== 'undefined' && MABillTypeSelect.selectedOptionValue && MABillTypeSelect.selectedOptionValue !== 'All')
+				c.push(`AND m.bill_type = ${q(MABillTypeSelect.selectedOptionValue)}`);
+
+			if (typeof MALocationSelect !== 'undefined' && MALocationSelect.selectedOptionValue && MALocationSelect.selectedOptionValue !== 'All')
+				c.push(`AND m.location_id = ${MALocationSelect.selectedOptionValue}`);
+
+			if (typeof MALocationAttrSelect !== 'undefined' && MALocationAttrSelect.selectedOptionValue && MALocationAttrSelect.selectedOptionValue !== 'All') {
+				const choice = (typeof MAAttrChoiceSelect !== 'undefined' && MAAttrChoiceSelect.selectedOptionValue && MAAttrChoiceSelect.selectedOptionValue !== 'All')
+					? MAAttrChoiceSelect.selectedOptionValue : null;
+				c.push(`AND EXISTS (\n    SELECT 1\n    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr\n    WHERE attr->>'id' = ${q(MALocationAttrSelect.selectedOptionValue)}\n    ${choice ? `AND attr->>'value' = ${q(choice)}` : ''}\n)`);
+			}
 		} else {
 			// Main Analytics Report filters (ported verbatim from the original query)
 			const dates = (typeof DateSelect !== 'undefined' && Array.isArray(DateSelect.selectedOptionValues))
