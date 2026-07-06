@@ -41,7 +41,7 @@
   "mobileRightColumn": 53,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ fetch_analytics_data.run(); ReportSelect.selectedOptionValue === 'Monthly Attributes Report' && MonthlyAttributesHelper.setDefaults(); }}",
+  "onOptionChange": "{{ fetch_analytics_data.run(); ReportSelect.selectedOptionValue === 'Monthly Attributes Report' && (fetch_monthly_attributes.run(), MonthlyAttributesHelper.setDefaults()); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 7,

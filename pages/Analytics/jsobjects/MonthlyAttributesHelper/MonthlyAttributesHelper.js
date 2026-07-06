@@ -189,6 +189,27 @@ export default {
 		return (metricNames[view] || 'Energy Consumption') + ' by ' + attr;
 	},
 
+	// A minimal-but-complete ECharts option that reliably renders a centered message
+	// in the CUSTOM_ECHART widget (hidden axes guarantee the chart initialises).
+	_messageConfig(text, size) {
+		return {
+			xAxis: { show: false, type: 'category', data: [] },
+			yAxis: { show: false, type: 'value' },
+			series: [],
+			graphic: {
+				type: 'text',
+				left: 20,
+				top: 20,
+				style: {
+					text: text,
+					fill: '#1e293b',
+					fontSize: size || 16,
+					fontWeight: 'bold'
+				}
+			}
+		};
+	},
+
 	/* ===============================
 	   MONTHLY CHART CONFIG
 	=============================== */
@@ -198,19 +219,7 @@ export default {
 		const uomLabel = this.getUOMLabel();
 
 		if (!attrName) {
-			return {
-				backgroundColor: '#1E293B',
-				graphic: {
-					type: 'text',
-					left: 'center',
-					top: 'middle',
-					style: {
-						text: 'Select a Monthly Attribute',
-						fill: '#94A3B8',
-						fontSize: 16
-					}
-				}
-			};
+			return this._messageConfig('Please select a Monthly Attribute', 18);
 		}
 
 		const byLocMonth = this.getMonthlyData();
@@ -253,6 +262,10 @@ export default {
 				lineStyle: { width: 2, color: colors[idx % colors.length] }
 			});
 		});
+
+		if (series.length === 0) {
+			return this._messageConfig('No data for "' + attrName + '" in the selected date range', 16);
+		}
 
 		const yLabel = this._getYLabel(view, uomLabel);
 
