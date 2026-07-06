@@ -27,7 +27,7 @@
   "rightColumn": 10,
   "text": "Select Metric:",
   "textAlign": "LEFT",
-  "textColor": "#1e293b",
+  "textColor": "#e2e8f0",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,

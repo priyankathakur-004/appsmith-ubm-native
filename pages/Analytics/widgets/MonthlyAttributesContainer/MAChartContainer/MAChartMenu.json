@@ -24,7 +24,7 @@
   "isVisible": true,
   "key": "ma_chart_menu",
   "leftColumn": 59,
-  "menuColor": "#334155",
+  "menuColor": "#ffffff",
   "menuItems": {
     "menuItemMAexport01": {
       "id": "menuItemMAexport01",

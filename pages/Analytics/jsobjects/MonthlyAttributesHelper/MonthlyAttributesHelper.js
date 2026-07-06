@@ -216,6 +216,7 @@ export default {
 	// in the CUSTOM_ECHART widget (hidden axes guarantee the chart initialises).
 	_messageConfig(text, size) {
 		return {
+			backgroundColor: '#1E293B',
 			xAxis: { show: false, type: 'category', data: [] },
 			yAxis: { show: false, type: 'value' },
 			series: [],
@@ -225,7 +226,7 @@ export default {
 				top: 20,
 				style: {
 					text: text,
-					fill: '#1e293b',
+					fill: '#E2E8F0',
 					fontSize: size || 16,
 					fontWeight: 'bold'
 				}
@@ -293,22 +294,22 @@ export default {
 		const yLabel = this._getYLabel(view, uomLabel);
 
 		return {
-			backgroundColor: '#ffffff',
+			backgroundColor: '#1E293B',
 			tooltip: {
 				trigger: 'axis',
-				backgroundColor: '#ffffff',
-				borderColor: '#e2e8f0',
-				textStyle: { color: '#1e293b' }
+				backgroundColor: '#0F172A',
+				borderColor: '#334155',
+				textStyle: { color: '#E2E8F0' }
 			},
 			legend: {
 				type: 'scroll',
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#334155', fontSize: 11 },
-				pageTextStyle: { color: '#64748b' },
-				pageIconColor: '#64748b',
-				pageIconInactiveColor: '#cbd5e1',
+				textStyle: { color: '#E2E8F0', fontSize: 11 },
+				pageTextStyle: { color: '#94A3B8' },
+				pageIconColor: '#94A3B8',
+				pageIconInactiveColor: '#334155',
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
@@ -317,8 +318,8 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: '#475569', fontSize: 11 },
-				axisLine: { lineStyle: { color: '#cbd5e1' } },
+				axisLabel: { color: '#CBD5E1', fontSize: 11 },
+				axisLine: { lineStyle: { color: '#475569' } },
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -326,10 +327,10 @@ export default {
 				name: yLabel,
 				nameLocation: 'middle',
 				nameGap: 65,
-				nameTextStyle: { color: '#475569', fontSize: 12 },
-				axisLabel: { color: '#475569' },
-				axisLine: { lineStyle: { color: '#cbd5e1' } },
-				splitLine: { lineStyle: { color: '#e2e8f0', type: 'dashed' } }
+				nameTextStyle: { color: '#CBD5E1', fontSize: 12 },
+				axisLabel: { color: '#CBD5E1' },
+				axisLine: { lineStyle: { color: '#475569' } },
+				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
 			},
 			series: series
 		};
