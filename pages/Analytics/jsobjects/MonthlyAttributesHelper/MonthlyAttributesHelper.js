@@ -64,7 +64,11 @@ export default {
 		return Array.from(names).sort().map(n => ({ label: n, value: n }));
 	},
 
+	// Read the picker directly so the chart updates via native reactivity (no async
+	// storeValue round-trip). Falls back to the store for safety.
 	getSelectedAttribute() {
+		if (typeof MAAttrSelect !== 'undefined' && MAAttrSelect.selectedOptionValue)
+			return MAAttrSelect.selectedOptionValue;
 		return appsmith.store.maAttribute || null;
 	},
 
@@ -72,16 +76,15 @@ export default {
 	   LOCATION OPTIONS
 	=============================== */
 
-	// Locations that have monthly-attribute values (for the selected attribute, or any
-	// attribute when none is selected). Falls back to all loaded locations if the
-	// attribute join resolves to nothing, so the list is never needlessly empty.
+	// Locations that have any monthly-attribute value. Independent of the selected
+	// attribute (so the list stays stable and the widget doesn't re-render on every
+	// attribute change). Falls back to all loaded locations if the join resolves to
+	// nothing, so the list is never needlessly empty.
 	getLocationOptions() {
 		const raw = fetch_analytics_data.data || [];
 		const attrs = fetch_monthly_attributes.data || [];
-		const attrName = this.getSelectedAttribute();
 		const attrLocIds = new Set();
 		attrs.forEach(a => {
-			if (attrName && a.attribute_name !== attrName) return;
 			if (!Number(a.attribute_value)) return;
 			attrLocIds.add(String(a.location_id));
 		});
@@ -171,12 +174,13 @@ export default {
 		if (!attrName) return {};
 
 		const attrIdx = this._attrIndex();
-		const selectedLocs = this.getSelectedLocations();
+		// Single selected location (or null = every location that the attribute join keeps).
+		const onlyLoc = appsmith.store.maSelectedLocation || null;
 		const byLocMonth = {};
 
 		raw.forEach(r => {
 			const loc = r.location_description || 'Unknown';
-			if (!selectedLocs.includes(loc)) return;
+			if (onlyLoc && loc !== onlyLoc) return;
 
 			const month = this._monthKey(r.time_period);
 			if (!month) return;

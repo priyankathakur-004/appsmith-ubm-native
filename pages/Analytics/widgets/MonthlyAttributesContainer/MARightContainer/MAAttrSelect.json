@@ -34,7 +34,7 @@
   "mobileLeftColumn": 12,
   "mobileRightColumn": 22,
   "mobileTopRow": 9,
-  "onOptionChange": "{{ storeValue('maAttribute', MAAttrSelect.selectedOptionValue) }}",
+  "onOptionChange": "",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,
