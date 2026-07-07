@@ -47,9 +47,11 @@ export default {
 		return ids;
 	},
 
-	// Attributes that have numeric values. When usage data is loaded we narrow to
-	// attributes available for a loaded location; if usage data hasn't loaded yet
-	// we fall back to every attribute so the picker is never empty.
+	// Attributes that have numeric values. fetch_monthly_attributes is already date-
+	// scoped server-side (its WHERE filters v.date_month by MADateSelect), so the rows
+	// here only cover the selected months. We further narrow to attributes for a loaded
+	// location when usage data is present; falls back to every attribute otherwise so
+	// the picker is never needlessly empty.
 	getAttributeOptions() {
 		const attrs = fetch_monthly_attributes.data || [];
 		const baseIds = this._baseLocationIds();
@@ -76,16 +78,20 @@ export default {
 	   LOCATION OPTIONS
 	=============================== */
 
-	// Locations that have any monthly-attribute value. Independent of the selected
-	// attribute (so the list stays stable and the widget doesn't re-render on every
-	// attribute change). Falls back to all loaded locations if the join resolves to
-	// nothing, so the list is never needlessly empty.
+	// Locations that have a value for the SELECTED monthly attribute. The attribute
+	// rows are already date-scoped server-side (fetch_monthly_attributes filters
+	// v.date_month by MADateSelect), so this is implicitly within the selected months.
+	// Before an attribute is picked we fall back to any location with any attribute
+	// value so the list is populated. Falls back to all loaded locations if the join
+	// resolves to nothing, so the list is never needlessly empty.
 	getLocationOptions() {
 		const raw = fetch_analytics_data.data || [];
 		const attrs = fetch_monthly_attributes.data || [];
+		const attrName = this.getSelectedAttribute();
 		const attrLocIds = new Set();
 		attrs.forEach(a => {
 			if (!Number(a.attribute_value)) return;
+			if (attrName && a.attribute_name !== attrName) return;
 			attrLocIds.add(String(a.location_id));
 		});
 		const filtered = new Set();
@@ -250,7 +256,19 @@ export default {
 	   MONTHLY CHART CONFIG
 	=============================== */
 
+	// True while either source query is still fetching. Used to show a "Loading" state
+	// instead of the misleading "No data" message while a date change re-runs the query.
+	_isLoading() {
+		const a = (typeof fetch_analytics_data !== 'undefined') && fetch_analytics_data.isLoading;
+		const b = (typeof fetch_monthly_attributes !== 'undefined') && fetch_monthly_attributes.isLoading;
+		return !!(a || b);
+	},
+
 	getMonthlyChartConfig() {
+		if (this._isLoading()) {
+			return this._messageConfig('Loading data…', 18);
+		}
+
 		const attrName = this.getSelectedAttribute();
 		const uomLabel = this.getUOMLabel();
 

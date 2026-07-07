@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n    m.attribute_name,\n    v.attribute_value,\n    v.location_id,\n    v.date_month\nFROM bill_management_v2.location_monthly_attributes_metadata m\nINNER JOIN bill_management_v2.location_monthly_attributes_values v\n    ON m.id = v.location_monthly_attributes_metadata_id\nWHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}\n    AND m.attribute_type = 'Numeric'\n    AND v.attribute_value <> ''\nORDER BY m.attribute_name;\n",
+      "body": "SELECT\n    m.attribute_name,\n    v.attribute_value,\n    v.location_id,\n    v.date_month\nFROM bill_management_v2.location_monthly_attributes_metadata m\nINNER JOIN bill_management_v2.location_monthly_attributes_values v\n    ON m.id = v.location_monthly_attributes_metadata_id\nWHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}\n    AND m.attribute_type = 'Numeric'\n    AND v.attribute_value <> ''\n    {{ MADateSelect.selectedOptionValues?.filter(d => d.includes('-')).length > 0 ? `AND date_trunc('month', v.date_month::date)::date IN (${MADateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(\",\")})` : \"\" }}\nORDER BY m.attribute_name;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

@@ -44,7 +44,7 @@
   "mobileTopRow": 9,
   "mode": "SHOW_ALL",
   "needsErrorInfo": false,
-  "onOptionChange": "{{ fetch_analytics_data.run() }}",
+  "onOptionChange": "{{ fetch_analytics_data.run(); fetch_monthly_attributes.run(); }}",
   "options": "{{ _FilterActions.getDates() }}",
   "originalBottomRow": 35,
   "originalTopRow": 30,

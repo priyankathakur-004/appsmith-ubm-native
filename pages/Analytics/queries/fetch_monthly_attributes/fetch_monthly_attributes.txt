@@ -9,4 +9,5 @@ INNER JOIN bill_management_v2.location_monthly_attributes_values v
 WHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013}}
     AND m.attribute_type = 'Numeric'
     AND v.attribute_value <> ''
+    {{ MADateSelect.selectedOptionValues?.filter(d => d.includes('-')).length > 0 ? `AND date_trunc('month', v.date_month::date)::date IN (${MADateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})` : "" }}
 ORDER BY m.attribute_name;
