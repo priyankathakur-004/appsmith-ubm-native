@@ -5,7 +5,7 @@ export default {
 	   received bill). The matrix counts bills by Location > Utility > Meter >
 	   Bill Type across invoice months; the chart counts bills by Utility per
 	   month. The invoice-date window is applied in SQL (shared Bill-Health date
-	   filter via LFDateHelper); the categorical Account Status / Utility /
+	   filter via BH_LFDateHelper); the categorical Account Status / Utility /
 	   Location filters are applied here so they react live.                    */
 
 	/* Month palette shared with the rest of the app (Late Fees donut). */

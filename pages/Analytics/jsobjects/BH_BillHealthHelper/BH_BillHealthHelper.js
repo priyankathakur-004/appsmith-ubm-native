@@ -632,8 +632,8 @@ export default {
 	getWarnCountChartConfig() { return this._warnOverTimeConfig('count', 'Warning Count'); },
 
 	/* Note: the "Show as a Table" / Export data for these charts lives in the separate
-	   WarnTableHelper JSObject — keeping it out of BillHealthHelper avoids a reactive-dependency
-	   misuse (BillHealthHelper reads both fetch_warnings.data and, via the SQL builders, the
+	   BH_WarnTableHelper JSObject — keeping it out of BH_BillHealthHelper avoids a reactive-dependency
+	   misuse (BH_BillHealthHelper reads both fetch_warnings.data and, via the SQL builders, the
 	   slicer widgets that run fetch_warnings). */
 
 	/* ── Impacted Locations tab ──────────────── */

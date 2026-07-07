@@ -46,7 +46,7 @@ export default {
 	// BTU conversion factors per utility. Power BI uses the simpler 100,000
 	// BTU/CCF (1 therm equivalent) rather than the heating-value-corrected
 	// 102,800, so we match that to keep PSF EUI consistent with PBI.
-	// NOTE: this differs from MonthlyEnergyHelper which uses 102800. If those
+	// NOTE: this differs from MA_MonthlyEnergyHelper which uses 102800. If those
 	// numbers ever need to match PBI too, update both maps in lockstep.
 	_btuFactor(utilityType) {
 		var map = {
@@ -75,7 +75,7 @@ export default {
 	//
 	// `consumption` is the raw mixed-UOM sum used by ConsPerSqft.
 	// `cons` is the per-row energy total in mmBTU, same arithmetic as
-	// MonthlyEnergyHelper.getMonthlyData:  (consumption × factor) / 1e6.
+	// MA_MonthlyEnergyHelper.getMonthlyData:  (consumption × factor) / 1e6.
 	getPerSqftData() {
 		var self = this;
 		var raw = fetch_analytics_data.data || [];
@@ -102,7 +102,7 @@ export default {
 
 			bucket.charges += parseFloat(r.total_charges) || 0;
 			bucket.consumption += rawCons;
-			// mmBTU, same arithmetic as MonthlyEnergyHelper.getMonthlyData.
+			// mmBTU, same arithmetic as MA_MonthlyEnergyHelper.getMonthlyData.
 			bucket.cons += (rawCons * f) / 1000000;
 			// Sum sqft per row to mirror Power BI's SUM(square_feet).
 			bucket.sqftSum += sqft;

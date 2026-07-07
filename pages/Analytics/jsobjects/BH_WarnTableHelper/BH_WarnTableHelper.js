@@ -1,7 +1,7 @@
 export default {
 	/* Self-contained "Show as a Table" / Export data source for the Warnings-over-Time charts.
 	   It reads the warnings query result directly and references no widgets, so it stays a pure
-	   data source (reading the Warnings slicers would pull in BillHealthHelper, whose SQL builders
+	   data source (reading the Warnings slicers would pull in BH_BillHealthHelper, whose SQL builders
 	   read the widgets that run the query — Appsmith flags mixing a query's run trigger with its
 	   data in one path). It therefore reflects the server-side Severity + Invoice Date filters,
 	   not the four JS slicers. */

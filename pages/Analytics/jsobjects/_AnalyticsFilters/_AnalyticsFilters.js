@@ -35,7 +35,7 @@ export default {
 			c.push(`AND m.time_period >= '${cutoff}'`);
 
 			// Bill Health: only Account Status is SQL-side; Vendor/Utility/Location/%Last12Mo
-			// are applied client-side in BillHealthHelper.getRows so their option lists stay complete.
+			// are applied client-side in BH_BillHealthHelper.getRows so their option lists stay complete.
 			const acct = (typeof BHAcctStatusSelect !== 'undefined') ? this._multiVals(BHAcctStatusSelect) : [];
 			if (acct.length) c.push(`AND m.account_status IN (${acct.map(q).join(',')})`);
 		} else if (report === 'Monthly Attributes Report') {

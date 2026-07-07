@@ -43,5 +43,5 @@
   "version": 1,
   "widgetId": "ptmkjuwc19",
   "widgetName": "OTYMap",
-  "zoomLevel": "{{OverTheYearsHelper.getMapZoom()}}"
+  "zoomLevel": "{{MA_OverTheYearsHelper.getMapZoom()}}"
 }

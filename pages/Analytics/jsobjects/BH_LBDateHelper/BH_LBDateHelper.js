@@ -1,6 +1,6 @@
 export default {
 
-	/* Invoice-date relative filter → SQL bounds. Kept SEPARATE from LateFeeHelper (which reads the
+	/* Invoice-date relative filter → SQL bounds. Kept SEPARATE from BH_LateFeeHelper (which reads the
 	   query's .data) so the query→helper binding can't form a cycle. Reads only the Date widgets. */
 
 	_mode() { try { return (typeof LBDateMode !== 'undefined' && LBDateMode.selectedOptionValue) || 'Last'; } catch (e) { return 'Last'; } },

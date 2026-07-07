@@ -45,7 +45,7 @@ export default {
 
 	/* Apply the categorical Late Fees page filters (Account Status / Utility / Location / Vendor).
 	   The Invoice Date filter is handled in SQL (it can point to the future or a window wider than
-	   the loaded set, which JS narrowing can't do) — see LFDateHelper + fetch_late_fees. */
+	   the loaded set, which JS narrowing can't do) — see BH_LFDateHelper + fetch_late_fees. */
 	_applyFilters(rows) {
 		const acct = this._lfMulti(typeof BHAcctStatusSelect !== 'undefined' ? BHAcctStatusSelect : null);
 		const util = this._lfMulti(typeof BHUtilitySelect !== 'undefined' ? BHUtilitySelect : null);

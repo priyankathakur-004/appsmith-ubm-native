@@ -101,7 +101,7 @@ export default {
 		return Object.keys(s).sort();
 	},
 
-	// Stable color per series. Same palette as MonthlyElectricDemandHelper so
+	// Stable color per series. Same palette as MA_MonthlyElectricDemandHelper so
 	// the dashboard feels consistent across tabs.
 	_color(idx) {
 		var palette = [
