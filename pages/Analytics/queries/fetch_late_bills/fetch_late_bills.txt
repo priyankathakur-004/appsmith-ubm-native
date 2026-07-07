@@ -52,8 +52,8 @@ agg AS (   -- combine only the LATE, in-window services per account (UBM shows e
         string_agg(DISTINCT building_type, ', ' ORDER BY building_type) AS building_types
     FROM va
     WHERE va.days_late >= 0
-      AND va.date_of_last_bill >= '{{ LBDateHelper.start() }}'
-      AND va.date_of_last_bill <  '{{ LBDateHelper.end() }}'
+      AND va.date_of_last_bill >= '{{ BH_LBDateHelper.start() }}'
+      AND va.date_of_last_bill <  '{{ BH_LBDateHelper.end() }}'
     GROUP BY billing_account
 )
 SELECT
@@ -76,8 +76,8 @@ SELECT
     a.building_types                                                   AS building_type
 FROM rep r
 JOIN agg a ON a.billing_account = r.billing_account
-WHERE r.date_of_last_bill >= '{{ LBDateHelper.start() }}'
-  AND r.date_of_last_bill <  '{{ LBDateHelper.end() }}'
+WHERE r.date_of_last_bill >= '{{ BH_LBDateHelper.start() }}'
+  AND r.date_of_last_bill <  '{{ BH_LBDateHelper.end() }}'
   AND r.days_late >= 0
 ORDER BY r.days_late DESC
 LIMIT 5000

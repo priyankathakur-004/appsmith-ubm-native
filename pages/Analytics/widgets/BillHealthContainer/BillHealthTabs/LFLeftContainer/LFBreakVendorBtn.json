@@ -33,7 +33,7 @@
   "mobileLeftColumn": 27,
   "mobileRightColumn": 41,
   "mobileTopRow": 6,
-  "onClick": "{{ LateFeeHelper.setBreakdown('vendor') }}",
+  "onClick": "{{ BH_LateFeeHelper.setBreakdown('vendor') }}",
   "parentColumnSpace": 1,
   "parentId": "lfleftcanvas",
   "parentRowSpace": 10,

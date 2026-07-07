@@ -29,7 +29,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 59,
   "shouldTruncate": false,
-  "text": "{{MonthlyEnergyHelper.getChartTitle()}}",
+  "text": "{{MA_MonthlyEnergyHelper.getChartTitle()}}",
   "textAlign": "LEFT",
   "textColor": "#e2e8f0",
   "topRow": 10,

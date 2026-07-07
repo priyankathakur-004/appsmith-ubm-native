@@ -4,7 +4,7 @@
   "bottomRow": 97,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{MonthlyAttributesHelper.getMonthlyChartConfig()}}",
+  "customEChartConfig": "{{MT_MonthlyAttributesHelper.getMonthlyChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

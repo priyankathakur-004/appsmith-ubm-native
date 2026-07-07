@@ -39,7 +39,7 @@ WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
       WHERE hw.pear_id = w.pear_id
         AND hw.customer_id = w.customer_id
   )
-  {{ BillHealthHelper.warnSeveritySql() }}
+  {{ BH_BillHealthHelper.warnSeveritySql() }}
   AND (
       w.bill_warning_severity <> 30
       OR m.utility_type IS NULL
@@ -53,6 +53,6 @@ WHERE w.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
             AND cw.bill_warning_severity = 30
       )
   )
-{{ BillHealthHelper.warnDateSql() }}
+{{ BH_BillHealthHelper.warnDateSql() }}
 ORDER BY w.total_amount DESC, w.warning_id
 LIMIT 1000

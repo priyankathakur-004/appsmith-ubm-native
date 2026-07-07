@@ -29,7 +29,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 58,
   "shouldTruncate": false,
-  "text": "{{EnergyConsumptionHelper.getRightChartTitle()}}",
+  "text": "{{MA_EnergyConsumptionHelper.getRightChartTitle()}}",
   "textAlign": "LEFT",
   "textColor": "#f1f5f9",
   "topRow": 0,

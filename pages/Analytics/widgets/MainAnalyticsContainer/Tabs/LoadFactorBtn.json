@@ -30,7 +30,7 @@
   "mobileLeftColumn": 42,
   "mobileRightColumn": 49,
   "mobileTopRow": 16,
-  "onClick": "{{FilterActions.setView('Load Factor')}}",
+  "onClick": "{{_FilterActions.setView('Load Factor')}}",
   "parentColumnSpace": 15,
   "parentId": "9amqshcg87",
   "parentRowSpace": 10,

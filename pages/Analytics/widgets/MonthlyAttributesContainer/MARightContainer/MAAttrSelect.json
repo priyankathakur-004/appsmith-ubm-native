@@ -40,13 +40,13 @@
   "parentColumnSpace": 15,
   "parentId": "marghtcanv1",
   "parentRowSpace": 10,
+  "placeholderText": "Select attribute",
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "sourceData": "{{ MonthlyAttributesHelper.getAttributeOptions() }}",
+  "sourceData": "{{ MT_MonthlyAttributesHelper.getAttributeOptions() }}",
   "topRow": 4,
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "marsel00001",
-  "widgetName": "MAAttrSelect",
-  "placeholderText": "Select attribute"
+  "widgetName": "MAAttrSelect"
 }

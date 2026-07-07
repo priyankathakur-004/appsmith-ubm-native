@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'WO_WarningCount');\ndownload(\n  [Object.keys(WarnTableHelper.getCountTable()[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat(WarnTableHelper.getCountTable().map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'warnings_count.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'WO_WarningCount');\ndownload(\n  [Object.keys(BH_WarnTableHelper.getCountTable()[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat(BH_WarnTableHelper.getCountTable().map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'warnings_count.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_wotc_exp"
     },
     "mi_wotc_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'WO_WarningCount');\nstoreValue('woTable', WarnTableHelper.getCountTable());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'WO_WarningCount');\nstoreValue('woTable', BH_WarnTableHelper.getCountTable());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_wotc_tbl"
     }
   },

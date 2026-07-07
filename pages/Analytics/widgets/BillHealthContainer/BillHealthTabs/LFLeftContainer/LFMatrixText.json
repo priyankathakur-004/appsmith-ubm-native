@@ -38,7 +38,7 @@
   "rightColumn": 64,
   "shouldScrollContents": true,
   "shouldTruncate": false,
-  "text": "{{ LateFeeHelper.getMatrixHtml() }}",
+  "text": "{{ BH_LateFeeHelper.getMatrixHtml() }}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 11,

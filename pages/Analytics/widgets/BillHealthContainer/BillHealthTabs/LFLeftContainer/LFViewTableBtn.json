@@ -30,7 +30,7 @@
   "mobileLeftColumn": 30,
   "mobileRightColumn": 48,
   "mobileTopRow": 0,
-  "onClick": "{{ LateFeeHelper.setView('tabular') }}",
+  "onClick": "{{ BH_LateFeeHelper.setView('tabular') }}",
   "parentColumnSpace": 1,
   "parentId": "lfleftcanvas",
   "parentRowSpace": 10,

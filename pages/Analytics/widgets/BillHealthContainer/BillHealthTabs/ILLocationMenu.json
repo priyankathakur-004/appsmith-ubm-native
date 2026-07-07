@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'IL_Locations');\ndownload(\n  [Object.keys((BillHealthHelper.getImpactedLocationsTable())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BillHealthHelper.getImpactedLocationsTable()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'impacted_locations.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'IL_Locations');\ndownload(\n  [Object.keys((BH_BillHealthHelper.getImpactedLocationsTable())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BH_BillHealthHelper.getImpactedLocationsTable()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'impacted_locations.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_il_exp"
     },
     "mi_il_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'IL_Locations');\nstoreValue('woTable', BillHealthHelper.getImpactedLocationsTable());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'IL_Locations');\nstoreValue('woTable', BH_BillHealthHelper.getImpactedLocationsTable());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_il_tbl"
     }
   },

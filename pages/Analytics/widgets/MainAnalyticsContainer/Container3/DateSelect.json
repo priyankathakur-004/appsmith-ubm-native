@@ -40,7 +40,7 @@
   "mobileTopRow": 9,
   "mode": "SHOW_ALL",
   "needsErrorInfo": false,
-  "options": "{{ FilterActions.getDates() }}",
+  "options": "{{ _FilterActions.getDates() }}",
   "originalBottomRow": 35,
   "originalTopRow": 30,
   "parentColumnSpace": 16.453125,

@@ -38,7 +38,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 63,
   "shouldTruncate": false,
-  "text": "{{OverviewHelper.getSummaryText()}}",
+  "text": "{{MA_OverviewHelper.getSummaryText()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 2,

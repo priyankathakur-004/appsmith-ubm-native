@@ -39,7 +39,7 @@
   "rightColumn": 64,
   "shouldScrollContents": true,
   "shouldTruncate": false,
-  "text": "{{OverviewHelper.getUtilitySummaryHtml()}}",
+  "text": "{{MA_OverviewHelper.getUtilitySummaryHtml()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 39,

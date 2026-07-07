@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'LF_Bills');\ndownload(\n  [Object.keys((LateFeeHelper.getBillsTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((LateFeeHelper.getBillsTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'late_fee_bills.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'LF_Bills');\ndownload(\n  [Object.keys((BH_LateFeeHelper.getBillsTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BH_LateFeeHelper.getBillsTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'late_fee_bills.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_lftb_exp"
     },
     "mi_lftb_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'LF_Bills');\nstoreValue('woTable', LateFeeHelper.getBillsTableData());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'LF_Bills');\nstoreValue('woTable', BH_LateFeeHelper.getBillsTableData());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_lftb_tbl"
     }
   },

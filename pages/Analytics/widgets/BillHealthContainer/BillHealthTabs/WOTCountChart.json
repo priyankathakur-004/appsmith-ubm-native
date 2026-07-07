@@ -4,7 +4,7 @@
   "bottomRow": 130,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{BillHealthHelper.getWarnCountChartConfig()}}",
+  "customEChartConfig": "{{BH_BillHealthHelper.getWarnCountChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

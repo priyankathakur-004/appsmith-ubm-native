@@ -4,7 +4,7 @@
   "bottomRow": 55,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{OverTheYearsHelper.getUnitCostChartConfig()}}",
+  "customEChartConfig": "{{MA_OverTheYearsHelper.getUnitCostChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"
@@ -26,7 +26,7 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 5,
-  "onDataPointClick": "{{OverTheYearsHelper.onUnitCostChartClick()}}",
+  "onDataPointClick": "{{MA_OverTheYearsHelper.onUnitCostChartClick()}}",
   "parentColumnSpace": 15,
   "parentId": "ukzzqnbbtt",
   "parentRowSpace": 10,

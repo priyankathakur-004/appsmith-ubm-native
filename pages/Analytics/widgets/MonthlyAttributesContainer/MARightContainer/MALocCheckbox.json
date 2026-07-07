@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 17,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: MonthlyAttributesHelper.getLocationOptions(),\nselected: MonthlyAttributesHelper.getLocationOptions().map(o => o.value)\n}\n}}",
+  "defaultModel": "{{ {\ndata: MT_MonthlyAttributesHelper.getLocationOptions(),\nselected: MT_MonthlyAttributesHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

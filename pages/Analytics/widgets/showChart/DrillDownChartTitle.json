@@ -32,7 +32,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 41,
   "shouldTruncate": false,
-  "text": "{{OverTheYearsHelper.getDrillDownTitle()}}",
+  "text": "{{MA_OverTheYearsHelper.getDrillDownTitle()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 1,

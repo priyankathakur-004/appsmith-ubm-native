@@ -54,7 +54,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export Data",
-      "onClick": "{{\nstoreValue('chartName', \"Correlation\");\ndownload(\n  AnalyticsHelper.getTableData(),\n  \"analytics.csv\",\n  \"text/csv\"\n)\n}}",
+      "onClick": "{{\nstoreValue('chartName', \"Correlation\");\ndownload(\n  _AnalyticsHelper.getTableData(),\n  \"analytics.csv\",\n  \"text/csv\"\n)\n}}",
       "widgetId": ""
     },
     "menuItem2": {

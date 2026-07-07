@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'LB_Bills');\ndownload(\n  [Object.keys((LateBillsHelper.getBillsTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((LateBillsHelper.getBillsTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'late_bills.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'LB_Bills');\ndownload(\n  [Object.keys((BH_LateBillsHelper.getBillsTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BH_LateBillsHelper.getBillsTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'late_bills.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_lbtb_exp"
     },
     "mi_lbtb_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'LB_Bills');\nstoreValue('woTable', LateBillsHelper.getBillsTableData());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'LB_Bills');\nstoreValue('woTable', BH_LateBillsHelper.getBillsTableData());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_lbtb_tbl"
     }
   },

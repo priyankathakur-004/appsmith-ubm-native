@@ -30,7 +30,7 @@
   "mobileLeftColumn": 35,
   "mobileRightColumn": 41,
   "mobileTopRow": 16,
-  "onClick": "{{FilterActions.setView('Demand')}}",
+  "onClick": "{{_FilterActions.setView('Demand')}}",
   "parentColumnSpace": 15,
   "parentId": "9amqshcg87",
   "parentRowSpace": 10,

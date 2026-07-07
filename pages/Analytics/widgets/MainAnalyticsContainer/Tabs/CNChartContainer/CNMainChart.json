@@ -4,7 +4,7 @@
   "bottomRow": 95,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ConsumptionHelper.getChartConfig()}}",
+  "customEChartConfig": "{{MA_ConsumptionHelper.getChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

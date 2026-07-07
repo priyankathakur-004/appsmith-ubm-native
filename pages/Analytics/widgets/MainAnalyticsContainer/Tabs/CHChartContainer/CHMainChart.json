@@ -4,7 +4,7 @@
   "bottomRow": 95,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ChargesHelper.getChartConfig()}}",
+  "customEChartConfig": "{{MA_ChargesHelper.getChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

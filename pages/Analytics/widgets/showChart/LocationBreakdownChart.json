@@ -26,7 +26,7 @@
   },
   "chartName": "Sales Report",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{OverTheYearsHelper.getLocationBreakdownConfig()}}",
+  "customEChartConfig": "{{MA_OverTheYearsHelper.getLocationBreakdownConfig()}}",
   "customFusionChartConfig": {
     "dataSource": {
       "chart": {

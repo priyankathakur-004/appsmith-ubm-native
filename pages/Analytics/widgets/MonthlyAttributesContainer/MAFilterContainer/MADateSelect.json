@@ -44,7 +44,8 @@
   "mobileTopRow": 9,
   "mode": "SHOW_ALL",
   "needsErrorInfo": false,
-  "options": "{{ FilterActions.getDates() }}",
+  "onOptionChange": "{{ fetch_analytics_data.run() }}",
+  "options": "{{ _FilterActions.getDates() }}",
   "originalBottomRow": 35,
   "originalTopRow": 30,
   "parentColumnSpace": 16.453125,
@@ -58,6 +59,5 @@
   "type": "MULTI_SELECT_TREE_WIDGET",
   "version": 1,
   "widgetId": "mafdsel0001",
-  "widgetName": "MADateSelect",
-  "onOptionChange": "{{ fetch_analytics_data.run() }}"
+  "widgetName": "MADateSelect"
 }

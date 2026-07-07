@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 101,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: OverTheYearsHelper.getFilterOptions(),\nselected: OverTheYearsHelper.getFilterOptions().map(o => o.value),\nheader: OverTheYearsHelper.getFilterHeader()\n}\n}}",
+  "defaultModel": "{{ {\ndata: MA_OverTheYearsHelper.getFilterOptions(),\nselected: MA_OverTheYearsHelper.getFilterOptions().map(o => o.value),\nheader: MA_OverTheYearsHelper.getFilterHeader()\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

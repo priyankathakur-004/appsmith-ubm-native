@@ -35,7 +35,7 @@
   "rightColumn": 37,
   "shouldScrollContents": false,
   "shouldTruncate": false,
-  "text": "{{ ReceivedBillsHelper.getRateMatrixHtml() }}",
+  "text": "{{ BH_ReceivedBillsHelper.getRateMatrixHtml() }}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 9,

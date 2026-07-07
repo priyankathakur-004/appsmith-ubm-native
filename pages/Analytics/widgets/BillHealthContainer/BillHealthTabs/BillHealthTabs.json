@@ -537,7 +537,7 @@
   "mobileRightColumn": 25,
   "mobileTopRow": 33,
   "needsErrorInfo": false,
-  "onTabSelected": "{{ BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
+  "onTabSelected": "{{ BH_BillHealthHelper.setDefaults(); BillHealthTabs.selectedTab === 'Warnings Overview' && fetch_warnings.run(); }}",
   "originalBottomRow": 224,
   "originalTopRow": 42,
   "parentColumnSpace": 16.453125,

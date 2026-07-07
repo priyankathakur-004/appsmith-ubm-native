@@ -51,7 +51,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export Data",
-      "onClick": "{{\nstoreValue('chartName', \"Scatter\");\ndownload(\n  AnalyticsHelper.getTableData(),\n  \"analytics.csv\",\n  \"text/csv\"\n)}}",
+      "onClick": "{{\nstoreValue('chartName', \"Scatter\");\ndownload(\n  _AnalyticsHelper.getTableData(),\n  \"analytics.csv\",\n  \"text/csv\"\n)}}",
       "widgetId": ""
     },
     "menuItem2": {

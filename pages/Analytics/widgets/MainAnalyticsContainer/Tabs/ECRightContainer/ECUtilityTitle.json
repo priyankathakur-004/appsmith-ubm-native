@@ -29,7 +29,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 58,
   "shouldTruncate": false,
-  "text": "Equivalent Energy Consumption ({{EnergyConsumptionHelper.getUOMLabel()}})",
+  "text": "Equivalent Energy Consumption ({{MA_EnergyConsumptionHelper.getUOMLabel()}})",
   "textAlign": "CENTER",
   "textColor": "#e2e8f0",
   "topRow": 43,

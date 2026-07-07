@@ -34,7 +34,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 48,
   "shouldScrollContents": true,
-  "text": "{{RankLocationHelper.getInfoText()}}",
+  "text": "{{MA_RankLocationHelper.getInfoText()}}",
   "textAlign": "LEFT",
   "textColor": "#ac6c2f",
   "topRow": 1,

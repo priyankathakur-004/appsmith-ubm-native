@@ -32,7 +32,7 @@ LEFT JOIN bt ON bt.meter_serial = bi.meter_serial AND bt.utility_type = bi.commo
 WHERE bm.deleted_at IS NULL
   AND bm.customer_ready IS NOT NULL
   AND bm.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
-  AND br.statement_date >= '{{ LFDateHelper.start() }}'
-  AND br.statement_date <  '{{ LFDateHelper.end() }}'
+  AND br.statement_date >= '{{ BH_LFDateHelper.start() }}'
+  AND br.statement_date <  '{{ BH_LFDateHelper.end() }}'
 ORDER BY location, utility_type, meter_id, bill_type, invoice_date_raw
 LIMIT 20000

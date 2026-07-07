@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'RC_Matrix');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getRateMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getRateMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'rate_codes.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'RC_Matrix');\ndownload(\n  [Object.keys((BH_ReceivedBillsHelper.getRateMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BH_ReceivedBillsHelper.getRateMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'rate_codes.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_rcmtx_exp"
     },
     "mi_rcmtx_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'RC_Matrix');\nstoreValue('woTable', ReceivedBillsHelper.getRateMatrixTableData());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'RC_Matrix');\nstoreValue('woTable', BH_ReceivedBillsHelper.getRateMatrixTableData());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_rcmtx_tbl"
     }
   },

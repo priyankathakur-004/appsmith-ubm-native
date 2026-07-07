@@ -4,7 +4,7 @@
   "bottomRow": 44,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{OverTheYearsHelper.getChargesChartConfig()}}",
+  "customEChartConfig": "{{MA_OverTheYearsHelper.getChargesChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"
@@ -26,7 +26,7 @@
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
   "mobileTopRow": 5,
-  "onDataPointClick": "{{OverTheYearsHelper.onChargesChartClick()}}",
+  "onDataPointClick": "{{MA_OverTheYearsHelper.onChargesChartClick()}}",
   "parentColumnSpace": 15,
   "parentId": "2ew6f8lze2",
   "parentRowSpace": 10,

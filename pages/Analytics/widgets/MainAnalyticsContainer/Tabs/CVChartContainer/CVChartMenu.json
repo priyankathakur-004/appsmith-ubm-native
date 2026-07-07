@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'CV_' + (appsmith.store.cvViewBy || 'Location'));\ndownload(\n  [Object.keys(AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\\\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('charges_vs_consumption_' + (appsmith.store.cvViewBy || 'Location')) + '.csv',\n  'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'CV_' + (appsmith.store.cvViewBy || 'Location'));\ndownload(\n  [Object.keys(_AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(_AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\\\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('charges_vs_consumption_' + (appsmith.store.cvViewBy || 'Location')) + '.csv',\n  'text/csv'\n);\n}}",
       "widgetId": "cvexportbtn01"
     },
     "menuItemcvtable01": {

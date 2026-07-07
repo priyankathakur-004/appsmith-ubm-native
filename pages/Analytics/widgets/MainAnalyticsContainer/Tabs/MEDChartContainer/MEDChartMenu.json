@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'MED_' + (appsmith.store.medViewBy || 'Demand'));\ndownload(\n  [Object.keys(AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('monthly_electric_demand_' + (appsmith.store.medViewBy || 'Demand')) + '.csv',\n  'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'MED_' + (appsmith.store.medViewBy || 'Demand'));\ndownload(\n  [Object.keys(_AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(_AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('monthly_electric_demand_' + (appsmith.store.medViewBy || 'Demand')) + '.csv',\n  'text/csv'\n);\n}}",
       "widgetId": "medexportbtn01"
     },
     "menuItemmedtable01": {

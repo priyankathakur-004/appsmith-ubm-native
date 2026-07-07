@@ -719,7 +719,7 @@
   "mobileRightColumn": 25,
   "mobileTopRow": 33,
   "needsErrorInfo": false,
-  "onTabSelected": "{{AnalyticsHelper.setDefaults();}}",
+  "onTabSelected": "{{_AnalyticsHelper.setDefaults();}}",
   "originalBottomRow": 124,
   "originalTopRow": 22,
   "parentColumnSpace": 16.453125,

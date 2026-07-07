@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 130,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ { rows: BillHealthHelper.getMissingInvoiceRows(), axis: BillHealthHelper.getMonthAxis() } }}",
+  "defaultModel": "{{ { rows: BH_BillHealthHelper.getMissingInvoiceRows(), axis: BH_BillHealthHelper.getMonthAxis() } }}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"
