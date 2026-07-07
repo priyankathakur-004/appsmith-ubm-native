@@ -29,7 +29,7 @@
     ],
     "name": "fetch_notifications",
     "pageId": "Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
