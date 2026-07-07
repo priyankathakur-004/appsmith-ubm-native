@@ -4,7 +4,7 @@
   "borderColor": "transparent",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 128,
+  "bottomRow": 109,
   "boxShadow": "none",
   "children": [
     {
@@ -16,7 +16,7 @@
       "flexLayers": [],
       "isLoading": false,
       "isVisible": true,
-      "key": "marghtcnvk1",
+      "key": "machrtcnvk1",
       "leftColumn": 0,
       "minHeight": 400,
       "mobileBottomRow": 3300,
@@ -25,7 +25,7 @@
       "mobileTopRow": 0,
       "needsErrorInfo": false,
       "parentColumnSpace": 1,
-      "parentId": "marght00001",
+      "parentId": "machrt00001",
       "parentRowSpace": 1,
       "renderMode": "CANVAS",
       "rightColumn": 960,
@@ -33,8 +33,8 @@
       "topRow": 0,
       "type": "CANVAS_WIDGET",
       "version": 1,
-      "widgetId": "marghtcanv1",
-      "widgetName": "MARightCanvas"
+      "widgetId": "machrtcanv1",
+      "widgetName": "MAChartCanvas"
     }
   ],
   "dynamicBindingPathList": [
@@ -45,14 +45,14 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicHeight": "FIXED",
+  "dynamicHeight": "AUTO_HEIGHT",
   "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "start",
   "isCanvas": true,
   "isLoading": false,
   "isVisible": true,
-  "key": "marghtkey01",
-  "leftColumn": 42,
+  "key": "machrtkey01",
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
@@ -61,18 +61,18 @@
   "mobileRightColumn": 48,
   "mobileTopRow": 16,
   "needsErrorInfo": false,
-  "originalBottomRow": 128,
-  "originalTopRow": 29,
-  "parentColumnSpace": 15,
-  "parentId": "macanvas001",
+  "originalBottomRow": 109,
+  "originalTopRow": 10,
+  "parentColumnSpace": 1,
+  "parentId": "matabcanv01",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 64,
+  "rightColumn": 42,
   "shouldScrollContents": true,
-  "topRow": 29,
+  "topRow": 10,
   "type": "CONTAINER_WIDGET",
   "version": 1,
-  "widgetId": "marght00001",
-  "widgetName": "MARightContainer"
+  "widgetId": "machrt00001",
+  "widgetName": "MAChartContainer"
 }
