@@ -193,22 +193,11 @@ export default {
 		// server-summed — instead of the raw per-meter history. This is what keeps the
 		// tab fast: a few hundred rows to fold, not tens of thousands.
 		const raw = fetch_ma_usage.data || [];
-		const attrs = fetch_monthly_attributes.data || [];
 		const attrName = this.getSelectedAttribute();
 		if (!attrName) return {};
 
 		// Single selected location (or null = every location that the attribute join keeps).
 		const onlyLoc = appsmith.store.maSelectedLocation || null;
-
-		// Memoize the join. The DB data is loaded once; this crunches it once and reuses
-		// the result. Neither the metric (maActiveView) NOR the UOM (maUOM) affect this
-		// grid — consumption is stored UOM-independent as consBase and both are applied
-		// later in _computeStandard — so switching any metric OR UOM button is a cache hit
-		// instead of a fresh two-dataset join. The key covers every input that actually
-		// changes the grid, so a stale value can never be returned (worst case it
-		// recomputes). Both the chart and the table read through this one cache.
-		const cacheKey = raw.length + '|' + attrs.length + '|' + attrName + '|' + (onlyLoc || '');
-		if (this._mdKey === cacheKey && this._mdCache) return this._mdCache;
 
 		const attrIdx = this._attrIndex();
 		const byLocMonth = {};
@@ -254,8 +243,6 @@ export default {
 			byLocMonth[loc][month].sqftSum += sqft;
 		});
 
-		this._mdKey = cacheKey;
-		this._mdCache = byLocMonth;
 		return byLocMonth;
 	},
 
