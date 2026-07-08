@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'LD_' + (appsmith.store.ldViewBy || 'ChargesVsConsumption'));\ndownload(\n  [Object.keys(AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('location_details_' + (appsmith.store.ldViewBy || 'ChargesVsConsumption')) + '.csv',\n  'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'LD_' + (appsmith.store.ldViewBy || 'ChargesVsConsumption'));\ndownload(\n  [Object.keys(_AnalyticsHelper.getTableData()[0] || {}).join(',')]\n    .concat(_AnalyticsHelper.getTableData().map(row => Object.values(row).map(v => typeof v === 'string' && v.indexOf(',') >= 0 ? '\"' + v.replace(/\"/g, '\"\"') + '\"' : v).join(',')))\n    .join('\\n'),\n  ('location_details_' + (appsmith.store.ldViewBy || 'ChargesVsConsumption')) + '.csv',\n  'text/csv'\n);\n}}",
       "widgetId": "ldexportbtn01"
     },
     "menuItemldtable01": {

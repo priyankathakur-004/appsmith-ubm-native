@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_af000000-0000-4000-8000-000000000000",
+  "id": "Analytics__AnalyticsFilters",
+  "unpublishedCollection": {
+    "name": "_AnalyticsFilters",
+    "pageId": "Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

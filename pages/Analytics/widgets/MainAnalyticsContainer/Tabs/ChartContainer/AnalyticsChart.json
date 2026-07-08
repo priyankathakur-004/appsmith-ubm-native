@@ -4,7 +4,7 @@
   "bottomRow": 69,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{RankLocationHelper.getChartConfig()}}",
+  "customEChartConfig": "{{MA_RankLocationHelper.getChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

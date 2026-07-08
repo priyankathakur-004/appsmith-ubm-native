@@ -6,7 +6,7 @@
   "bottomRow": 55,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{WeatherHelper.getCorrelationConfig()}}",
+  "customEChartConfig": "{{MA_WeatherHelper.getCorrelationConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

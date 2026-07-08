@@ -1,0 +1,63 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 12,
+  "boxShadow": "none",
+  "defaultText": "",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onSubmit"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "search",
+  "inputType": "TEXT",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "vsearchk01",
+  "label": "Search",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelStyle": "",
+  "labelTextColor": "#f4f4f5",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 12,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 50,
+  "mobileTopRow": 5,
+  "needsErrorInfo": false,
+  "onSubmit": "{{ VendorsData.applyFilters() }}",
+  "parentColumnSpace": 13.83,
+  "parentId": "vlistcnv01",
+  "parentRowSpace": 10,
+  "placeholderText": "Search for Vendor ID, Code and Pretty Name",
+  "renderMode": "CANVAS",
+  "resetOnSubmit": false,
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "showStepArrows": false,
+  "topRow": 5,
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "widgetId": "vsearch001",
+  "widgetName": "V_SearchInput"
+}

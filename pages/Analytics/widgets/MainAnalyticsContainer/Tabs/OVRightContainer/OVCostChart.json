@@ -4,7 +4,7 @@
   "bottomRow": 48,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{OverviewHelper.getCostBreakdownConfig()}}",
+  "customEChartConfig": "{{MA_OverviewHelper.getCostBreakdownConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 118,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: ChargesHelper.getGroupOptions(),\nselected: ChargesHelper.getGroupOptions().map(o => o.value),\nheader: ChargesHelper.getViewBy()\n}\n}}",
+  "defaultModel": "{{ {\ndata: MA_ChargesHelper.getGroupOptions(),\nselected: MA_ChargesHelper.getGroupOptions().map(o => o.value),\nheader: MA_ChargesHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

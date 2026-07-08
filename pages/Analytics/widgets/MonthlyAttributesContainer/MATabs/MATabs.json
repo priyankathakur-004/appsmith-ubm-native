@@ -1,0 +1,115 @@
+{
+  "accentColor": "#86efac",
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": 1,
+  "bottomRow": 132,
+  "boxShadow": "none",
+  "children": [
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 1300,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "ma_tabcanv01",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1100,
+      "minWidth": 450,
+      "mobileBottomRow": 1100,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 960,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "matabs00001",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 960,
+      "shouldScrollContents": false,
+      "tabId": "matab00001",
+      "tabName": "Monthly Location Attributes",
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "matabcanv01",
+      "widgetName": "MonthlyLocationAttributes"
+    }
+  ],
+  "defaultTab": "Monthly Location Attributes",
+  "dynamicBindingPathList": [
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onTabSelected"
+    }
+  ],
+  "flexVerticalAlignment": "stretch",
+  "isCanvas": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ma_tabs_key",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 10,
+  "minWidth": 450,
+  "mobileBottomRow": 132,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 19,
+  "needsErrorInfo": false,
+  "onTabSelected": "{{ MT_MonthlyAttributesHelper.setDefaults(); }}",
+  "originalBottomRow": 132,
+  "originalTopRow": 19,
+  "parentColumnSpace": 15,
+  "parentId": "macanvas001",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "shouldShowTabs": true,
+  "tabsObj": {
+    "matab00001": {
+      "id": "matab00001",
+      "index": 0,
+      "isVisible": true,
+      "label": "Monthly Location Attributes",
+      "widgetId": "matabcanv01"
+    }
+  },
+  "topRow": 19,
+  "type": "TABS_WIDGET",
+  "version": 3,
+  "widgetId": "matabs00001",
+  "widgetName": "MATabs"
+}

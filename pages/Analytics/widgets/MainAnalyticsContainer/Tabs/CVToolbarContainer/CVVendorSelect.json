@@ -50,7 +50,7 @@
   "mode": "SHOW_ALL",
   "needsErrorInfo": false,
   "onOptionChange": "{{storeValue('cvVendor', CVVendorSelect.selectedOptionValueArr)}}",
-  "options": "{{ChargesVsConsumptionHelper.getVendorOptions()}}",
+  "options": "{{MA_ChargesVsConsumptionHelper.getVendorOptions()}}",
   "parentColumnSpace": 15,
   "parentId": "cvtbcanv001",
   "parentRowSpace": 10,

@@ -1,0 +1,58 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 108,
+  "boxShadow": "none",
+  "defaultModel": "{{ (function(){var rows=V_fetchVendorDetail.data||[];var r=rows[0];var header=r?{id:r.id,code:r.code,pretty_name:r.pretty_name||''}:{};var providers=rows.filter(function(x){return x&&(x.provider||x.provider_id||x.pv_code||x.pv_name);}).map(function(x){return {provider:x.provider||'',provider_id:(x.provider_id==null?'':x.provider_id),name:x.pv_name||'',code:x.pv_code||'',remittance_name:x.remittance_name||'',remittance_address:x.remittance_address||'',main_phone:x.main_phone||'',custsvc_phone:x.custsvc_phone||'',web_address:x.web_address||'',priority_phone:x.priority_phone||'',emergency_phone:x.emergency_phone||''};});return {header:header,providers:providers};})() }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "vdcardk001",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 300,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 5,
+  "needsErrorInfo": false,
+  "originalBottomRow": 108,
+  "originalTopRow": 5,
+  "parentColumnSpace": 16,
+  "parentId": "vdetlcnv01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "*,*::before,*::after{box-sizing:border-box;}\nhtml,body{width:100%;}\nbody{margin:0;padding:2px 6px 8px;font-family:'Open Sans','Inter','Segoe UI',Arial,sans-serif;background:transparent;color:#e2e8f0;}\n.hd{background:#1b2a4a;color:#ffffff;font-weight:700;padding:11px 16px;font-size:14px;border-radius:4px;}\n.section{padding:20px 6px 8px;}\n.line{margin:16px 0;font-size:14px;line-height:1.5;}\n.box{border:1px solid #334155;border-radius:6px;margin-top:16px;overflow:hidden;}\n.toprow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding:20px;border-bottom:1px solid #334155;}\n.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 22px;padding:22px 20px;}\n.item{font-size:14px;min-width:0;word-break:break-word;line-height:1.5;}\n.lbl{font-weight:700;color:#cbd5e1;}\n.val{color:#e2e8f0;}\n.na{color:#64748b;}\n.globe{opacity:.75;margin-right:6px;}\n.empty{color:#94a3b8;padding:20px;font-style:italic;}",
+    "html": "<html><body><div id=\"root\"></div></body></html>",
+    "js": "function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}\n// Postgres composite address cast to text looks like (\"PO Box 7066\",,,,\"San Juan\",PR,00916-7066,)\n// -> split top-level, unquote, drop empty parts, join with commas for a clean address line.\nfunction fmtAddr(raw){\n  if(raw==null||raw==='') return '';\n  var s=String(raw).trim();\n  if(s.charAt(0)==='(' && s.charAt(s.length-1)===')') s=s.slice(1,-1);\n  var parts=[],cur='',q=false;\n  for(var i=0;i<s.length;i++){var c=s.charAt(i);\n    if(c==='\"'){ if(q && s.charAt(i+1)==='\"'){cur+='\"';i++;} else {q=!q;} }\n    else if(c===',' && !q){ parts.push(cur); cur=''; }\n    else { cur+=c; } }\n  parts.push(cur);\n  parts=parts.map(function(p){return p.trim();}).filter(function(p){return p!=='';});\n  return parts.join(', ');\n}\nfunction vv(val){return (val===''||val==null)?'<span class=\"na\">N/A</span>':esc(val);}\nfunction item(label,val){return '<div class=\"item\"><span class=\"lbl\">'+esc(label)+':</span> <span class=\"val\">'+vv(val)+'</span></div>';}\nfunction line(label,val){return '<div class=\"line\"><span class=\"lbl\">'+esc(label)+':</span> <span class=\"val\">'+vv(val)+'</span></div>';}\nfunction render(model){\n  var h=(model&&model.header)||{};\n  var ps=(model&&Array.isArray(model.providers))?model.providers:[];\n  var root=document.getElementById('root'); if(!root) return;\n  var html='<div class=\"hd\">General Information</div>'\n    +'<div class=\"section\">'+line('ID',h.id)+line('Vendor Code',h.code)+line('Vendor Name',h.pretty_name)+'</div>';\n  if(!ps.length){ html+='<div class=\"box\"><div class=\"empty\">No provider mappings on file for this vendor.</div></div>'; }\n  ps.forEach(function(p){\n    html+='<div class=\"box\"><div class=\"toprow\">'\n      +item('Provider',p.provider)+item('Provider ID',p.provider_id)\n      +'<div class=\"item\"><span class=\"globe\">\\uD83C\\uDF10</span><span class=\"val\">'+vv(p.web_address)+'</span></div>'\n      +'</div><div class=\"grid\">'\n      +item('Vendor Name',p.name)+item('Vendor Code',p.code)+item('Remittance Name',p.remittance_name)\n      +item('Main Phone',p.main_phone)+item('Customer Service Phone',p.custsvc_phone)+item('Remittance Address',fmtAddr(p.remittance_address))\n      +item('Priority Phone',p.priority_phone)+item('Emergency Phone',p.emergency_phone)\n      +'</div></div>';\n  });\n  root.innerHTML=html;\n}\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(render); });"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 5,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "*,*::before,*::after{box-sizing:border-box;}\nhtml,body{width:100%;}\nbody{margin:0;padding:2px 6px 8px;font-family:'Open Sans','Inter','Segoe UI',Arial,sans-serif;background:transparent;color:#e2e8f0;}\n.hd{background:#1b2a4a;color:#ffffff;font-weight:700;padding:11px 16px;font-size:14px;border-radius:4px;}\n.section{padding:20px 6px 8px;}\n.line{margin:16px 0;font-size:14px;line-height:1.5;}\n.box{border:1px solid #334155;border-radius:6px;margin-top:16px;overflow:hidden;}\n.toprow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;padding:20px;border-bottom:1px solid #334155;}\n.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px 22px;padding:22px 20px;}\n.item{font-size:14px;min-width:0;word-break:break-word;line-height:1.5;}\n.lbl{font-weight:700;color:#cbd5e1;}\n.val{color:#e2e8f0;}\n.na{color:#64748b;}\n.globe{opacity:.75;margin-right:6px;}\n.empty{color:#94a3b8;padding:20px;font-style:italic;}",
+    "html": "<html><body><div id=\"root\"></div></body></html>",
+    "js": "function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}\n// Postgres composite address cast to text looks like (\"PO Box 7066\",,,,\"San Juan\",PR,00916-7066,)\n// -> split top-level, unquote, drop empty parts, join with commas for a clean address line.\nfunction fmtAddr(raw){\n  if(raw==null||raw==='') return '';\n  var s=String(raw).trim();\n  if(s.charAt(0)==='(' && s.charAt(s.length-1)===')') s=s.slice(1,-1);\n  var parts=[],cur='',q=false;\n  for(var i=0;i<s.length;i++){var c=s.charAt(i);\n    if(c==='\"'){ if(q && s.charAt(i+1)==='\"'){cur+='\"';i++;} else {q=!q;} }\n    else if(c===',' && !q){ parts.push(cur); cur=''; }\n    else { cur+=c; } }\n  parts.push(cur);\n  parts=parts.map(function(p){return p.trim();}).filter(function(p){return p!=='';});\n  return parts.join(', ');\n}\nfunction vv(val){return (val===''||val==null)?'<span class=\"na\">N/A</span>':esc(val);}\nfunction item(label,val){return '<div class=\"item\"><span class=\"lbl\">'+esc(label)+':</span> <span class=\"val\">'+vv(val)+'</span></div>';}\nfunction line(label,val){return '<div class=\"line\"><span class=\"lbl\">'+esc(label)+':</span> <span class=\"val\">'+vv(val)+'</span></div>';}\nfunction render(model){\n  var h=(model&&model.header)||{};\n  var ps=(model&&Array.isArray(model.providers))?model.providers:[];\n  var root=document.getElementById('root'); if(!root) return;\n  var html='<div class=\"hd\">General Information</div>'\n    +'<div class=\"section\">'+line('ID',h.id)+line('Vendor Code',h.code)+line('Vendor Name',h.pretty_name)+'</div>';\n  if(!ps.length){ html+='<div class=\"box\"><div class=\"empty\">No provider mappings on file for this vendor.</div></div>'; }\n  ps.forEach(function(p){\n    html+='<div class=\"box\"><div class=\"toprow\">'\n      +item('Provider',p.provider)+item('Provider ID',p.provider_id)\n      +'<div class=\"item\"><span class=\"globe\">\\uD83C\\uDF10</span><span class=\"val\">'+vv(p.web_address)+'</span></div>'\n      +'</div><div class=\"grid\">'\n      +item('Vendor Name',p.name)+item('Vendor Code',p.code)+item('Remittance Name',p.remittance_name)\n      +item('Main Phone',p.main_phone)+item('Customer Service Phone',p.custsvc_phone)+item('Remittance Address',fmtAddr(p.remittance_address))\n      +item('Priority Phone',p.priority_phone)+item('Emergency Phone',p.emergency_phone)\n      +'</div></div>';\n  });\n  root.innerHTML=html;\n}\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(render); });"
+  },
+  "version": 1,
+  "widgetId": "vdcard0001",
+  "widgetName": "V_DetailCard"
+}

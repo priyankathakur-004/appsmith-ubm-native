@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 117,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: PerSquareFeetHelper.getLocationOptions(),\nselected: PerSquareFeetHelper.getLocationOptions().map(o => o.value)\n}\n}}",
+  "defaultModel": "{{ {\ndata: MA_PerSquareFeetHelper.getLocationOptions(),\nselected: MA_PerSquareFeetHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

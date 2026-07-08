@@ -88,6 +88,10 @@
     {
       "id": "Rate Class Analysis",
       "isDefault": false
+    },
+    {
+      "id": "Vendors",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {

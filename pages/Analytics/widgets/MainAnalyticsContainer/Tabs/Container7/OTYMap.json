@@ -3,7 +3,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 44,
   "boxShadow": "none",
-  "defaultMarkers": "{{OverTheYearsHelper.getMapMarkers()}}",
+  "defaultMarkers": "{{MA_OverTheYearsHelper.getMapMarkers()}}",
   "dynamicBindingPathList": [
     {
       "key": "mapCenter"
@@ -27,7 +27,7 @@
   "isVisible": true,
   "key": "74k8ygzrza",
   "leftColumn": 14,
-  "mapCenter": "{{OverTheYearsHelper.getMapCenter()}}",
+  "mapCenter": "{{MA_OverTheYearsHelper.getMapCenter()}}",
   "mobileBottomRow": 300,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 64,
@@ -43,5 +43,5 @@
   "version": 1,
   "widgetId": "ptmkjuwc19",
   "widgetName": "OTYMap",
-  "zoomLevel": "{{OverTheYearsHelper.getMapZoom()}}"
+  "zoomLevel": "{{MA_OverTheYearsHelper.getMapZoom()}}"
 }

@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 83,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ { rows: LateFeeHelper.getBills() } }}",
+  "defaultModel": "{{ { rows: BH_LateFeeHelper.getBills() } }}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

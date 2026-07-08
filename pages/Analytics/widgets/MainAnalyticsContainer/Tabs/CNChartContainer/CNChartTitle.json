@@ -29,7 +29,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 61,
   "shouldTruncate": false,
-  "text": "{{ConsumptionHelper.getChartTitle()}}",
+  "text": "{{MA_ConsumptionHelper.getChartTitle()}}",
   "textAlign": "CENTER",
   "textColor": "#e2e8f0",
   "topRow": 1,

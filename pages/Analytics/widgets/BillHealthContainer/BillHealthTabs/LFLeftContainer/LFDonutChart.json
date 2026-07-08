@@ -5,7 +5,7 @@
   "bottomRowBeforeCollapse": 82,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{LateFeeHelper.getDonutConfig()}}",
+  "customEChartConfig": "{{BH_LateFeeHelper.getDonutConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

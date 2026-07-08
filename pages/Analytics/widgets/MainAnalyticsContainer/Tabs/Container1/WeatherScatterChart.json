@@ -6,7 +6,7 @@
   "bottomRow": 100,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{WeatherHelper.getScatterConfig()}}",
+  "customEChartConfig": "{{MA_WeatherHelper.getScatterConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

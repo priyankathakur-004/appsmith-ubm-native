@@ -30,7 +30,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 60,
-  "text": "{{RankLocationHelper.getChartTitle()}}",
+  "text": "{{MA_RankLocationHelper.getChartTitle()}}",
   "textAlign": "CENTER",
   "textColor": "#ffffff",
   "topRow": 5,

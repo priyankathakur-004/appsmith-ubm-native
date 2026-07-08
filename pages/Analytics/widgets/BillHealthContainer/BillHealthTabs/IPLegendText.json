@@ -30,7 +30,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 64,
   "shouldTruncate": false,
-  "text": "{{BillHealthHelper.getLegendHtml()}}",
+  "text": "{{BH_BillHealthHelper.getLegendHtml()}}",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
   "topRow": 5,

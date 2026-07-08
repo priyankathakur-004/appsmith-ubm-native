@@ -14,8 +14,8 @@ SELECT
 FROM bill_management_v2.analytics_billing_line_items li
 WHERE li.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
   AND li.bill_type = 'live'
-  AND li.statement_date >= '{{ LFDateHelper.start() }}'
-  AND li.statement_date <  '{{ LFDateHelper.end() }}'
+  AND li.statement_date >= '{{ BH_LFDateHelper.start() }}'
+  AND li.statement_date <  '{{ BH_LFDateHelper.end() }}'
 GROUP BY li.bill_id, li.statement_date
 ORDER BY li.bill_id
 LIMIT 5000

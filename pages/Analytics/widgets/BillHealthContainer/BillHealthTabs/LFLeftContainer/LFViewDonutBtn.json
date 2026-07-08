@@ -30,7 +30,7 @@
   "mobileLeftColumn": 12,
   "mobileRightColumn": 30,
   "mobileTopRow": 0,
-  "onClick": "{{ LateFeeHelper.setView('donut') }}",
+  "onClick": "{{ BH_LateFeeHelper.setView('donut') }}",
   "parentColumnSpace": 1,
   "parentId": "lfleftcanvas",
   "parentRowSpace": 10,

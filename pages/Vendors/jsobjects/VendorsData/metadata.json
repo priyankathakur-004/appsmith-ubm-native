@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6a42383420f165a7650f6c4d_39eb6176-0626-4a72-bef5-cf69588662ee",
+  "id": "Vendors_VendorsData",
+  "unpublishedCollection": {
+    "name": "VendorsData",
+    "pageId": "Vendors",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

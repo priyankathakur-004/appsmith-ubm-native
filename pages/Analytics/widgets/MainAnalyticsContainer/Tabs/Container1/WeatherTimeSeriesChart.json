@@ -6,7 +6,7 @@
   "bottomRow": 49,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{WeatherHelper.getTimeSeriesConfig()}}",
+  "customEChartConfig": "{{MA_WeatherHelper.getTimeSeriesConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

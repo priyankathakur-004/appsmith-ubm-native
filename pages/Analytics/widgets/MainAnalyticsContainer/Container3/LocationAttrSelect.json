@@ -33,7 +33,7 @@
   "mobileLeftColumn": 33,
   "mobileRightColumn": 43,
   "mobileTopRow": 9,
-  "onOptionChange": "{{FilterActions.onLocationAttrChange()}}",
+  "onOptionChange": "{{_FilterActions.onLocationAttrChange()}}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 43,

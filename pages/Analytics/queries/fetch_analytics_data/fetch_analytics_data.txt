@@ -68,6 +68,6 @@ LEFT JOIN LATERAL (
 
 WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
-{{ AnalyticsFilters.analyticsWhere() }}
+{{ _AnalyticsFilters.analyticsWhere() }}
 
 ORDER BY m.location_description, m.time_period DESC;

@@ -80,7 +80,7 @@
   "mobileRightColumn": 12,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onClose": "{{AnalyticsHelper.clear();\nresetWidget(\"Table1\", true);}}",
+  "onClose": "{{_AnalyticsHelper.clear();\nresetWidget(\"Table1\", true);}}",
   "parentColumnSpace": 16.140625,
   "parentId": "0",
   "parentRowSpace": 10,

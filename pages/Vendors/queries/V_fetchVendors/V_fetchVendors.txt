@@ -1,0 +1,11 @@
+{{
+`SELECT v.id,
+       v.code,
+       COALESCE(v.pretty_name, '') AS pretty_name,
+       string_agg(DISTINCT pv.provider_id::text, ',') AS provider_ids
+FROM bill_management_v2.vendors v
+LEFT JOIN bill_management_v2.providers_vendors pv ON pv.vendor_id = v.id
+GROUP BY v.id, v.code, v.pretty_name
+ORDER BY v.id
+LIMIT 10000`
+}}

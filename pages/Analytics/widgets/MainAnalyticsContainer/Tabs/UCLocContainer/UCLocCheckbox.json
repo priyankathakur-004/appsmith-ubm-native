@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 117,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: UnitCostHelper.getGroupOptions(),\nselected: UnitCostHelper.getGroupOptions().map(o => o.value),\nheader: UnitCostHelper.getViewBy()\n}\n}}",
+  "defaultModel": "{{ {\ndata: MA_UnitCostHelper.getGroupOptions(),\nselected: MA_UnitCostHelper.getGroupOptions().map(o => o.value),\nheader: MA_UnitCostHelper.getViewBy()\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

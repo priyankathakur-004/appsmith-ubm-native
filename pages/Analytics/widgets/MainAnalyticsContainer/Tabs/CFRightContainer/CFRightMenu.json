@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'CF_Monthly');\ndownload(\n  [Object.keys(ChargesForecastHelper.getMonthlyTableData()[0] || {}).join(',')]\n    .concat(ChargesForecastHelper.getMonthlyTableData().map(row => Object.values(row).join(',')))\n    .join('\\n'),\n  'charges_monthly_forecast.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'CF_Monthly');\ndownload(\n  [Object.keys(MA_ChargesForecastHelper.getMonthlyTableData()[0] || {}).join(',')]\n    .concat(MA_ChargesForecastHelper.getMonthlyTableData().map(row => Object.values(row).join(',')))\n    .join('\\n'),\n  'charges_monthly_forecast.csv', 'text/csv'\n);\n}}",
       "widgetId": "cfr_exp01"
     },
     "mi_cfr_tbl": {

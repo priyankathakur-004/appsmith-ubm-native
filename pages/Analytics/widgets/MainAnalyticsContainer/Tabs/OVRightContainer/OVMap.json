@@ -3,7 +3,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 94,
   "boxShadow": "none",
-  "defaultMarkers": "{{OverviewHelper.getMapMarkers()}}",
+  "defaultMarkers": "{{MA_OverviewHelper.getMapMarkers()}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultMarkers"

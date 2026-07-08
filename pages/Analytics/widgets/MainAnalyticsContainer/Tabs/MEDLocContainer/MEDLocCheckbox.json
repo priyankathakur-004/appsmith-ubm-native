@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 16,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: MonthlyElectricDemandHelper.getLocationOptions(),\nselected: MonthlyElectricDemandHelper.getLocationOptions().map(o => o.value)\n}\n}}",
+  "defaultModel": "{{ {\ndata: MA_MonthlyElectricDemandHelper.getLocationOptions(),\nselected: MA_MonthlyElectricDemandHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

@@ -4,7 +4,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 28,
+  "bottomRow": 32,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -38,7 +38,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 63,
   "shouldTruncate": false,
-  "text": "{{OverviewHelper.getSummaryText()}}",
+  "text": "{{MA_OverviewHelper.getSummaryText()}}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 2,

@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'RB_Matrix');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'received_bills.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'RB_Matrix');\ndownload(\n  [Object.keys((BH_ReceivedBillsHelper.getMatrixTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BH_ReceivedBillsHelper.getMatrixTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'received_bills.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_rbmtx_exp"
     },
     "mi_rbmtx_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'RB_Matrix');\nstoreValue('woTable', ReceivedBillsHelper.getMatrixTableData());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'RB_Matrix');\nstoreValue('woTable', BH_ReceivedBillsHelper.getMatrixTableData());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_rbmtx_tbl"
     }
   },

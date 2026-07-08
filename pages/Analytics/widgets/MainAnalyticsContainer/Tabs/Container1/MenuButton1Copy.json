@@ -54,7 +54,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export Data",
-      "onClick": "{{\nstoreValue('chartName', \"Time Series\");\ndownload(\nObject.values(AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"analytics.csv\",\n\"text/csv\"\n)}}",
+      "onClick": "{{\nstoreValue('chartName', \"Time Series\");\ndownload(\nObject.values(_AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"analytics.csv\",\n\"text/csv\"\n)}}",
       "widgetId": ""
     },
     "menuItem2": {

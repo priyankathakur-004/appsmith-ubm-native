@@ -1,0 +1,63 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowClear": false,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultOptionValue": "2025, 2025-12-01, 2025-11-01, 2025-10-01, 2025-09-01, 2025-08-01, 2025-07-01, 2025-06-01, 2025-05-01, 2025-04-01, 2025-03-01, 2025-02-01, 2025-01-01, 2024, 2024-12-01, 2024-11-01, 2024-10-01, 2024-09-01, 2024-08-01, 2024-07-01, 2024-06-01, 2024-05-01, 2024-04-01, 2024-03-01, 2024-02-01, 2024-01-01, 2023, 2023-12-01, 2023-11-01, 2023-10-01, 2023-09-01, 2023-08-01, 2023-07-01, 2023-06-01, 2023-05-01, 2023-04-01, 2023-03-01, 2023-02-01, 2023-01-01",
+  "dynamicBindingPathList": [
+    {
+      "key": "options"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "expandAll": false,
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "ma_sel_date",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 16,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 2,
+  "mobileTopRow": 9,
+  "mode": "SHOW_ALL",
+  "needsErrorInfo": false,
+  "onOptionChange": "{{ fetch_ma_usage.run(); fetch_monthly_attributes.run(); }}",
+  "options": "{{ _FilterActions.getDates() }}",
+  "originalBottomRow": 35,
+  "originalTopRow": 30,
+  "parentColumnSpace": 16.453125,
+  "parentId": "mafiltcanv1",
+  "parentRowSpace": 10,
+  "placeholderText": "Select option(s)",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 16,
+  "topRow": 4,
+  "type": "MULTI_SELECT_TREE_WIDGET",
+  "version": 1,
+  "widgetId": "mafdsel0001",
+  "widgetName": "MADateSelect"
+}

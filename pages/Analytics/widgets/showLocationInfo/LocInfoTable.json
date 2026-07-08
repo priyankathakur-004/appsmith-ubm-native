@@ -163,7 +163,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 63,
   "searchKey": "",
-  "tableData": "{{OverTheYearsHelper.getLocationInfo()}}",
+  "tableData": "{{MA_OverTheYearsHelper.getLocationInfo()}}",
   "textSize": "0.875rem",
   "topRow": 6,
   "totalRecordsCount": 0,

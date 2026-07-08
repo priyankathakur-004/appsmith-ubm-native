@@ -1,0 +1,18 @@
+SELECT v.id,
+       v.code,
+       COALESCE(v.pretty_name, '') AS pretty_name,
+       pv.provider,
+       pv.provider_id,
+       pv.name             AS pv_name,
+       pv.code             AS pv_code,
+       pv.remittance_name,
+       pv.remittance_address::text AS remittance_address,
+       pv.main_phone,
+       pv.custsvc_phone,
+       pv.web_address,
+       pv.priority_phone,
+       pv.emergency_phone
+FROM bill_management_v2.vendors v
+LEFT JOIN bill_management_v2.providers_vendors pv ON pv.vendor_id = v.id
+WHERE v.id = {{ V_VendorsTable.model.selectedVendorId || 0 }}
+ORDER BY pv.provider_id NULLS LAST;

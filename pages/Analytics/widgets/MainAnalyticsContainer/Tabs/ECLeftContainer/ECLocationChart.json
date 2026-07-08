@@ -4,7 +4,7 @@
   "bottomRow": 84,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{EnergyConsumptionHelper.getLocationChartConfig()}}",
+  "customEChartConfig": "{{MA_EnergyConsumptionHelper.getLocationChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

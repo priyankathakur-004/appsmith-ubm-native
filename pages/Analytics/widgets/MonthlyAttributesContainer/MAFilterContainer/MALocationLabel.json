@@ -1,0 +1,36 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 4,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ma_loc_lbl",
+  "leftColumn": 49,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 12,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 15,
+  "parentId": "mafiltcanv1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "text": "Location",
+  "textAlign": "LEFT",
+  "textColor": "#94a3b8",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "mafllbl0001",
+  "widgetName": "MALocationLabel"
+}

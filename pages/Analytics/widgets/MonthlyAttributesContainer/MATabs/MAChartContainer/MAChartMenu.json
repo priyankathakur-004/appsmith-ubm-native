@@ -1,0 +1,71 @@
+{
+  "animateLoading": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 14,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "menuItems.menuItemMAexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemMAtable01.onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "menuItems.menuItemMAexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemMAtable01.onClick"
+    }
+  ],
+  "iconAlign": "left",
+  "iconName": "menu",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ma_chart_menu",
+  "leftColumn": 60,
+  "menuColor": "#ffffff",
+  "menuItems": {
+    "menuItemMAexport01": {
+      "id": "menuItemMAexport01",
+      "index": 0,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Export ",
+      "onClick": "{{\nstoreValue('chartName', \"MA_Monthly\");\n((rows) => {\n  if (!rows.length) { showAlert('No data to export', 'warning'); return; }\n  const headers = Object.keys(rows[0]);\n  const esc = v => '\"' + String(v == null ? '' : v).replace(/\"/g, '\"\"') + '\"';\n  download(headers.map(esc).join(',') + '\\n' + rows.map(r => headers.map(h => esc(r[h])).join(',')).join('\\n'), 'monthly_attributes.csv', 'text/csv');\n})(MT_MonthlyAttributesHelper.getMonthlyTable())}}",
+      "widgetId": "maexpitem001"
+    },
+    "menuItemMAtable01": {
+      "id": "menuItemMAtable01",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', \"MA_Monthly\");\nstoreValue('maTable', MT_MonthlyAttributesHelper.getMonthlyTable());\nshowModal('showTable');}}",
+      "widgetId": "matblitem001"
+    }
+  },
+  "menuItemsSource": "STATIC",
+  "menuVariant": "TERTIARY",
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "machrtcanv1",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 10,
+  "type": "MENU_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "machmenu001",
+  "widgetName": "MAChartMenu"
+}

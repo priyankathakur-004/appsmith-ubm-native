@@ -4,7 +4,7 @@
   "bottomRow": 49,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{ChargesForecastHelper.getYearlyChartConfig()}}",
+  "customEChartConfig": "{{MA_ChargesForecastHelper.getYearlyChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

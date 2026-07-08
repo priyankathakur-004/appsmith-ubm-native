@@ -29,7 +29,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 55,
   "shouldTruncate": false,
-  "text": "{{MonthlyElectricDemandHelper.getChartTitle()}}",
+  "text": "{{MA_MonthlyElectricDemandHelper.getChartTitle()}}",
   "textAlign": "LEFT",
   "textColor": "#e2e8f0",
   "topRow": 1,

@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export ",
-      "onClick": "{{\nstoreValue('chartName', \"OTY_UnitCost\");\ndownload(\nObject.values(AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"unitcost.csv\",\n\"text/csv\"\n)}}",
+      "onClick": "{{\nstoreValue('chartName', \"OTY_UnitCost\");\ndownload(\nObject.values(_AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"unitcost.csv\",\n\"text/csv\"\n)}}",
       "widgetId": "rv4gnqi7pp"
     },
     "menuItem_uc_table": {

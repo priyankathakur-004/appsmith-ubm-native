@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export",
-      "onClick": "{{\nstoreValue('chartName', 'RC_Treemap');\ndownload(\n  [Object.keys((ReceivedBillsHelper.getRateTreemapTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((ReceivedBillsHelper.getRateTreemapTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'rate_codes_by_utility.csv', 'text/csv'\n);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'RC_Treemap');\ndownload(\n  [Object.keys((BH_ReceivedBillsHelper.getRateTreemapTableData())[0] || {}).map(h => '\"' + String(h).replace(/\"/g,'\"\"') + '\"').join(',')]\n    .concat((BH_ReceivedBillsHelper.getRateTreemapTableData()).map(row => Object.values(row).map(v => '\"' + String(v == null ? '' : v).replace(/\"/g,'\"\"') + '\"').join(',')))\n    .join('\\n'),\n  'rate_codes_by_utility.csv', 'text/csv'\n);\n}}",
       "widgetId": "mi_rctr_exp"
     },
     "mi_rctr_tbl": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', 'RC_Treemap');\nstoreValue('woTable', ReceivedBillsHelper.getRateTreemapTableData());\nshowModal(showTable.name);\n}}",
+      "onClick": "{{\nstoreValue('chartName', 'RC_Treemap');\nstoreValue('woTable', BH_ReceivedBillsHelper.getRateTreemapTableData());\nshowModal(showTable.name);\n}}",
       "widgetId": "mi_rctr_tbl"
     }
   },
