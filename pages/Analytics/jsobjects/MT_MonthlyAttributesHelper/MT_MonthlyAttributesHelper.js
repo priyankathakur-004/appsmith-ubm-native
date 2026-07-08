@@ -160,19 +160,25 @@ export default {
 		const u = appsmith.store.maUOM || 'BTU';
 		const scale = u === 'Joule' ? 1 : 1000;
 
+		// d.consBase holds Σ(consumption × base BTU factor) — UOM-INDEPENDENT — so the
+		// memoized grid survives BTU/Wh/Joule toggles. Apply the UOM multiplier here at
+		// display time (base × mult == the old per-UOM factor, so results are unchanged).
+		const uomMult = u === 'Wh' ? 0.29307107 : (u === 'Joule' ? 1055.06 : 1);
+		const cons = d.consBase * uomMult;
+
 		if (view === 'Charges')
 			return d.charges;
 
 		if (view === 'UnitCost')
-			return d.cons ? (d.charges * 1000) / (d.cons * scale) : 0;
+			return cons ? (d.charges * 1000) / (cons * scale) : 0;
 
 		if (view === 'EnergyUseIntensity')
 			// Power BI EUI = SUM(kBtu) / SUM(square_feet); sqftSum is sqft summed per
 			// meter row (see getMonthlyData), NOT the single per-location sqft.
-			return d.sqftSum ? (d.cons * scale) / d.sqftSum : 0;
+			return d.sqftSum ? (cons * scale) / d.sqftSum : 0;
 
 		// Consumption
-		return u === 'Joule' ? d.cons / 1000 : d.cons;
+		return u === 'Joule' ? cons / 1000 : cons;
 	},
 
 	/* ===============================
@@ -181,13 +187,24 @@ export default {
 
 	getMonthlyData() {
 		const raw = fetch_analytics_data.data || [];
-		const u = appsmith.store.maUOM || 'BTU';
+		const attrs = fetch_monthly_attributes.data || [];
 		const attrName = this.getSelectedAttribute();
 		if (!attrName) return {};
 
-		const attrIdx = this._attrIndex();
 		// Single selected location (or null = every location that the attribute join keeps).
 		const onlyLoc = appsmith.store.maSelectedLocation || null;
+
+		// Memoize the join. The DB data is loaded once; this crunches it once and reuses
+		// the result. Neither the metric (maActiveView) NOR the UOM (maUOM) affect this
+		// grid — consumption is stored UOM-independent as consBase and both are applied
+		// later in _computeStandard — so switching any metric OR UOM button is a cache hit
+		// instead of a fresh two-dataset join. The key covers every input that actually
+		// changes the grid, so a stale value can never be returned (worst case it
+		// recomputes). Both the chart and the table read through this one cache.
+		const cacheKey = raw.length + '|' + attrs.length + '|' + attrName + '|' + (onlyLoc || '');
+		if (this._mdKey === cacheKey && this._mdCache) return this._mdCache;
+
+		const attrIdx = this._attrIndex();
 		const byLocMonth = {};
 
 		// The Power BI "monthly attribute" source query filters usage to these three
@@ -195,13 +212,12 @@ export default {
 		// don't pick up WATER/SEWER/etc. rows the reference report excludes.
 		const ALLOWED = { ELECTRIC: 1, NATURALGAS: 1, PROPANE: 1 };
 
-		// Cache the BTU conversion factor per raw utility_type value. u is fixed for this
-		// call, so the factor only depends on the utility type — there are a handful of
-		// distinct values across thousands of rows. Avoids re-allocating the factor map
-		// and re-reading the store on every single row.
+		// Base (UOM-independent) BTU factor per raw utility_type value — cached because
+		// there are only a handful of distinct types across thousands of rows. The UOM
+		// multiplier is applied later in _computeStandard, keeping this grid reusable.
 		const factorCache = {};
 		const factorFor = (utype) => {
-			if (!(utype in factorCache)) factorCache[utype] = this.getBTUConversionFactor(utype, u);
+			if (!(utype in factorCache)) factorCache[utype] = this.getBTUConversionFactor(utype, 'BTU');
 			return factorCache[utype];
 		};
 
@@ -222,15 +238,17 @@ export default {
 			const sqft = Number(r.square_feet) || 0;
 			if (!byLocMonth[loc]) byLocMonth[loc] = {};
 			if (!byLocMonth[loc][month])
-				byLocMonth[loc][month] = { cons: 0, charges: 0, sqft: sqft, sqftSum: 0, attr: attrVal };
+				byLocMonth[loc][month] = { consBase: 0, charges: 0, sqft: sqft, sqftSum: 0, attr: attrVal };
 
 			const f = factorFor(r.utility_type);
-			byLocMonth[loc][month].cons += ((Number(r.consumption) || 0) * f) / 1000000;
+			byLocMonth[loc][month].consBase += ((Number(r.consumption) || 0) * f) / 1000000;
 			byLocMonth[loc][month].charges += Number(r.total_charges) || 0;
 			// Sum sqft per row to mirror Power BI's EUI denominator SUM(square_feet).
 			byLocMonth[loc][month].sqftSum += sqft;
 		});
 
+		this._mdKey = cacheKey;
+		this._mdCache = byLocMonth;
 		return byLocMonth;
 	},
 
@@ -243,6 +261,73 @@ export default {
 		if (view === 'UnitCost') return 'Unit Cost per monthly attribute ($/mm' + uom + ')';
 		if (view === 'EnergyUseIntensity') return 'Energy Use Intensity per monthly attribute';
 		return 'Energy Consumption per monthly attribute (' + uom + ')';
+	},
+
+	/* ===============================
+	   TOOLTIP / DETAIL FORMATTING
+	   Shared by the chart hover tooltip and the "show as table" Details column so the
+	   two always read identically (matches the Power BI monthly-attribute report).
+	=============================== */
+
+	// Unit of the RAW metric numerator (before dividing by the attribute). Mirrors the
+	// scaling in _computeStandard so the label always matches the number it annotates.
+	_metricUnit(view, u) {
+		if (view === 'Charges') return '';
+		if (view === 'UnitCost') return u === 'Joule' ? '$/GJ' : (u === 'Wh' ? '$/MWh' : '$/mmBTU');
+		if (view === 'EnergyUseIntensity') return u === 'Joule' ? 'MJ/sqft' : (u === 'Wh' ? 'kWh/sqft' : 'kBtu/sqft');
+		return u === 'Joule' ? 'GJ' : (u === 'Wh' ? 'MWh' : 'mmBTU');
+	},
+
+	// Short metric name used in the "<metric> Details" text and the Details column header.
+	_metricRawLabel(view) {
+		if (view === 'Charges') return 'Charges';
+		if (view === 'UnitCost') return 'Unit Cost';
+		if (view === 'EnergyUseIntensity') return 'EUI';
+		return 'Consumption';
+	},
+
+	// Thousands-separated fixed-decimal formatter (kept local to avoid relying on
+	// Intl/toLocaleString inside the Appsmith JS sandbox).
+	_commas(n, dp) {
+		const d = (dp == null) ? 2 : dp;
+		const num = Number(n) || 0;
+		const neg = num < 0;
+		const parts = Math.abs(num).toFixed(d).split('.');
+		parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+		return (neg ? '-' : '') + parts.join('.');
+	},
+
+	// The plotted value (metric ÷ attribute) as shown in the tooltip and the value
+	// column. Charges and Unit Cost are money; Consumption and EUI are plain numbers.
+	_fmtMain(v, view) {
+		if (view === 'Charges' || view === 'UnitCost') return '$' + this._commas(v);
+		return this._commas(v);
+	},
+
+	// Unit string for the currently-selected attribute (e.g. "LBS"). The monthly-
+	// attributes feed does not yet carry a unit column, so this returns '' until one is
+	// added — the detail text then simply omits the unit. Reads attribute_uom/unit/uom
+	// from the row if present so it lights up automatically once the query exposes it.
+	_selectedAttrUnit() {
+		const attrName = this.getSelectedAttribute();
+		if (!attrName) return '';
+		const attrs = fetch_monthly_attributes.data || [];
+		const row = attrs.find(a => a.attribute_name === attrName);
+		return (row && (row.attribute_uom || row.unit || row.uom)) || '';
+	},
+
+	// "Products Produced 145.00 LBS, Consumption 10,378.76 MWh" — the attribute (divisor)
+	// followed by the raw metric numerator, matching the Power BI detail format.
+	_detailText(d, view, u, attrName, attrUnit) {
+		const std = this._computeStandard(d, view);
+		const rawLabel = this._metricRawLabel(view);
+		const unit = this._metricUnit(view, u);
+		const au = attrUnit ? (' ' + attrUnit) : '';
+		const attrPart = attrName + ' ' + this._commas(d.attr) + au;
+		const metricPart = (view === 'Charges')
+			? rawLabel + ' $' + this._commas(std)
+			: rawLabel + ' ' + this._commas(std) + (unit ? (' ' + unit) : '');
+		return attrPart + ', ' + metricPart;
 	},
 
 	getChartTitle() {
@@ -305,6 +390,9 @@ export default {
 
 		const byLocMonth = this.getMonthlyData();
 		const view = this.getActiveView();
+		const u = appsmith.store.maUOM || 'BTU';
+		const attrUnit = this._selectedAttrUnit();
+		const detailLabel = this._metricRawLabel(view) + ' Details';
 
 		const allMonths = new Set();
 		Object.values(byLocMonth).forEach(months => {
@@ -330,7 +418,14 @@ export default {
 				const std = this._computeStandard(d, view);
 				const v = Number((std / d.attr).toFixed(4));
 				if (!v) return;
-				data.push([mi, v]);
+				// Carry the display value + detail text on the point so the tooltip
+				// formatter can render the same "<attribute>, <metric>" line as the table.
+				data.push({
+					value: [mi, v],
+					mainDisp: this._fmtMain(v, view),
+					detail: this._detailText(d, view, u, attrName, attrUnit),
+					detailLabel: detailLabel
+				});
 			});
 			if (data.length === 0) return;
 			series.push({
@@ -356,7 +451,24 @@ export default {
 				trigger: 'axis',
 				backgroundColor: '#0F172A',
 				borderColor: '#334155',
-				textStyle: { color: '#E2E8F0' }
+				textStyle: { color: '#E2E8F0' },
+				formatter: function (params) {
+					const arr = Array.isArray(params) ? params : [params];
+					if (!arr.length) return '';
+					const head = arr[0].axisValueLabel || arr[0].name || '';
+					let s = '<div style="font-weight:700;margin-bottom:4px;">' + head + '</div>';
+					arr.forEach(function (p) {
+						const dd = p.data || {};
+						if (dd.mainDisp == null) return;
+						s += '<div style="margin-top:2px;">' + p.marker + ' ' + p.seriesName +
+							' &nbsp;<b>' + dd.mainDisp + '</b></div>';
+						if (dd.detail) {
+							s += '<div style="color:#94A3B8;font-size:11px;margin:1px 0 4px 16px;">' +
+								dd.detailLabel + ': ' + dd.detail + '</div>';
+						}
+					});
+					return s;
+				}
 			},
 			legend: {
 				type: 'scroll',
@@ -397,40 +509,61 @@ export default {
 	   TABLE DATA (for export / show as table)
 	=============================== */
 
+	// Long format matching the Power BI report: one row per location-month with the
+	// plotted value and a Details column identical to the chart tooltip's detail line.
 	getMonthlyTable() {
 		const attrName = this.getSelectedAttribute();
 		if (!attrName) return [];
 
 		const byLocMonth = this.getMonthlyData();
 		const view = this.getActiveView();
-		const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		const u = appsmith.store.maUOM || 'BTU';
+		const attrUnit = this._selectedAttrUnit();
 
-		const allMonths = new Set();
-		Object.values(byLocMonth).forEach(months => {
-			Object.keys(months).forEach(m => allMonths.add(m));
-		});
-		const sortedMonths = Array.from(allMonths).sort();
+		const monthNamesFull = ['January','February','March','April','May','June',
+			'July','August','September','October','November','December'];
+		const fullNames = {
+			Consumption: 'Energy Consumption',
+			Charges: 'Charges',
+			EnergyUseIntensity: 'Energy Use Intensity',
+			UnitCost: 'Unit Cost'
+		};
+		const valCol = (fullNames[view] || 'Energy Consumption') + ' per monthly attribute';
+		const detCol = this._metricRawLabel(view) + ' Details';
+
 		const locations = Object.keys(byLocMonth).sort();
-
-		return sortedMonths.map(m => {
-			const parts = m.split('-');
-			const monthLabel = monthNames[parseInt(parts[1]) - 1] + ' ' + parts[0];
-			const row = { MonthYear: monthLabel };
-			locations.forEach(loc => {
-				const d = (byLocMonth[loc] || {})[m];
-				row[loc] = (d && d.attr) ? Number((this._computeStandard(d, view) / d.attr).toFixed(4)) : 0;
+		const rows = [];
+		locations.forEach(loc => {
+			const months = Object.keys(byLocMonth[loc]).sort();
+			months.forEach(m => {
+				const d = byLocMonth[loc][m];
+				if (!d || !d.attr) return;
+				const parts = m.split('-');
+				const ym = parts[0] + ', ' + monthNamesFull[parseInt(parts[1]) - 1];
+				const v = this._computeStandard(d, view) / d.attr;
+				const row = {};
+				row['Location'] = loc;
+				row['Year, Month'] = ym;
+				row[valCol] = this._fmtMain(v, view);
+				row[detCol] = this._detailText(d, view, u, attrName, attrUnit);
+				rows.push(row);
 			});
-			return row;
 		});
+		return rows;
 	},
 
 	/* ===============================
 	   DEFAULTS
 	=============================== */
 
+	// Runs when the user enters the Monthly Attributes Report (ReportSelect.onOptionChange).
+	// appsmith.store persists across page reloads, so we FORCE the metric back to
+	// Consumption and the UOM back to BTU on entry rather than only seeding when unset —
+	// otherwise the toolbar buttons would show a stale prior selection after a reload.
 	setDefaults() {
-		if (!appsmith.store.maActiveView) storeValue('maActiveView', 'Consumption');
-		if (!appsmith.store.maUOM) storeValue('maUOM', 'BTU');
+		storeValue('maActiveView', 'Consumption');
+		storeValue('maUOM', 'BTU');
 		removeValue('maSelectedLocation');
+		removeValue('maTable');
 	}
 }
