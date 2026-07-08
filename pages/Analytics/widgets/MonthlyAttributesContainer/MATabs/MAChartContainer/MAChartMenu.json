@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', \"MA_Monthly\");\nshowModal('showTable');}}",
+      "onClick": "{{\nstoreValue('chartName', \"MA_Monthly\");\nstoreValue('maTable', MT_MonthlyAttributesHelper.getMonthlyTable());\nshowModal('showTable');}}",
       "widgetId": "matblitem001"
     }
   },

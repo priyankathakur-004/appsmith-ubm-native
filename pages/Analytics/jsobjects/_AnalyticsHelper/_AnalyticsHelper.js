@@ -10,9 +10,16 @@ export default {
 
 				/* Monthly Attributes Report lives outside the Tabs widget (shown via ReportSelect),
 				   so dispatch on its unique chartName and return early — this avoids the Tabs
-				   branches below overwriting the data with a stale selected tab. */
+				   branches below overwriting the data with a stale selected tab.
+
+				   Store-stash pattern (mirrors the Bill Health charts above): the MAChartMenu
+				   onClick computes getMonthlyTable() (a trigger context) and stashes it in the
+				   store, so this reactive data path reads maTable instead of the heavy helper.
+				   That keeps the always-mounted Table1.text binding from re-running the full
+				   two-dataset attribute join on every unrelated store change (e.g. every MA
+				   metric/UOM click). */
 				if (appsmith.store.chartName === 'MA_Monthly')
-						return MT_MonthlyAttributesHelper.getMonthlyTable().map(row => {
+						return (appsmith.store.maTable || []).map(row => {
 								const r = {};
 								Object.keys(row).forEach(k => {
 										const v = row[k];
@@ -143,6 +150,7 @@ export default {
 
 		clear() {
 			removeValue('chartName');
+			removeValue('maTable');
 			removeValue('viewType');
 			removeValue('selectedSite');
 			removeValue('selectedLocation');

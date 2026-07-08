@@ -195,6 +195,16 @@ export default {
 		// don't pick up WATER/SEWER/etc. rows the reference report excludes.
 		const ALLOWED = { ELECTRIC: 1, NATURALGAS: 1, PROPANE: 1 };
 
+		// Cache the BTU conversion factor per raw utility_type value. u is fixed for this
+		// call, so the factor only depends on the utility type — there are a handful of
+		// distinct values across thousands of rows. Avoids re-allocating the factor map
+		// and re-reading the store on every single row.
+		const factorCache = {};
+		const factorFor = (utype) => {
+			if (!(utype in factorCache)) factorCache[utype] = this.getBTUConversionFactor(utype, u);
+			return factorCache[utype];
+		};
+
 		raw.forEach(r => {
 			const ut = String(r.utility_type || '').toUpperCase().replace(/[\s_-]/g, '');
 			if (!ALLOWED[ut]) return;
@@ -214,7 +224,7 @@ export default {
 			if (!byLocMonth[loc][month])
 				byLocMonth[loc][month] = { cons: 0, charges: 0, sqft: sqft, sqftSum: 0, attr: attrVal };
 
-			const f = this.getBTUConversionFactor(r.utility_type, u);
+			const f = factorFor(r.utility_type);
 			byLocMonth[loc][month].cons += ((Number(r.consumption) || 0) * f) / 1000000;
 			byLocMonth[loc][month].charges += Number(r.total_charges) || 0;
 			// Sum sqft per row to mirror Power BI's EUI denominator SUM(square_feet).
