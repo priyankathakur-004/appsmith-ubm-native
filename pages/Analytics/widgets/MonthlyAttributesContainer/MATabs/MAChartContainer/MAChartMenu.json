@@ -11,11 +11,17 @@
   "dynamicPropertyPathList": [
     {
       "key": "menuItems.menuItemMAexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemMAtable01.onClick"
     }
   ],
   "dynamicTriggerPathList": [
     {
       "key": "menuItems.menuItemMAexport01.onClick"
+    },
+    {
+      "key": "menuItems.menuItemMAtable01.onClick"
     }
   ],
   "iconAlign": "left",
@@ -34,6 +40,15 @@
       "label": "Export ",
       "onClick": "{{\nstoreValue('chartName', \"MA_Monthly\");\ndownload(\nObject.values(MT_MonthlyAttributesHelper.getMonthlyTable())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"monthly_attributes.csv\",\n\"text/csv\"\n)}}",
       "widgetId": "maexpitem001"
+    },
+    "menuItemMAtable01": {
+      "id": "menuItemMAtable01",
+      "index": 1,
+      "isDisabled": false,
+      "isVisible": true,
+      "label": "Show as a Table",
+      "onClick": "{{\nstoreValue('chartName', \"MA_Monthly\");\nshowModal(showTable.name);}}",
+      "widgetId": "matblitem001"
     }
   },
   "menuItemsSource": "STATIC",

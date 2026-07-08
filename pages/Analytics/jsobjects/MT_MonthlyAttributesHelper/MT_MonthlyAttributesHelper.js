@@ -20,9 +20,13 @@ export default {
 	=============================== */
 
 	getBTUConversionFactor(utilityType, uom) {
+		// Factors mirror MA_PerSquareFeetHelper (the Main Analytics EUI helper), which
+		// is reconciled against Power BI. Power BI uses the simpler 100,000 BTU/CCF
+		// (1 therm equivalent) for natural gas, NOT the heating-value 102,800 — using
+		// 102,800 here inflated gas-heavy months by ~2.8%.
 		const map = {
 			ELECTRIC: 3412,
-			NATURALGAS: 102800,
+			NATURALGAS: 100000,
 			OIL2: 138500,
 			STEAM: 1000,
 			WATER: 0,
@@ -163,7 +167,9 @@ export default {
 			return d.cons ? (d.charges * 1000) / (d.cons * scale) : 0;
 
 		if (view === 'EnergyUseIntensity')
-			return d.sqft ? (d.cons * scale) / d.sqft : 0;
+			// Power BI EUI = SUM(kBtu) / SUM(square_feet); sqftSum is sqft summed per
+			// meter row (see getMonthlyData), NOT the single per-location sqft.
+			return d.sqftSum ? (d.cons * scale) / d.sqftSum : 0;
 
 		// Consumption
 		return u === 'Joule' ? d.cons / 1000 : d.cons;
@@ -184,7 +190,15 @@ export default {
 		const onlyLoc = appsmith.store.maSelectedLocation || null;
 		const byLocMonth = {};
 
+		// The Power BI "monthly attribute" source query filters usage to these three
+		// utility types (see Power BI Queries.sql). Match it so charges/consumption
+		// don't pick up WATER/SEWER/etc. rows the reference report excludes.
+		const ALLOWED = { ELECTRIC: 1, NATURALGAS: 1, PROPANE: 1 };
+
 		raw.forEach(r => {
+			const ut = String(r.utility_type || '').toUpperCase().replace(/[\s_-]/g, '');
+			if (!ALLOWED[ut]) return;
+
 			const loc = r.location_description || 'Unknown';
 			if (onlyLoc && loc !== onlyLoc) return;
 
@@ -195,13 +209,16 @@ export default {
 			const attrVal = attrIdx[r.location_id + '|' + month];
 			if (!attrVal) return;
 
+			const sqft = Number(r.square_feet) || 0;
 			if (!byLocMonth[loc]) byLocMonth[loc] = {};
 			if (!byLocMonth[loc][month])
-				byLocMonth[loc][month] = { cons: 0, charges: 0, sqft: Number(r.square_feet) || 0, attr: attrVal };
+				byLocMonth[loc][month] = { cons: 0, charges: 0, sqft: sqft, sqftSum: 0, attr: attrVal };
 
 			const f = this.getBTUConversionFactor(r.utility_type, u);
 			byLocMonth[loc][month].cons += ((Number(r.consumption) || 0) * f) / 1000000;
 			byLocMonth[loc][month].charges += Number(r.total_charges) || 0;
+			// Sum sqft per row to mirror Power BI's EUI denominator SUM(square_feet).
+			byLocMonth[loc][month].sqftSum += sqft;
 		});
 
 		return byLocMonth;

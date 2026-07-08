@@ -35,7 +35,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 26,
   "shouldTruncate": false,
-  "text": "{{\nTabs.selectedTab === 'Rank of Locations' ?MA_RankLocationHelper.getChartTitle() : ''}}",
+  "text": "{{\nappsmith.store.chartName === 'MA_Monthly' ? MT_MonthlyAttributesHelper.getChartTitle() : (Tabs.selectedTab === 'Rank of Locations' ? MA_RankLocationHelper.getChartTitle() : '')}}",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
   "topRow": 0,

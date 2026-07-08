@@ -8,6 +8,19 @@ export default {
 				if (['WO_BillsImpacted', 'WO_WarningCount', 'IL_Locations', 'LF_LateFees', 'LF_Bills', 'LB_Bills', 'RB_Matrix', 'RB_Utility', 'RBL_Matrix', 'RC_Matrix', 'RC_Treemap'].includes(appsmith.store.chartName))
 						return appsmith.store.woTable || [];
 
+				/* Monthly Attributes Report lives outside the Tabs widget (shown via ReportSelect),
+				   so dispatch on its unique chartName and return early — this avoids the Tabs
+				   branches below overwriting the data with a stale selected tab. */
+				if (appsmith.store.chartName === 'MA_Monthly')
+						return MT_MonthlyAttributesHelper.getMonthlyTable().map(row => {
+								const r = {};
+								Object.keys(row).forEach(k => {
+										const v = row[k];
+										r[k] = typeof v === "number" ? Number(v.toFixed(2)) : v;
+								});
+								return r;
+						});
+
 				if (Tabs.selectedTab === 'Rank of Locations')
 						data = MA_RankLocationHelper.getTableData();
 
