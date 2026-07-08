@@ -44,8 +44,11 @@ export default {
 	=============================== */
 
 	// location_ids present in the currently-loaded usage data (respects the filter bar).
+	// Reads the dedicated, pre-aggregated fetch_ma_usage query (location/month/utility
+	// rollup) rather than the big raw fetch_analytics_data, so this tab never scans the
+	// full 32-column history.
 	_baseLocationIds() {
-		const raw = fetch_analytics_data.data || [];
+		const raw = fetch_ma_usage.data || [];
 		const ids = new Set();
 		raw.forEach(r => ids.add(String(r.location_id)));
 		return ids;
@@ -89,7 +92,7 @@ export default {
 	// value so the list is populated. Falls back to all loaded locations if the join
 	// resolves to nothing, so the list is never needlessly empty.
 	getLocationOptions() {
-		const raw = fetch_analytics_data.data || [];
+		const raw = fetch_ma_usage.data || [];
 		const attrs = fetch_monthly_attributes.data || [];
 		const attrName = this.getSelectedAttribute();
 		const attrLocIds = new Set();
@@ -186,7 +189,10 @@ export default {
 	=============================== */
 
 	getMonthlyData() {
-		const raw = fetch_analytics_data.data || [];
+		// Pre-aggregated per location/month/utility rollup (fetch_ma_usage) — small,
+		// server-summed — instead of the raw per-meter history. This is what keeps the
+		// tab fast: a few hundred rows to fold, not tens of thousands.
+		const raw = fetch_ma_usage.data || [];
 		const attrs = fetch_monthly_attributes.data || [];
 		const attrName = this.getSelectedAttribute();
 		if (!attrName) return {};
@@ -228,7 +234,8 @@ export default {
 			const loc = r.location_description || 'Unknown';
 			if (onlyLoc && loc !== onlyLoc) return;
 
-			const month = this._monthKey(r.time_period);
+			// fetch_ma_usage exposes the pre-truncated month column (date_trunc → YYYY-MM-01).
+			const month = this._monthKey(r.month);
 			if (!month) return;
 
 			// Divisor: the attribute value for this location and month.
@@ -371,7 +378,7 @@ export default {
 	// True while either source query is still fetching. Used to show a "Loading" state
 	// instead of the misleading "No data" message while a date change re-runs the query.
 	_isLoading() {
-		const a = (typeof fetch_analytics_data !== 'undefined') && fetch_analytics_data.isLoading;
+		const a = (typeof fetch_ma_usage !== 'undefined') && fetch_ma_usage.isLoading;
 		const b = (typeof fetch_monthly_attributes !== 'undefined') && fetch_monthly_attributes.isLoading;
 		return !!(a || b);
 	},

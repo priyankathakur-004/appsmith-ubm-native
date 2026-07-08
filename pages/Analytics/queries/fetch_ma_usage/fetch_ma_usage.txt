@@ -1,0 +1,30 @@
+SELECT
+    m.location_id,
+    m.location_description,
+    date_trunc('month', m.time_period)::date AS month,
+    m.utility_type,
+    SUM(
+        CASE
+            WHEN m.bill_type = 'Supply Only'
+            THEN m.total_gen_consumption
+            ELSE m.total_consumption
+        END
+    ) AS consumption,
+    SUM(COALESCE(m.total_charges, 0)) AS total_charges,
+    SUM(COALESCE(l.square_feet, 0)) AS square_feet
+
+FROM bill_management_v2.reports_customer_monthly_usage m
+INNER JOIN bill_management_v2.locations l
+    ON l.id = m.location_id
+
+WHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
+
+{{ _AnalyticsFilters.analyticsWhere() }}
+
+GROUP BY
+    m.location_id,
+    m.location_description,
+    date_trunc('month', m.time_period),
+    m.utility_type
+
+ORDER BY m.location_description, date_trunc('month', m.time_period);

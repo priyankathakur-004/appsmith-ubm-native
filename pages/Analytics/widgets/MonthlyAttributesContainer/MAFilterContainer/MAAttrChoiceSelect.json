@@ -40,7 +40,7 @@
   "mobileLeftColumn": 12,
   "mobileRightColumn": 22,
   "mobileTopRow": 9,
-  "onOptionChange": "{{ fetch_analytics_data.run() }}",
+  "onOptionChange": "{{ fetch_ma_usage.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,
