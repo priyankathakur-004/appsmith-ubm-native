@@ -1,0 +1,52 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 17,
+  "boxShadow": "none",
+  "defaultOptionValue": "All",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isDisabled": "{{ !EELocationAttrSelect.selectedOptionValue }}",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "eefattrsel0",
+  "labelText": "",
+  "leftColumn": 17,
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 54,
+  "mobileTopRow": 9,
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "eefiltcanv1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 32,
+  "sourceData": "{{ (fetch_attribute_values.data || []).map(d => ({\n  label: d.attribute_value,\n  value: d.attribute_value\n})) }}",
+  "topRow": 12,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "eefattrsel0",
+  "widgetName": "EEAttrChoiceSelect"
+}
