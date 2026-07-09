@@ -28,6 +28,20 @@ export default {
 								return r;
 						});
 
+				/* EE Project Analytics lives outside the Main Tabs widget (shown via ReportSelect),
+				   so dispatch on its unique chartName and return early. Store-stash pattern: the
+				   EEMECChartMenu onClick computes getMonthlyTable() and stashes it in eeTable, so
+				   this reactive path never re-runs the heavy helper on unrelated store changes. */
+				if (appsmith.store.chartName === 'EE_Monthly')
+						return (appsmith.store.eeTable || []).map(row => {
+								const r = {};
+								Object.keys(row).forEach(k => {
+										const v = row[k];
+										r[k] = typeof v === "number" ? Number(v.toFixed(2)) : v;
+								});
+								return r;
+						});
+
 				if (Tabs.selectedTab === 'Rank of Locations')
 						data = MA_RankLocationHelper.getTableData();
 

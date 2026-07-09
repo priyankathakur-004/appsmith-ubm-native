@@ -16,9 +16,6 @@ export default {
 	},
 
 	getChartType() {
-		// EE Project Analytics always renders as a line chart; other reports keep their own toggle.
-		if (typeof ReportSelect !== 'undefined' && ReportSelect.selectedOptionValue === 'EE Project Analytics')
-			return 'line';
 		return appsmith.store.mecChartType || 'scatter';
 	},
 

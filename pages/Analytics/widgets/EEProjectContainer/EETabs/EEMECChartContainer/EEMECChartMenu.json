@@ -38,7 +38,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Export ",
-      "onClick": "{{\nstoreValue('chartName', \"MEC_Monthly\");\ndownload(\nObject.values(_AnalyticsHelper.getTableData())\n.map(row => Object.values(row).join(\",\"))\n.join(\"\\n\"),\n\"monthly_energy.csv\",\n\"text/csv\"\n)}}",
+      "onClick": "{{\nstoreValue('chartName', 'EE_Monthly');\n((t) => download(\n[(t[0] ? Object.keys(t[0]).join(',') : ''), ...t.map(row => Object.values(row).join(','))].join('\\n'),\n'ee_monthly_energy.csv',\n'text/csv'\n))(EE_MonthlyEnergyHelper.getMonthlyTable());}}",
       "widgetId": "by839taw50"
     },
     "menuItemx06nx2k67f": {
@@ -47,7 +47,7 @@
       "isDisabled": false,
       "isVisible": true,
       "label": "Show as a Table",
-      "onClick": "{{\nstoreValue('chartName', \"MEC_Monthly\");\nshowModal(showTable.name);}}",
+      "onClick": "{{\nstoreValue('chartName', 'EE_Monthly');\nstoreValue('eeTable', EE_MonthlyEnergyHelper.getMonthlyTable());\nshowModal(showTable.name);}}",
       "widgetId": "gr1l75skil"
     }
   },
