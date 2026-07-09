@@ -4,7 +4,7 @@
   "bottomRow": 98,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
-  "customEChartConfig": "{{MA_MonthlyEnergyHelper.getMonthlyChartConfig()}}",
+  "customEChartConfig": "{{EE_MonthlyEnergyHelper.getMonthlyChartConfig()}}",
   "dynamicBindingPathList": [
     {
       "key": "customEChartConfig"

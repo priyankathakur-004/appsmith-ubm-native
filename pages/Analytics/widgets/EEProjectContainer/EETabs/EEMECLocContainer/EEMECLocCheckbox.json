@@ -5,7 +5,7 @@
   "borderWidth": "1",
   "bottomRow": 196,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-  "defaultModel": "{{ {\ndata: MA_MonthlyEnergyHelper.getLocationOptions(),\nselected: MA_MonthlyEnergyHelper.getLocationOptions().map(o => o.value)\n}\n}}",
+  "defaultModel": "{{ {\ndata: EE_MonthlyEnergyHelper.getLocationOptions(),\nselected: EE_MonthlyEnergyHelper.getLocationOptions().map(o => o.value)\n}\n}}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"

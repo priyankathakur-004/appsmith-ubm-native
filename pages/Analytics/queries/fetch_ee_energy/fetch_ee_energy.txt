@@ -1,0 +1,31 @@
+SELECT
+    amf.location_id,
+    l.name AS location_description,
+    DATE_TRUNC('month', amf.time_period)::date AS time_period,
+    amf.utility_type,
+    SUM(COALESCE(amf.total_consumption, 0))       AS consumption,
+    SUM(COALESCE(amf.total_charges_customer, 0))  AS total_charges,
+    MAX(l.square_feet)                            AS square_feet
+FROM bill_management_v2.analytics_monthly_feed amf
+INNER JOIN bill_management_v2.locations l
+    ON l.id = amf.location_id
+WHERE amf.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
+
+{{ EEDateSelect.selectedOptionValues && EEDateSelect.selectedOptionValues.filter(d => d.includes('-')).length > 0 ?
+    `AND DATE_TRUNC('month', amf.time_period)::date IN (${EEDateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
+: "" }}
+
+{{ EEUtilityTypeSelect.selectedOptionValue && EEUtilityTypeSelect.selectedOptionValue !== 'All' ?
+    `AND amf.utility_type = '${EEUtilityTypeSelect.selectedOptionValue}'`
+: "" }}
+
+{{ EEBillTypeSelect.selectedOptionValue && EEBillTypeSelect.selectedOptionValue !== 'All' ?
+    `AND amf.bill_type = '${EEBillTypeSelect.selectedOptionValue}'`
+: "" }}
+
+{{ EELocationSelect.selectedOptionValue && EELocationSelect.selectedOptionValue !== 'All' ?
+    `AND amf.location_id = ${EELocationSelect.selectedOptionValue}`
+: "" }}
+
+GROUP BY amf.location_id, l.name, DATE_TRUNC('month', amf.time_period), amf.utility_type
+ORDER BY l.name, time_period DESC;

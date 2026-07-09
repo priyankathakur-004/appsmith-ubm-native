@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_ee000002-0000-4000-8000-000000000002",
+  "id": "Analytics_EE_MonthlyEnergyHelper",
+  "unpublishedCollection": {
+    "name": "EE_MonthlyEnergyHelper",
+    "pageId": "Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}
