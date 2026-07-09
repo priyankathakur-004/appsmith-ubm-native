@@ -37,13 +37,28 @@ export default {
 	=============================== */
 
 	getBTUConversionFactor(utilityType, uom) {
+		// Btu per physical unit, per EIA (eia.gov/energyexplained/units-and-calculators),
+		// matched to each utility type's actual total_consumption_uom:
+		//   ELECTRIC/LIGHTING/SOLARPV = KWH, NATURALGAS = THERM, PROPANE = GAL, etc.
+		// Water-family services (WATER/SEWER/FIREPROTECTION/IRRIGATION/STORMWATER) and
+		// NITROGEN carry no fuel energy content -> 0.
 		const map = {
-			ELECTRIC: 3412,
-			NATURALGAS: 102800,
-			OIL2: 138500,
+			ELECTRIC: 3412,        // KWH  (1 kWh = 3,412 Btu)
+			LIGHTING: 3412,        // KWH  (billed as electricity)
+			SOLARPV: 3412,         // KWH  (on-site generation; confirm UBM includes it)
+			NATURALGAS: 100000,    // THERM (1 therm = 100,000 Btu)
+			UTILITYGAS: 100000,    // billed in "CL" - confirm unit; treated as therm-equivalent
+			PROPANE: 91452,        // GAL  (1 gallon = 91,452 Btu)
+			OIL2: 138500,          // GAL  (heating oil No. 2)
+			DIESEL: 137381,        // GAL  (1 gallon = 137,381 Btu)
+			GASOLINE: 120214,      // GAL  (1 gallon = 120,214 Btu)
 			STEAM: 1000,
-			WATER: 0,
-			SEWER: 0
+			WATER: 0,              // CCF
+			SEWER: 0,              // CCF
+			FIREPROTECTION: 0,     // CCF (water service)
+			IRRIGATION: 0,         // CCF (water)
+			STORMWATER: 0,         // SQFEET (area fee)
+			NITROGEN: 0            // GAL (industrial gas, not an energy fuel)
 		};
 		const base = map[utilityType] || 0;
 		const u = uom || appsmith.store.mecUOM || 'BTU';

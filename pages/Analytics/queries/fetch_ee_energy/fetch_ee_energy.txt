@@ -1,9 +1,19 @@
+-- EE Project Analytics: monthly energy consumption per location.
+-- Uses the app's canonical measure (mirrors RC_LocationUsage / the Main Analytics
+-- Monthly Energy Consumption tab): SUM per location-month of delivered consumption,
+-- taking generation consumption for Supply Only bills. Sourced from
+-- reports_customer_monthly_usage (the only consumption source in the app).
 SELECT
     m.location_id,
     l.name AS location_description,
     m.time_period,
     m.utility_type,
-    SUM(COALESCE(m.total_consumption, 0)) AS consumption,
+    SUM(
+        CASE WHEN m.bill_type = 'Supply Only'
+             THEN COALESCE(m.total_gen_consumption, 0)
+             ELSE COALESCE(m.total_consumption, 0)
+        END
+    )                                     AS consumption,
     SUM(COALESCE(m.total_charges, 0))     AS total_charges,
     MAX(l.square_feet)                    AS square_feet
 FROM bill_management_v2.reports_customer_monthly_usage m
