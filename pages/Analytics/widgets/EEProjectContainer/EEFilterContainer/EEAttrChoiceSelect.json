@@ -24,7 +24,11 @@
       "key": "isDisabled"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": "{{ !EELocationAttrSelect.selectedOptionValue }}",
   "isFilterable": true,
   "isLoading": false,
@@ -36,6 +40,7 @@
   "mobileLeftColumn": 44,
   "mobileRightColumn": 54,
   "mobileTopRow": 9,
+  "onOptionChange": "{{ fetch_ee_energy.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,

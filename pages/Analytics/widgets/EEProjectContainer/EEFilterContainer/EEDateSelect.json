@@ -18,7 +18,11 @@
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "expandAll": false,
   "isDisabled": false,
   "isLoading": false,
@@ -40,6 +44,7 @@
   "mobileTopRow": 9,
   "mode": "SHOW_ALL",
   "needsErrorInfo": false,
+  "onOptionChange": "{{ fetch_ee_energy.run() }}",
   "options": "{{ _FilterActions.getDates() }}",
   "originalBottomRow": 35,
   "originalTopRow": 30,
