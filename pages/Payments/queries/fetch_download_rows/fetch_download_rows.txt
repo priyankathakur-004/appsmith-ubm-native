@@ -1,0 +1,15 @@
+SELECT
+    d.bill_meta_id                        AS "Bill ID",
+    d.amount_due                          AS "Amount Due",
+    d.vendor                              AS "Vendor",
+    d.client_account                      AS "Billing ID",
+    TO_CHAR(d.due_date, 'YYYY-MM-DD')     AS "Due Date",
+    TO_CHAR(d.invoice_date, 'YYYY-MM-DD') AS "Invoice Date",
+    d.fee                                 AS "Fee",
+    d.payment_file_type::text             AS "File Type",
+    d.extra_data
+FROM bill_management_v2.payment_files_logs_details d
+WHERE d.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
+  AND d.payment_file_date = {{ appsmith.store.pay_dl_date ? "'" + appsmith.store.pay_dl_date + "'" : "NULL" }}
+  AND d.payment_file_type::text = {{ appsmith.store.pay_dl_type ? "'" + appsmith.store.pay_dl_type.replace(/'/g, "''") + "'" : "NULL" }}
+ORDER BY d.due_date;

@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "061f65ff7d234e7df9849b4d_9ea74538-31a9-4771-bc99-f5079a798ebf",
+  "id": "Payments_PaymentsHelper",
+  "unpublishedCollection": {
+    "name": "PaymentsHelper",
+    "pageId": "Payments",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}
