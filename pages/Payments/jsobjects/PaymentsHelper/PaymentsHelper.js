@@ -1,4 +1,16 @@
 export default {
+  // Runs on page load: clear the persisted accumulation so a fresh first
+  // page is fetched (appsmith.store survives reloads and would serve stale rows).
+  async initPage() {
+    await storeValue("pay_rows", []);
+    await storeValue("pay_page", 0);
+    await storeValue("pay_done", false);
+    await storeValue("pay_loading", false);
+    await storeValue("pay_error", null);
+    await storeValue("pay_active_date", null);
+    await storeValue("pay_month", null);
+  },
+
   // Append-paginated loader for the payment batches list (infinite scroll).
   async loadMore() {
     if (appsmith.store.pay_loading || appsmith.store.pay_done || appsmith.store.pay_error) return;

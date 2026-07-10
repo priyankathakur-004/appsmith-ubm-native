@@ -10,7 +10,5 @@ SELECT
 FROM bill_management_v2.payment_files_logs_details d
 WHERE d.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
   AND TO_CHAR(d.payment_file_date, 'YYYY-MM-DD') = {{ appsmith.store.pay_dl_date || '2000-01-01' }}
-{{ (appsmith.store.pay_dl_type && appsmith.store.pay_dl_type !== 'summary')
-   ? "AND d.payment_file_type::text = '" + appsmith.store.pay_dl_type.replace(/'/g, "''") + "'"
-   : "" }}
+  AND COALESCE(d.payment_file_type::text, 'summary') = {{ appsmith.store.pay_dl_type || 'summary' }}
 ORDER BY d.due_date;
