@@ -67,17 +67,40 @@ export default {
       showAlert("No rows found for this payment file.", "warning");
       return;
     }
-    const cols = ["Bill ID", "Amount Due", "Vendor", "Billing ID", "Due Date", "Invoice Date", "Fee"];
     const esc = (v) => {
       if (v === null || v === undefined) return "";
       const s = String(v);
       return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
     };
-    const header = cols.join(",");
-    const body = rows.map((r) => cols.map((c) => esc(r[c])).join(",")).join("\n");
-    const csv = header + "\n" + body;
-    const cust = (appsmith.store.selectedCustomerName || "Customer").replace(/\s+/g, "");
-    const fname = fileName || (type + "-" + cust + "-" + date + ".csv");
+    const custName = CustomerSelect.selectedOptionLabel || appsmith.store.selectedCustomerName || "";
+    const custId = CustomerSelect.selectedOptionValue || appsmith.store.selectedCustomerId || "";
+    // File date (e.g. 2026-06-08) comes from the real filename, not payment_file_date.
+    const fdMatch = (fileName || "").match(/(\d{4}-\d{2}-\d{2})/);
+    const fileDate = fdMatch ? fdMatch[1] : date;
+
+    let csv;
+    if (type === "bill_pay") {
+      // Exact PayClearly (PC-Payment) 41-column layout.
+      const headers = ["Amount", "Vendor ID", "Vendor Name", "Account ID", "Invoice Number", "Invoice Date", "Notification Email", "Add Email", "Reference Number", "Memo", "UDF1", "UDF2", "UDF3", "UDF4", "UDF5", "UDF6", "UDF7", "UDF8", "UDF9", "UDF10", "UDF11", "UDF12", "UDF13", "UDF14", "UDF15", "UDF16", "UDF17", "UDF18", "UDF19", "Account number", "Credential1", "Credential2", "Credential3", "Credential4", "Supplier Field 1", "Supplier address line 1", "Supplier address line 2", "Supplier City", "Supplier State", "Supplier Post Code", "Supplier Country"];
+      const body = rows.map((r) => {
+        const acct = r["Billing ID"];
+        const cols = [
+          r["Amount Due"], "", r["Vendor"], acct, "", r["Invoice Date"], "", "", "", "",
+          r["Bill ID"], custName, custId, r["Invoice Date"], fileDate, acct, acct, "false", r["Hash"], "",
+          "", "", "", "", "", "", "", "", "", acct,
+          "", "", "", "", custName, "", "", "", "", "", ""
+        ];
+        return cols.map(esc).join(",");
+      }).join("\n");
+      csv = headers.join(",") + "\n" + body;
+    } else {
+      // Generic layout for summary / other file types.
+      const cols = ["Bill ID", "Amount Due", "Vendor", "Billing ID", "Due Date", "Invoice Date", "Fee"];
+      const body = rows.map((r) => cols.map((c) => esc(r[c])).join(",")).join("\n");
+      csv = cols.join(",") + "\n" + body;
+    }
+
+    const fname = fileName || (type + "-" + String(custName).replace(/\s+/g, "") + "-" + date + ".csv");
     download(csv, fname, "text/csv");
     showAlert("Downloaded " + fname, "success");
   }

@@ -6,6 +6,7 @@ SELECT
     TO_CHAR(d.due_date, 'YYYY-MM-DD')     AS "Due Date",
     TO_CHAR(d.invoice_date, 'YYYY-MM-DD') AS "Invoice Date",
     d.fee                                 AS "Fee",
+    d.bill_url_hash                       AS "Hash",
     COALESCE(d.payment_file_type::text, 'summary') AS "File Type"
 FROM bill_management_v2.payment_files_logs_details d
 WHERE d.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
