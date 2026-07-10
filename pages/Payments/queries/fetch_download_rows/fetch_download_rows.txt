@@ -10,6 +10,6 @@ SELECT
     d.extra_data
 FROM bill_management_v2.payment_files_logs_details d
 WHERE d.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
-  AND d.payment_file_date = {{ appsmith.store.pay_dl_date ? "'" + appsmith.store.pay_dl_date + "'" : "NULL" }}
+  AND d.payment_file_date::date = {{ appsmith.store.pay_dl_date ? "'" + appsmith.store.pay_dl_date + "'" : "NULL" }}::date
   AND d.payment_file_type::text = {{ appsmith.store.pay_dl_type ? "'" + appsmith.store.pay_dl_type.replace(/'/g, "''") + "'" : "NULL" }}
 ORDER BY d.due_date;

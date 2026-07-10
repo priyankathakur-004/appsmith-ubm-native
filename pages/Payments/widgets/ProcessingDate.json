@@ -1,0 +1,62 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 13,
+  "boxShadow": "none",
+  "closeOnSelection": true,
+  "dateFormat": "MM-DD-YYYY",
+  "datePickerType": "DATE_PICKER",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDateSelected"
+    }
+  ],
+  "firstDayOfWeek": 0,
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "procdatekey1",
+  "label": "Processing Date",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelTextColor": "#f4f4f5",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 13,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 20,
+  "mobileTopRow": 8,
+  "needsErrorInfo": false,
+  "onDateSelected": "{{ storeValue('pay_month', ProcessingDate.selectedDate ? moment(ProcessingDate.selectedDate).format('YYYY-MM') : null); PaymentsHelper.resetAndLoad(); }}",
+  "originalBottomRow": 13,
+  "originalTopRow": 8,
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "placeholderText": "All months",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 20,
+  "shortcuts": false,
+  "timePrecision": "minute",
+  "topRow": 8,
+  "type": "DATE_PICKER_WIDGET2",
+  "version": 2,
+  "widgetId": "procdate01wd",
+  "widgetName": "ProcessingDate"
+}
