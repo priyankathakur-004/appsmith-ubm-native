@@ -21,7 +21,7 @@ LEFT JOIN LATERAL (
       AND d.payment_file_date::date = v.payment_file_date::date
 ) ft ON true
 WHERE v.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
-  AND ({{ appsmith.store.pay_month || '' }} = '' OR TO_CHAR(v.payment_file_date, 'YYYY-MM') = {{ appsmith.store.pay_month || '' }})
+  AND ('{{ appsmith.store.pay_month || "" }}' = '' OR TO_CHAR(v.payment_file_date, 'YYYY-MM') = '{{ appsmith.store.pay_month || "" }}')
 ORDER BY v.payment_file_date DESC
 LIMIT {{ this.params.limit || 10 }}
 OFFSET {{ this.params.offset || 0 }};
