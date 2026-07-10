@@ -2,7 +2,7 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 6,
+  "bottomRow": 8,
   "boxShadow": "none",
   "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
   "dynamicBindingPathList": [
@@ -42,7 +42,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Customer",
-  "labelTextColor": "#0a2540",
+  "labelTextColor": "#f4f4f5",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 44,

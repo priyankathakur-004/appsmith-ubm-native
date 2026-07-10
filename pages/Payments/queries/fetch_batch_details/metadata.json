@@ -29,7 +29,7 @@
     ],
     "name": "fetch_batch_details",
     "pageId": "Payments",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }
