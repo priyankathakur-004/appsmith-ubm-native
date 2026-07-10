@@ -10,13 +10,15 @@ SELECT
 FROM bill_management_v2.payment_files_logs_view v
 LEFT JOIN LATERAL (
     SELECT jsonb_agg(DISTINCT jsonb_build_object(
-        'type', d.payment_file_type::text,
-        'name', d.extra_data->>'payment_file_name'
+        'type', COALESCE(d.payment_file_type::text, 'summary'),
+        'name', COALESCE(
+            d.extra_data->>'payment_file_name',
+            'summary_payment_file_' || TO_CHAR(d.payment_file_date, 'YYYY-MM-DD') || '.csv'
+        )
     )) AS files
     FROM bill_management_v2.payment_files_logs_details d
     WHERE d.customer_id = v.customer_id
       AND d.payment_file_date::date = v.payment_file_date::date
-      AND d.payment_file_type IS NOT NULL
 ) ft ON true
 WHERE v.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
 {{ appsmith.store.pay_month ? "AND TO_CHAR(v.payment_file_date, 'YYYY-MM') = '" + appsmith.store.pay_month + "'" : "" }}
