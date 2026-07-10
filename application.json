@@ -92,6 +92,10 @@
     {
       "id": "Vendors",
       "isDefault": false
+    },
+    {
+      "id": "Payments",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
