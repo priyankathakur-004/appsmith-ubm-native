@@ -10,5 +10,5 @@ SELECT
     d.payment_status                      AS "Status"
 FROM bill_management_v2.payment_files_logs_details_view d
 WHERE d.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
-  AND d.payment_file_date::date = {{ appsmith.store.pay_active_date ? "'" + appsmith.store.pay_active_date + "'" : "NULL" }}::date
+  AND d.payment_file_date::date = {{ appsmith.store.pay_active_date || '2000-01-01' }}::date
 ORDER BY d.due_date;
