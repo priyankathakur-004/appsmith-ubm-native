@@ -40,7 +40,7 @@
   "mobileLeftColumn": 12,
   "mobileRightColumn": 22,
   "mobileTopRow": 9,
-  "onOptionChange": "",
+  "onOptionChange": "{{ fetch_ee_energy.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,

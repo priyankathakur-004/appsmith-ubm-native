@@ -18,7 +18,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isFilterable": true,
   "isLoading": false,
   "isVisible": true,
@@ -29,6 +33,7 @@
   "mobileLeftColumn": 55,
   "mobileRightColumn": 64,
   "mobileTopRow": 9,
+  "onOptionChange": "{{ fetch_ee_energy.run() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 15,

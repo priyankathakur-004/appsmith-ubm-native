@@ -47,7 +47,7 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); fetch_ma_usage.run(); fetch_monthly_attributes.run(); }}",
+  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); fetch_ma_usage.run(); fetch_monthly_attributes.run(); fetch_ee_energy.run(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 26,
