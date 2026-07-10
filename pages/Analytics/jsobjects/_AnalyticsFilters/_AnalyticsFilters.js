@@ -59,6 +59,27 @@ export default {
 					? MAAttrChoiceSelect.selectedOptionValue : null;
 				c.push(`AND EXISTS (\n    SELECT 1\n    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr\n    WHERE attr->>'id' = ${q(MALocationAttrSelect.selectedOptionValue)}\n    ${choice ? `AND attr->>'value' = ${q(choice)}` : ''}\n)`);
 			}
+		} else if (report === 'EE Project Analytics') {
+			// EE Project Analytics has its own filter bar (EE* widgets) so its
+			// selections never leak into other reports and vice versa.
+			const dates = (typeof EEDateSelect !== 'undefined' && Array.isArray(EEDateSelect.selectedOptionValues))
+				? EEDateSelect.selectedOptionValues.filter(d => d.includes('-')) : [];
+			if (dates.length) c.push(`AND m.time_period IN (${dates.map(q).join(',')})`);
+
+			if (typeof EEUtilityTypeSelect !== 'undefined' && EEUtilityTypeSelect.selectedOptionValue && EEUtilityTypeSelect.selectedOptionValue !== 'All')
+				c.push(`AND m.utility_type = ${q(EEUtilityTypeSelect.selectedOptionValue)}`);
+
+			if (typeof EEBillTypeSelect !== 'undefined' && EEBillTypeSelect.selectedOptionValue && EEBillTypeSelect.selectedOptionValue !== 'All')
+				c.push(`AND m.bill_type = ${q(EEBillTypeSelect.selectedOptionValue)}`);
+
+			if (typeof EELocationSelect !== 'undefined' && EELocationSelect.selectedOptionValue && EELocationSelect.selectedOptionValue !== 'All')
+				c.push(`AND m.location_id = ${EELocationSelect.selectedOptionValue}`);
+
+			if (typeof EELocationAttrSelect !== 'undefined' && EELocationAttrSelect.selectedOptionValue && EELocationAttrSelect.selectedOptionValue !== 'All') {
+				const choice = (typeof EEAttrChoiceSelect !== 'undefined' && EEAttrChoiceSelect.selectedOptionValue && EEAttrChoiceSelect.selectedOptionValue !== 'All')
+					? EEAttrChoiceSelect.selectedOptionValue : null;
+				c.push(`AND EXISTS (\n    SELECT 1\n    FROM jsonb_array_elements(m.location_attributes->'custom_attributes') attr\n    WHERE attr->>'id' = ${q(EELocationAttrSelect.selectedOptionValue)}\n    ${choice ? `AND attr->>'value' = ${q(choice)}` : ''}\n)`);
+			}
 		} else {
 			// Main Analytics Report filters (ported verbatim from the original query)
 			const dates = (typeof DateSelect !== 'undefined' && Array.isArray(DateSelect.selectedOptionValues))

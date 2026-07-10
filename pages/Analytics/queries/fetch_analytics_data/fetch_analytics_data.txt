@@ -8,7 +8,7 @@ SELECT
     m.meter_serial as meter,
     m.vendor_name,
     m.account_status,
-    m.location_description,
+    l.name AS location_description,
     l.address,
     l.state,
     l.city,
@@ -70,4 +70,4 @@ WHERE  m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
 {{ _AnalyticsFilters.analyticsWhere() }}
 
-ORDER BY m.location_description, m.time_period DESC;
+ORDER BY l.name, m.time_period DESC;

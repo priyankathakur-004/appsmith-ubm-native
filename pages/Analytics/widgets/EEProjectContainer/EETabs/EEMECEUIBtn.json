@@ -1,0 +1,51 @@
+{
+  "animateLoading": true,
+  "borderRadius": "20px",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "buttonColor": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? '#2563eb' : '#ffffff'}}",
+  "buttonVariant": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? 'PRIMARY' : 'SECONDARY'}}",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "buttonVariant"
+    },
+    {
+      "key": "buttonColor"
+    },
+    {
+      "key": "textColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "eemeceuibtn",
+  "leftColumn": 34,
+  "minWidth": 80,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 34,
+  "mobileRightColumn": 49,
+  "mobileTopRow": 5,
+  "onClick": "{{storeValue('mecActiveView', 'EnergyUseIntensity')}}",
+  "parentColumnSpace": 15,
+  "parentId": "eemeccanv01",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 49,
+  "text": "Energy Use Intensity",
+  "textColor": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? '#ffffff' : '#2563eb'}}",
+  "topRow": 5,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "eemeceuibtn",
+  "widgetName": "EEMECEUIBtn"
+}

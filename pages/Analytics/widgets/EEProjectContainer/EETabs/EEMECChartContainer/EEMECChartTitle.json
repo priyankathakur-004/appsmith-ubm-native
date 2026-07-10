@@ -1,0 +1,40 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 13,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "eemecchttk1",
+  "leftColumn": 3,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 3,
+  "mobileRightColumn": 60,
+  "mobileTopRow": 4,
+  "parentColumnSpace": 15,
+  "parentId": "eemecchcanv1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 59,
+  "shouldTruncate": false,
+  "text": "{{EE_MonthlyEnergyHelper.getChartTitle()}}",
+  "textAlign": "LEFT",
+  "textColor": "#e2e8f0",
+  "topRow": 10,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "eemecchttl01",
+  "widgetName": "EEMECChartTitle"
+}
