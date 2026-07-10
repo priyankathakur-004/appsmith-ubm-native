@@ -1,8 +1,9 @@
 export default {
   // Append-paginated loader for the payment batches list (infinite scroll).
   async loadMore() {
-    if (appsmith.store.pay_loading || appsmith.store.pay_done) return;
+    if (appsmith.store.pay_loading || appsmith.store.pay_done || appsmith.store.pay_error) return;
     await storeValue("pay_loading", true);
+    await storeValue("pay_error", null);
     const size = 10;
     const page = appsmith.store.pay_page || 0;
     try {
@@ -13,6 +14,8 @@ export default {
       await storeValue("pay_page", page + 1);
       if (rows.length < size) await storeValue("pay_done", true);
     } catch (e) {
+      // Halt the scroll loop on failure so it does not retrigger endlessly.
+      await storeValue("pay_error", e.message || String(e));
       showAlert("Failed to load payments: " + (e.message || e), "error");
     } finally {
       await storeValue("pay_loading", false);
@@ -26,6 +29,7 @@ export default {
     await storeValue("pay_page", 0);
     await storeValue("pay_done", false);
     await storeValue("pay_loading", false);
+    await storeValue("pay_error", null);
     await storeValue("pay_active_date", null);
   },
 
@@ -41,6 +45,7 @@ export default {
   async downloadFile() {
     const date = PaymentsList.model.dlDate;
     const type = PaymentsList.model.dlType;
+    const fileName = PaymentsList.model.dlName;
     if (!date || !type) return;
     await storeValue("pay_dl_date", date);
     await storeValue("pay_dl_type", type);
@@ -60,7 +65,7 @@ export default {
     const body = rows.map((r) => cols.map((c) => esc(r[c])).join(",")).join("\n");
     const csv = header + "\n" + body;
     const cust = (appsmith.store.selectedCustomerName || "Customer").replace(/\s+/g, "");
-    const fname = type + "-" + cust + "-" + date + ".csv";
+    const fname = fileName || (type + "-" + cust + "-" + date + ".csv");
     download(csv, fname, "text/csv");
     showAlert("Downloaded " + fname, "success");
   }

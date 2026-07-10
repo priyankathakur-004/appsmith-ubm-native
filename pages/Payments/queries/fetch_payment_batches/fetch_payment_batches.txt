@@ -6,11 +6,13 @@ SELECT
     TRIM(TO_CHAR(v.payment_file_date, 'Month')) || ' ' || TO_CHAR(v.payment_file_date, 'YYYY') AS month_label,
     v.bills_count,
     v.total_amount_due,
-    v.batch_status,
-    ft.file_types
+    ft.files
 FROM bill_management_v2.payment_files_logs_view v
 LEFT JOIN LATERAL (
-    SELECT array_agg(DISTINCT d.payment_file_type::text) AS file_types
+    SELECT jsonb_agg(DISTINCT jsonb_build_object(
+        'type', d.payment_file_type::text,
+        'name', d.extra_data->>'payment_file_name'
+    )) AS files
     FROM bill_management_v2.payment_files_logs_details d
     WHERE d.customer_id = v.customer_id
       AND d.payment_file_date = v.payment_file_date
