@@ -1,0 +1,27 @@
+SELECT
+    v.customer_id,
+    TO_CHAR(v.payment_file_date, 'YYYY-MM-DD')   AS payment_file_date,
+    TO_CHAR(v.payment_file_date, 'MM/DD/YYYY')   AS date_display,
+    TO_CHAR(v.payment_file_date, 'YYYY-MM')      AS month_key,
+    TRIM(TO_CHAR(v.payment_file_date, 'Month')) || ' ' || TO_CHAR(v.payment_file_date, 'YYYY') AS month_label,
+    v.bills_count,
+    v.total_amount_due,
+    ft.files
+FROM bill_management_v2.payment_files_logs_view v
+LEFT JOIN LATERAL (
+    SELECT jsonb_agg(DISTINCT jsonb_build_object(
+        'type', COALESCE(d.payment_file_type::text, 'summary'),
+        'name', COALESCE(
+            d.extra_data->>'payment_file_name',
+            'summary_payment_file_' || TO_CHAR(d.payment_file_date, 'YYYY-MM-DD') || '.csv'
+        )
+    )) AS files
+    FROM bill_management_v2.payment_files_logs_details d
+    WHERE d.customer_id = v.customer_id
+      AND d.payment_file_date::date = v.payment_file_date::date
+) ft ON true
+WHERE v.customer_id = {{ CustomerSelect.selectedOptionValue ? parseInt(CustomerSelect.selectedOptionValue, 10) : 76013 }}
+  AND ('{{ appsmith.store.pay_month || "" }}' = '' OR TO_CHAR(v.payment_file_date, 'YYYY-MM') = '{{ appsmith.store.pay_month || "" }}')
+ORDER BY v.payment_file_date DESC
+LIMIT {{ this.params.limit || 10 }}
+OFFSET {{ this.params.offset || 0 }};

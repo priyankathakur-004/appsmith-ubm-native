@@ -1,11 +1,11 @@
 {
-  "gitSyncId": "6a1fd180000000000000a024_e70702bb-2546-4b25-90c2-9cf2f6b85e5d",
-  "id": "Reports_getCountries",
+  "gitSyncId": "e75a01c8e6df91e7eaba7c7d_c5bccb30-d7db-4804-b6c6-1cb47eafb405",
+  "id": "Payments_getCustomers",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT country AS value, country AS label\nFROM bill_management_v2.locations\nWHERE customer_id = {{ Number(CustomerSelect.selectedOptionValue) || 94512 }}\n  AND country IS NOT NULL AND country <> ''\nORDER BY country;\n",
+      "body": "SELECT id, name\nFROM bill_management_v2.customers_search\nORDER BY name;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -22,13 +22,9 @@
       "name": "UBM_Database",
       "pluginId": "postgres-plugin"
     },
-    "dynamicBindingPathList": [
-      {
-        "key": "body"
-      }
-    ],
-    "name": "getCountries",
-    "pageId": "Reports",
+    "dynamicBindingPathList": [],
+    "name": "getCustomers",
+    "pageId": "Payments",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }

@@ -9,6 +9,9 @@
       "jsArguments": [
         {
           "name": "r"
+        },
+        {
+          "name": "dim"
         }
       ],
       "paginationType": "NONE",
