@@ -75,7 +75,7 @@ export default {
     if (!rows.length) {
       return '<div style="padding:24px;color:#94A3B8;text-align:center;">No bills in this payment.</div>';
     }
-    const cols = ["Bill ID", "Due Date", "Invoice Date", "Vendor", "Billing ID", "Amount Due", "Fees", "Amount Paid", "Status"];
+    const cols = ["Bill ID", "Due Date", "Invoice Date", "Vendor", "Billing ID", "Amount Due", "Fees", "Amount Paid"];
     const moneyCols = { "Amount Due": 1, "Fees": 1, "Amount Paid": 1 };
     const fmtMoney = (n) => "$" + Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const thBase = "padding:10px 14px;color:#F1F5F9;font-size:13px;font-weight:700;border-bottom:2px solid #475569;white-space:nowrap;";
