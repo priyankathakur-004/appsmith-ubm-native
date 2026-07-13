@@ -46,11 +46,50 @@ export default {
   },
 
   // Open the bill-payment-details modal for the clicked processing date.
+  // Uses a native modal (BillDetailsModal) so the popup stays centered on
+  // scroll — a modal rendered inside the custom widget's iframe cannot.
   async openBatch() {
     const date = PaymentsList.model.activeDate;
     if (!date) return;
     await storeValue("pay_active_date", date);
     await fetch_batch_details.run();
+    showModal("BillDetailsModal");
+  },
+
+  // Title for the native details modal, e.g. "Bill Payment Details for 06/07/2026".
+  getDetailsTitle() {
+    const d = appsmith.store.pay_active_date;
+    if (!d) return "Bill Payment Details";
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(d));
+    const disp = m ? m[2] + "/" + m[3] + "/" + m[1] : d;
+    return "Bill Payment Details for " + disp;
+  },
+
+  // Build the HTML table shown in the native details modal (rendered by a
+  // TEXT_WIDGET, same approach as the Analytics showTable modal).
+  getDetailsHtml() {
+    const rows = fetch_batch_details.data || [];
+    if (fetch_batch_details.isLoading) {
+      return '<div style="padding:24px;color:#94A3B8;text-align:center;">Loading...</div>';
+    }
+    if (!rows.length) {
+      return '<div style="padding:24px;color:#94A3B8;text-align:center;">No bills in this payment.</div>';
+    }
+    const cols = ["Bill ID", "Due Date", "Invoice Date", "Vendor", "Billing ID", "Amount Due", "Fees", "Amount Paid", "Status"];
+    const moneyCols = { "Amount Due": 1, "Fees": 1, "Amount Paid": 1 };
+    const fmtMoney = (n) => "$" + Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const thBase = "padding:10px 14px;color:#F1F5F9;font-size:13px;font-weight:700;border-bottom:2px solid #475569;white-space:nowrap;";
+    const tdBase = "padding:10px 14px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;white-space:nowrap;";
+    const header = '<tr style="background:#334155;">' + cols.map((c) => {
+      const align = moneyCols[c] ? "right" : "left";
+      return '<th style="' + thBase + "text-align:" + align + ';">' + c + "</th>";
+    }).join("") + "</tr>";
+    const body = rows.map((r) => "<tr>" + cols.map((c) => {
+      const align = moneyCols[c] ? "right" : "left";
+      const v = moneyCols[c] ? fmtMoney(r[c]) : (r[c] != null ? r[c] : "");
+      return '<td style="' + tdBase + "text-align:" + align + ';">' + v + "</td>";
+    }).join("") + "</tr>").join("");
+    return '<div style="max-height:560px;overflow:auto;"><table style="width:100%;border-collapse:collapse;background:#1E293B;">' + header + body + "</table></div>";
   },
 
   // Build and download the payment file (CSV) for a given date + file type.

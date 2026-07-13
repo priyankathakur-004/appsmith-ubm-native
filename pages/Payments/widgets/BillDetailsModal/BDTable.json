@@ -1,0 +1,50 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 46,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.8125rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bdmtablekey",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 37,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 19,
+  "mobileTopRow": 9,
+  "originalBottomRow": 46,
+  "originalTopRow": 5,
+  "parentColumnSpace": 6.9375,
+  "parentId": "bdmcanvaswd1",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "{{PaymentsHelper.getDetailsHtml()}}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 5,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "bdmtablewid1",
+  "widgetName": "BDTable"
+}
