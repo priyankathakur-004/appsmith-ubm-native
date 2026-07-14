@@ -1,0 +1,10 @@
+SELECT DISTINCT
+    CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name') AS user_name
+FROM bill_management_v2.activity_history ah
+CROSS JOIN LATERAL json_array_elements(ah.text::json->'chatTags') AS tag
+JOIN bill_management_v2.users u ON u.id = (tag->>'id')::int
+WHERE ah.type = 'manual_comment'
+  AND LEFT(ah.text,1) = '{'
+  AND tag->>'type' IN ('customerUser','operatorUser')
+  AND COALESCE(TRIM(CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name')), '') <> ''
+ORDER BY user_name;

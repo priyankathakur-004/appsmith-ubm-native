@@ -1,16 +1,16 @@
-WITH helene AS (
+WITH target_user AS (   -- all persona accounts for the selected person (defaults to Helene)
     SELECT id FROM bill_management_v2.users
-    WHERE profile->>'first_name' ILIKE 'helene'
-      AND profile->>'last_name'  ILIKE 'piscopo'
+    WHERE CONCAT(profile->>'first_name', ' ', profile->>'last_name')
+          = '{{ appsmith.store.notifUser || "Helene Piscopo" }}'
 ),
-tagged AS (   -- one row per comment where Helene (either persona) was tagged
+tagged AS (   -- one row per comment where the selected person (any persona) was tagged by name
     SELECT DISTINCT ah.id
     FROM bill_management_v2.activity_history ah
     CROSS JOIN LATERAL json_array_elements(ah.text::json->'chatTags') AS tag
     WHERE ah.type = 'manual_comment'
       AND LEFT(ah.text,1) = '{'
       AND tag->>'type' IN ('customerUser','operatorUser')
-      AND (tag->>'id')::int IN (SELECT id FROM helene)
+      AND (tag->>'id')::int IN (SELECT id FROM target_user)
 )
 SELECT
     ah.created_at                                                          AS date_time,
