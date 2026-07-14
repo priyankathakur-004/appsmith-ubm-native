@@ -29,7 +29,7 @@
     ],
     "name": "fetch_notifications",
     "pageId": "Bill Notifications",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }

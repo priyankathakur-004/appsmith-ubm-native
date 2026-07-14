@@ -25,7 +25,7 @@
     "dynamicBindingPathList": [],
     "name": "fetch_taggable_users",
     "pageId": "Bill Notifications",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
