@@ -96,6 +96,10 @@
     {
       "id": "Payments",
       "isDefault": false
+    },
+    {
+      "id": "Bill Notifications",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
