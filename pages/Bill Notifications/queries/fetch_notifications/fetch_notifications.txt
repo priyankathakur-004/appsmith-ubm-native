@@ -1,7 +1,7 @@
-WITH target_user AS (   -- all persona accounts for the selected person (defaults to Helene)
+WITH target_user AS (   -- all persona accounts for the user picked in the dropdown
     SELECT id FROM bill_management_v2.users
     WHERE CONCAT(profile->>'first_name', ' ', profile->>'last_name')
-          = '{{ appsmith.store.notifUser || "Helene Piscopo" }}'
+          = '{{ appsmith.store.notifUser || "" }}'
 ),
 tagged AS (   -- one row per comment where the selected person (any persona) was tagged by name
     SELECT DISTINCT ah.id
@@ -13,7 +13,7 @@ tagged AS (   -- one row per comment where the selected person (any persona) was
       AND (tag->>'id')::int IN (SELECT id FROM target_user)
 )
 SELECT
-    ah.created_at                                                          AS date_time,
+    TO_CHAR(ah.created_at, 'YYYY-MM-DD HH24:MI')                           AS date_time,
     ah.bill_meta_id                                                        AS bill_id,
     cs.name                                                                AS customer,
     CONCAT(author.profile->>'first_name',' ',author.profile->>'last_name') AS sender,
