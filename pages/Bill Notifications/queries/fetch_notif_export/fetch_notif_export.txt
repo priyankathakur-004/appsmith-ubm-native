@@ -1,3 +1,4 @@
+-- unpaginated export of the current filter set (Download button)
 WITH filtered AS (   -- all notification comments, narrowed by the optional user / customer filters
     SELECT ah.id, ah.created_at, ah.bill_meta_id, ah.user_id, ah.text
     FROM bill_management_v2.activity_history ah
@@ -23,8 +24,6 @@ WITH filtered AS (   -- all notification comments, narrowed by the optional user
       AND ( {{ appsmith.store.notifDays || 0 }} = 0
             OR ah.created_at >= NOW() - ({{ appsmith.store.notifDays || 0 }} * INTERVAL '1 day') )
     ORDER BY ah.created_at DESC
-    LIMIT  {{ appsmith.store.notifPageSize || 20 }}
-    OFFSET {{ appsmith.store.notifOffset || 0 }}
 )
 SELECT
     TO_CHAR(f.created_at, 'YYYY-MM-DD HH24:MI')                            AS date_time,

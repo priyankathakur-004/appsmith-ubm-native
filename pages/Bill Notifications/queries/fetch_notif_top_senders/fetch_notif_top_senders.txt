@@ -1,0 +1,31 @@
+-- top comment authors for the current filter (Top Senders panel)
+SELECT
+    CONCAT(au.profile->>'first_name', ' ', au.profile->>'last_name') AS sender,
+    COUNT(*)::int AS n
+FROM bill_management_v2.activity_history ah
+LEFT JOIN bill_management_v2.users au ON au.id = ah.user_id
+WHERE ah.type = 'manual_comment'
+  AND LEFT(ah.text,1) = '{'
+  AND ( '{{ appsmith.store.notifUser || "" }}' = ''
+        OR EXISTS (
+            SELECT 1
+            FROM json_array_elements(COALESCE(ah.text::json->'chatTags', '[]'::json)) AS tag
+            JOIN bill_management_v2.users tu ON tu.id = (tag->>'id')::int
+            WHERE tag->>'type' IN ('customerUser','operatorUser')
+              AND CONCAT(tu.profile->>'first_name', ' ', tu.profile->>'last_name')
+                  = '{{ appsmith.store.notifUser || "" }}'
+        ) )
+  AND ( {{ appsmith.store.notifCustomer || 0 }} = 0
+        OR ah.bill_meta_id IN (
+            SELECT bmbr.bill_meta_id
+            FROM bill_management_v2.bill_metas_bill_records bmbr
+            JOIN bill_management_v2.bill_records br ON br.id = bmbr.bill_record_id
+            WHERE bmbr.status = 'active'
+              AND br.customer_id = {{ appsmith.store.notifCustomer || 0 }}
+        ) )
+  AND ( {{ appsmith.store.notifDays || 0 }} = 0
+        OR ah.created_at >= NOW() - ({{ appsmith.store.notifDays || 0 }} * INTERVAL '1 day') )
+GROUP BY 1
+HAVING TRIM(CONCAT(au.profile->>'first_name', ' ', au.profile->>'last_name')) <> ''
+ORDER BY n DESC
+LIMIT 6;

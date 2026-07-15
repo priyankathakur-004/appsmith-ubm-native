@@ -1,0 +1,27 @@
+-- KPI totals for the current user / customer filter (also drives table pagination total)
+SELECT
+    COUNT(*)::int                                                                    AS total,
+    COUNT(*) FILTER (WHERE ah.created_at >= NOW() - INTERVAL '30 days')::int          AS last_30,
+    COUNT(*) FILTER (WHERE ah.created_at >= NOW() - INTERVAL '7 days')::int           AS last_7
+FROM bill_management_v2.activity_history ah
+WHERE ah.type = 'manual_comment'
+  AND LEFT(ah.text,1) = '{'
+  AND ( '{{ appsmith.store.notifUser || "" }}' = ''
+        OR EXISTS (
+            SELECT 1
+            FROM json_array_elements(COALESCE(ah.text::json->'chatTags', '[]'::json)) AS tag
+            JOIN bill_management_v2.users tu ON tu.id = (tag->>'id')::int
+            WHERE tag->>'type' IN ('customerUser','operatorUser')
+              AND CONCAT(tu.profile->>'first_name', ' ', tu.profile->>'last_name')
+                  = '{{ appsmith.store.notifUser || "" }}'
+        ) )
+  AND ( {{ appsmith.store.notifCustomer || 0 }} = 0
+        OR ah.bill_meta_id IN (
+            SELECT bmbr.bill_meta_id
+            FROM bill_management_v2.bill_metas_bill_records bmbr
+            JOIN bill_management_v2.bill_records br ON br.id = bmbr.bill_record_id
+            WHERE bmbr.status = 'active'
+              AND br.customer_id = {{ appsmith.store.notifCustomer || 0 }}
+        ) )
+  AND ( {{ appsmith.store.notifDays || 0 }} = 0
+        OR ah.created_at >= NOW() - ({{ appsmith.store.notifDays || 0 }} * INTERVAL '1 day') );
