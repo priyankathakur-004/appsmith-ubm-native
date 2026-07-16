@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n    u.id                                                   AS id,\n    u.profile->>'first_name'                               AS first_name,\n    u.profile->>'last_name'                                AS last_name,\n    u.email                                                AS email,\n    COALESCE(u.profile->>'phone', u.profile->>'phone_number') AS phone,\n    u.profile->>'role'                                     AS role,\n    u.profile->>'notification'                             AS notification,\n    u.active                                               AS active\nFROM bill_management_v2.users u\nWHERE u.id = {{ UsersTable.model.selectedUserId || 0 }}\nLIMIT 1;\n",
+      "body": "SELECT\n    u.id                                                   AS id,\n    u.profile->>'first_name'                               AS first_name,\n    u.profile->>'last_name'                                AS last_name,\n    u.email                                                AS email,\n    COALESCE(u.profile->>'phone', u.profile->>'phone_number') AS phone,\n    u.profile->>'role'                                     AS role,\n    u.profile->>'notification'                             AS notification,\n    u.active                                               AS active\nFROM bill_management_v2.users u\nWHERE u.id = {{ appsmith.store.selectedUserId || 0 }}\nLIMIT 1;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

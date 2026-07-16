@@ -8,5 +8,5 @@ SELECT
     u.profile->>'notification'                             AS notification,
     u.active                                               AS active
 FROM bill_management_v2.users u
-WHERE u.id = {{ UsersTable.model.selectedUserId || 0 }}
+WHERE u.id = {{ appsmith.store.selectedUserId || 0 }}
 LIMIT 1;

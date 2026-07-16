@@ -48,7 +48,7 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); fetch_customer_detail.run(); fetch_customer_contract.run(); fetch_customer_audit.run(); fetch_customer_users.run(); storeValue('userScreen','list'); }}",
+  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); fetch_customer_detail.run(); fetch_customer_contract.run(); fetch_customer_audit.run(); fetch_customer_users.run(); fetch_customer_groups.run(); storeValue('userScreen','list'); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 16.453125,

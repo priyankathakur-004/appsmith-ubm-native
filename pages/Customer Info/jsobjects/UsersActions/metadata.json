@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "6a42383420f165a7650f6c99_uac00001-0000-4000-8000-000000000000",
+  "id": "Customer Info_UsersActions",
+  "unpublishedCollection": {
+    "name": "UsersActions",
+    "pageId": "Customer Info",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}
