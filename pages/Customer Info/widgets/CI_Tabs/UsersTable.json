@@ -418,7 +418,7 @@
       "index": 8,
       "isCellEditable": false,
       "isCellVisible": true,
-      "isDerived": false,
+      "isDerived": true,
       "isDisabled": false,
       "isDiscardVisible": true,
       "isEditable": false,
