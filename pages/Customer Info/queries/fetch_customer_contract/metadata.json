@@ -1,11 +1,11 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c99_cust0002-0000-4000-8000-000000000002",
-  "id": "Customer Info_fetch_customer_detail",
+  "gitSyncId": "6a42383420f165a7650f6c99_cust0003-0000-4000-8000-000000000003",
+  "id": "Customer Info_fetch_customer_contract",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT *\nFROM bill_management_v2.customers\nWHERE id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}\nLIMIT 1;",
+      "body": "SELECT *\nFROM bill_management_v2.customer_contract_details\nWHERE customer_id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}\nLIMIT 1;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
@@ -27,7 +27,7 @@
         "key": "body"
       }
     ],
-    "name": "fetch_customer_detail",
+    "name": "fetch_customer_contract",
     "pageId": "Customer Info",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false

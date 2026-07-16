@@ -1,0 +1,44 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 60,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "REGULAR",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ci_custinfo_k",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 60,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "overflow": "NONE",
+  "parentColumnSpace": 16.453125,
+  "parentId": "ci_cust_canvas",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "shouldTruncate": false,
+  "text": "{{ (() => { const d = (fetch_customer_detail.data && fetch_customer_detail.data[0]) || {}; const c = (fetch_customer_contract.data && fetch_customer_contract.data[0]) || {}; const esc = (v) => (v==null||v==='')?'—':(typeof v==='object'?JSON.stringify(v):String(v)); const row = (label,val)=>`<tr><td style='padding:9px 14px;color:#94a3b8;width:280px;border-bottom:1px solid #334155;'>${label}</td><td style='padding:9px 14px;color:#f1f5f9;font-weight:600;border-bottom:1px solid #334155;'>${esc(val)}</td></tr>`; const section = (title,rowsHtml)=>`<div style='margin-bottom:22px;'><div style='font-size:15px;font-weight:700;color:#93c5fd;margin-bottom:8px;'>${title}</div><table style='width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;'>${rowsHtml}</table></div>`; const dump = (obj,label)=> Object.keys(obj).length? Object.keys(obj).map(k=>row(k,obj[k])).join('') : row(label,'no data'); const main = section('Main Information', row('Customer ID', d.id)+row('Customer Name', d.name)); const contract = section('Contract Details', dump(c,'customer_contract_details')); const all = section('All available fields (from customers)', dump(d,'customers')); return `<div style='font-family:sans-serif;padding:8px 4px;'>${main}${contract}${all}</div>`; })() }}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "ci_custinfo_w",
+  "widgetName": "CI_CustomerInfo"
+}

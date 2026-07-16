@@ -1,0 +1,4 @@
+SELECT *
+FROM bill_management_v2.customer_contract_details
+WHERE customer_id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}
+LIMIT 1;

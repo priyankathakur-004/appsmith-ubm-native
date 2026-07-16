@@ -1,0 +1,20 @@
+-- Run this once to confirm the exact columns available for the Customer Info page.
+-- Share the result and the widget bindings can be mapped precisely to the mockup
+-- (FDG code, status, entitlements, SFTP config, contract details, target processing time).
+SELECT
+    table_name,
+    ordinal_position,
+    column_name,
+    data_type
+FROM information_schema.columns
+WHERE table_schema = 'bill_management_v2'
+  AND table_name IN (
+      'customers',
+      'customer_contract_details',
+      'customer_dashboard',
+      'customers_users_view',
+      'customers_users',
+      'customer_chat_groups',
+      'customers_search'
+  )
+ORDER BY table_name, ordinal_position;
