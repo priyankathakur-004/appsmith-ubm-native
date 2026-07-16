@@ -81,7 +81,7 @@
   "mobileRightColumn": 12,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onClose": "{{resetWidget(\"BDTable\", true);}}",
+  "onClose": "{{ storeValue('selectedUserId', 0); }}",
   "parentColumnSpace": 16.140625,
   "parentId": "0",
   "parentRowSpace": 10,
