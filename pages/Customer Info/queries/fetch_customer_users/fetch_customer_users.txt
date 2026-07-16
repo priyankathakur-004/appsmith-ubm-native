@@ -12,9 +12,29 @@ SELECT
         WHEN v.new_user OR v.activated_at IS NULL THEN 'Pending'
         ELSE 'Active'
     END                                         AS status,
-    v.last_login                                AS last_login
+    v.last_login                                AS last_login,
+    EXISTS (
+        SELECT 1
+        FROM bill_management_v2.users_customer_chat_groups g
+        JOIN bill_management_v2.customer_chat_groups cg ON cg.id = g.customer_chat_group_id
+        WHERE g.user_id = v.user_id
+          AND g.deleted_at IS NULL
+          AND cg.customer_id = cu.customer_id
+    )                                           AS chat_tag,
+    au.modified_by_name                         AS modified_by_name,
+    au.modified_at                              AS modified_at
 FROM bill_management_v2.customers_users cu
-JOIN bill_management_v2.customers_users_view v ON v.id = cu.id
+JOIN bill_management_v2.customers_users_view v ON v.user_id = cu.user_id
+LEFT JOIN LATERAL (
+    SELECT TRIM(CONCAT(mu.profile->>'first_name', ' ', mu.profile->>'last_name')) AS modified_by_name,
+           a.modified_at
+    FROM bill_management_v2.customers_users_audit_logs a
+    LEFT JOIN bill_management_v2.users mu ON mu.id = a.modified_by
+    WHERE a.customer_id = cu.customer_id
+      AND a.user_id = v.user_id
+    ORDER BY a.modified_at DESC
+    LIMIT 1
+) au ON true
 WHERE cu.customer_id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}
   AND cu.deleted_at IS NULL
 ORDER BY v.user_id DESC;

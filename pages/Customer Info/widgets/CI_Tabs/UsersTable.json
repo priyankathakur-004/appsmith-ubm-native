@@ -37,7 +37,9 @@
     "email",
     "location",
     "status",
-    "last_login"
+    "last_login",
+    "chat_tag",
+    "last_updated"
   ],
   "customIsLoading": false,
   "customIsLoadingValue": "",
@@ -77,6 +79,12 @@
     },
     {
       "key": "primaryColumns.last_login.computedValue"
+    },
+    {
+      "key": "primaryColumns.chat_tag.computedValue"
+    },
+    {
+      "key": "primaryColumns.last_updated.computedValue"
     }
   ],
   "dynamicPropertyPathList": [
@@ -176,7 +184,7 @@
       "thousandSeparator": true,
       "validation": {},
       "verticalAlignment": "CENTER",
-      "width": 180
+      "width": 170
     },
     "access_type": {
       "alias": "access_type",
@@ -210,7 +218,7 @@
       "thousandSeparator": true,
       "validation": {},
       "verticalAlignment": "CENTER",
-      "width": 130
+      "width": 120
     },
     "email": {
       "alias": "email",
@@ -244,7 +252,7 @@
       "thousandSeparator": true,
       "validation": {},
       "verticalAlignment": "CENTER",
-      "width": 260
+      "width": 240
     },
     "location": {
       "alias": "location",
@@ -312,7 +320,7 @@
       "thousandSeparator": true,
       "validation": {},
       "verticalAlignment": "CENTER",
-      "width": 110
+      "width": 100
     },
     "last_login": {
       "alias": "last_login",
@@ -346,7 +354,75 @@
       "thousandSeparator": true,
       "validation": {},
       "verticalAlignment": "CENTER",
-      "width": 160
+      "width": 150
+    },
+    "chat_tag": {
+      "alias": "chat_tag",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "cellBackground": "",
+      "columnType": "text",
+      "computedValue": "{{(() => { const tableData = UsersTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"chat_tag\"] ? \"✓\" : \"\")) : [] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "REGULAR",
+      "horizontalAlignment": "CENTER",
+      "id": "chat_tag",
+      "index": 7,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Chat Tag",
+      "notation": "standard",
+      "originalId": "chat_tag",
+      "sticky": "",
+      "textColor": "",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 90
+    },
+    "last_updated": {
+      "alias": "last_updated",
+      "allowCellWrapping": false,
+      "allowSameOptionsInNewRow": true,
+      "cellBackground": "",
+      "columnType": "text",
+      "computedValue": "{{(() => { const tableData = UsersTable.processedTableData || []; return tableData.length > 0 ? tableData.map((currentRow, currentIndex) => (currentRow[\"modified_by_name\"] ? (currentRow[\"modified_by_name\"] + \", \" + moment(currentRow[\"modified_at\"]).format(\"MM/DD/YYYY h:mm A\")) : \"Admin System\")) : [] })()}}",
+      "currencyCode": "USD",
+      "decimals": 0,
+      "enableFilter": true,
+      "enableSort": true,
+      "fontStyle": "REGULAR",
+      "horizontalAlignment": "LEFT",
+      "id": "last_updated",
+      "index": 8,
+      "isCellEditable": false,
+      "isCellVisible": true,
+      "isDerived": false,
+      "isDisabled": false,
+      "isDiscardVisible": true,
+      "isEditable": false,
+      "isSaveVisible": true,
+      "isVisible": true,
+      "label": "Last Updated",
+      "notation": "standard",
+      "originalId": "last_updated",
+      "sticky": "",
+      "textColor": "",
+      "textSize": "0.875rem",
+      "thousandSeparator": true,
+      "validation": {},
+      "verticalAlignment": "CENTER",
+      "width": 220
     }
   },
   "renderMode": "CANVAS",
