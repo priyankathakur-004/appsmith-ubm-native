@@ -17,17 +17,15 @@ SELECT
     END                                                                  AS location,
     CASE
         WHEN NOT v.active THEN 'Inactive'
-        WHEN v.new_user OR v.activated_at IS NULL THEN 'Pending'
+        WHEN v.last_login IS NULL THEN 'Pending'
         ELSE 'Active'
     END                                                                  AS status,
     v.last_login                                                         AS last_login,
     EXISTS (
         SELECT 1
         FROM bill_management_v2.users_customer_chat_groups g
-        JOIN bill_management_v2.customer_chat_groups cg ON cg.id = g.customer_chat_group_id
         WHERE g.user_id = v.user_id
           AND g.deleted_at IS NULL
-          AND cg.customer_id = cu.customer_id
     )                                                                    AS chat_tag,
     au.modified_by_name                                                  AS modified_by_name,
     au.modified_at                                                       AS modified_at
