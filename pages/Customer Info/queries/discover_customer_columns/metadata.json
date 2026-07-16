@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n    table_name,\n    ordinal_position,\n    column_name,\n    data_type\nFROM information_schema.columns\nWHERE table_schema = 'bill_management_v2'\n  AND table_name IN (\n      'customers',\n      'customer_contract_details',\n      'customer_dashboard',\n      'customers_users_view',\n      'customers_users',\n      'customer_chat_groups',\n      'customers_search'\n  )\nORDER BY table_name, ordinal_position;",
+      "body": "-- Run this once to confirm the exact columns available for the Customer Info page.\n-- Share the result and the widget bindings can be mapped precisely to the mockup\n-- (FDG code, status, entitlements, SFTP config, contract details, target processing time).\nSELECT\n    table_name,\n    ordinal_position,\n    column_name,\n    data_type\nFROM information_schema.columns\nWHERE table_schema = 'bill_management_v2'\n  AND table_name IN (\n      'customers',\n      'customer_contract_details',\n      'customer_dashboard',\n      'customers_users_view',\n      'customers_users',\n      'customer_chat_groups',\n      'customers_search'\n  )\nORDER BY table_name, ordinal_position;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

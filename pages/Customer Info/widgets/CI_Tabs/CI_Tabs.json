@@ -1,16 +1,16 @@
 {
-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "accentColor": "#86efac",
   "animateLoading": true,
   "backgroundColor": "#1E293B",
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 118,
+  "bottomRow": 126,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1080,
+      "bottomRow": 1430,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -40,7 +40,7 @@
       "mobileTopRow": 0,
       "needsErrorInfo": false,
       "parentColumnSpace": 1,
-      "parentId": "ci_tabs_w",
+      "parentId": "ig43jv4lbo",
       "parentRowSpace": 1,
       "renderMode": "CANVAS",
       "responsiveBehavior": "fill",
@@ -51,12 +51,12 @@
       "topRow": 0,
       "type": "CANVAS_WIDGET",
       "version": 1,
-      "widgetId": "ci_cust_canvas",
+      "widgetId": "maqe3hbqzw",
       "widgetName": "CustomerCanvas"
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1080,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -86,7 +86,7 @@
       "mobileTopRow": 0,
       "needsErrorInfo": false,
       "parentColumnSpace": 1,
-      "parentId": "ci_tabs_w",
+      "parentId": "ig43jv4lbo",
       "parentRowSpace": 1,
       "renderMode": "CANVAS",
       "responsiveBehavior": "fill",
@@ -97,12 +97,12 @@
       "topRow": 0,
       "type": "CANVAS_WIDGET",
       "version": 1,
-      "widgetId": "ci_users_canvas",
+      "widgetId": "fjw4rm1oax",
       "widgetName": "UsersCanvas"
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1080,
+      "bottomRow": 1140,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -132,7 +132,7 @@
       "mobileTopRow": 0,
       "needsErrorInfo": false,
       "parentColumnSpace": 1,
-      "parentId": "ci_tabs_w",
+      "parentId": "ig43jv4lbo",
       "parentRowSpace": 1,
       "renderMode": "CANVAS",
       "responsiveBehavior": "fill",
@@ -143,15 +143,12 @@
       "topRow": 0,
       "type": "CANVAS_WIDGET",
       "version": 1,
-      "widgetId": "ci_groups_canvas",
+      "widgetId": "v71m8smob2",
       "widgetName": "UserGroupsCanvas"
     }
   ],
   "defaultTab": "Customer Info",
   "dynamicBindingPathList": [
-    {
-      "key": "accentColor"
-    },
     {
       "key": "borderRadius"
     },
@@ -166,7 +163,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "ci_tabs_k",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 15,
   "minWidth": 450,
@@ -176,11 +173,11 @@
   "mobileTopRow": 9,
   "needsErrorInfo": false,
   "parentColumnSpace": 16.453125,
-  "parentId": "ci_main_canvas",
+  "parentId": "0",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 63,
+  "rightColumn": 64,
   "shouldScrollContents": false,
   "shouldShowTabs": true,
   "tabsObj": {
@@ -191,16 +188,7 @@
       "isVisible": true,
       "label": "Customer Info",
       "positioning": "vertical",
-      "widgetId": "ci_cust_canvas"
-    },
-    "tab_users": {
-      "id": "tab_users",
-      "index": 1,
-      "isDuplicateLabel": false,
-      "isVisible": true,
-      "label": "Users",
-      "positioning": "vertical",
-      "widgetId": "ci_users_canvas"
+      "widgetId": "maqe3hbqzw"
     },
     "tab_groups": {
       "id": "tab_groups",
@@ -209,12 +197,21 @@
       "isVisible": true,
       "label": "User groups",
       "positioning": "vertical",
-      "widgetId": "ci_groups_canvas"
+      "widgetId": "v71m8smob2"
+    },
+    "tab_users": {
+      "id": "tab_users",
+      "index": 1,
+      "isDuplicateLabel": false,
+      "isVisible": true,
+      "label": "Users",
+      "positioning": "vertical",
+      "widgetId": "fjw4rm1oax"
     }
   },
-  "topRow": 9,
+  "topRow": 8,
   "type": "TABS_WIDGET",
   "version": 3,
-  "widgetId": "ci_tabs_w",
+  "widgetId": "ig43jv4lbo",
   "widgetName": "CI_Tabs"
 }

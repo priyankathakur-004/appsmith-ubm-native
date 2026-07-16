@@ -1,38 +1,41 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
+  "bottomRow": 5,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
+    },
+    {
+      "key": "text"
     }
   ],
   "dynamicTriggerPathList": [],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
-  "fontSize": "0.875rem",
-  "fontStyle": "REGULAR",
+  "fontSize": "1.25rem",
+  "fontStyle": "BOLD",
   "isLoading": false,
   "isVisible": true,
-  "key": "ci_groupsph_k",
-  "leftColumn": 1,
+  "key": "ci_heading_k",
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "mobileBottomRow": 8,
+  "mobileBottomRow": 6,
   "mobileLeftColumn": 1,
-  "mobileRightColumn": 63,
+  "mobileRightColumn": 40,
   "mobileTopRow": 1,
   "parentColumnSpace": 16.453125,
-  "parentId": "ci_groups_canvas",
+  "parentId": "0",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 63,
-  "text": "User groups — coming next.",
+  "rightColumn": 35,
+  "text": "{{ `Customer Info for ${(fetch_customer_detail.data && fetch_customer_detail.data[0] && fetch_customer_detail.data[0].name) || ''}` }}",
   "textAlign": "LEFT",
-  "textColor": "#94a3b8",
-  "topRow": 2,
+  "textColor": "#F1F5F9",
+  "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,
-  "widgetId": "ci_groupsph_w",
-  "widgetName": "CI_GroupsPlaceholder"
+  "widgetId": "ci_heading_w",
+  "widgetName": "CI_Heading"
 }
