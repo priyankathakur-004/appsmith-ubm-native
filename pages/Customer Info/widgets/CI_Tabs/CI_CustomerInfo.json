@@ -35,7 +35,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 64,
   "shouldTruncate": false,
-  "text": "{{ CustomerInfoHelper.getInfoHtml() }}",
+  "text": "{{ CustomerInfoHelper.getInfoHtml(fetch_customer_detail.data, fetch_customer_contract.data, fetch_customer_audit.data) }}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
   "topRow": 1,

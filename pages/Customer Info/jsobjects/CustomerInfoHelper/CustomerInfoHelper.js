@@ -1,16 +1,19 @@
 export default {
-	// Builds the Customer Info tab HTML from the customer queries.
-	// Pure reader: it only reads the already-fetched data of the detail, contract
-	// and audit queries (it never triggers them), so it stays clear of the
-	// reactive-dependency misuse error. Those queries are refreshed on page load
-	// and whenever the selected customer changes.
+	// Builds the Customer Info tab HTML.
 	//
-	// Sections use native <details>/<summary> so they collapse/expand (with a
-	// disclosure arrow) without any JavaScript, which the Text widget cannot run.
-	// Only the first section (Main Information) is open by default.
-	getInfoHtml() {
-		const d = (fetch_customer_detail.data && fetch_customer_detail.data[0]) || {};
-		const c = (fetch_customer_contract.data && fetch_customer_contract.data[0]) || {};
+	// The three query results are passed IN as arguments (detail / contract /
+	// audit) rather than read off the query objects here. That keeps this a pure
+	// function AND — crucially — makes the widget binding reference each query
+	// directly, so Appsmith runs all three on page load. (Queries referenced only
+	// from inside a JSObject are not detected as on-load dependencies, which left
+	// the audit + contract data empty and every row showing "Admin System".)
+	//
+	// Sections use native <details>/<summary> to collapse/expand without JS. The
+	// Text widget's HTML sanitizer strips the <details open> attribute, so the
+	// two sections that must be open on load are rendered as always-open blocks.
+	getInfoHtml(detail, contract, audit) {
+		const d = (Array.isArray(detail) && detail[0]) || {};
+		const c = (Array.isArray(contract) && contract[0]) || {};
 
 		// A JSON column may arrive as an object or as a string; normalise both.
 		const asObject = (v) => {
@@ -23,9 +26,10 @@ export default {
 
 		// --- audit column ("modified by") -------------------------------------
 		// customer_info_audit_logs stores one row per changed field, keyed like
-		// "entitlements.billPay". Map the latest change per key; anything without
-		// a manual change defaults to "Admin System".
-		const auditRows = Array.isArray(fetch_customer_audit.data) ? fetch_customer_audit.data : [];
+		// "entitlements.billPay". Map the latest change per key (the query already
+		// returns latest-first per key); fields with no manual change default to
+		// "Admin System".
+		const auditRows = Array.isArray(audit) ? audit : [];
 		const auditByKey = {};
 		auditRows.forEach((r) => { if (r && r.key && !(r.key in auditByKey)) auditByKey[r.key] = r; });
 
@@ -80,12 +84,20 @@ export default {
 		const table = (rowsHtml) =>
 			`<table style='width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;'>${rowsHtml}</table>`;
 
-		// One collapsible section. `open` controls the default-expanded state.
-		const details = (title, bodyHtml, open) =>
-			`<details ${open ? "open" : ""} style='margin-bottom:10px;border-bottom:1px solid #1e293b;padding-bottom:6px;'>` +
+		// Collapsible section (closed by default).
+		const details = (title, bodyHtml) =>
+			`<details style='margin-bottom:10px;border-bottom:1px solid #1e293b;padding-bottom:6px;'>` +
 			`<summary style='cursor:pointer;list-style:revert;font-size:15px;font-weight:700;color:#93c5fd;padding:8px 4px;'>${title}</summary>` +
 			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
 			`</details>`;
+
+		// Always-expanded section (with a ▼ marker) for the sections that must be
+		// open on load, since the sanitizer drops <details open>.
+		const staticSection = (title, bodyHtml) =>
+			`<div style='margin-bottom:10px;border-bottom:1px solid #1e293b;padding-bottom:6px;'>` +
+			`<div style='font-size:15px;font-weight:700;color:#93c5fd;padding:8px 4px;'>&#9662; ${title}</div>` +
+			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
+			`</div>`;
 
 		// product_tier_id -> display name. Only tier 3 (Platinum) is confirmed from
 		// the source screen; 1/2 are best-guess until a tiers lookup exists.
@@ -106,13 +118,15 @@ export default {
 			: "<span style='color:#f87171;'>&#9679; Inactive</span>";
 		const liveDays = (th.live != null) ? Math.round(th.live / 24) : "—";
 
-		const main = details("Main Information", table(
+		// Main Information and Status are open on load (staticSection); the rest
+		// are collapsible and start closed.
+		const main = staticSection("Main Information", table(
 			row("Customer ID", esc(d.id)) +
 			row("FDG Customer Code", esc(d.fdg_code)) +
-			row("Customer Name", esc(d.name))), true);
+			row("Customer Name", esc(d.name))));
 
-		const status = details("Status", table(
-			arow("Customer Status", statusPill, null)), false);
+		const status = staticSection("Status", table(
+			arow("Customer Status", statusPill, null)));
 
 		const entl = details("Entitlements", table(
 			arow("Payments", pill(ent.payments), "entitlements.payments") +
@@ -124,24 +138,24 @@ export default {
 			arow("Carbon Footprint", pill(ent.carbonFootprint), "entitlements.carbonFootprint", true) +
 			arow("Budgeting", pill(ent.budgeting), "entitlements.budgeting") +
 			arow("Activity History Chat", pill(ent.activityHistoryChat), "entitlements.activityHistoryChat") +
-			arow("Rate Class", pill(ent.rateClass), "entitlements.rateClass")), false);
+			arow("Rate Class", pill(ent.rateClass), "entitlements.rateClass")));
 
 		const sftp = details("SFTP Configuration", table(
 			arow("Reports Delivery Settings", pill(ent.reportDeliverySettings), "entitlements.reportDeliverySettings") +
 			arow("Bills Bulk Download Settings", pill(ent.billsBulkDownloadSettings), "entitlements.billsBulkDownloadSettings") +
-			arow("Scheduled Bills Extracts", pill(ent.scheduledBillsExtractsSettings), "entitlements.scheduledBillsExtractsSettings")), false);
+			arow("Scheduled Bills Extracts", pill(ent.scheduledBillsExtractsSettings), "entitlements.scheduledBillsExtractsSettings")));
 
 		const tpt = details("Target Processing Time (Business Days)", table(
-			row("Live Bills", esc(liveDays))), false);
+			row("Live Bills", esc(liveDays))));
 
-		const contract = details("Contract Details", table(
+		const contractSec = details("Contract Details", table(
 			row("Product Tier", tierName(c.product_tier_id)) +
 			row("Contract Signed", esc(c.contract_signed)) +
-			row("Start Date", fmtDate(c.contract_start_date))), false);
+			row("Start Date", fmtDate(c.contract_start_date))));
 
 		const mail = details("Mail To Address",
-			"<div style='padding:10px 14px;color:#94a3b8;'>Select Edit in order to fill in.</div>", false);
+			"<div style='padding:10px 14px;color:#94a3b8;'>Select Edit in order to fill in.</div>");
 
-		return `<div style='font-family:sans-serif;padding:8px 4px;'>${main}${status}${entl}${sftp}${tpt}${contract}${mail}</div>`;
+		return `<div style='font-family:sans-serif;padding:8px 4px;'>${main}${status}${entl}${sftp}${tpt}${contractSec}${mail}</div>`;
 	}
 }
