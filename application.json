@@ -100,6 +100,10 @@
     {
       "id": "Bill Notifications",
       "isDefault": false
+    },
+    {
+      "id": "Customer Info",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
