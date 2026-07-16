@@ -1,18 +1,26 @@
 SELECT
-    v.user_id                                   AS id,
-    v.name                                      AS name,
-    COALESCE(NULLIF(v.term, ''), 'Full Access') AS access_type,
-    v.email                                     AS email,
+    v.user_id                                                            AS id,
+    TRIM(CONCAT(v.profile->>'first_name', ' ', v.profile->>'last_name')) AS name,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM json_array_elements(COALESCE(v.permissions, '[]'::json)) perm
+            WHERE perm->>'feature' = 'customer_full_access'
+              AND perm->>'permission' = 'enabled'
+        ) THEN 'Full Access'
+        ELSE 'Limited Access'
+    END                                                                  AS access_type,
+    v.email                                                              AS email,
     CASE
         WHEN v.locations IS NULL OR v.locations::text IN ('null', '[]', '{}', '') THEN 'All'
         ELSE 'Restricted'
-    END                                         AS location,
+    END                                                                  AS location,
     CASE
         WHEN NOT v.active THEN 'Inactive'
         WHEN v.new_user OR v.activated_at IS NULL THEN 'Pending'
         ELSE 'Active'
-    END                                         AS status,
-    v.last_login                                AS last_login,
+    END                                                                  AS status,
+    v.last_login                                                         AS last_login,
     EXISTS (
         SELECT 1
         FROM bill_management_v2.users_customer_chat_groups g
@@ -20,11 +28,13 @@ SELECT
         WHERE g.user_id = v.user_id
           AND g.deleted_at IS NULL
           AND cg.customer_id = cu.customer_id
-    )                                           AS chat_tag,
-    au.modified_by_name                         AS modified_by_name,
-    au.modified_at                              AS modified_at
+    )                                                                    AS chat_tag,
+    au.modified_by_name                                                  AS modified_by_name,
+    au.modified_at                                                       AS modified_at
 FROM bill_management_v2.customers_users cu
-JOIN bill_management_v2.customers_users_view v ON v.user_id = cu.user_id
+JOIN bill_management_v2.customers c ON c.id = cu.customer_id
+JOIN bill_management_v2.customers_users_view v
+     ON v.user_id = cu.user_id AND v.name = c.name
 LEFT JOIN LATERAL (
     SELECT TRIM(CONCAT(mu.profile->>'first_name', ' ', mu.profile->>'last_name')) AS modified_by_name,
            a.modified_at
