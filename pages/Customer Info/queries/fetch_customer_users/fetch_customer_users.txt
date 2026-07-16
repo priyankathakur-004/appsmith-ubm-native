@@ -1,0 +1,20 @@
+SELECT
+    v.user_id                                   AS id,
+    v.name                                      AS name,
+    COALESCE(NULLIF(v.term, ''), 'Full Access') AS access_type,
+    v.email                                     AS email,
+    CASE
+        WHEN v.locations IS NULL OR v.locations::text IN ('null', '[]', '{}', '') THEN 'All'
+        ELSE 'Restricted'
+    END                                         AS location,
+    CASE
+        WHEN NOT v.active THEN 'Inactive'
+        WHEN v.new_user OR v.activated_at IS NULL THEN 'Pending'
+        ELSE 'Active'
+    END                                         AS status,
+    v.last_login                                AS last_login
+FROM bill_management_v2.customers_users cu
+JOIN bill_management_v2.customers_users_view v ON v.id = cu.id
+WHERE cu.customer_id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}
+  AND cu.deleted_at IS NULL
+ORDER BY v.user_id DESC;
