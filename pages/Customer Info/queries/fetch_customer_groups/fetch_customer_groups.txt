@@ -1,0 +1,14 @@
+SELECT
+    cg.group_name AS group_name,
+    STRING_AGG(
+        TRIM(CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name')) || '(' || u.email || ')',
+        ';' ORDER BY u.email
+    ) AS users
+FROM bill_management_v2.customer_chat_groups cg
+LEFT JOIN bill_management_v2.users_customer_chat_groups g
+       ON g.customer_chat_group_id = cg.id AND g.deleted_at IS NULL
+LEFT JOIN bill_management_v2.users u ON u.id = g.user_id
+WHERE cg.customer_id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}
+  AND cg.deleted_at IS NULL
+GROUP BY cg.id, cg.group_name
+ORDER BY cg.group_name;
