@@ -5,7 +5,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 110,
+  "bottomRow": 52,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
@@ -28,7 +28,7 @@
       "isDisabled": false,
       "isLoading": false,
       "isVisible": true,
-      "key": "ud_ui_canvas_k",
+      "key": "udm_ui_canvas_k",
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
@@ -40,19 +40,19 @@
       "mobileTopRow": 0,
       "needsErrorInfo": false,
       "parentColumnSpace": 1,
-      "parentId": "ud_tabs",
+      "parentId": "udm_tabs",
       "parentRowSpace": 1,
       "renderMode": "CANVAS",
       "responsiveBehavior": "fill",
       "rightColumn": 174,
       "shouldScrollContents": false,
-      "tabId": "tab_user_info",
+      "tabId": "tab_ui",
       "tabName": "User Info",
       "topRow": 0,
       "type": "CANVAS_WIDGET",
       "version": 1,
-      "widgetId": "ud_userinfo_canvas",
-      "widgetName": "UD_UserInfoCanvas"
+      "widgetId": "udm_ui_canvas",
+      "widgetName": "UDM_UserInfoCanvas"
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
@@ -74,7 +74,7 @@
       "isDisabled": false,
       "isLoading": false,
       "isVisible": true,
-      "key": "ud_uc_canvas_k",
+      "key": "udm_cust_canvas_k",
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
@@ -86,19 +86,19 @@
       "mobileTopRow": 0,
       "needsErrorInfo": false,
       "parentColumnSpace": 1,
-      "parentId": "ud_tabs",
+      "parentId": "udm_tabs",
       "parentRowSpace": 1,
       "renderMode": "CANVAS",
       "responsiveBehavior": "fill",
       "rightColumn": 174,
       "shouldScrollContents": false,
-      "tabId": "tab_user_customers",
+      "tabId": "tab_cust",
       "tabName": "Customers",
       "topRow": 0,
       "type": "CANVAS_WIDGET",
       "version": 1,
-      "widgetId": "ud_customers_canvas",
-      "widgetName": "UD_CustomersCanvas"
+      "widgetId": "udm_cust_canvas",
+      "widgetName": "UDM_CustomersCanvas"
     }
   ],
   "defaultTab": "User Info",
@@ -108,9 +108,6 @@
     },
     {
       "key": "boxShadow"
-    },
-    {
-      "key": "isVisible"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -118,19 +115,18 @@
   "flexVerticalAlignment": "stretch",
   "isCanvas": true,
   "isLoading": false,
-  "isVisible": "{{ appsmith.store.userScreen === 'detail' }}",
-  "key": "ud_tabs_k",
+  "key": "udm_tabs_k",
   "leftColumn": 1,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 15,
   "minWidth": 450,
-  "mobileBottomRow": 110,
+  "mobileBottomRow": 52,
   "mobileLeftColumn": 1,
   "mobileRightColumn": 63,
-  "mobileTopRow": 6,
+  "mobileTopRow": 5,
   "needsErrorInfo": false,
   "parentColumnSpace": 16.453125,
-  "parentId": "fjw4rm1oax",
+  "parentId": "udm_canvas",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
@@ -138,24 +134,24 @@
   "shouldScrollContents": false,
   "shouldShowTabs": true,
   "tabsObj": {
-    "tab_user_info": {
-      "id": "tab_user_info",
+    "tab_ui": {
+      "id": "tab_ui",
       "index": 0,
       "isVisible": true,
       "label": "User Info",
-      "widgetId": "ud_userinfo_canvas"
+      "widgetId": "udm_ui_canvas"
     },
-    "tab_user_customers": {
-      "id": "tab_user_customers",
+    "tab_cust": {
+      "id": "tab_cust",
       "index": 1,
       "isVisible": true,
       "label": "Customers",
-      "widgetId": "ud_customers_canvas"
+      "widgetId": "udm_cust_canvas"
     }
   },
-  "topRow": 6,
+  "topRow": 5,
   "type": "TABS_WIDGET",
   "version": 3,
-  "widgetId": "ud_tabs",
-  "widgetName": "UD_Tabs"
+  "widgetId": "udm_tabs",
+  "widgetName": "UDM_Tabs"
 }

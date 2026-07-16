@@ -18,6 +18,6 @@ SELECT
 FROM bill_management_v2.customers_users cu
 JOIN bill_management_v2.customers c ON c.id = cu.customer_id
 JOIN bill_management_v2.customers_users_view v ON v.user_id = cu.user_id AND v.name = c.name
-WHERE cu.user_id = {{ UsersTable.model.selectedUserId || 0 }}
+WHERE cu.user_id = {{ appsmith.store.selectedUserId || 0 }}
   AND cu.deleted_at IS NULL
 ORDER BY c.name;

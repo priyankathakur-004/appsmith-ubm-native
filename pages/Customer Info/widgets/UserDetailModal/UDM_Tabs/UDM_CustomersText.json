@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 60,
+  "bottomRow": 55,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -18,19 +18,19 @@
   "fontStyle": "REGULAR",
   "isLoading": false,
   "isVisible": true,
-  "key": "ud_uc_text_k",
+  "key": "udm_cust_text_k",
   "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "mobileBottomRow": 60,
+  "mobileBottomRow": 55,
   "mobileLeftColumn": 0,
   "mobileRightColumn": 63,
-  "mobileTopRow": 1,
+  "mobileTopRow": 0,
   "originalBottomRow": 143,
   "originalTopRow": 1,
   "overflow": "NONE",
   "parentColumnSpace": 16.453125,
-  "parentId": "ud_customers_canvas",
+  "parentId": "udm_cust_canvas",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 63,
@@ -38,9 +38,9 @@
   "text": "{{ UserInfoHelper.getCustomersHtml(fetch_user_customers.data) }}",
   "textAlign": "LEFT",
   "textColor": "#E2E8F0",
-  "topRow": 1,
+  "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,
-  "widgetId": "ud_customers_text",
-  "widgetName": "UD_CustomersText"
+  "widgetId": "udm_cust_text",
+  "widgetName": "UDM_CustomersText"
 }
