@@ -5,7 +5,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 52,
+  "bottomRow": 96,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
@@ -120,10 +120,10 @@
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 15,
   "minWidth": 450,
-  "mobileBottomRow": 52,
+  "mobileBottomRow": 96,
   "mobileLeftColumn": 1,
   "mobileRightColumn": 63,
-  "mobileTopRow": 5,
+  "mobileTopRow": 6,
   "needsErrorInfo": false,
   "parentColumnSpace": 16.453125,
   "parentId": "udm_canvas",
@@ -149,7 +149,7 @@
       "widgetId": "udm_cust_canvas"
     }
   },
-  "topRow": 5,
+  "topRow": 6,
   "type": "TABS_WIDGET",
   "version": 3,
   "widgetId": "udm_tabs",

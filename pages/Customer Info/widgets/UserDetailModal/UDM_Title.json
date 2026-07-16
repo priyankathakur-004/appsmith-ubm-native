@@ -31,7 +31,7 @@
   "parentId": "udm_canvas",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 50,
+  "rightColumn": 60,
   "shouldTruncate": false,
   "text": "{{ `User Info for ${(fetch_user_detail.data && fetch_user_detail.data[0]) ? ((fetch_user_detail.data[0].first_name||'') + ' ' + (fetch_user_detail.data[0].last_name||'')).trim() : ''}` }}",
   "textAlign": "LEFT",
