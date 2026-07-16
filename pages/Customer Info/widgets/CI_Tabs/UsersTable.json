@@ -18,6 +18,9 @@
     },
     {
       "key": "defaultModel"
+    },
+    {
+      "key": "isVisible"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -66,5 +69,6 @@
   "version": 1,
   "widgetId": "ci_users_cw",
   "widgetName": "UsersTable",
-  "onUserOpen": "{{ storeValue('selectedUserId', UsersTable.model.selectedUserId); storeValue('selectedUserName', UsersTable.model.selectedUserName); }}"
+  "onUserOpen": "{{ storeValue('userScreen','detail'); fetch_user_detail.run(); fetch_user_customers.run(); }}",
+  "isVisible": "{{ appsmith.store.userScreen !== 'detail' }}"
 }

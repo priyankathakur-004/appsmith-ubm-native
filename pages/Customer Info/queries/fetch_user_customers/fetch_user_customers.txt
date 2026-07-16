@@ -1,0 +1,23 @@
+SELECT
+    c.id   AS id,
+    c.name AS name,
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM json_array_elements(COALESCE(v.permissions, '[]'::json)) perm
+            WHERE perm->>'feature' = 'customer_full_access'
+              AND perm->>'permission' = 'enabled'
+        ) THEN 'Full Access'
+        ELSE 'Limited Access'
+    END    AS user_role,
+    v.profile->>'job_title' AS job_title,
+    CASE
+        WHEN v.locations IS NULL OR v.locations::text IN ('null', '[]', '{}', '') THEN 'All'
+        ELSE 'Restricted'
+    END    AS locations
+FROM bill_management_v2.customers_users cu
+JOIN bill_management_v2.customers c ON c.id = cu.customer_id
+JOIN bill_management_v2.customers_users_view v ON v.user_id = cu.user_id AND v.name = c.name
+WHERE cu.user_id = {{ UsersTable.model.selectedUserId || 0 }}
+  AND cu.deleted_at IS NULL
+ORDER BY c.name;

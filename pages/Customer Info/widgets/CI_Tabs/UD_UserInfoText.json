@@ -1,0 +1,46 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 60,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "REGULAR",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ud_ui_text_k",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 60,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "originalBottomRow": 143,
+  "originalTopRow": 1,
+  "overflow": "NONE",
+  "parentColumnSpace": 16.453125,
+  "parentId": "ud_userinfo_canvas",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "shouldTruncate": false,
+  "text": "{{ UserInfoHelper.getUserHtml(fetch_user_detail.data) }}",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 1,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "ud_userinfo_text",
+  "widgetName": "UD_UserInfoText"
+}

@@ -1,0 +1,12 @@
+SELECT
+    u.id                                                   AS id,
+    u.profile->>'first_name'                               AS first_name,
+    u.profile->>'last_name'                                AS last_name,
+    u.email                                                AS email,
+    COALESCE(u.profile->>'phone', u.profile->>'phone_number') AS phone,
+    u.profile->>'role'                                     AS role,
+    u.profile->>'notification'                             AS notification,
+    u.active                                               AS active
+FROM bill_management_v2.users u
+WHERE u.id = {{ UsersTable.model.selectedUserId || 0 }}
+LIMIT 1;
