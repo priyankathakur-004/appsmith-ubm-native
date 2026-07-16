@@ -48,8 +48,7 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "udm_canvas",
-      "widgetName": "UDM_Canvas",
-      "children": []
+      "widgetName": "UDM_Canvas"
     }
   ],
   "detachFromLayout": true,
