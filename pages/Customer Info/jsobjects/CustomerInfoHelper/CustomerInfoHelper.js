@@ -4,6 +4,10 @@ export default {
 	// contract queries (it never triggers them), so it stays clear of the
 	// reactive-dependency misuse error. Those queries are refreshed on page
 	// load and whenever the selected customer changes.
+	//
+	// Sections use native <details>/<summary> so they collapse/expand (with a
+	// disclosure arrow) without any JavaScript, which the Text widget cannot run.
+	// Only the first section (Main Information) is open by default.
 	getInfoHtml() {
 		const d = (fetch_customer_detail.data && fetch_customer_detail.data[0]) || {};
 		const c = (fetch_customer_contract.data && fetch_customer_contract.data[0]) || {};
@@ -32,11 +36,15 @@ export default {
 				`</tr>`;
 		};
 
-		const section = (title, rowsHtml) =>
-			`<div style='margin-bottom:22px;'>` +
-			`<div style='font-size:15px;font-weight:700;color:#93c5fd;margin-bottom:8px;'>${title}</div>` +
-			`<table style='width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;'>${rowsHtml}</table>` +
-			`</div>`;
+		const table = (rowsHtml) =>
+			`<table style='width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;'>${rowsHtml}</table>`;
+
+		// One collapsible section. `open` controls the default-expanded state.
+		const details = (title, bodyHtml, open) =>
+			`<details ${open ? "open" : ""} style='margin-bottom:10px;border-bottom:1px solid #1e293b;padding-bottom:6px;'>` +
+			`<summary style='cursor:pointer;list-style:revert;font-size:15px;font-weight:700;color:#93c5fd;padding:8px 4px;'>${title}</summary>` +
+			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
+			`</details>`;
 
 		// product_tier_id -> display name. Only tier 3 (Platinum) is confirmed from
 		// the source screen; 1/2 are best-guess until a tiers lookup exists.
@@ -57,14 +65,15 @@ export default {
 			: "<span style='color:#f87171;'>&#9679; Inactive</span>";
 		const liveDays = (th.live != null) ? Math.round(th.live / 24) : "—";
 
-		const main = section("Main Information",
+		const main = details("Main Information", table(
 			row("Customer ID", esc(d.id)) +
 			row("FDG Customer Code", esc(d.fdg_code)) +
-			row("Customer Name", esc(d.name)));
+			row("Customer Name", esc(d.name))), true);
 
-		const status = section("Status", row("Customer Status", statusPill));
+		const status = details("Status", table(
+			row("Customer Status", statusPill)), false);
 
-		const entl = section("Entitlements",
+		const entl = details("Entitlements", table(
 			row("Payments", pill(ent.payments)) +
 			row("Bill Pay", pill(ent.billPay), true) +
 			row("Weather", pill(ent.weather)) +
@@ -74,23 +83,23 @@ export default {
 			row("Carbon Footprint", pill(ent.carbonFootprint), true) +
 			row("Budgeting", pill(ent.budgeting)) +
 			row("Activity History Chat", pill(ent.activityHistoryChat)) +
-			row("Rate Class", pill(ent.rateClass)));
+			row("Rate Class", pill(ent.rateClass))), false);
 
-		const sftp = section("SFTP Configuration",
+		const sftp = details("SFTP Configuration", table(
 			row("Reports Delivery Settings", pill(ent.reportDeliverySettings)) +
 			row("Bills Bulk Download Settings", pill(ent.billsBulkDownloadSettings)) +
-			row("Scheduled Bills Extracts", pill(ent.scheduledBillsExtractsSettings)));
+			row("Scheduled Bills Extracts", pill(ent.scheduledBillsExtractsSettings))), false);
 
-		const tpt = section("Target Processing Time (Business Days)",
-			row("Live Bills", esc(liveDays)));
+		const tpt = details("Target Processing Time (Business Days)", table(
+			row("Live Bills", esc(liveDays))), false);
 
-		const contract = section("Contract Details",
+		const contract = details("Contract Details", table(
 			row("Product Tier", tierName(c.product_tier_id)) +
 			row("Contract Signed", esc(c.contract_signed)) +
-			row("Start Date", fmtDate(c.contract_start_date)));
+			row("Start Date", fmtDate(c.contract_start_date))), false);
 
-		const mail = section("Mail To Address",
-			row("Address", "Select Edit in order to fill in."));
+		const mail = details("Mail To Address",
+			"<div style='padding:10px 14px;color:#94a3b8;'>Select Edit in order to fill in.</div>", false);
 
 		return `<div style='font-family:sans-serif;padding:8px 4px;'>${main}${status}${entl}${sftp}${tpt}${contract}${mail}</div>`;
 	}
