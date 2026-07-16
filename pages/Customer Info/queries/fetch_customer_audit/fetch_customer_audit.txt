@@ -1,0 +1,8 @@
+SELECT DISTINCT ON (a.key)
+       a.key                                                                AS key,
+       TRIM(CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name')) AS modified_by_name,
+       a.modified_at                                                        AS modified_at
+FROM bill_management_v2.customer_info_audit_logs a
+LEFT JOIN bill_management_v2.users u ON u.id = a.modified_by
+WHERE a.customer_id = {{ appsmith.store.selectedCustomerId || CustomerSelect.selectedOptionValue || 76013 }}
+ORDER BY a.key, a.modified_at DESC;

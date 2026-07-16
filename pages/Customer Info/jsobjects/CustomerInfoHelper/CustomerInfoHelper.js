@@ -1,9 +1,9 @@
 export default {
-	// Builds the Customer Info tab HTML from the two customer queries.
-	// Pure reader: it only reads the already-fetched data of the detail and
-	// contract queries (it never triggers them), so it stays clear of the
-	// reactive-dependency misuse error. Those queries are refreshed on page
-	// load and whenever the selected customer changes.
+	// Builds the Customer Info tab HTML from the customer queries.
+	// Pure reader: it only reads the already-fetched data of the detail, contract
+	// and audit queries (it never triggers them), so it stays clear of the
+	// reactive-dependency misuse error. Those queries are refreshed on page load
+	// and whenever the selected customer changes.
 	//
 	// Sections use native <details>/<summary> so they collapse/expand (with a
 	// disclosure arrow) without any JavaScript, which the Text widget cannot run.
@@ -21,6 +21,36 @@ export default {
 		const ent = asObject(d.entitlements);
 		const th = asObject(d.target_hours);
 
+		// --- audit column ("modified by") -------------------------------------
+		// customer_info_audit_logs stores one row per changed field, keyed like
+		// "entitlements.billPay". Map the latest change per key; anything without
+		// a manual change defaults to "Admin System".
+		const auditRows = Array.isArray(fetch_customer_audit.data) ? fetch_customer_audit.data : [];
+		const auditByKey = {};
+		auditRows.forEach((r) => { if (r && r.key && !(r.key in auditByKey)) auditByKey[r.key] = r; });
+
+		// "2026-06-11T13:52:02Z" -> "06/11/2026 7:22 PM" (in the viewer's local time)
+		const fmtDateTime = (s) => {
+			if (!s) return "";
+			const dt = new Date(s);
+			if (isNaN(dt.getTime())) return "";
+			const mm = String(dt.getMonth() + 1).padStart(2, "0");
+			const dd = String(dt.getDate()).padStart(2, "0");
+			const yyyy = dt.getFullYear();
+			let h = dt.getHours();
+			const ampm = h >= 12 ? "PM" : "AM";
+			h = h % 12; if (h === 0) h = 12;
+			const min = String(dt.getMinutes()).padStart(2, "0");
+			return `${mm}/${dd}/${yyyy} ${h}:${min} ${ampm}`;
+		};
+		const auditFor = (key) => {
+			const r = key ? auditByKey[key] : null;
+			const name = r ? String(r.modified_by_name || "").trim() : "";
+			if (!name) return "Admin System";
+			const when = fmtDateTime(r.modified_at);
+			return when ? `${name}, ${when}` : name;
+		};
+
 		const esc = (v) => (v == null || v === "") ? "—" : String(v);
 
 		const pill = (on) => {
@@ -28,11 +58,22 @@ export default {
 			return `<span style='color:${color};font-weight:700;'>${on ? "On" : "Off"}</span>`;
 		};
 
+		// Two-column row (label / value) for the plain sections.
 		const row = (label, valueHtml, indent) => {
 			const pad = indent ? "padding-left:36px;" : "";
 			return `<tr>` +
 				`<td style='padding:9px 14px;color:#94a3b8;width:340px;border-bottom:1px solid #334155;${pad}'>${label}</td>` +
 				`<td style='padding:9px 14px;color:#f1f5f9;font-weight:600;border-bottom:1px solid #334155;'>${valueHtml}</td>` +
+				`</tr>`;
+		};
+
+		// Three-column row (label / value / modified-by) for audited sections.
+		const arow = (label, valueHtml, auditKey, indent) => {
+			const pad = indent ? "padding-left:36px;" : "";
+			return `<tr>` +
+				`<td style='padding:9px 14px;color:#94a3b8;width:340px;border-bottom:1px solid #334155;${pad}'>${label}</td>` +
+				`<td style='padding:9px 14px;color:#f1f5f9;font-weight:600;width:110px;border-bottom:1px solid #334155;'>${valueHtml}</td>` +
+				`<td style='padding:9px 14px;color:#cbd5e1;border-bottom:1px solid #334155;'>${auditFor(auditKey)}</td>` +
 				`</tr>`;
 		};
 
@@ -71,24 +112,24 @@ export default {
 			row("Customer Name", esc(d.name))), true);
 
 		const status = details("Status", table(
-			row("Customer Status", statusPill)), false);
+			arow("Customer Status", statusPill, null)), false);
 
 		const entl = details("Entitlements", table(
-			row("Payments", pill(ent.payments)) +
-			row("Bill Pay", pill(ent.billPay), true) +
-			row("Weather", pill(ent.weather)) +
-			row("PowerBI", pill(ent.powerBi)) +
-			row("Sustainability", pill(ent.energyStar || ent.carbonFootprint)) +
-			row("Energy Star", pill(ent.energyStar), true) +
-			row("Carbon Footprint", pill(ent.carbonFootprint), true) +
-			row("Budgeting", pill(ent.budgeting)) +
-			row("Activity History Chat", pill(ent.activityHistoryChat)) +
-			row("Rate Class", pill(ent.rateClass))), false);
+			arow("Payments", pill(ent.payments), "entitlements.payments") +
+			arow("Bill Pay", pill(ent.billPay), "entitlements.billPay", true) +
+			arow("Weather", pill(ent.weather), "entitlements.weather") +
+			arow("PowerBI", pill(ent.powerBi), "entitlements.powerBi") +
+			arow("Sustainability", pill(ent.energyStar || ent.carbonFootprint), null) +
+			arow("Energy Star", pill(ent.energyStar), "entitlements.energyStar", true) +
+			arow("Carbon Footprint", pill(ent.carbonFootprint), "entitlements.carbonFootprint", true) +
+			arow("Budgeting", pill(ent.budgeting), "entitlements.budgeting") +
+			arow("Activity History Chat", pill(ent.activityHistoryChat), "entitlements.activityHistoryChat") +
+			arow("Rate Class", pill(ent.rateClass), "entitlements.rateClass")), false);
 
 		const sftp = details("SFTP Configuration", table(
-			row("Reports Delivery Settings", pill(ent.reportDeliverySettings)) +
-			row("Bills Bulk Download Settings", pill(ent.billsBulkDownloadSettings)) +
-			row("Scheduled Bills Extracts", pill(ent.scheduledBillsExtractsSettings))), false);
+			arow("Reports Delivery Settings", pill(ent.reportDeliverySettings), "entitlements.reportDeliverySettings") +
+			arow("Bills Bulk Download Settings", pill(ent.billsBulkDownloadSettings), "entitlements.billsBulkDownloadSettings") +
+			arow("Scheduled Bills Extracts", pill(ent.scheduledBillsExtractsSettings), "entitlements.scheduledBillsExtractsSettings")), false);
 
 		const tpt = details("Target Processing Time (Business Days)", table(
 			row("Live Bills", esc(liveDays))), false);
