@@ -178,7 +178,7 @@
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 64,
-  "shouldScrollContents": false,
+  "shouldScrollContents": true,
   "shouldShowTabs": true,
   "tabsObj": {
     "tab_unmapped": {

@@ -18,5 +18,16 @@ export default {
 	// "Bulk Map" header link -> open the bulk-map modal (read-only in this view).
 	bulkMap() {
 		showModal("BulkMapModal");
+	},
+
+	// "Virtual Accounts" link on an Unpaired site header: load every VA mapped to
+	// that location, then open the Location Details modal. Await the store + fetch
+	// so the modal body reads the right location's data.
+	async openLocation(locationId, site) {
+		if (!locationId) return;
+		await storeValue("selectedLocationId", locationId);
+		await storeValue("selectedLocationSite", site || "");
+		await fetch_location_vas.run();
+		showModal("LocationDetailsModal");
 	}
 }
