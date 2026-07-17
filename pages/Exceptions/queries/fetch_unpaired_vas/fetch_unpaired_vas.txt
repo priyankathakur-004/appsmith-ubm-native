@@ -1,29 +1,15 @@
--- Unpaired Virtual Accounts: mapped to a location but not paired to a finalized bill.
--- NOTE: definition is a best-effort proxy; confirm the real "unpaired" rule with the
--- UBM team.
+-- Unpaired Virtual Accounts.
+-- TODO(confirm): no dedicated "unpaired" source was found in discovery; pointing at
+-- customers_exceptions for now. Replace WHERE/table once the real definition is known.
 SELECT
-    abli.virtual_account_id                        AS va_id,
-    COALESCE(cpv.name, br.vendor_code)             AS vendor,
-    bi.meter_serial                                AS meter_id,
-    bi.account_code                                AS service_account_id,
-    bi.service_address                             AS service_address,
-    bi.service_zip                                 AS service_zip,
-    COUNT(*)                                       AS bill_blocks
-FROM bill_management_v2.bill_items bi
-JOIN bill_management_v2.analytics_billing_line_items abli
-     ON abli.bill_item_id = bi.id
-JOIN bill_management_v2.bill_records br
-     ON br.id = abli.bill_record_id AND br.deleted_at IS NULL
-LEFT JOIN bill_management_v2.customers_providers_vendors cpv
-     ON cpv.code = br.vendor_code AND cpv.customer_id = br.customer_id
-WHERE br.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
-  AND abli.location_id IS NOT NULL
-  AND NOT EXISTS (
-      SELECT 1
-      FROM bill_management_v2.analytics_bills_items abi2
-      WHERE abi2.bill_item_id = bi.id
-  )
-GROUP BY abli.virtual_account_id, COALESCE(cpv.name, br.vendor_code),
-         bi.meter_serial, bi.account_code, bi.service_address, bi.service_zip
-ORDER BY va_id DESC
+    virtual_account_id   AS va_id,
+    pretty_name          AS vendor,
+    meter_serial         AS meter_id,
+    account_code         AS service_account_id,
+    service_address      AS service_address,
+    service_zip          AS service_zip,
+    items_count          AS bill_blocks
+FROM bill_management_v2.customers_exceptions
+WHERE customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
+ORDER BY virtual_account_id DESC
 LIMIT 5000;
