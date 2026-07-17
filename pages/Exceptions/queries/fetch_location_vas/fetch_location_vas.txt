@@ -3,7 +3,7 @@
 -- status/type for the location (no pair/bill filters).
 SELECT DISTINCT ON (va.id)
     va.id                                          AS id,
-    COALESCE(va.pair_status, '')                   AS pair_status,
+    COALESCE(va.pair_status::text, '')            AS pair_status,
     COALESCE(v.pretty_name, va.vendor_code)        AS vendor,
     va.account_code                                AS billing_id,
     va.client_account                              AS service_account,
