@@ -1,0 +1,20 @@
+-- Unmapped Virtual Accounts: dedicated exceptions table for the current customer.
+-- Extra columns (billing_id/billing_account/utility/type/provider_vendor_id) feed the
+-- "Map Virtual Account to Location" modal.
+SELECT
+    virtual_account_id   AS va_id,
+    pretty_name          AS vendor,
+    meter_serial         AS meter_id,
+    account_code         AS service_account_id,
+    service_address      AS service_address,
+    service_zip          AS service_zip,
+    items_count          AS bill_blocks,
+    account_code         AS billing_id,
+    client_account       AS billing_account,
+    commodity            AS utility,
+    bill_type            AS type,
+    provider_vendor_ids  AS provider_vendor_id
+FROM bill_management_v2.customers_exceptions
+WHERE customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
+ORDER BY virtual_account_id DESC
+LIMIT 5000;

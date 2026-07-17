@@ -1,0 +1,36 @@
+-- Unpaired Virtual Accounts, grouped by site & utility.
+-- Account fields (account_code, client_account, bill_type, pair_status, vendor_code)
+-- come from the fast base table virtual_accounts. Site name + last bill come from
+-- reports_new_virtual_accounts (rnva), which also restricts the list to accounts that
+-- have actually been billed (matches UBM, which hides never-billed VAs).
+-- Only supply/distribution accounts need pairing (Full Service excluded); the widget's
+-- No Pair -> 'Need Pair', Pair -> 'Pair' toggle filters on pair_status.
+SELECT location_id, site, utility, billing_account_id, vendor, billing_id,
+       service_account_id, meter_id, type, last_bill, pair_status, paired, va_id
+FROM (
+    SELECT DISTINCT ON (va.id)
+        rnva.location_id                                 AS location_id,
+        COALESCE(NULLIF(rnva.location, ''), 'Site ' || rnva.location_id) AS site,
+        va.commodity                                     AS utility,
+        REPLACE(COALESCE(va.account_code, ''), '-', '')  AS billing_account_id,
+        va.vendor_code                                   AS vendor,
+        va.account_code                                  AS billing_id,
+        va.client_account                                AS service_account_id,
+        va.meter_serial                                  AS meter_id,
+        va.bill_type                                     AS type,
+        TO_CHAR(rnva.date_of_last_bill, 'MM/DD/YYYY')    AS last_bill,
+        va.pair_status                                   AS pair_status,
+        (va.virtual_accounts_pairing_id IS NOT NULL)     AS paired,
+        va.id                                            AS va_id
+    FROM bill_management_v2.virtual_accounts va
+    JOIN bill_management_v2.reports_new_virtual_accounts rnva
+          ON rnva.virtual_account_id = va.id
+         AND rnva.customer_id = va.customer_id
+    WHERE va.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
+      AND va.bill_type IN ('Supply Only', 'Distribution Only')
+      AND va.pair_status IN ('Need Pair', 'Pair')
+      AND rnva.date_of_last_bill IS NOT NULL
+    ORDER BY va.id, rnva.date_of_last_bill DESC NULLS LAST
+) t
+ORDER BY t.location_id, t.utility, t.va_id
+LIMIT 2000;

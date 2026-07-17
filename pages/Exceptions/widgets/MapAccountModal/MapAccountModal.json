@@ -1,0 +1,96 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "#1E293B",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 640,
+  "boxShadow": "none",
+  "canEscapeKeyClose": true,
+  "canOutsideClickClose": true,
+  "children": [
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 639,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "FIXED",
+      "flexLayers": [],
+      "isDisabled": false,
+      "isLoading": false,
+      "isVisible": true,
+      "key": "mapacct_canvas_k",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 639,
+      "minWidth": 450,
+      "mobileBottomRow": 639,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 250,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "mapacct_modal",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 250,
+      "shouldScrollContents": false,
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "mapacct_canvas",
+      "widgetName": "mapacct_canvas"
+    }
+  ],
+  "detachFromLayout": true,
+  "dynamicBindingPathList": [
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClose"
+    }
+  ],
+  "height": 640,
+  "isCanvas": true,
+  "isLoading": false,
+  "key": "mapacct_modal_k",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 24,
+  "minHeight": 640,
+  "mobileBottomRow": 25,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 12,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onClose": "{{ storeValue('mapVirtualAccount', {}) }}",
+  "parentColumnSpace": 16.140625,
+  "parentId": "0",
+  "renderMode": "CANVAS",
+  "parentRowSpace": 10,
+  "rightColumn": 12,
+  "shouldScrollContents": true,
+  "topRow": 1,
+  "type": "MODAL_WIDGET",
+  "version": 2,
+  "widgetId": "mapacct_modal",
+  "widgetName": "MapAccountModal",
+  "width": 1120
+}

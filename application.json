@@ -104,6 +104,10 @@
     {
       "id": "Customer Info",
       "isDefault": false
+    },
+    {
+      "id": "Exceptions",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {
