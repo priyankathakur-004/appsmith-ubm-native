@@ -1,16 +1,16 @@
 -- Unprocessed Bills: dedicated queue table for the current customer.
 SELECT
-    ub.id                                                 AS bill_id,
-    ub.batch_id                                           AS batch_id,
-    ub.batch_type                                         AS batch_type,
+    ub.id                                                 AS record_id,
     ub.fdg_id                                             AS fdg_id,
     CASE
         WHEN ub.account_codes IS NULL THEN ''
         ELSE ARRAY_TO_STRING(
             ARRAY(SELECT json_array_elements_text(ub.account_codes::json)), ', '
         )
-    END                                                   AS account_codes,
-    TO_CHAR(ub.processed_at, 'MM/DD/YYYY')                AS uploaded_at
+    END                                                   AS service_account_id,
+    ub.batch_id                                           AS batch_id,
+    ub.batch_type                                         AS batch_type,
+    TO_CHAR(ub.processed_at, 'MM/DD/YYYY')                AS processed_date
 FROM bill_management_v2.unprocessed_bills ub
 WHERE ub.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
 ORDER BY ub.id DESC

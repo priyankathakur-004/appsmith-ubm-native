@@ -1,8 +1,8 @@
 {
-  "accentColor": "#2563EB",
+  "accentColor": "#86efac",
   "animateLoading": true,
-  "backgroundColor": "#FFFFFF",
-  "borderColor": "#E2E8F0",
+  "backgroundColor": "#1E293B",
+  "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
   "bottomRow": 126,
