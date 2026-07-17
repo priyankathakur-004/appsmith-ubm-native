@@ -1,0 +1,19 @@
+-- Unprocessed Bills: bills whose billing line items have not reached the 'processed'
+-- workflow state. NOTE: confirm the exact "unprocessed" definition with the UBM team.
+SELECT DISTINCT ON (abli.bill_id)
+    abli.bill_id                                     AS bill_id,
+    COALESCE(cpv.name, br.vendor_code)               AS vendor,
+    br.invoice_number                                AS invoice_number,
+    br.client_account                                AS billing_id,
+    TO_CHAR(br.statement_date, 'MM/DD/YYYY')         AS statement_date,
+    INITCAP(REPLACE(abli.workflow_state, '_', ' '))  AS stage,
+    TO_CHAR(br.received_on, 'MM/DD/YYYY')            AS received_on
+FROM bill_management_v2.analytics_billing_line_items abli
+JOIN bill_management_v2.bill_records br
+     ON br.id = abli.bill_record_id AND br.deleted_at IS NULL
+LEFT JOIN bill_management_v2.customers_providers_vendors cpv
+     ON cpv.code = br.vendor_code AND cpv.customer_id = br.customer_id
+WHERE br.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
+  AND COALESCE(abli.workflow_state, '') <> 'processed'
+ORDER BY abli.bill_id DESC
+LIMIT 5000;
