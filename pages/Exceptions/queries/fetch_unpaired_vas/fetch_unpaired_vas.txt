@@ -1,24 +1,30 @@
 -- Unpaired Virtual Accounts, grouped by site & utility.
--- Uses reports_new_virtual_accounts (the fast per-customer reporting table the
--- Late Bills feature also uses) instead of the virtual_accounts_locations view,
--- which was too slow to scan.
--- TODO(confirm): (1) the exact "No Pair" filter (account_status is a best-effort
--- proxy), (2) the Site label source, and (3) the "Type" column source
--- (Supply Only / Distribution Only was on the slow view; blank here for now).
+-- Leads with the fast base table virtual_accounts (indexed on customer_id) and
+-- joins out to the location, instead of the slow virtual_accounts_locations view.
+-- Only supply/distribution accounts need pairing (Full Service excluded).
+-- "paired" comes from virtual_accounts_pairing_id; the widget's No Pair / Pair
+-- toggle filters on it (default: No Pair).
+-- TODO(confirm): the Site label column (location_description) and whether last_bill
+-- should be surfaced (it lives on the slow view, so it is blank here for now).
 SELECT
-    rnva.location_id                                  AS location_id,
-    COALESCE(NULLIF(rnva.location, ''), 'Site ' || rnva.location_id) AS site,
-    rnva.utility_type                                 AS utility,
-    rnva.billing_id                                   AS billing_account_id,
-    rnva.vendor                                       AS vendor,
-    rnva.billing_id                                   AS billing_id,
-    rnva.service_account_id                           AS service_account_id,
-    rnva.meter_id                                     AS meter_id,
-    rnva.account_status                               AS type,
-    TO_CHAR(rnva.date_of_last_bill, 'MM/DD/YYYY')     AS last_bill,
-    rnva.virtual_account_id                           AS va_id
-FROM bill_management_v2.reports_new_virtual_accounts rnva
-WHERE rnva.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
-  AND rnva.account_status IN ('Open', 'Unknown')
-ORDER BY rnva.location_id, rnva.utility_type, rnva.virtual_account_id
+    vap.location_id                                  AS location_id,
+    COALESCE(NULLIF(ld.location_description, ''), 'Site ' || vap.location_id) AS site,
+    va.commodity                                     AS utility,
+    REPLACE(COALESCE(va.account_code, ''), '-', '')  AS billing_account_id,
+    va.vendor_code                                   AS vendor,
+    va.account_code                                  AS billing_id,
+    va.client_account                                AS service_account_id,
+    va.meter_serial                                  AS meter_id,
+    va.bill_type                                     AS type,
+    ''                                               AS last_bill,
+    (va.virtual_accounts_pairing_id IS NOT NULL)     AS paired,
+    va.id                                            AS va_id
+FROM bill_management_v2.virtual_accounts va
+LEFT JOIN bill_management_v2.virtual_accounts_locations_pairing vap
+       ON vap.virtual_account_id = va.id
+LEFT JOIN bill_management_v2.location_detail ld
+       ON ld.location_id = vap.location_id
+WHERE va.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
+  AND va.bill_type IN ('Supply Only', 'Distribution Only')
+ORDER BY vap.location_id, va.commodity, va.id
 LIMIT 2000;
