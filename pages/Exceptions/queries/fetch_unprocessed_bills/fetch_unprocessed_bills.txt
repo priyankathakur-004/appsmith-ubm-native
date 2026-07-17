@@ -4,9 +4,7 @@ SELECT
     ub.fdg_id                                             AS fdg_id,
     CASE
         WHEN ub.account_codes IS NULL THEN ''
-        ELSE ARRAY_TO_STRING(
-            ARRAY(SELECT json_array_elements_text(ub.account_codes::json)), ', '
-        )
+        ELSE ARRAY_TO_STRING(ub.account_codes, ', ')
     END                                                   AS service_account_id,
     ub.batch_id                                           AS batch_id,
     ub.batch_type                                         AS batch_type,
