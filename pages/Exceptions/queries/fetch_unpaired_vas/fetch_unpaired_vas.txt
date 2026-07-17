@@ -27,5 +27,8 @@ LEFT JOIN bill_management_v2.location_detail ld
        ON ld.location_id = vap.location_id
 WHERE va.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
   AND va.bill_type IN ('Supply Only', 'Distribution Only')
+  -- Only the actionable statuses are shown by the No Pair / Pair toggle;
+  -- excluding 'No Pair'/blank here cuts rows and join work.
+  AND va.pair_status IN ('Need Pair', 'Pair')
 ORDER BY vap.location_id, va.commodity, va.id
 LIMIT 2000;
