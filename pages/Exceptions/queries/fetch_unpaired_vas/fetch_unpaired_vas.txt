@@ -17,6 +17,7 @@ SELECT
     va.meter_serial                                  AS meter_id,
     va.bill_type                                     AS type,
     ''                                               AS last_bill,
+    va.pair_status                                   AS pair_status,
     (va.virtual_accounts_pairing_id IS NOT NULL)     AS paired,
     va.id                                            AS va_id
 FROM bill_management_v2.virtual_accounts va
