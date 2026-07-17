@@ -18,5 +18,8 @@ FROM bill_management_v2.virtual_accounts_locations va
 LEFT JOIN bill_management_v2.vendors v ON v.code = va.vendor_code
 LEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = va.location_id
 WHERE va.customer_id = {{ appsmith.store.selectedCustomerId || 76013 }}
+  -- Only supply/distribution accounts need pairing (Full Service is excluded);
+  -- this matches the UBM-native tab and greatly shrinks the scan.
+  AND va.bill_type IN ('Supply Only', 'Distribution Only')
 ORDER BY va.location_id, va.commodity, va.id
-LIMIT 5000;
+LIMIT 2000;
