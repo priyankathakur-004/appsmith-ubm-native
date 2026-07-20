@@ -29,7 +29,7 @@
     ],
     "name": "getCountries",
     "pageId": "Reports",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
