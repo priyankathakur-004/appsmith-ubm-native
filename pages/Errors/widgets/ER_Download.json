@@ -1,11 +1,13 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 20,
+  "bottomRow": 26,
   "boxShadow": "none",
+  "buttonColor": "#60A5FA",
+  "buttonVariant": "TERTIARY",
   "dynamicBindingPathList": [
     {
-      "key": "fontFamily"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [
@@ -13,30 +15,26 @@
       "key": "onClick"
     }
   ],
-  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
-  "fontSize": "1.25rem",
-  "fontStyle": "BOLD",
+  "iconName": "import",
+  "iconSize": 24,
+  "isDisabled": false,
   "isLoading": false,
   "isVisible": true,
   "key": "er_download_k",
-  "leftColumn": 58,
-  "maxDynamicHeight": 9000,
-  "minDynamicHeight": 4,
-  "mobileBottomRow": 20,
-  "mobileLeftColumn": 58,
+  "leftColumn": 60,
+  "minWidth": 50,
+  "mobileBottomRow": 26,
+  "mobileLeftColumn": 60,
   "mobileRightColumn": 64,
-  "mobileTopRow": 17,
+  "mobileTopRow": 22,
+  "needsErrorInfo": false,
   "onClick": "{{ ErrorsActions.downloadCsv() }}",
-  "parentColumnSpace": 16.453125,
   "parentId": "0",
-  "parentRowSpace": 10,
   "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
   "rightColumn": 64,
-  "text": "⬇",
-  "textAlign": "RIGHT",
-  "textColor": "#CBD5E1",
-  "topRow": 17,
-  "type": "TEXT_WIDGET",
+  "topRow": 22,
+  "type": "ICON_BUTTON_WIDGET",
   "version": 1,
   "widgetId": "er_download_w",
   "widgetName": "ER_Download"

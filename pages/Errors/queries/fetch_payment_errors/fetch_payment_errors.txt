@@ -8,7 +8,18 @@ SELECT
     cs.name                                    AS customer,
     pfe.days_on_error_log                      AS days_on_error_log,
     pfe.payment_file_format::text              AS format,
-    pfe.event                                  AS event,
+    -- Event codes are stored numerically; map the known codes to their labels so
+    -- the Event column matches UBM native. Unknown codes fall back to the raw code.
+    -- TODO: replace this CASE with a JOIN once the event-lookup table is confirmed.
+    COALESCE(
+      CASE pfe.event
+        WHEN '5000' THEN 'Payment file created'
+        WHEN '5001' THEN 'Payment file emailed'
+        WHEN '5405' THEN 'Total amount due is zero'
+        WHEN '5406' THEN 'Total amount due is negative'
+        WHEN '5430' THEN 'Missing Processing Fee'
+        WHEN '5433' THEN 'Missing Attributes - Ascension Specific'
+      END, pfe.event)                          AS event,
     pfe.type                                   AS type,
     pfe.bill_meta_id                           AS bill_id,
     pfe.description                            AS description
