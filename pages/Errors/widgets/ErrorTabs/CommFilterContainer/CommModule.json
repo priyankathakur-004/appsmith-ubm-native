@@ -56,7 +56,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 54,
   "serverSideFiltering": false,
-  "sourceData": "{{ [...new Set((fetch_comm_errors.data||[]).map(r => r.module).filter(Boolean))].map(v => ({ label: v, value: v })) }}",
+  "sourceData": "{{ fetch_comm_modules.data.map(r => ({ label: r.module, value: r.module })) }}",
   "topRow": 1,
   "type": "SELECT_WIDGET",
   "version": 1,

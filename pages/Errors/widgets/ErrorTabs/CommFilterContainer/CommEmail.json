@@ -56,7 +56,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 63,
   "serverSideFiltering": false,
-  "sourceData": "{{ [...new Set((fetch_comm_errors.data||[]).map(r => r.email_address).filter(Boolean))].map(v => ({ label: v, value: v })) }}",
+  "sourceData": "{{ fetch_comm_emails.data.map(r => ({ label: r.email_address, value: r.email_address })) }}",
   "topRow": 1,
   "type": "SELECT_WIDGET",
   "version": 1,

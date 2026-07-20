@@ -56,7 +56,24 @@
   "responsiveBehavior": "fill",
   "rightColumn": 18,
   "serverSideFiltering": false,
-  "sourceData": "{{ [...new Set((fetch_comm_errors.data||[]).map(r => r.status).filter(Boolean))].map(v => ({ label: v, value: v })) }}",
+  "sourceData": [
+    {
+      "label": "Bounce",
+      "value": "Bounce"
+    },
+    {
+      "label": "Dropped",
+      "value": "Dropped"
+    },
+    {
+      "label": "Deferred",
+      "value": "Deferred"
+    },
+    {
+      "label": "Blocked",
+      "value": "Blocked"
+    }
+  ],
   "topRow": 1,
   "type": "SELECT_WIDGET",
   "version": 1,

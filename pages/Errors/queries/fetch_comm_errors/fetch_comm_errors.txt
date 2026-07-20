@@ -1,23 +1,38 @@
--- Communication Error Log (email delivery / notification errors).
--- TODO: confirm the real table + column names; this is a best-guess placeholder.
-SELECT
-    ce.id                                          AS id,
-    TO_CHAR(ce.created_at,        'MM/DD/YYYY')     AS initial_creation_date,
-    ce.status                                       AS status,
-    ce.type                                         AS type,
-    TO_CHAR(ce.status_changed_at, 'MM/DD/YYYY')     AS status_change_date,
-    cs.name                                         AS customer,
-    ce.module                                       AS module,
-    ce.email_address                                AS email_address
-FROM bill_management_v2.communication_errors ce
-LEFT JOIN bill_management_v2.customers_search cs ON cs.id = ce.customer_id
+-- Communication Error Log: email delivery failures from emails_deliveries_status.
+SELECT id, initial_creation_date, status, type, status_change_date, customer, module, email_address
+FROM (
+  SELECT
+    eds.id                                                              AS id,
+    eds.customer_id                                                     AS customer_id,
+    eds.created_at                                                      AS created_at,
+    TO_CHAR(eds.created_at, 'MM/DD/YYYY')                               AS initial_creation_date,
+    CASE
+      WHEN eds.bounce   IS NOT NULL THEN 'Bounce'
+      WHEN eds.dropped  IS NOT NULL THEN 'Dropped'
+      WHEN eds.blocked  IS NOT NULL THEN 'Blocked'
+      WHEN eds.deferred IS NOT NULL THEN 'Deferred'
+    END                                                                 AS status,
+    CASE
+      WHEN eds.bounce IS NOT NULL OR eds.dropped IS NOT NULL OR eds.blocked IS NOT NULL THEN 'Error'
+      ELSE 'Warning'
+    END                                                                 AS type,
+    COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred)        AS status_change_at,
+    TO_CHAR(COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred), 'MM/DD/YYYY') AS status_change_date,
+    cs.name                                                             AS customer,
+    eds.email_type                                                      AS module,
+    eds.email_address                                                   AS email_address
+  FROM bill_management_v2.emails_deliveries_status eds
+  LEFT JOIN bill_management_v2.customers_search cs ON cs.id = eds.customer_id
+  WHERE eds.deleted_at IS NULL
+    AND (eds.bounce IS NOT NULL OR eds.dropped IS NOT NULL OR eds.blocked IS NOT NULL OR eds.deferred IS NOT NULL)
+) t
 WHERE 1 = 1
-    {{ CommCustomer.selectedOptionValue ? "AND ce.customer_id = " + CommCustomer.selectedOptionValue : "" }}
-    {{ CommStatus.selectedOptionValue ? "AND ce.status = '" + CommStatus.selectedOptionValue + "'" : "" }}
-    {{ (CommType.selectedOptionValues && CommType.selectedOptionValues.length) ? "AND ce.type IN (" + CommType.selectedOptionValues.map(t => "'" + t + "'").join(",") + ")" : "" }}
-    {{ CommModule.selectedOptionValue ? "AND ce.module = '" + CommModule.selectedOptionValue + "'" : "" }}
-    {{ CommEmail.selectedOptionValue ? "AND ce.email_address = '" + CommEmail.selectedOptionValue + "'" : "" }}
-    {{ CommInitDate.selectedDate ? "AND ce.created_at::date = '" + moment(CommInitDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
-    {{ CommChangeDate.selectedDate ? "AND ce.status_changed_at::date = '" + moment(CommChangeDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
-ORDER BY ce.created_at DESC NULLS LAST
+    {{ CommCustomer.selectedOptionValue ? "AND t.customer_id = " + CommCustomer.selectedOptionValue : "" }}
+    {{ CommStatus.selectedOptionValue ? "AND t.status = '" + CommStatus.selectedOptionValue + "'" : "" }}
+    {{ (CommType.selectedOptionValues && CommType.selectedOptionValues.length) ? "AND t.type IN (" + CommType.selectedOptionValues.map(x => "'" + x + "'").join(",") + ")" : "" }}
+    {{ CommModule.selectedOptionValue ? "AND t.module = '" + CommModule.selectedOptionValue + "'" : "" }}
+    {{ CommEmail.selectedOptionValue ? "AND t.email_address = '" + CommEmail.selectedOptionValue + "'" : "" }}
+    {{ CommInitDate.selectedDate ? "AND t.created_at::date = '" + moment(CommInitDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+    {{ CommChangeDate.selectedDate ? "AND t.status_change_at::date = '" + moment(CommChangeDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+ORDER BY t.created_at DESC NULLS LAST
 LIMIT 5000;

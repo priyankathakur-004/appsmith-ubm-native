@@ -1,0 +1,6 @@
+SELECT DISTINCT email_address
+FROM bill_management_v2.emails_deliveries_status
+WHERE email_address IS NOT NULL AND email_address <> ''
+  AND (bounce IS NOT NULL OR dropped IS NOT NULL OR blocked IS NOT NULL OR deferred IS NOT NULL)
+ORDER BY email_address
+LIMIT 1000;
