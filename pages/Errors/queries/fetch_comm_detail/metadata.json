@@ -29,7 +29,7 @@
     ],
     "name": "fetch_comm_detail",
     "pageId": "Errors",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }

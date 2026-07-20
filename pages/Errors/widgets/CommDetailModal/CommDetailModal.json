@@ -9,7 +9,7 @@
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 820,
+      "bottomRow": 539,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -30,7 +30,7 @@
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
-      "minHeight": 826,
+      "minHeight": 539,
       "minWidth": 450,
       "mobileBottomRow": 539,
       "mobileLeftColumn": 0,
@@ -54,13 +54,16 @@
   "detachFromLayout": true,
   "dynamicBindingPathList": [
     {
+      "key": "backgroundColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
-  "height": 826,
+  "height": 540,
   "isCanvas": true,
   "isLoading": false,
   "key": "comm_detail_modal_k",
@@ -84,5 +87,5 @@
   "version": 2,
   "widgetId": "comm_detail_modal",
   "widgetName": "CommDetailModal",
-  "width": 1665.8
+  "width": 900
 }

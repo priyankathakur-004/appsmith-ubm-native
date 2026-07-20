@@ -5,12 +5,12 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 145,
+  "bottomRow": 126,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1350,
+      "bottomRow": 1200,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -56,7 +56,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1350,
+      "bottomRow": 1200,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -126,8 +126,6 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 6,
   "needsErrorInfo": false,
-  "originalBottomRow": 51,
-  "originalTopRow": 6,
   "parentColumnSpace": 16.453125,
   "parentId": "0",
   "parentRowSpace": 10,
@@ -137,15 +135,6 @@
   "shouldScrollContents": true,
   "shouldShowTabs": true,
   "tabsObj": {
-    "tab_comm": {
-      "id": "tab_comm",
-      "index": 1,
-      "isDuplicateLabel": false,
-      "isVisible": true,
-      "label": "Communication Error Log",
-      "positioning": "vertical",
-      "widgetId": "er_comm_cv"
-    },
     "tab_payments": {
       "id": "tab_payments",
       "index": 0,
@@ -154,6 +143,15 @@
       "label": "Payments Error Log",
       "positioning": "vertical",
       "widgetId": "er_pay_cv"
+    },
+    "tab_comm": {
+      "id": "tab_comm",
+      "index": 1,
+      "isDuplicateLabel": false,
+      "isVisible": true,
+      "label": "Communication Error Log",
+      "positioning": "vertical",
+      "widgetId": "er_comm_cv"
     }
   },
   "topRow": 6,
