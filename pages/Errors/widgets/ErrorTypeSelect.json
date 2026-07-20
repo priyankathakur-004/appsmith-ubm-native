@@ -1,0 +1,66 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 13,
+  "boxShadow": "none",
+  "defaultOptionValue": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "er_typeselect_k",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Error Type",
+  "labelTextColor": "#334155",
+  "labelTextSize": "0.875rem",
+  "leftColumn": 12,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 13,
+  "mobileLeftColumn": 16,
+  "mobileRightColumn": 32,
+  "mobileTopRow": 6,
+  "onOptionChange": "{{ storeValue('err_types', ErrorTypeSelect.selectedOptionValues); fetch_payment_errors.run(); }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "placeholderText": "Add another",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 24,
+  "serverSideFiltering": false,
+  "sourceData": [
+    {
+      "label": "Warning",
+      "value": "Warning"
+    },
+    {
+      "label": "Error",
+      "value": "Error"
+    }
+  ],
+  "topRow": 6,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 1,
+  "widgetId": "er_typeselect_w",
+  "widgetName": "ErrorTypeSelect"
+}

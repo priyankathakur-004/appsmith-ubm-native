@@ -1,0 +1,43 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 17,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "er_clear_k",
+  "leftColumn": 56,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 17,
+  "mobileLeftColumn": 56,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 13,
+  "onClick": "{{ ErrorsActions.clearFilters() }}",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "text": "Clear",
+  "textAlign": "RIGHT",
+  "textColor": "#2563EB",
+  "topRow": 14,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "er_clear_w",
+  "widgetName": "ClearFilters"
+}

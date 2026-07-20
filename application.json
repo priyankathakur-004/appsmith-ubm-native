@@ -108,6 +108,10 @@
     {
       "id": "Exceptions",
       "isDefault": false
+    },
+    {
+      "id": "Errors",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {

@@ -1,0 +1,25 @@
+-- Payments Error Log. Prepared statements are OFF, so each {{ }} injects a
+-- literal SQL fragment only when that filter is set. Column casts (::date) are on
+-- the column, never on a substituted value, so they are safe.
+SELECT
+    pfe.id                                    AS id,
+    TO_CHAR(pfe.payment_date, 'MM/DD/YYYY')   AS payment_date,
+    TO_CHAR(pfe.created_at,  'MM/DD/YYYY')     AS creation_date,
+    cs.name                                    AS customer,
+    pfe.days_on_error_log                      AS days_on_error_log,
+    pfe.payment_file_format::text              AS format,
+    pfe.event                                  AS event,
+    pfe.type                                   AS type,
+    pfe.bill_meta_id                           AS bill_id,
+    pfe.description                            AS description
+FROM bill_management_v2.payment_files_errors pfe
+LEFT JOIN bill_management_v2.customers_search cs ON cs.id = pfe.customer_id
+WHERE 1 = 1
+    {{ appsmith.store.err_customerId ? "AND pfe.customer_id = " + appsmith.store.err_customerId : "" }}
+    {{ (appsmith.store.err_types && appsmith.store.err_types.length) ? "AND pfe.type IN (" + appsmith.store.err_types.map(t => "'" + t + "'").join(",") + ")" : "" }}
+    {{ appsmith.store.err_payFrom ? "AND pfe.payment_date::date >= '" + appsmith.store.err_payFrom + "'" : "" }}
+    {{ appsmith.store.err_payTo ? "AND pfe.payment_date::date <= '" + appsmith.store.err_payTo + "'" : "" }}
+    {{ appsmith.store.err_createFrom ? "AND pfe.created_at::date >= '" + appsmith.store.err_createFrom + "'" : "" }}
+    {{ appsmith.store.err_createTo ? "AND pfe.created_at::date <= '" + appsmith.store.err_createTo + "'" : "" }}
+ORDER BY pfe.payment_date DESC NULLS LAST, pfe.created_at DESC NULLS LAST
+LIMIT 5000;
