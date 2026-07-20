@@ -30,7 +30,7 @@
   "label": "Payment File Creation Date",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelTextColor": "#334155",
+  "labelTextColor": "#E2E8F0",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 44,

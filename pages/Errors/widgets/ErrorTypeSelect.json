@@ -12,9 +12,16 @@
     },
     {
       "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
     }
   ],
-  "dynamicPropertyPathList": [],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
   "dynamicTriggerPathList": [
     {
       "key": "onOptionChange"
@@ -27,7 +34,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Error Type",
-  "labelTextColor": "#334155",
+  "labelTextColor": "#E2E8F0",
   "labelTextSize": "0.875rem",
   "leftColumn": 12,
   "maxDynamicHeight": 9000,
@@ -48,16 +55,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 24,
   "serverSideFiltering": false,
-  "sourceData": [
-    {
-      "label": "Warning",
-      "value": "Warning"
-    },
-    {
-      "label": "Error",
-      "value": "Error"
-    }
-  ],
+  "sourceData": "{{ fetch_error_types.data.map(t => ({ label: t.type, value: t.type })) }}",
   "topRow": 6,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,

@@ -29,7 +29,7 @@
   "rightColumn": 35,
   "text": "Payments Error Log",
   "textAlign": "LEFT",
-  "textColor": "#1E293B",
+  "textColor": "#F1F5F9",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,
