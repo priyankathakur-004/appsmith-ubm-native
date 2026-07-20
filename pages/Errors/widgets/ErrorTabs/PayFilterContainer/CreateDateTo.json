@@ -44,7 +44,7 @@
   "needsErrorInfo": false,
   "onDateSelected": "{{ storeValue('err_createTo', CreateDateTo.selectedDate ? moment(CreateDateTo.selectedDate).format('YYYY-MM-DD') : null); fetch_payment_errors.run(); }}",
   "parentColumnSpace": 13.83,
-  "parentId": "er_filter_cv",
+  "parentId": "er_payfilter_cv",
   "parentRowSpace": 10,
   "placeholderText": "mm/dd/yyyy",
   "renderMode": "CANVAS",

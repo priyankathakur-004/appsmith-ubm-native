@@ -1,22 +1,22 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ appsmith.store.err_customerId || '' }}",
+  "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
-      "key": "sourceData"
-    },
-    {
-      "key": "defaultOptionValue"
-    },
-    {
       "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
     }
   ],
-  "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
@@ -27,42 +27,38 @@
       "key": "onOptionChange"
     }
   ],
-  "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
-  "isRequired": false,
   "isVisible": true,
-  "key": "er_custselect_k",
+  "key": "er_typeselect_k",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelText": "Customer",
+  "labelText": "Error Type",
   "labelTextColor": "#E2E8F0",
   "labelTextSize": "0.875rem",
-  "labelWidth": 5,
-  "leftColumn": 1,
+  "leftColumn": 13,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
   "mobileBottomRow": 9,
-  "mobileLeftColumn": 1,
-  "mobileRightColumn": 16,
+  "mobileLeftColumn": 13,
+  "mobileRightColumn": 24,
   "mobileTopRow": 1,
-  "needsErrorInfo": false,
-  "onOptionChange": "{{ storeValue('err_customerId', CustomerSelect.selectedOptionValue); fetch_payment_errors.run(); }}",
+  "onOptionChange": "{{ storeValue('err_types', ErrorTypeSelect.selectedOptionValues); fetch_payment_errors.run(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 13.83,
-  "parentId": "er_filter_cv",
+  "parentId": "er_payfilter_cv",
   "parentRowSpace": 10,
-  "placeholderText": "Select",
+  "placeholderText": "Add another",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 12,
+  "rightColumn": 24,
   "serverSideFiltering": false,
-  "sourceData": "{{ getCustomers.data.map(c => ({ label: c.name, value: c.id })) }}",
+  "sourceData": "{{ fetch_error_types.data.map(t => ({ label: t.type, value: t.type })) }}",
   "topRow": 1,
-  "type": "SELECT_WIDGET",
+  "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "er_custselect_w",
-  "widgetName": "CustomerSelect"
+  "widgetId": "er_typeselect_w",
+  "widgetName": "ErrorTypeSelect"
 }

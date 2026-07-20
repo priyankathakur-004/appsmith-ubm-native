@@ -1,0 +1,60 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "closeOnSelection": true,
+  "dateFormat": "MM/DD/YYYY",
+  "datePickerType": "DATE_PICKER",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDateSelected"
+    }
+  ],
+  "firstDayOfWeek": 0,
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "er_payto_k",
+  "label": "to",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelTextColor": "#E2E8F0",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 35,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 35,
+  "mobileRightColumn": 44,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onDateSelected": "{{ storeValue('err_payTo', PayDateTo.selectedDate ? moment(PayDateTo.selectedDate).format('YYYY-MM-DD') : null); fetch_payment_errors.run(); }}",
+  "parentColumnSpace": 13.83,
+  "parentId": "er_payfilter_cv",
+  "parentRowSpace": 10,
+  "placeholderText": "mm/dd/yyyy",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 44,
+  "shortcuts": false,
+  "timePrecision": "minute",
+  "topRow": 1,
+  "type": "DATE_PICKER_WIDGET2",
+  "version": 2,
+  "widgetId": "er_payto_w",
+  "widgetName": "PayDateTo"
+}

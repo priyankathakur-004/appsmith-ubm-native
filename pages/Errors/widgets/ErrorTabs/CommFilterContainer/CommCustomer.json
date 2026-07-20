@@ -4,57 +4,62 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "closeOnSelection": true,
-  "dateFormat": "MM/DD/YYYY",
-  "datePickerType": "DATE_PICKER",
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
+      "key": "sourceData"
     },
     {
       "key": "borderRadius"
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [
+  "dynamicPropertyPathList": [
     {
-      "key": "onDateSelected"
+      "key": "sourceData"
     }
   ],
-  "firstDayOfWeek": 0,
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
+  "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
   "isVisible": true,
-  "key": "er_createfrom_k",
-  "label": "Payment File Creation Date",
+  "key": "cm_cust_k",
   "labelAlignment": "left",
   "labelPosition": "Top",
+  "labelText": "Customer",
   "labelTextColor": "#E2E8F0",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
-  "leftColumn": 45,
+  "leftColumn": 37,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
   "mobileBottomRow": 9,
-  "mobileLeftColumn": 45,
-  "mobileRightColumn": 54,
+  "mobileLeftColumn": 37,
+  "mobileRightColumn": 45,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onDateSelected": "{{ storeValue('err_createFrom', CreateDateFrom.selectedDate ? moment(CreateDateFrom.selectedDate).format('YYYY-MM-DD') : null); fetch_payment_errors.run(); }}",
+  "onOptionChange": "{{ storeValue('comm_customerId', CommCustomer.selectedOptionValue); fetch_comm_errors.run(); }}",
+  "optionLabel": "label",
+  "optionValue": "value",
   "parentColumnSpace": 13.83,
-  "parentId": "er_filter_cv",
+  "parentId": "er_commfilter_cv",
   "parentRowSpace": 10,
-  "placeholderText": "mm/dd/yyyy",
+  "placeholderText": "Select",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 54,
-  "shortcuts": false,
-  "timePrecision": "minute",
+  "rightColumn": 45,
+  "serverSideFiltering": false,
+  "sourceData": "{{ getCustomers.data.map(c => ({ label: c.name, value: c.id })) }}",
   "topRow": 1,
-  "type": "DATE_PICKER_WIDGET2",
-  "version": 2,
-  "widgetId": "er_createfrom_w",
-  "widgetName": "CreateDateFrom"
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "cm_cust_w",
+  "widgetName": "CommCustomer"
 }
