@@ -56,24 +56,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 18,
   "serverSideFiltering": false,
-  "sourceData": [
-    {
-      "label": "Bounce",
-      "value": "Bounce"
-    },
-    {
-      "label": "Dropped",
-      "value": "Dropped"
-    },
-    {
-      "label": "Deferred",
-      "value": "Deferred"
-    },
-    {
-      "label": "Blocked",
-      "value": "Blocked"
-    }
-  ],
+  "sourceData": "{{ fetch_comm_statuses.data.map(r => ({ label: r.status, value: r.status })) }}",
   "topRow": 1,
   "type": "SELECT_WIDGET",
   "version": 1,
