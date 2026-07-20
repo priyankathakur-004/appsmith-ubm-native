@@ -44,7 +44,7 @@
   "mobileLeftColumn": 13,
   "mobileRightColumn": 24,
   "mobileTopRow": 1,
-  "onOptionChange": "{{ storeValue('err_types', ErrorTypeSelect.selectedOptionValues); fetch_payment_errors.run(); }}",
+  "onOptionChange": "{{ fetch_payment_errors.run(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 13.83,

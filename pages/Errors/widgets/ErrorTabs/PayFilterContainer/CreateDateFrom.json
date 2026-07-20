@@ -42,7 +42,7 @@
   "mobileRightColumn": 54,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onDateSelected": "{{ storeValue('err_createFrom', CreateDateFrom.selectedDate ? moment(CreateDateFrom.selectedDate).format('YYYY-MM-DD') : null); fetch_payment_errors.run(); }}",
+  "onDateSelected": "{{ fetch_payment_errors.run(); }}",
   "parentColumnSpace": 13.83,
   "parentId": "er_payfilter_cv",
   "parentRowSpace": 10,

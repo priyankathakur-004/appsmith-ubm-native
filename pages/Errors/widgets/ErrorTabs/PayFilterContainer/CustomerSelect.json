@@ -4,13 +4,10 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ appsmith.store.err_customerId || '' }}",
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
-    },
-    {
-      "key": "defaultOptionValue"
     },
     {
       "key": "borderRadius"
@@ -48,7 +45,7 @@
   "mobileRightColumn": 12,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ storeValue('err_customerId', CustomerSelect.selectedOptionValue); fetch_payment_errors.run(); }}",
+  "onOptionChange": "{{ fetch_payment_errors.run(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 13.83,

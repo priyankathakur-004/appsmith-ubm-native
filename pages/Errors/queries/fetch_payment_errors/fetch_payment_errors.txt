@@ -26,11 +26,11 @@ SELECT
 FROM bill_management_v2.payment_files_errors pfe
 LEFT JOIN bill_management_v2.customers_search cs ON cs.id = pfe.customer_id
 WHERE 1 = 1
-    {{ appsmith.store.err_customerId ? "AND pfe.customer_id = " + appsmith.store.err_customerId : "" }}
-    {{ (appsmith.store.err_types && appsmith.store.err_types.length) ? "AND pfe.type IN (" + appsmith.store.err_types.map(t => "'" + t + "'").join(",") + ")" : "" }}
-    {{ appsmith.store.err_payFrom ? "AND pfe.payment_date::date >= '" + appsmith.store.err_payFrom + "'" : "" }}
-    {{ appsmith.store.err_payTo ? "AND pfe.payment_date::date <= '" + appsmith.store.err_payTo + "'" : "" }}
-    {{ appsmith.store.err_createFrom ? "AND pfe.created_at::date >= '" + appsmith.store.err_createFrom + "'" : "" }}
-    {{ appsmith.store.err_createTo ? "AND pfe.created_at::date <= '" + appsmith.store.err_createTo + "'" : "" }}
+    {{ CustomerSelect.selectedOptionValue ? "AND pfe.customer_id = " + CustomerSelect.selectedOptionValue : "" }}
+    {{ (ErrorTypeSelect.selectedOptionValues && ErrorTypeSelect.selectedOptionValues.length) ? "AND pfe.type IN (" + ErrorTypeSelect.selectedOptionValues.map(t => "'" + t + "'").join(",") + ")" : "" }}
+    {{ PayDateFrom.selectedDate ? "AND pfe.payment_date::date >= '" + moment(PayDateFrom.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+    {{ PayDateTo.selectedDate ? "AND pfe.payment_date::date <= '" + moment(PayDateTo.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+    {{ CreateDateFrom.selectedDate ? "AND pfe.created_at::date >= '" + moment(CreateDateFrom.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+    {{ CreateDateTo.selectedDate ? "AND pfe.created_at::date <= '" + moment(CreateDateTo.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
 ORDER BY pfe.payment_date DESC NULLS LAST, pfe.created_at DESC NULLS LAST
 LIMIT 5000;

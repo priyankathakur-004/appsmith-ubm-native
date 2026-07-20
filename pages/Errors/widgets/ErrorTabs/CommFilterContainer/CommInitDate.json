@@ -42,7 +42,7 @@
   "mobileRightColumn": 9,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onDateSelected": "{{ storeValue('comm_initCreate', CommInitDate.selectedDate ? moment(CommInitDate.selectedDate).format('YYYY-MM-DD') : null); fetch_comm_errors.run(); }}",
+  "onDateSelected": "{{ fetch_comm_errors.run(); }}",
   "parentColumnSpace": 13.83,
   "parentId": "er_commfilter_cv",
   "parentRowSpace": 10,

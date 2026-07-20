@@ -45,7 +45,7 @@
   "mobileRightColumn": 18,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ storeValue('comm_status', CommStatus.selectedOptionValue); fetch_comm_errors.run(); }}",
+  "onOptionChange": "{{ fetch_comm_errors.run(); }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 13.83,

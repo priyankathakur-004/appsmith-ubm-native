@@ -1,12 +1,6 @@
 export default {
 	// --- Payments Error Log ---
 	clearFilters() {
-		storeValue("err_customerId", null);
-		storeValue("err_types", []);
-		storeValue("err_payFrom", null);
-		storeValue("err_payTo", null);
-		storeValue("err_createFrom", null);
-		storeValue("err_createTo", null);
 		resetWidget("CustomerSelect", true);
 		resetWidget("ErrorTypeSelect", true);
 		resetWidget("PayDateFrom", true);
@@ -27,13 +21,6 @@ export default {
 
 	// --- Communication Error Log ---
 	clearCommFilters() {
-		storeValue("comm_customerId", null);
-		storeValue("comm_status", null);
-		storeValue("comm_types", []);
-		storeValue("comm_module", null);
-		storeValue("comm_email", null);
-		storeValue("comm_initCreate", null);
-		storeValue("comm_statusChange", null);
 		resetWidget("CommCustomer", true);
 		resetWidget("CommStatus", true);
 		resetWidget("CommType", true);

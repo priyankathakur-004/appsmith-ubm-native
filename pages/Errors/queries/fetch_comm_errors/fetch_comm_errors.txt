@@ -12,12 +12,12 @@ SELECT
 FROM bill_management_v2.communication_errors ce
 LEFT JOIN bill_management_v2.customers_search cs ON cs.id = ce.customer_id
 WHERE 1 = 1
-    {{ appsmith.store.comm_customerId ? "AND ce.customer_id = " + appsmith.store.comm_customerId : "" }}
-    {{ appsmith.store.comm_status ? "AND ce.status = '" + appsmith.store.comm_status + "'" : "" }}
-    {{ (appsmith.store.comm_types && appsmith.store.comm_types.length) ? "AND ce.type IN (" + appsmith.store.comm_types.map(t => "'" + t + "'").join(",") + ")" : "" }}
-    {{ appsmith.store.comm_module ? "AND ce.module = '" + appsmith.store.comm_module + "'" : "" }}
-    {{ appsmith.store.comm_email ? "AND ce.email_address = '" + appsmith.store.comm_email + "'" : "" }}
-    {{ appsmith.store.comm_initCreate ? "AND ce.created_at::date = '" + appsmith.store.comm_initCreate + "'" : "" }}
-    {{ appsmith.store.comm_statusChange ? "AND ce.status_changed_at::date = '" + appsmith.store.comm_statusChange + "'" : "" }}
+    {{ CommCustomer.selectedOptionValue ? "AND ce.customer_id = " + CommCustomer.selectedOptionValue : "" }}
+    {{ CommStatus.selectedOptionValue ? "AND ce.status = '" + CommStatus.selectedOptionValue + "'" : "" }}
+    {{ (CommType.selectedOptionValues && CommType.selectedOptionValues.length) ? "AND ce.type IN (" + CommType.selectedOptionValues.map(t => "'" + t + "'").join(",") + ")" : "" }}
+    {{ CommModule.selectedOptionValue ? "AND ce.module = '" + CommModule.selectedOptionValue + "'" : "" }}
+    {{ CommEmail.selectedOptionValue ? "AND ce.email_address = '" + CommEmail.selectedOptionValue + "'" : "" }}
+    {{ CommInitDate.selectedDate ? "AND ce.created_at::date = '" + moment(CommInitDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+    {{ CommChangeDate.selectedDate ? "AND ce.status_changed_at::date = '" + moment(CommChangeDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
 ORDER BY ce.created_at DESC NULLS LAST
 LIMIT 5000;
