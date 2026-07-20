@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT DISTINCT status FROM (\n  SELECT CASE\n    WHEN bounce   IS NOT NULL THEN 'Bounce'\n    WHEN dropped  IS NOT NULL THEN 'Dropped'\n    WHEN blocked  IS NOT NULL THEN 'Blocked'\n    WHEN deferred IS NOT NULL THEN 'Deferred'\n  END AS status\n  FROM bill_management_v2.emails_deliveries_status\n  WHERE deleted_at IS NULL\n    AND (bounce IS NOT NULL OR dropped IS NOT NULL OR blocked IS NOT NULL OR deferred IS NOT NULL)\n) s\nWHERE status IS NOT NULL\nORDER BY status;",
+      "body": "SELECT DISTINCT status FROM (\n  SELECT CASE\n    WHEN bounce   IS NOT NULL THEN 'Bounce'\n    WHEN dropped  IS NOT NULL THEN 'Dropped'\n    WHEN blocked  IS NOT NULL THEN 'Blocked'\n    WHEN deferred IS NOT NULL THEN 'Deferred'\n    ELSE 'None'\n  END AS status\n  FROM bill_management_v2.emails_deliveries_status\n  WHERE deleted_at IS NULL\n) s\nWHERE status IS NOT NULL\nORDER BY status;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

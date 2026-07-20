@@ -1,4 +1,6 @@
--- Communication Error Log: email delivery failures from emails_deliveries_status.
+-- Communication Error Log: every email delivery row from emails_deliveries_status.
+-- Status/Type are derived from which delivery-failure timestamp is set; a row with
+-- no failure timestamp is Status 'None' / Type 'Information' (a delivered/normal email).
 SELECT id, initial_creation_date, status, type, status_change_date, customer, module, email_address
 FROM (
   SELECT
@@ -11,20 +13,21 @@ FROM (
       WHEN eds.dropped  IS NOT NULL THEN 'Dropped'
       WHEN eds.blocked  IS NOT NULL THEN 'Blocked'
       WHEN eds.deferred IS NOT NULL THEN 'Deferred'
+      ELSE 'None'
     END                                                                 AS status,
     CASE
       WHEN eds.bounce IS NOT NULL OR eds.dropped IS NOT NULL OR eds.blocked IS NOT NULL THEN 'Error'
-      ELSE 'Warning'
+      WHEN eds.deferred IS NOT NULL THEN 'Warning'
+      ELSE 'Information'
     END                                                                 AS type,
-    COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred)        AS status_change_at,
-    TO_CHAR(COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred), 'MM/DD/YYYY') AS status_change_date,
+    COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred, eds.updated_at, eds.created_at) AS status_change_at,
+    TO_CHAR(COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred, eds.updated_at, eds.created_at), 'MM/DD/YYYY') AS status_change_date,
     cs.name                                                             AS customer,
     eds.email_type                                                      AS module,
     eds.email_address                                                   AS email_address
   FROM bill_management_v2.emails_deliveries_status eds
   LEFT JOIN bill_management_v2.customers_search cs ON cs.id = eds.customer_id
   WHERE eds.deleted_at IS NULL
-    AND (eds.bounce IS NOT NULL OR eds.dropped IS NOT NULL OR eds.blocked IS NOT NULL OR eds.deferred IS NOT NULL)
 ) t
 WHERE 1 = 1
     {{ CommCustomer.selectedOptionValue ? "AND t.customer_id = " + CommCustomer.selectedOptionValue : "" }}
