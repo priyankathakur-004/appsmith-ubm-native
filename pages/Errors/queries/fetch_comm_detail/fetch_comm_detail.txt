@@ -1,20 +1,14 @@
 SELECT
     eds.id                                          AS id,
+    eds.customer_id                                 AS customer_id,
+    cs.name                                         AS customer_name,
     eds.email_address                               AS email_address,
-    eds.email_type                                  AS module,
+    eds.email_type                                  AS email_type,
     eds.email_subject                               AS email_subject,
     eds.sendgrid_tracking_id                        AS tracking_id,
-    cs.name                                         AS customer,
     TO_CHAR(eds.created_at, 'MM/DD/YYYY HH24:MI')    AS created_at,
     TO_CHAR(eds.updated_at, 'MM/DD/YYYY HH24:MI')    AS updated_at,
-    TO_CHAR(eds.processed,  'MM/DD/YYYY HH24:MI')    AS processed,
-    TO_CHAR(eds.delivered,  'MM/DD/YYYY HH24:MI')    AS delivered,
-    TO_CHAR(eds.open,       'MM/DD/YYYY HH24:MI')    AS opened,
-    TO_CHAR(eds.bounce,     'MM/DD/YYYY HH24:MI')    AS bounce,
-    TO_CHAR(eds.dropped,    'MM/DD/YYYY HH24:MI')    AS dropped,
-    TO_CHAR(eds.deferred,   'MM/DD/YYYY HH24:MI')    AS deferred,
-    TO_CHAR(eds.blocked,    'MM/DD/YYYY HH24:MI')    AS blocked,
-    TO_CHAR(COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred, eds.updated_at, eds.created_at), 'MM/DD/YYYY HH24:MI') AS status_change_date,
+    TO_CHAR(COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred, eds.delivered, eds.open, eds.processed, eds.updated_at, eds.created_at), 'MM/DD/YYYY HH24:MI') AS status_date,
     CASE
       WHEN eds.bounce   IS NOT NULL THEN 'Bounce'
       WHEN eds.dropped  IS NOT NULL THEN 'Dropped'
@@ -26,7 +20,8 @@ SELECT
       WHEN eds.bounce IS NOT NULL OR eds.dropped IS NOT NULL OR eds.blocked IS NOT NULL THEN 'Error'
       WHEN eds.deferred IS NOT NULL THEN 'Warning'
       ELSE 'Information'
-    END                                             AS type
+    END                                             AS type,
+    eds.payload -> 'sendgridEvents'                 AS sendgrid_events
 FROM bill_management_v2.emails_deliveries_status eds
 LEFT JOIN bill_management_v2.customers_search cs ON cs.id = eds.customer_id
 WHERE eds.id = {{ CommTable.model.selectedRow ? CommTable.model.selectedRow.id : 0 }}
