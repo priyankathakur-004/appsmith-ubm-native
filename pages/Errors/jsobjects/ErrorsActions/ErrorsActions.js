@@ -39,10 +39,13 @@ export default {
 		], "communication_error_log.csv");
 	},
 
-	// "More Details" row link (read-only placeholder until a detail view is defined).
-	commDetails(row) {
-		if (!row) return;
-		showAlert("Details for " + (row.email_address || "record") + " — read-only view", "info");
+	// "More Details" row link: load the full row, then open the detail modal.
+	// The custom table already did updateModel({selectedRow}) before firing this,
+	// so fetch_comm_detail's WHERE reads CommTable.model.selectedRow.id.
+	async commDetails(row) {
+		if (!row || row.id == null) return;
+		await fetch_comm_detail.run();
+		showModal("CommDetailModal");
 	},
 
 	// shared CSV builder
