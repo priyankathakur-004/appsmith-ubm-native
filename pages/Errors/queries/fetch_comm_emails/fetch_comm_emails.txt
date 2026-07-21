@@ -1,0 +1,5 @@
+SELECT DISTINCT email_address
+FROM bill_management_v2.emails_deliveries_status
+WHERE email_address IS NOT NULL AND email_address <> '' AND deleted_at IS NULL
+ORDER BY email_address
+LIMIT 1000;

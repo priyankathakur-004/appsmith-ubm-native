@@ -1,0 +1,41 @@
+-- Communication Error Log: every email delivery row from emails_deliveries_status.
+-- Status/Type are derived from which delivery-failure timestamp is set; a row with
+-- no failure timestamp is Status 'None' / Type 'Information' (a delivered/normal email).
+SELECT id, initial_creation_date, status, type, status_change_date, customer, module, email_address
+FROM (
+  SELECT
+    eds.id                                                              AS id,
+    eds.customer_id                                                     AS customer_id,
+    eds.created_at                                                      AS created_at,
+    TO_CHAR(eds.created_at, 'MM/DD/YYYY')                               AS initial_creation_date,
+    CASE
+      WHEN eds.bounce   IS NOT NULL THEN 'Bounce'
+      WHEN eds.dropped  IS NOT NULL THEN 'Dropped'
+      WHEN eds.blocked  IS NOT NULL THEN 'Blocked'
+      WHEN eds.deferred IS NOT NULL THEN 'Deferred'
+      ELSE 'None'
+    END                                                                 AS status,
+    CASE
+      WHEN eds.bounce IS NOT NULL OR eds.dropped IS NOT NULL OR eds.blocked IS NOT NULL THEN 'Error'
+      WHEN eds.deferred IS NOT NULL THEN 'Warning'
+      ELSE 'Information'
+    END                                                                 AS type,
+    COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred, eds.updated_at, eds.created_at) AS status_change_at,
+    TO_CHAR(COALESCE(eds.bounce, eds.dropped, eds.blocked, eds.deferred, eds.updated_at, eds.created_at), 'MM/DD/YYYY') AS status_change_date,
+    cs.name                                                             AS customer,
+    eds.email_type                                                      AS module,
+    eds.email_address                                                   AS email_address
+  FROM bill_management_v2.emails_deliveries_status eds
+  LEFT JOIN bill_management_v2.customers_search cs ON cs.id = eds.customer_id
+  WHERE eds.deleted_at IS NULL
+) t
+WHERE 1 = 1
+    {{ CommCustomer.selectedOptionValue ? "AND t.customer_id = " + CommCustomer.selectedOptionValue : "" }}
+    {{ CommStatus.selectedOptionValue ? "AND t.status = '" + CommStatus.selectedOptionValue + "'" : "" }}
+    {{ (CommType.selectedOptionValues && CommType.selectedOptionValues.length) ? "AND t.type IN (" + CommType.selectedOptionValues.map(x => "'" + x + "'").join(",") + ")" : "" }}
+    {{ CommModule.selectedOptionValue ? "AND t.module = '" + CommModule.selectedOptionValue + "'" : "" }}
+    {{ CommEmail.selectedOptionValue ? "AND t.email_address = '" + CommEmail.selectedOptionValue + "'" : "" }}
+    {{ CommInitDate.selectedDate ? "AND t.created_at::date = '" + moment(CommInitDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+    {{ CommChangeDate.selectedDate ? "AND t.status_change_at::date = '" + moment(CommChangeDate.selectedDate).format('YYYY-MM-DD') + "'" : "" }}
+ORDER BY t.created_at DESC NULLS LAST
+LIMIT 5000;

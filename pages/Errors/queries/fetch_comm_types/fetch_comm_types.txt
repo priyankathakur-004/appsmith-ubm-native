@@ -1,0 +1,10 @@
+SELECT DISTINCT type FROM (
+  SELECT CASE
+    WHEN bounce IS NOT NULL OR dropped IS NOT NULL OR blocked IS NOT NULL THEN 'Error'
+    WHEN deferred IS NOT NULL THEN 'Warning'
+    ELSE 'Information'
+  END AS type
+  FROM bill_management_v2.emails_deliveries_status
+  WHERE deleted_at IS NULL
+) s
+ORDER BY type;

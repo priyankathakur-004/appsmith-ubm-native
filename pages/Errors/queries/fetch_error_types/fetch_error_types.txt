@@ -1,0 +1,5 @@
+-- Distinct error/log types drive the "Error Type" filter options dynamically.
+SELECT DISTINCT type
+FROM bill_management_v2.payment_files_errors
+WHERE type IS NOT NULL AND type <> ''
+ORDER BY type;

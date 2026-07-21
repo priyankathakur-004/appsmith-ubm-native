@@ -1,0 +1,13 @@
+SELECT DISTINCT status FROM (
+  SELECT CASE
+    WHEN bounce   IS NOT NULL THEN 'Bounce'
+    WHEN dropped  IS NOT NULL THEN 'Dropped'
+    WHEN blocked  IS NOT NULL THEN 'Blocked'
+    WHEN deferred IS NOT NULL THEN 'Deferred'
+    ELSE 'None'
+  END AS status
+  FROM bill_management_v2.emails_deliveries_status
+  WHERE deleted_at IS NULL
+) s
+WHERE status IS NOT NULL
+ORDER BY status;

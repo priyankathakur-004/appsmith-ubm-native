@@ -1,0 +1,4 @@
+SELECT DISTINCT email_type AS module
+FROM bill_management_v2.emails_deliveries_status
+WHERE email_type IS NOT NULL AND email_type <> ''
+ORDER BY email_type;

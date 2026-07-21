@@ -1,0 +1,64 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "allowSelectAll": true,
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultOptionValue": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cm_type_k",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Type",
+  "labelTextColor": "#E2E8F0",
+  "labelTextSize": "0.875rem",
+  "leftColumn": 19,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 19,
+  "mobileRightColumn": 27,
+  "mobileTopRow": 1,
+  "onOptionChange": "{{ fetch_comm_errors.run(); }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 13.83,
+  "parentId": "er_commfilter_cv",
+  "parentRowSpace": 10,
+  "placeholderText": "Add another",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 27,
+  "serverSideFiltering": false,
+  "sourceData": "{{ fetch_comm_types.data.map(r => ({ label: r.type, value: r.type })) }}",
+  "topRow": 1,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "version": 1,
+  "widgetId": "cm_type_w",
+  "widgetName": "CommType"
+}
