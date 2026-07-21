@@ -1,4 +1,17 @@
 export default {
+	// Runs on page load (this function is flagged run-on-load) so every table and
+	// filter dropdown populates without relying on Appsmith's on-load inference.
+	initPage() {
+		getCustomers.run();
+		fetch_error_types.run();
+		fetch_comm_statuses.run();
+		fetch_comm_types.run();
+		fetch_comm_modules.run();
+		fetch_comm_emails.run();
+		fetch_payment_errors.run();
+		fetch_comm_errors.run();
+	},
+
 	// --- Payments Error Log ---
 	clearFilters() {
 		resetWidget("CustomerSelect", true);
