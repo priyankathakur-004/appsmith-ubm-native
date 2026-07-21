@@ -44,7 +44,7 @@
 		FROM bill_management_v2.locations AS l
 		LEFT JOIN bill_management_v2.location_detail AS lt ON l.id = lt.location_id
 		WHERE ${where.join(' AND ')}
-		ORDER BY lt.location_description COLLATE "C" NULLS LAST;
+		ORDER BY l.id;
 	`;
 })()
 }}
