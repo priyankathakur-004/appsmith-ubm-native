@@ -91,7 +91,7 @@
       "responsiveBehavior": "fill",
       "rightColumn": 231.25,
       "tabId": "tabk7r4tpv3iy",
-      "tabName": "Bill Accounting",
+      "tabName": "Billing Accounts",
       "topRow": 1,
       "type": "CANVAS_WIDGET",
       "version": 1,
@@ -400,7 +400,7 @@
       "index": 2,
       "isDuplicateLabel": false,
       "isVisible": true,
-      "label": "Bill Accounting",
+      "label": "Billing Accounts",
       "widgetId": "ebsavx6wp6"
     },
     "tabnq0csbsmle": {

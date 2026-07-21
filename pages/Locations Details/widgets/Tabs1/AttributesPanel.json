@@ -1,0 +1,58 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#0f172a",
+  "borderRadius": "0",
+  "borderWidth": "0",
+  "bottomRow": 150,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({ a: (getLocationAttributes.data && getLocationAttributes.data[0]) || {} }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "attrpanelkey1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 150,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "originalBottomRow": 150,
+  "originalTopRow": 1,
+  "parentColumnSpace": 13.83,
+  "parentId": "01qtyuersh",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#0f172a;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.wrap{display:flex;gap:60px;padding:22px 26px;height:calc(var(--appsmith-ui-height)*1px);overflow:auto;}\n.col{flex:1;min-width:0;}\n.sec{font-size:17px;font-weight:700;color:#f8fafc;margin:22px 0 10px;} .sec:first-child{margin-top:0;}\n.row{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid #1e293b;}\n.k{color:#cbd5e1;font-size:14px;} .v{color:#f1f5f9;font-size:14px;font-weight:600;text-align:right;word-break:break-word;}\n.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:7px;}\n::-webkit-scrollbar{width:10px;background:#0f172a;} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px;border:2px solid #0f172a;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\nfunction val(v){return (v==null||v===\"\")?\"-\":esc(v);}\nfunction rowsHtml(pairs){return pairs.map(function(p){return '<div class=\"row\"><div class=\"k\">'+esc(p[0])+'</div><div class=\"v\">'+p[1]+'</div></div>';}).join('');}\nfunction render(){\n  var a=(appsmith.model&&appsmith.model.a)||{};\n  var area=(a.area==null||a.area===\"\")?\"-\":(esc(a.area)+\" Sq. Ft.\");\n  var opstat=a.operating_status?(String(a.operating_status).toLowerCase()==='active'?'Operational':esc(a.operating_status)):'-';\n  var main=[[\"Description\",val(a.description)],[\"Address\",val(a.address)],[\"Postcode\",val(a.postcode)],[\"Type\",val(a.type)],[\"Area (Sq. Ft.)\",area]];\n  var addl=[[\"Site number\",val(a.site_number)],[\"City\",val(a.city)],[\"State\",val(a.state)],[\"Country\",val(a.country)],[\"Division\",val(a.division)],[\"Phone\",val(a.phone)],[\"Fax\",val(a.fax)],[\"Latitude\",val(a.latitude)],[\"Longitude\",val(a.longitude)],[\"Operating status\",opstat]];\n  var custKeys=[\"Property\",\"Premise number\",\"Xref Number\",\"Bldg#=Unit#\",\"Floor plan\",\"Unit #\",\"Year Built\",\"Location Level - GL Code\",\"Legal Entity Name\",\"Location Type\",\"Energy Efficiency Upgrade\",\"LED retrofit date\",\"Location Classification\",\"Property Name\",\"Company Code\"];\n  var cust=custKeys.map(function(k){return [k,\"-\"];});\n  var active=String(a.weather||\"\").toLowerCase()===\"active\";\n  var weatherVal='<span class=\"dot\" style=\"background:'+(active?'#22c55e':'#94a3b8')+'\"></span>'+val(a.weather);\n  var html='<div class=\"wrap\">'\n    +'<div class=\"col\"><div class=\"sec\">Main Information</div>'+rowsHtml(main)\n      +'<div class=\"sec\">Additional Information</div>'+rowsHtml(addl)+'</div>'\n    +'<div class=\"col\"><div class=\"sec\">Custom Attributes</div>'+rowsHtml(cust)\n      +'<div class=\"sec\">Weather Data</div>'+rowsHtml([[\"Location weather data\",weatherVal]])+'</div>'\n    +'</div>';\n  var root=document.getElementById(\"root\");if(!root)return;root.innerHTML=html;\n}\nappsmith.onReady(function(){render();appsmith.onModelChange(render);});\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#0f172a;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.wrap{display:flex;gap:60px;padding:22px 26px;height:calc(var(--appsmith-ui-height)*1px);overflow:auto;}\n.col{flex:1;min-width:0;}\n.sec{font-size:17px;font-weight:700;color:#f8fafc;margin:22px 0 10px;} .sec:first-child{margin-top:0;}\n.row{display:flex;justify-content:space-between;gap:20px;padding:9px 0;border-bottom:1px solid #1e293b;}\n.k{color:#cbd5e1;font-size:14px;} .v{color:#f1f5f9;font-size:14px;font-weight:600;text-align:right;word-break:break-word;}\n.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:7px;}\n::-webkit-scrollbar{width:10px;background:#0f172a;} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px;border:2px solid #0f172a;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\nfunction val(v){return (v==null||v===\"\")?\"-\":esc(v);}\nfunction rowsHtml(pairs){return pairs.map(function(p){return '<div class=\"row\"><div class=\"k\">'+esc(p[0])+'</div><div class=\"v\">'+p[1]+'</div></div>';}).join('');}\nfunction render(){\n  var a=(appsmith.model&&appsmith.model.a)||{};\n  var area=(a.area==null||a.area===\"\")?\"-\":(esc(a.area)+\" Sq. Ft.\");\n  var opstat=a.operating_status?(String(a.operating_status).toLowerCase()==='active'?'Operational':esc(a.operating_status)):'-';\n  var main=[[\"Description\",val(a.description)],[\"Address\",val(a.address)],[\"Postcode\",val(a.postcode)],[\"Type\",val(a.type)],[\"Area (Sq. Ft.)\",area]];\n  var addl=[[\"Site number\",val(a.site_number)],[\"City\",val(a.city)],[\"State\",val(a.state)],[\"Country\",val(a.country)],[\"Division\",val(a.division)],[\"Phone\",val(a.phone)],[\"Fax\",val(a.fax)],[\"Latitude\",val(a.latitude)],[\"Longitude\",val(a.longitude)],[\"Operating status\",opstat]];\n  var custKeys=[\"Property\",\"Premise number\",\"Xref Number\",\"Bldg#=Unit#\",\"Floor plan\",\"Unit #\",\"Year Built\",\"Location Level - GL Code\",\"Legal Entity Name\",\"Location Type\",\"Energy Efficiency Upgrade\",\"LED retrofit date\",\"Location Classification\",\"Property Name\",\"Company Code\"];\n  var cust=custKeys.map(function(k){return [k,\"-\"];});\n  var active=String(a.weather||\"\").toLowerCase()===\"active\";\n  var weatherVal='<span class=\"dot\" style=\"background:'+(active?'#22c55e':'#94a3b8')+'\"></span>'+val(a.weather);\n  var html='<div class=\"wrap\">'\n    +'<div class=\"col\"><div class=\"sec\">Main Information</div>'+rowsHtml(main)\n      +'<div class=\"sec\">Additional Information</div>'+rowsHtml(addl)+'</div>'\n    +'<div class=\"col\"><div class=\"sec\">Custom Attributes</div>'+rowsHtml(cust)\n      +'<div class=\"sec\">Weather Data</div>'+rowsHtml([[\"Location weather data\",weatherVal]])+'</div>'\n    +'</div>';\n  var root=document.getElementById(\"root\");if(!root)return;root.innerHTML=html;\n}\nappsmith.onReady(function(){render();appsmith.onModelChange(render);});\n"
+  },
+  "version": 1,
+  "widgetId": "attrpanel001",
+  "widgetName": "AttributesPanel"
+}

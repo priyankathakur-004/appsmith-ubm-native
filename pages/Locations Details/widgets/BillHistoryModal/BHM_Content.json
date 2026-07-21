@@ -5,7 +5,7 @@
   "borderWidth": "0",
   "bottomRow": 54,
   "boxShadow": "none",
-  "defaultModel": "{{ ({ rows: fetch_va_bill_history.data, isLoading: fetch_va_bill_history.isLoading }) }}",
+  "defaultModel": "{{ ({ rows: (appsmith.store.billHistorySource === 'ba' ? fetch_ba_bill_history.data : fetch_va_bill_history.data), isLoading: (fetch_va_bill_history.isLoading || fetch_ba_bill_history.isLoading) }) }}",
   "dynamicBindingPathList": [
     {
       "key": "theme"

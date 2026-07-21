@@ -66,5 +66,5 @@
   "version": 1,
   "widgetId": "vagrid00001",
   "widgetName": "VAGrid",
-  "onBillHistory": "{{ storeValue('vaSelected', VAGrid.model.vaSelected); fetch_va_bill_history.run(); showModal('BillHistoryModal'); }}"
+  "onBillHistory": "{{ storeValue('billHistorySource','va'); storeValue('vaSelected', VAGrid.model.vaSelected); fetch_va_bill_history.run(); showModal('BillHistoryModal'); }}"
 }

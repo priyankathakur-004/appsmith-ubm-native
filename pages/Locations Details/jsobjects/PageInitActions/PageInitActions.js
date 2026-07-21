@@ -6,5 +6,7 @@ export default {
 		getVirtualAccounts.run();
 		getTotalVirtualAccounts.run();
 		fetch_location_metrics.run();
+		getLocationAttributes.run();
+		getBillingAccounts.run();
 	}
 }

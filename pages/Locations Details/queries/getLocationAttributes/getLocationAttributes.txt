@@ -1,0 +1,21 @@
+SELECT
+    lt.location_description AS description,
+    lt.location_address     AS address,
+    lt.location_postcode    AS postcode,
+    lt.building_type        AS type,
+    lt.square_feet          AS area,
+    lt.location_number      AS site_number,
+    lt.location_city        AS city,
+    lt.location_state       AS state,
+    lt.location_country     AS country,
+    lt.location_division    AS division,
+    lt.location_phone       AS phone,
+    lt.location_fax         AS fax,
+    lt.location_latitude    AS latitude,
+    lt.location_longitude   AS longitude,
+    lt.location_status      AS operating_status,
+    CASE WHEN l.weather_setup THEN 'Active' ELSE 'Inactive' END AS weather
+FROM bill_management_v2.locations l
+LEFT JOIN bill_management_v2.location_detail lt ON l.id = lt.location_id
+WHERE l.id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+LIMIT 1;

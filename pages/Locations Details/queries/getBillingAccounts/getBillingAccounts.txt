@@ -1,0 +1,20 @@
+SELECT
+    va.account_code                                     AS "Billing Account",
+    COALESCE(v.pretty_name, va.vendor_code)             AS "Vendor",
+    va.account_code                                     AS "Billing ID",
+    STRING_AGG(DISTINCT INITCAP(va.commodity), ', ')    AS "Utility",
+    TO_CHAR(MAX(rnva.date_of_last_bill), 'MM/DD/YYYY')  AS "Last Bill",
+    COALESCE(MAX(st.account_status), 'Unknown')         AS "Open/Closed"
+FROM bill_management_v2.virtual_accounts_locations_pairing vap
+JOIN bill_management_v2.virtual_accounts va
+      ON va.id = vap.virtual_account_id
+LEFT JOIN bill_management_v2.vendors v
+      ON v.code = va.vendor_code
+LEFT JOIN bill_management_v2.reports_new_virtual_accounts rnva
+      ON rnva.virtual_account_id = va.id AND rnva.customer_id = va.customer_id
+LEFT JOIN bill_management_v2.virtual_accounts_status st
+      ON st.virtual_account_id = va.id
+WHERE vap.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+  AND va.customer_id = {{ appsmith.store.selectedCustomerId || 0 }}
+GROUP BY va.account_code, COALESCE(v.pretty_name, va.vendor_code)
+ORDER BY va.account_code;
