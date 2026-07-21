@@ -1,0 +1,65 @@
+{
+  "backgroundColor": "#1E293B",
+  "borderColor": "#1E293B",
+  "borderRadius": "0",
+  "borderWidth": "0",
+  "bottomRow": 54,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({ rows: fetch_va_bill_history.data, isLoading: fetch_va_bill_history.isLoading }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClose"
+    }
+  ],
+  "events": [
+    "onClose"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "bhmcontentk",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 54,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onClose": "{{ closeModal('BillHistoryModal') }}",
+  "originalBottomRow": 54,
+  "originalTopRow": 1,
+  "parentColumnSpace": 16.14,
+  "parentId": "bhm_canvas",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 63,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#1E293B;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.hd{display:flex;align-items:center;justify-content:space-between;padding:20px 26px 12px;}\n.hd h2{margin:0;font-size:20px;font-weight:700;color:#f8fafc;}\n.x{cursor:pointer;font-size:26px;line-height:1;color:#94a3b8;padding:0 6px;}\n.x:hover{color:#fff;}\n.tblwrap{margin:0 22px 22px;border:1px solid #334155;border-radius:8px;overflow:auto;max-height:calc(var(--appsmith-ui-height) * 1px - 110px);}\ntable{width:100%;border-collapse:collapse;font-size:14px;}\nthead th{position:sticky;top:0;background:#0f172a;color:#cbd5e1;font-weight:700;text-align:right;padding:12px 18px;white-space:nowrap;border-bottom:2px solid #334155;}\nthead th:first-child,thead th:nth-child(2){text-align:left;}\ntbody td{padding:11px 18px;text-align:right;white-space:nowrap;color:#e2e8f0;}\ntbody td:first-child,tbody td:nth-child(2){text-align:left;}\ntbody tr:nth-child(odd){background:#0f172a;}\ntbody tr:nth-child(even){background:#1E293B;}\n.link{color:#60a5fa;cursor:pointer;font-weight:600;}\n.empty{padding:26px;text-align:center;color:#64748b;font-style:italic;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){ return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\"); }\nfunction fmtCur(n){ return \"$\" + Number(n || 0).toLocaleString(\"en-US\", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }\nfunction render(){\n  var m = appsmith.model || {};\n  var rows = m.rows || [];\n  var html = '<div class=\"hd\"><h2>Bill History</h2><span class=\"x\" id=\"closeX\">\u00d7</span></div>';\n  html += '<div class=\"tblwrap\"><table><thead><tr>'\n        + '<th>Bill ID</th><th>Invoice Date</th><th>Charges</th><th>Consumption</th><th>Max Demand</th><th>Gen Consumption</th>'\n        + '</tr></thead><tbody>';\n  if (m.isLoading) {\n    html += '<tr><td colspan=\"6\" class=\"empty\">Loading\u2026</td></tr>';\n  } else if (!rows.length) {\n    html += '<tr><td colspan=\"6\" class=\"empty\">No bills found</td></tr>';\n  } else {\n    rows.forEach(function(r){\n      html += '<tr>'\n        + '<td class=\"link\">' + esc(r[\"Bill ID\"]) + '</td>'\n        + '<td>' + esc(r[\"Invoice Date\"]) + '</td>'\n        + '<td>' + fmtCur(r[\"Charges\"]) + '</td>'\n        + '<td>N/A</td><td>N/A</td><td>N/A</td>'\n        + '</tr>';\n    });\n  }\n  html += '</tbody></table></div>';\n  var root = document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML = html;\n  var x = document.getElementById(\"closeX\"); if (x) x.onclick = function(){ appsmith.triggerEvent(\"onClose\"); };\n}\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#1E293B;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.hd{display:flex;align-items:center;justify-content:space-between;padding:20px 26px 12px;}\n.hd h2{margin:0;font-size:20px;font-weight:700;color:#f8fafc;}\n.x{cursor:pointer;font-size:26px;line-height:1;color:#94a3b8;padding:0 6px;}\n.x:hover{color:#fff;}\n.tblwrap{margin:0 22px 22px;border:1px solid #334155;border-radius:8px;overflow:auto;max-height:calc(var(--appsmith-ui-height) * 1px - 110px);}\ntable{width:100%;border-collapse:collapse;font-size:14px;}\nthead th{position:sticky;top:0;background:#0f172a;color:#cbd5e1;font-weight:700;text-align:right;padding:12px 18px;white-space:nowrap;border-bottom:2px solid #334155;}\nthead th:first-child,thead th:nth-child(2){text-align:left;}\ntbody td{padding:11px 18px;text-align:right;white-space:nowrap;color:#e2e8f0;}\ntbody td:first-child,tbody td:nth-child(2){text-align:left;}\ntbody tr:nth-child(odd){background:#0f172a;}\ntbody tr:nth-child(even){background:#1E293B;}\n.link{color:#60a5fa;cursor:pointer;font-weight:600;}\n.empty{padding:26px;text-align:center;color:#64748b;font-style:italic;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){ return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\"); }\nfunction fmtCur(n){ return \"$\" + Number(n || 0).toLocaleString(\"en-US\", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }\nfunction render(){\n  var m = appsmith.model || {};\n  var rows = m.rows || [];\n  var html = '<div class=\"hd\"><h2>Bill History</h2><span class=\"x\" id=\"closeX\">\u00d7</span></div>';\n  html += '<div class=\"tblwrap\"><table><thead><tr>'\n        + '<th>Bill ID</th><th>Invoice Date</th><th>Charges</th><th>Consumption</th><th>Max Demand</th><th>Gen Consumption</th>'\n        + '</tr></thead><tbody>';\n  if (m.isLoading) {\n    html += '<tr><td colspan=\"6\" class=\"empty\">Loading\u2026</td></tr>';\n  } else if (!rows.length) {\n    html += '<tr><td colspan=\"6\" class=\"empty\">No bills found</td></tr>';\n  } else {\n    rows.forEach(function(r){\n      html += '<tr>'\n        + '<td class=\"link\">' + esc(r[\"Bill ID\"]) + '</td>'\n        + '<td>' + esc(r[\"Invoice Date\"]) + '</td>'\n        + '<td>' + fmtCur(r[\"Charges\"]) + '</td>'\n        + '<td>N/A</td><td>N/A</td><td>N/A</td>'\n        + '</tr>';\n    });\n  }\n  html += '</tbody></table></div>';\n  var root = document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML = html;\n  var x = document.getElementById(\"closeX\"); if (x) x.onclick = function(){ appsmith.triggerEvent(\"onClose\"); };\n}\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "version": 1,
+  "widgetId": "bhmcontent01",
+  "widgetName": "BHM_Content"
+}
