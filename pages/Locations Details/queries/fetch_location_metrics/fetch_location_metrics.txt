@@ -1,0 +1,11 @@
+SELECT
+    DATE_TRUNC('month', time_period)::date      AS month,
+    utility_type,
+    SUM(COALESCE(total_charges_consumption, 0)) AS distribution_cost,
+    SUM(COALESCE(total_charges_generation, 0))  AS supply_cost,
+    SUM(COALESCE(total_consumption, 0))         AS consumption
+FROM bill_management_v2.analytics_monthly_feed
+WHERE customer_id = {{ appsmith.store.selectedCustomerId }}
+  AND location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+GROUP BY DATE_TRUNC('month', time_period)::date, utility_type
+ORDER BY month DESC, utility_type;
