@@ -250,11 +250,7 @@
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
-  "dynamicTriggerPathList": [
-    {
-      "key": "onTabSelected"
-    }
-  ],
+  "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "stretch",
   "isCanvas": true,
   "isLoading": false,
@@ -269,7 +265,6 @@
   "mobileRightColumn": 16,
   "mobileTopRow": 5,
   "needsErrorInfo": false,
-  "onTabSelected": "{{ContainerUtils.Tabs1onTabSelected();}}",
   "originalBottomRow": 131,
   "originalTopRow": 8,
   "parentColumnSpace": 14.453125,
