@@ -53,13 +53,13 @@
   "containerStyle": "card",
   "dynamicBindingPathList": [
     {
+      "key": "isVisible"
+    },
+    {
       "key": "borderRadius"
     },
     {
       "key": "boxShadow"
-    },
-    {
-      "key": "isVisible"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",

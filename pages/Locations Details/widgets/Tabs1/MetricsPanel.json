@@ -8,13 +8,10 @@
   "defaultModel": "{{ ({ rows: fetch_location_metrics.data, isLoading: fetch_location_metrics.isLoading }) }}",
   "dynamicBindingPathList": [
     {
-      "key": "theme"
+      "key": "defaultModel"
     },
     {
       "key": "borderRadius"
-    },
-    {
-      "key": "defaultModel"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -33,6 +30,8 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
+  "originalBottomRow": 64,
+  "originalTopRow": 1,
   "parentColumnSpace": 13.83,
   "parentId": "1p4hzkyga7",
   "parentRowSpace": 10,
@@ -55,7 +54,5 @@
   },
   "version": 1,
   "widgetId": "wxn8d6mdf5",
-  "widgetName": "MetricsPanel",
-  "originalTopRow": 1,
-  "originalBottomRow": 64
+  "widgetName": "MetricsPanel"
 }

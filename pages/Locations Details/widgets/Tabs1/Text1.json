@@ -1,19 +1,13 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 30,
+  "bottomRow": 29,
   "dynamicBindingPathList": [
     {
-      "key": "truncateButtonColor"
+      "key": "text"
     },
     {
       "key": "fontFamily"
-    },
-    {
-      "key": "borderRadius"
-    },
-    {
-      "key": "text"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -33,7 +27,7 @@
   "mobileRightColumn": 17,
   "mobileTopRow": 0,
   "needsErrorInfo": false,
-  "originalBottomRow": 30,
+  "originalBottomRow": 29,
   "originalTopRow": 25,
   "overflow": "NONE",
   "parentColumnSpace": 14.140625,
@@ -45,7 +39,7 @@
   "shouldTruncate": false,
   "text": "Virtual Accounts total: {{ (getVirtualAccounts.data && getVirtualAccounts.data.length) || 0 }}",
   "textAlign": "LEFT",
-  "textColor": "#231F20",
+  "textColor": "#ffffffff",
   "topRow": 25,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

@@ -7,10 +7,10 @@
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
-      "key": "accentColor"
+      "key": "borderRadius"
     },
     {
-      "key": "borderRadius"
+      "key": "accentColor"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -36,6 +36,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Display Only",
+  "labelTextColor": "#f1f5f9",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 0,
@@ -63,6 +64,5 @@
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
   "widgetId": "vqyb1qifii",
-  "widgetName": "buildingTypeFilterCopy1",
-  "labelTextColor": "#f1f5f9"
+  "widgetName": "buildingTypeFilterCopy1"
 }

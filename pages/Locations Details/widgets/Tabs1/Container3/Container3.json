@@ -3,7 +3,7 @@
   "backgroundColor": "#1E293B",
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "borderWidth": "1",
+  "borderWidth": "0",
   "bottomRow": 13,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
@@ -60,6 +60,7 @@
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
   "flexVerticalAlignment": "stretch",
   "isCanvas": true,
   "isLoading": false,
