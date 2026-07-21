@@ -45,7 +45,7 @@
   "needsErrorInfo": false,
   "onTextChanged": "{{getLocationLists.run()}}",
   "parentColumnSpace": 4.990234375,
-  "parentId": "cifrqfr4qw",
+  "parentId": "rv38hnot2k",
   "parentRowSpace": 10,
   "placeholderText": "Search for Vendor, Billing ID, Service Account ID, Meter ID and Utility",
   "renderMode": "CANVAS",
@@ -56,6 +56,6 @@
   "topRow": 2,
   "type": "INPUT_WIDGET_V2",
   "version": 2,
-  "widgetId": "8zm5op1pv4",
+  "widgetId": "ubrgjhyhcs",
   "widgetName": "SearchInput"
 }

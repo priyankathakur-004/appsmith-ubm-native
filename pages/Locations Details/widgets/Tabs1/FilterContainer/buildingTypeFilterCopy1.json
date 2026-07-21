@@ -51,7 +51,7 @@
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 13.828125,
-  "parentId": "tpufhz2zfl",
+  "parentId": "qsq2so060n",
   "parentRowSpace": 10,
   "placeholderText": "Select option(s)",
   "renderMode": "CANVAS",
@@ -62,6 +62,6 @@
   "topRow": 0,
   "type": "MULTI_SELECT_WIDGET_V2",
   "version": 1,
-  "widgetId": "y05y8lfosd",
+  "widgetId": "vqyb1qifii",
   "widgetName": "buildingTypeFilterCopy1"
 }

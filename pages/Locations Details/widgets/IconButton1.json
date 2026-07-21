@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 4,
+  "bottomRow": 5,
   "boxShadow": "none",
   "buttonColor": "#f4f4f5",
   "buttonVariant": "TERTIARY",
@@ -29,14 +29,14 @@
   "needsErrorInfo": false,
   "onClick": "{{navigateTo('Locations', {}, 'SAME_WINDOW');}}",
   "parentColumnSpace": 9.398193359375,
-  "parentId": "7b1jk7tuq2",
+  "parentId": "0",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "responsiveBehavior": "hug",
-  "rightColumn": 4,
-  "topRow": 0,
+  "rightColumn": 2,
+  "topRow": 1,
   "type": "ICON_BUTTON_WIDGET",
   "version": 1,
-  "widgetId": "eabgnu7nev",
+  "widgetId": "klv1j8chpj",
   "widgetName": "IconButton1"
 }

@@ -29,7 +29,7 @@
     ],
     "name": "fetch_ee_energy",
     "pageId": "Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
