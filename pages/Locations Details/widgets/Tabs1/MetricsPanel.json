@@ -3,7 +3,7 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 64,
+  "bottomRow": 114,
   "boxShadow": "none",
   "defaultModel": "{{ ({ rows: fetch_location_metrics.data, isLoading: fetch_location_metrics.isLoading }) }}",
   "dynamicBindingPathList": [

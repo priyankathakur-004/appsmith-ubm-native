@@ -29,7 +29,7 @@
     ],
     "name": "fetch_ba_bill_history",
     "pageId": "Locations Details",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }

@@ -9,7 +9,7 @@
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 560,
+      "bottomRow": 810,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -30,7 +30,7 @@
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
-      "minHeight": 559,
+      "minHeight": 816,
       "minWidth": 450,
       "mobileBottomRow": 240,
       "mobileLeftColumn": 0,
@@ -64,7 +64,7 @@
       "key": "onClose"
     }
   ],
-  "height": 560,
+  "height": 816,
   "isCanvas": true,
   "isLoading": false,
   "key": "vadm_modal_k",
@@ -89,5 +89,5 @@
   "version": 2,
   "widgetId": "vadm_modal",
   "widgetName": "VADetailsModal",
-  "width": 1100
+  "width": 1520
 }
