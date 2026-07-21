@@ -1,16 +1,24 @@
-SELECT
-  va.id             AS "id",
-  v.pretty_name     AS "Vendor",
-  va.account_code   AS "Billing ID",
-  va.client_account AS "Service Account",
-  va.meter_serial   AS "Meter ID",
-  va.commodity      AS "Utility",
-  va.bill_type      AS "Type",
-  va.last_bill      AS "Last Bill",
-  va.vendor_code    AS "Vendor Code"
-FROM bill_management_v2.virtual_accounts_locations AS va
-LEFT JOIN bill_management_v2.vendors AS v
-  ON v.code = va.vendor_code
-WHERE va.customer_id = {{ appsmith.store.selectedCustomerId }}
-  AND va.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
-ORDER BY va.id;
+SELECT DISTINCT ON (va.id)
+    va.id                                          AS "id",
+    COALESCE(v.pretty_name, va.vendor_code)        AS "Vendor",
+    va.account_code                                AS "Billing ID",
+    va.client_account                              AS "Service Account",
+    va.meter_serial                                AS "Meter ID",
+    va.commodity                                   AS "Utility",
+    va.bill_type                                   AS "Type",
+    TO_CHAR(rnva.date_of_last_bill, 'MM/DD/YYYY')  AS "Last Bill",
+    COALESCE(st.account_status, 'Unknown')         AS "Open/Closed",
+    COALESCE(va.pair_status::text, '')             AS "Pair",
+    va.vendor_code                                 AS "Vendor Code"
+FROM bill_management_v2.virtual_accounts_locations_pairing vap
+JOIN bill_management_v2.virtual_accounts va
+      ON va.id = vap.virtual_account_id
+LEFT JOIN bill_management_v2.vendors v
+      ON v.code = va.vendor_code
+LEFT JOIN bill_management_v2.reports_new_virtual_accounts rnva
+      ON rnva.virtual_account_id = va.id AND rnva.customer_id = va.customer_id
+LEFT JOIN bill_management_v2.virtual_accounts_status st
+      ON st.virtual_account_id = va.id
+WHERE vap.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+  AND va.customer_id = {{ appsmith.store.selectedCustomerId || 0 }}
+ORDER BY va.id, rnva.date_of_last_bill DESC NULLS LAST;
