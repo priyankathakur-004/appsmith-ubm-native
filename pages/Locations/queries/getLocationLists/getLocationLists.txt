@@ -4,9 +4,7 @@
 	const searchText = SearchInput.text;
 	const buildingTypes = buildingTypeFilter.selectedOptionValues;
 	const city = cityFilter.selectedOptionValues;
-	const state = stateFilter.selectedOptionValues
-	const pageSize = locations.pageSize;
-	const pageNo = locations.pageNo;
+	const state = stateFilter.selectedOptionValues;
 
 	let query = `
       SELECT l.id,
@@ -55,7 +53,7 @@
 		query += ` AND lt.location_state IN (${states})`;
 	}
 
-	query += ` ORDER BY l.id LIMIT ${pageSize} OFFSET ${(pageNo - 1) * pageSize}`;
+	query += ` ORDER BY l.id`;
 
 	return query;
 })()

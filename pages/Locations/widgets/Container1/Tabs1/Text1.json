@@ -43,7 +43,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 11,
   "shouldTruncate": false,
-  "text": "Locations total: {{ getTotalLocations.data[0].count\n}}",
+  "text": "Locations total: {{ (getLocationLists.data && getLocationLists.data.length) || 0 }}",
   "textAlign": "LEFT",
   "textColor": "#ffffff",
   "topRow": 25,

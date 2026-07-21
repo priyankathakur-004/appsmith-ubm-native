@@ -1,0 +1,52 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 6,
+  "topRow": 1,
+  "leftColumn": 31,
+  "rightColumn": 41,
+  "boxShadow": "none",
+  "buttonColor": "#3b82f6",
+  "buttonVariant": "TERTIARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "createlockey1",
+  "minWidth": 120,
+  "mobileBottomRow": 6,
+  "mobileLeftColumn": 31,
+  "mobileRightColumn": 41,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onClick": "{{ showAlert('Create Location is not wired up yet.', 'info') }}",
+  "parentColumnSpace": 14.453125,
+  "parentId": "zitgpb54bt",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "text": "Create Location",
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "createlocbtn1",
+  "widgetName": "CreateLocationBtn"
+}
