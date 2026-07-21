@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n  va.id             AS \"id\",\n  v.pretty_name     AS \"Vendor\",\n  va.account_code   AS \"Billing ID\",\n  va.client_account AS \"Service Account\",\n  va.meter_serial   AS \"Meter ID\",\n  va.commodity      AS \"Utility\",\n  va.bill_type      AS \"Type\",\n  va.last_bill      AS \"Last Bill\",\n  va.pair_status    AS \"Pair\",\n  va.vendor_code    AS \"Vendor Code\"\nFROM bill_management_v2.virtual_accounts_locations AS va\nLEFT JOIN bill_management_v2.vendors AS v\n  ON v.code = va.vendor_code\nWHERE va.customer_id = {{ appsmith.store.selectedCustomerId }}\n  AND va.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}\nORDER BY va.id;\n",
+      "body": "SELECT\n  va.id             AS \"id\",\n  v.pretty_name     AS \"Vendor\",\n  va.account_code   AS \"Billing ID\",\n  va.client_account AS \"Service Account\",\n  va.meter_serial   AS \"Meter ID\",\n  va.commodity      AS \"Utility\",\n  va.bill_type      AS \"Type\",\n  va.last_bill      AS \"Last Bill\",\n  va.vendor_code    AS \"Vendor Code\"\nFROM bill_management_v2.virtual_accounts_locations AS va\nLEFT JOIN bill_management_v2.vendors AS v\n  ON v.code = va.vendor_code\nWHERE va.customer_id = {{ appsmith.store.selectedCustomerId }}\n  AND va.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}\nORDER BY va.id;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

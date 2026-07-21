@@ -7,7 +7,6 @@ SELECT
   va.commodity      AS "Utility",
   va.bill_type      AS "Type",
   va.last_bill      AS "Last Bill",
-  va.pair_status    AS "Pair",
   va.vendor_code    AS "Vendor Code"
 FROM bill_management_v2.virtual_accounts_locations AS va
 LEFT JOIN bill_management_v2.vendors AS v
