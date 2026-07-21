@@ -26,6 +26,6 @@
     "name": "fetch_comm_statuses",
     "pageId": "Errors",
     "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": false
+    "userSetOnLoad": true
   }
 }

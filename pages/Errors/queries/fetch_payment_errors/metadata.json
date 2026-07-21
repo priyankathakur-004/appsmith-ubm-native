@@ -30,6 +30,6 @@
     "name": "fetch_payment_errors",
     "pageId": "Errors",
     "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": false
+    "userSetOnLoad": true
   }
 }

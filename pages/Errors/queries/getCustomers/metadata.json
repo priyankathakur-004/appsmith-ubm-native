@@ -26,6 +26,6 @@
     "name": "getCustomers",
     "pageId": "Errors",
     "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": false
+    "userSetOnLoad": true
   }
 }

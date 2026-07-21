@@ -30,6 +30,6 @@
     "name": "fetch_comm_errors",
     "pageId": "Errors",
     "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": false
+    "userSetOnLoad": true
   }
 }
