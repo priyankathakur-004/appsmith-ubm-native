@@ -43,7 +43,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 11,
   "shouldTruncate": false,
-  "text": "Virtual Accounts total: {{ getTotalVirtualAccounts.data[0].count\n}}",
+  "text": "Virtual Accounts total: {{ (getVirtualAccounts.data && getVirtualAccounts.data.length) || 0 }}",
   "textAlign": "LEFT",
   "textColor": "#231F20",
   "topRow": 25,

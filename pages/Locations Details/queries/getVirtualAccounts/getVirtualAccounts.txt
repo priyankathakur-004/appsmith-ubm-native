@@ -1,13 +1,23 @@
-SELECT 
-  v.pretty_name AS "Vendor",
-  va.account_code AS "Billing ID",
-  va.client_account AS "Service Account",
-  va.meter_serial AS "Meter ID",
-  va.commodity AS "Utility",
-  va.bill_type AS "Type",
-	va.last_bill AS "Last Bill"
+SELECT
+  va.id                 AS "id",
+  v.pretty_name         AS "Vendor",
+  va.account_code       AS "Billing ID",
+  va.client_account     AS "Service Account",
+  va.meter_serial       AS "Meter ID",
+  va.commodity          AS "Utility",
+  va.bill_type          AS "Type",
+  va.last_bill          AS "Last Bill",
+  CASE
+    WHEN va.account_status ILIKE 'open'   THEN 'Open'
+    WHEN va.account_status ILIKE 'closed' THEN 'Closed'
+    ELSE COALESCE(NULLIF(va.account_status, ''), 'Unknown')
+  END                   AS "Open/Closed",
+  va.pair_status        AS "Pair",
+  va.vendor_code        AS "Vendor Code",
+  va.meter_id           AS "Meter"
 FROM bill_management_v2.virtual_accounts_locations AS va
-LEFT JOIN bill_management_v2.vendors AS v 
+LEFT JOIN bill_management_v2.vendors AS v
   ON v.code = va.vendor_code
-WHERE va.customer_id = {{ appsmith.store.selectedCustomerId }}  AND va.location_id = {{ JSON.parse(appsmith.URL.queryParams.rowData).id }}
-ORDER BY va.id LIMIT {{ pageSize }} OFFSET {{ (pageNo - 1) * pageSize }};
+WHERE va.customer_id = {{ appsmith.store.selectedCustomerId }}
+  AND va.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+ORDER BY va.id;
