@@ -324,7 +324,7 @@
       "widgetName": "Canvas10"
     }
   ],
-  "defaultTab": "Location list",
+  "defaultTab": "Metrics",
   "dynamicBindingPathList": [
     {
       "key": "backgroundColor"
