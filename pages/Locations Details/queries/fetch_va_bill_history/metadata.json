@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT\n    li.bill_id                                AS \"Bill ID\",\n    TO_CHAR(li.statement_date, 'MM/DD/YYYY')  AS \"Invoice Date\",\n    SUM(li.charge)                            AS \"Charges\"\nFROM bill_management_v2.analytics_billing_line_items li\nWHERE li.virtual_account_id = {{ (appsmith.store.vaSelected && appsmith.store.vaSelected.id) || 0 }}\n  AND li.customer_id = {{ appsmith.store.selectedCustomerId }}\n  AND li.bill_type = 'live'\n  AND li.workflow_state = 'processed'\nGROUP BY li.bill_id, li.statement_date\nORDER BY li.statement_date DESC;\n",
+      "body": "SELECT\n    li.bill_id                                AS \"Bill ID\",\n    TO_CHAR(li.statement_date, 'MM/DD/YYYY')  AS \"Invoice Date\",\n    SUM(li.charge)                            AS \"Charges\"\nFROM bill_management_v2.analytics_billing_line_items li\nWHERE li.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}\n  AND li.customer_id = {{ appsmith.store.selectedCustomerId }}\n  AND LOWER(li.commodity) = LOWER('{{ (appsmith.store.vaSelected && appsmith.store.vaSelected.Utility) || '' }}')\n  AND li.bill_type = 'live'\n  AND li.workflow_state = 'processed'\nGROUP BY li.bill_id, li.statement_date\nORDER BY li.statement_date DESC;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
