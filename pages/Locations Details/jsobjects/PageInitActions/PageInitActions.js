@@ -9,5 +9,6 @@ export default {
 		getLocationAttributes.run();
 		getBillingAccounts.run();
 		fetch_monthly_view.run();
+		fetch_location_monthly_attributes.run();
 	}
 }

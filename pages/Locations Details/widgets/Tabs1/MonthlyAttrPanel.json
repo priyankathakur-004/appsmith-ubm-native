@@ -1,0 +1,58 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#0f172a",
+  "borderRadius": "0",
+  "borderWidth": "0",
+  "bottomRow": 150,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({ rows: fetch_location_monthly_attributes.data, isLoading: fetch_location_monthly_attributes.isLoading }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "madpanelkey1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 150,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "originalBottomRow": 150,
+  "originalTopRow": 1,
+  "parentColumnSpace": 13.83,
+  "parentId": "teeenv2g0i",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#0f172a;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.wrap{height:calc(var(--appsmith-ui-height)*1px);overflow:auto;padding:18px 22px;}\n.filter{margin-bottom:18px;}\n.filter label{display:block;font-size:13px;color:#60a5fa;font-weight:600;margin-bottom:6px;}\n.filter select{background:#1e293b;color:#fff;border:1px solid #334155;border-radius:6px;padding:8px 12px;font-size:14px;min-width:220px;outline:none;cursor:pointer;}\n.filter select:focus{border-color:#3b82f6;}\n.tblwrap{border:1px solid #1e293b;border-radius:8px;overflow:auto;}\ntable{width:100%;border-collapse:collapse;font-size:14px;}\nthead th{position:sticky;top:0;background:#0f172a;color:#cbd5e1;font-weight:700;text-align:left;padding:13px 18px;white-space:nowrap;border-bottom:2px solid #1e293b;}\nthead th.r{text-align:right;}\ntbody td{padding:12px 18px;color:#e2e8f0;white-space:nowrap;} tbody td.r{text-align:right;}\ntbody tr:nth-child(odd){background:#1e293b;}\n.empty{padding:44px 20px;text-align:center;color:#94a3b8;}\n.empty .big{font-size:15px;color:#cbd5e1;margin-bottom:6px;}\n.empty .sm{font-size:13px;color:#64748b;}\n::-webkit-scrollbar{width:10px;background:#0f172a;} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px;border:2px solid #0f172a;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\nvar selAttr=\"ALL\";\nfunction render(){\n  var m=appsmith.model||{}; var all=m.rows||[];\n  var aset={}; all.forEach(function(r){ if(r.Attribute) aset[r.Attribute]=true; });\n  var attrs=Object.keys(aset).sort();\n  if(selAttr!==\"ALL\" && attrs.indexOf(selAttr)<0) selAttr=\"ALL\";\n  var rows=all.filter(function(r){ return selAttr===\"ALL\" || r.Attribute===selAttr; });\n  rows.sort(function(a,b){ var c=String(a.Attribute||\"\").localeCompare(String(b.Attribute||\"\")); return c!==0?c:String(b._sort||\"\").localeCompare(String(a._sort||\"\")); });\n\n  var opts='<option value=\"ALL\"'+(selAttr===\"ALL\"?\" selected\":\"\")+'>All Attributes</option>'\n    + attrs.map(function(a){ return '<option value=\"'+esc(a)+'\"'+(selAttr===a?\" selected\":\"\")+'>'+esc(a)+'</option>'; }).join('');\n  var html='<div class=\"filter\"><label>Attribute</label><select id=\"attrSel\">'+opts+'</select></div>';\n\n  if(m.isLoading){ html+='<div class=\"empty\"><div class=\"big\">Loading\u2026</div></div>'; }\n  else if(!all.length){\n    html+='<div class=\"empty\"><div class=\"big\">The Location needs to have Attributes in order to allow for Production Data values to be entered.</div><div class=\"sm\">No monthly attribute data for this location.</div></div>';\n  } else if(!rows.length){\n    html+='<div class=\"empty\"><div class=\"big\">No data for the selected attribute.</div></div>';\n  } else {\n    html+='<div class=\"tblwrap\"><table><thead><tr><th>Attribute</th><th>Month</th><th class=\"r\">Value</th></tr></thead><tbody>';\n    rows.forEach(function(r){\n      html+='<tr><td>'+esc(r.Attribute)+'</td><td>'+esc(r.Month)+'</td><td class=\"r\">'+esc(r.Value)+'</td></tr>';\n    });\n    html+='</tbody></table></div>';\n  }\n  var root=document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML='<div class=\"wrap\">'+html+'</div>';\n  var sel=document.getElementById(\"attrSel\");\n  if(sel) sel.onchange=function(e){ selAttr=e.target.value; render(); };\n}\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#0f172a;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.wrap{height:calc(var(--appsmith-ui-height)*1px);overflow:auto;padding:18px 22px;}\n.filter{margin-bottom:18px;}\n.filter label{display:block;font-size:13px;color:#60a5fa;font-weight:600;margin-bottom:6px;}\n.filter select{background:#1e293b;color:#fff;border:1px solid #334155;border-radius:6px;padding:8px 12px;font-size:14px;min-width:220px;outline:none;cursor:pointer;}\n.filter select:focus{border-color:#3b82f6;}\n.tblwrap{border:1px solid #1e293b;border-radius:8px;overflow:auto;}\ntable{width:100%;border-collapse:collapse;font-size:14px;}\nthead th{position:sticky;top:0;background:#0f172a;color:#cbd5e1;font-weight:700;text-align:left;padding:13px 18px;white-space:nowrap;border-bottom:2px solid #1e293b;}\nthead th.r{text-align:right;}\ntbody td{padding:12px 18px;color:#e2e8f0;white-space:nowrap;} tbody td.r{text-align:right;}\ntbody tr:nth-child(odd){background:#1e293b;}\n.empty{padding:44px 20px;text-align:center;color:#94a3b8;}\n.empty .big{font-size:15px;color:#cbd5e1;margin-bottom:6px;}\n.empty .sm{font-size:13px;color:#64748b;}\n::-webkit-scrollbar{width:10px;background:#0f172a;} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px;border:2px solid #0f172a;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\nvar selAttr=\"ALL\";\nfunction render(){\n  var m=appsmith.model||{}; var all=m.rows||[];\n  var aset={}; all.forEach(function(r){ if(r.Attribute) aset[r.Attribute]=true; });\n  var attrs=Object.keys(aset).sort();\n  if(selAttr!==\"ALL\" && attrs.indexOf(selAttr)<0) selAttr=\"ALL\";\n  var rows=all.filter(function(r){ return selAttr===\"ALL\" || r.Attribute===selAttr; });\n  rows.sort(function(a,b){ var c=String(a.Attribute||\"\").localeCompare(String(b.Attribute||\"\")); return c!==0?c:String(b._sort||\"\").localeCompare(String(a._sort||\"\")); });\n\n  var opts='<option value=\"ALL\"'+(selAttr===\"ALL\"?\" selected\":\"\")+'>All Attributes</option>'\n    + attrs.map(function(a){ return '<option value=\"'+esc(a)+'\"'+(selAttr===a?\" selected\":\"\")+'>'+esc(a)+'</option>'; }).join('');\n  var html='<div class=\"filter\"><label>Attribute</label><select id=\"attrSel\">'+opts+'</select></div>';\n\n  if(m.isLoading){ html+='<div class=\"empty\"><div class=\"big\">Loading\u2026</div></div>'; }\n  else if(!all.length){\n    html+='<div class=\"empty\"><div class=\"big\">The Location needs to have Attributes in order to allow for Production Data values to be entered.</div><div class=\"sm\">No monthly attribute data for this location.</div></div>';\n  } else if(!rows.length){\n    html+='<div class=\"empty\"><div class=\"big\">No data for the selected attribute.</div></div>';\n  } else {\n    html+='<div class=\"tblwrap\"><table><thead><tr><th>Attribute</th><th>Month</th><th class=\"r\">Value</th></tr></thead><tbody>';\n    rows.forEach(function(r){\n      html+='<tr><td>'+esc(r.Attribute)+'</td><td>'+esc(r.Month)+'</td><td class=\"r\">'+esc(r.Value)+'</td></tr>';\n    });\n    html+='</tbody></table></div>';\n  }\n  var root=document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML='<div class=\"wrap\">'+html+'</div>';\n  var sel=document.getElementById(\"attrSel\");\n  if(sel) sel.onchange=function(e){ selAttr=e.target.value; render(); };\n}\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "version": 1,
+  "widgetId": "madpanel0001",
+  "widgetName": "MonthlyAttrPanel"
+}
