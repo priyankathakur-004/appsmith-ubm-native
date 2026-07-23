@@ -9,7 +9,7 @@
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 440,
+      "bottomRow": 590,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -30,7 +30,7 @@
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
-      "minHeight": 440,
+      "minHeight": 592,
       "minWidth": 450,
       "mobileBottomRow": 240,
       "mobileLeftColumn": 0,
@@ -60,7 +60,7 @@
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
-  "height": 440,
+  "height": 592,
   "isCanvas": true,
   "isLoading": false,
   "key": "aym_modal_k",
@@ -84,5 +84,5 @@
   "version": 2,
   "widgetId": "aym_modal",
   "widgetName": "AddYearMonthsModal",
-  "width": 620
+  "width": 1004
 }
