@@ -1,0 +1,61 @@
+{
+  "backgroundColor": "#1E293B",
+  "borderColor": "#1E293B",
+  "borderRadius": "0",
+  "borderWidth": "0",
+  "bottomRow": 78,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({ detail: appsmith.store.mvSelected }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClose"
+    }
+  ],
+  "events": [
+    "onClose"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "cvmcontentk0",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 78,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "onClose": "{{ closeModal('CalcValuesModal'); storeValue('mvSelected', null); }}",
+  "originalBottomRow": 78,
+  "originalTopRow": 0,
+  "parentColumnSpace": 9.34,
+  "parentId": "cvm_canvas",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#1e293b;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.card{padding:22px 26px 20px;height:calc(var(--appsmith-ui-height)*1px);display:flex;flex-direction:column;}\n.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}\n.mh h3{margin:0;font-size:22px;font-weight:800;color:#f1f5f9;}\n.mh .x{cursor:pointer;color:#94a3b8;font-size:22px;line-height:1;}\n.mh .x:hover{color:#e2e8f0;}\n.sub{color:#93c5fd;font-size:14px;font-weight:600;margin:0 0 14px;}\n.tblwrap{flex:1 1 auto;min-height:0;overflow:auto;border:1px solid #334155;border-radius:8px;}\ntable{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;}\nthead th{position:sticky;top:0;background:#1e293b;text-align:left;font-weight:700;color:#cbd5e1;padding:12px 16px;border-bottom:1px solid #334155;z-index:1;}\nthead th.r,tbody td.r{text-align:left;}\ntbody td{padding:12px 16px;color:#e2e8f0;}\ntbody td.name{color:#f1f5f9;}\ntbody tr:nth-child(odd) td{background:#0f172a;}\ntbody tr:nth-child(even) td{background:transparent;}\n.acts{display:flex;justify-content:center;padding-top:18px;flex:0 0 auto;}\n.btn{padding:11px 40px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #2563eb;background:#2563eb;color:#fff;}\n.btn:hover{background:#1d4ed8;}\n.empty{padding:40px;text-align:center;color:#64748b;font-style:italic;}\n::-webkit-scrollbar{width:10px;height:10px;background:#1e293b;} ::-webkit-scrollbar-thumb{background:#334155;border-radius:4px;border:2px solid #1e293b;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>\n",
+    "js": "function esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\n\nfunction render(){\n  var m=appsmith.model||{}; var d=m.detail||{};\n  var rows=d.rows||[];\n  var head='<div class=\"mh\"><h3>Calculated Values</h3><span class=\"x\" id=\"x\">✕</span></div>';\n  var sub='<p class=\"sub\">#'+esc(d.billId||\"\")+' '+esc(d.vendor||\"\")+(d.endDate?('('+esc(d.endDate)+')'):'')+'</p>';\n  var body;\n  if(!rows.length){ body='<div class=\"empty\">No details available.</div>'; }\n  else {\n    body='<div class=\"tblwrap\"><table><thead><tr><th>Name</th><th>Bill Values</th><th>Pro-rated Values</th></tr></thead><tbody>';\n    rows.forEach(function(r){\n      body+='<tr><td class=\"name\">'+esc(r.name)+'</td><td>'+esc(r.bill)+'</td><td>'+esc(r.pro)+'</td></tr>';\n    });\n    body+='</tbody></table></div>';\n  }\n  var root=document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML='<div class=\"card\">'+head+sub+body+'<div class=\"acts\"><button class=\"btn\" id=\"close\">Close</button></div></div>';\n  var x=document.getElementById(\"x\"); if(x) x.onclick=function(){ appsmith.triggerEvent(\"onClose\"); };\n  var c=document.getElementById(\"close\"); if(c) c.onclick=function(){ appsmith.triggerEvent(\"onClose\"); };\n}\n\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#1e293b;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.card{padding:22px 26px 20px;height:calc(var(--appsmith-ui-height)*1px);display:flex;flex-direction:column;}\n.mh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}\n.mh h3{margin:0;font-size:22px;font-weight:800;color:#f1f5f9;}\n.mh .x{cursor:pointer;color:#94a3b8;font-size:22px;line-height:1;}\n.mh .x:hover{color:#e2e8f0;}\n.sub{color:#93c5fd;font-size:14px;font-weight:600;margin:0 0 14px;}\n.tblwrap{flex:1 1 auto;min-height:0;overflow:auto;border:1px solid #334155;border-radius:8px;}\ntable{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;}\nthead th{position:sticky;top:0;background:#1e293b;text-align:left;font-weight:700;color:#cbd5e1;padding:12px 16px;border-bottom:1px solid #334155;z-index:1;}\nthead th.r,tbody td.r{text-align:left;}\ntbody td{padding:12px 16px;color:#e2e8f0;}\ntbody td.name{color:#f1f5f9;}\ntbody tr:nth-child(odd) td{background:#0f172a;}\ntbody tr:nth-child(even) td{background:transparent;}\n.acts{display:flex;justify-content:center;padding-top:18px;flex:0 0 auto;}\n.btn{padding:11px 40px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #2563eb;background:#2563eb;color:#fff;}\n.btn:hover{background:#1d4ed8;}\n.empty{padding:40px;text-align:center;color:#64748b;font-style:italic;}\n::-webkit-scrollbar{width:10px;height:10px;background:#1e293b;} ::-webkit-scrollbar-thumb{background:#334155;border-radius:4px;border:2px solid #1e293b;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>\n",
+    "js": "function esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\n\nfunction render(){\n  var m=appsmith.model||{}; var d=m.detail||{};\n  var rows=d.rows||[];\n  var head='<div class=\"mh\"><h3>Calculated Values</h3><span class=\"x\" id=\"x\">✕</span></div>';\n  var sub='<p class=\"sub\">#'+esc(d.billId||\"\")+' '+esc(d.vendor||\"\")+(d.endDate?('('+esc(d.endDate)+')'):'')+'</p>';\n  var body;\n  if(!rows.length){ body='<div class=\"empty\">No details available.</div>'; }\n  else {\n    body='<div class=\"tblwrap\"><table><thead><tr><th>Name</th><th>Bill Values</th><th>Pro-rated Values</th></tr></thead><tbody>';\n    rows.forEach(function(r){\n      body+='<tr><td class=\"name\">'+esc(r.name)+'</td><td>'+esc(r.bill)+'</td><td>'+esc(r.pro)+'</td></tr>';\n    });\n    body+='</tbody></table></div>';\n  }\n  var root=document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML='<div class=\"card\">'+head+sub+body+'<div class=\"acts\"><button class=\"btn\" id=\"close\">Close</button></div></div>';\n  var x=document.getElementById(\"x\"); if(x) x.onclick=function(){ appsmith.triggerEvent(\"onClose\"); };\n  var c=document.getElementById(\"close\"); if(c) c.onclick=function(){ appsmith.triggerEvent(\"onClose\"); };\n}\n\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "version": 1,
+  "widgetId": "cvm_content",
+  "widgetName": "CVM_Content"
+}
