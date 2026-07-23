@@ -1,6 +1,8 @@
 SELECT
     m.attribute_name                                AS "Attribute",
     v.attribute_value                               AS "Value",
+    m.attribute_uom                                 AS "UoM",
+    m.sort_order                                    AS _order,
     TO_CHAR(v.date_month::date, 'FMMonth YYYY')     AS "Month",
     v.date_month                                    AS _sort
 FROM bill_management_v2.location_monthly_attributes_metadata m
@@ -9,4 +11,4 @@ INNER JOIN bill_management_v2.location_monthly_attributes_values v
 WHERE m.customer_id = {{ appsmith.store.selectedCustomerId }}
   AND v.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
   AND COALESCE(btrim(v.attribute_value), '') <> ''
-ORDER BY m.attribute_name, v.date_month DESC;
+ORDER BY m.sort_order, m.attribute_name, v.date_month DESC;
