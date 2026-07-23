@@ -1,0 +1,15 @@
+SELECT
+    DATE_TRUNC('month', time_period)::date AS month,
+    utility_type,
+    MAX(total_consumption_uom) AS uom,
+    SUM(COALESCE(total_charges, 0)) AS total_cost,
+    SUM(CASE WHEN bill_type = 'Supply Only' THEN COALESCE(total_charges, 0) ELSE 0 END) AS supply_cost,
+    SUM(CASE WHEN bill_type <> 'Supply Only' THEN COALESCE(total_charges, 0) ELSE 0 END) AS distribution_cost,
+    SUM(CASE WHEN bill_type = 'Supply Only'
+             THEN COALESCE(total_gen_consumption, 0)
+             ELSE COALESCE(total_consumption, 0) END) AS consumption
+FROM bill_management_v2.reports_customer_monthly_usage
+WHERE customer_id = {{ appsmith.store.selectedCustomerId }}
+  AND location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+GROUP BY DATE_TRUNC('month', time_period)::date, utility_type
+ORDER BY month DESC, utility_type;

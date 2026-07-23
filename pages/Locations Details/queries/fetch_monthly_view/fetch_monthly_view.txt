@@ -1,0 +1,47 @@
+SELECT DISTINCT ON (bm.id, bi.commodity)
+    bm.id                                                AS "Bill ID",
+    br.vendor_code                                       AS "Vendor",
+    UPPER(bi.commodity)                                  AS "Utility",
+    btac.total_charges                                   AS "Cost",
+    TO_CHAR(bi.start_date, 'YYYY-MM-DD')                 AS "StartISO",
+    TO_CHAR(COALESCE(bi.adjusted_end_date, bi.end_date), 'YYYY-MM-DD') AS "EndISO",
+    bi.days_of_service                                   AS "Days",
+    COALESCE(u.usage, 0)                                 AS "Usage",
+    COALESCE(mu.uom, u.uom)                              AS "uom",
+    TO_CHAR(bi.start_date, 'YYYY-MM-DD')                 AS _sort,
+    (
+        SELECT COALESCE(
+            json_agg(json_build_object('name', c.name, 'value', c.value, 'units', c.units)),
+            '[]'::json
+        )
+        FROM bill_management_v2.calculations c
+        WHERE c.bill_item_id = bi.id
+    )                                                    AS "Calcs"
+FROM bill_management_v2.bill_metas bm
+INNER JOIN bill_management_v2.bill_metas_bill_records bmbr
+      ON bmbr.bill_meta_id = bm.id AND bmbr.status = 'active'
+INNER JOIN bill_management_v2.bill_records br
+      ON br.id = bmbr.bill_record_id
+INNER JOIN bill_management_v2.bill_items bi
+      ON bi.bill_record_id = br.id
+INNER JOIN bill_management_v2.bill_items_virtual_accounts biva
+      ON biva.bill_item_id = bi.id
+LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac
+      ON btac.record_id = br.id
+LEFT JOIN (
+    SELECT bill_item_id, SUM(usage) AS usage, MAX(uom) AS uom
+    FROM bill_management_v2.analytics_billing_line_items
+    GROUP BY bill_item_id
+) u ON u.bill_item_id = bi.id
+LEFT JOIN (
+    SELECT location_id, utility_type, MAX(total_consumption_uom) AS uom
+    FROM bill_management_v2.reports_customer_monthly_usage
+    WHERE customer_id = {{ appsmith.store.selectedCustomerId }}
+    GROUP BY location_id, utility_type
+) mu ON mu.location_id = biva.location_id
+    AND LOWER(mu.utility_type) = LOWER(bi.commodity)
+WHERE biva.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+  AND bm.customer_id = {{ appsmith.store.selectedCustomerId }}
+  AND bm.deleted_at IS NULL
+  AND bm.customer_ready IS NOT NULL
+ORDER BY bm.id, bi.commodity, br.statement_date DESC;

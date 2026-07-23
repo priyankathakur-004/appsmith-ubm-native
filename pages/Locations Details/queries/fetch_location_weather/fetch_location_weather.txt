@@ -1,0 +1,10 @@
+SELECT
+    TO_CHAR(date, 'YYYY-MM-DD')  AS "date",
+    temperature_min              AS "minTemp",
+    temperature_max              AS "maxTemp",
+    heating                      AS "hdd",
+    cooling                      AS "cdd",
+    icon                         AS "icon"
+FROM bill_management_v2.weather_daily
+WHERE location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+ORDER BY date;

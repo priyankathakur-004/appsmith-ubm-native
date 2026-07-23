@@ -1,0 +1,52 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 6,
+  "boxShadow": "none",
+  "buttonColor": "#22c55e",
+  "buttonVariant": "TERTIARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "89qk6oq6du",
+  "leftColumn": 57,
+  "minWidth": 120,
+  "mobileBottomRow": 11,
+  "mobileLeftColumn": 48,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 7,
+  "needsErrorInfo": false,
+  "onClick": "{{  buildingTypeFilter.setSelectedOptions([]);\ncityFilter.setSelectedOptions([]);\nstateFilter.setSelectedOptions([]);\nareaFilterEnd.setValue(\"\");\nareaFilterStart.setValue(\"\")\n; }}",
+  "parentColumnSpace": 13.828125,
+  "parentId": "qsq2so060n",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Clear",
+  "topRow": 2,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "r0zg8j2ayc",
+  "widgetName": "Button2"
+}

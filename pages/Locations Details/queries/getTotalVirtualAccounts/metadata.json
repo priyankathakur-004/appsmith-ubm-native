@@ -29,7 +29,7 @@
     ],
     "name": "getTotalVirtualAccounts",
     "pageId": "Locations Details",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }

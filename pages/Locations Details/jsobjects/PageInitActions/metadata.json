@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "locdet_piact_0000_4000_8000_000000000001",
+  "id": "Locations Details_PageInitActions",
+  "unpublishedCollection": {
+    "name": "PageInitActions",
+    "pageId": "Locations Details",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

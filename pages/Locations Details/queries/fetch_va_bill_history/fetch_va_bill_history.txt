@@ -1,0 +1,11 @@
+SELECT
+    li.bill_id                                AS "Bill ID",
+    TO_CHAR(li.statement_date, 'MM/DD/YYYY')  AS "Invoice Date",
+    SUM(li.charge)                            AS "Charges"
+FROM bill_management_v2.analytics_billing_line_items li
+WHERE li.location_id = {{ (JSON.parse(appsmith.URL.queryParams.rowData || '{}').id) || 0 }}
+  AND li.customer_id = {{ appsmith.store.selectedCustomerId }}
+  AND LOWER(li.commodity) = LOWER('{{ (appsmith.store.vaSelected && appsmith.store.vaSelected.Utility) || '' }}')
+  AND li.workflow_state = 'processed'
+GROUP BY li.bill_id, li.statement_date
+ORDER BY li.statement_date DESC;

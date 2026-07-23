@@ -55,7 +55,7 @@
   "mobileRightColumn": 22,
   "mobileTopRow": 18,
   "needsErrorInfo": false,
-  "onOptionChange": "{{storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue);\nstoreValue('selectedCustomerName', CustomerSelect.selectedOptionLabel);\ngetCustomerUsers.run()}}",
+  "onOptionChange": "{{storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue);\nstoreValue('selectedCustomerName', CustomerSelect.selectedOptionLabel);}}",
   "optionLabel": "label",
   "optionValue": "value",
   "originalBottomRow": 19,

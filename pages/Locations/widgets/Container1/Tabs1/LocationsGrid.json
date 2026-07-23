@@ -1,0 +1,71 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 117,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ ({ data: getLocationLists.data, isLoading: getLocationLists.isLoading }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onRowClick"
+    }
+  ],
+  "events": [
+    "onRowClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "locgrid0key1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 117,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 29,
+  "needsErrorInfo": false,
+  "onRowClick": "{{ navigateTo('Locations Details', { rowData: JSON.stringify(LocationsGrid.model.clickedRowData) }) }}",
+  "originalBottomRow": 117,
+  "originalTopRow": 29,
+  "parentColumnSpace": 13.83,
+  "parentId": "zpm0rstcu0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "html,body { background:#0f172a !important; margin:0; padding:0; }\n.app { width: 100%; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }\n.ag-theme-alpine { --ag-header-background-color: #0f172a; --ag-header-foreground-color: #FFFFFF; --ag-odd-row-background-color: #0f172a; --ag-background-color: #1E293B; --ag-row-hover-color: #1E293B; --ag-selected-row-background-color: #1E293B; --ag-foreground-color: #FFFFFF; --ag-border-color: #1E293B; --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; --ag-font-size: 14px; --ag-row-height: 44px; --ag-header-height: 48px; border-radius: 6px; border: 1px solid #1E293B; overflow: hidden; }\n.ag-theme-alpine .ag-row-odd { background-color: #0f172a !important; }\n.ag-theme-alpine .ag-row-even { background-color: #1E293B !important; }\n.ag-theme-alpine .ag-row-hover { background-color: rgba(255,255,255,0.05) !important; }\n.ag-theme-alpine .ag-cell { border-right: 1px solid rgba(255,255,255,0.04); line-height: 44px; }\n.ag-theme-alpine .ag-header { font-weight: 600; background: #0f172a; border-bottom: 2px solid #1E293B; }\n.ag-theme-alpine .ag-header-cell { border-right: 1px solid rgba(255,255,255,0.06); }\n.ag-theme-alpine .ag-header-cell-text { color: #FFFFFF; }\n.ag-theme-alpine .ag-header-cell-menu-button { opacity: 1 !important; }\n.ag-theme-alpine .ag-paging-panel { background: #0f172a; color: #FFFFFF; border-top: 2px solid #1E293B; }\n.ag-theme-alpine .ag-paging-panel * { color: #FFFFFF !important; }\n.ag-theme-alpine .ag-paging-panel .ag-picker-field-wrapper { background: #1E293B; border-color: #1E293B; color: #FFFFFF; }\n.ag-theme-alpine .ag-paging-button { color: #FFFFFF !important; opacity: 0.85; }\n.ag-theme-alpine .ag-paging-button:hover { opacity: 1; background: #1E293B; border-radius: 4px; }\n.ag-theme-alpine .ag-paging-button[disabled] { opacity: 0.4; }\n.ag-theme-alpine .ag-paging-button.ag-paging-button-current { background: #FFFFFF; color: #0f172a !important; border-radius: 50%; }\n.ag-menu, .ag-menu-option, .ag-tooltip { z-index: 999999 !important; }\n::-webkit-scrollbar { width: 10px; height: 10px; background: #0f172a; }\n::-webkit-scrollbar-track { background: #0f172a; }\n::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; border: 2px solid #0f172a; }\n::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }\n::-webkit-scrollbar-corner { background: #0f172a; }\n* { scrollbar-color: #1E293B #0f172a; scrollbar-width: thin; }\n",
+    "html": "<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n<div id=\"myGrid\" class=\"ag-theme-alpine app\"></div>",
+    "js": "\nfunction weatherRenderer(params){\n  var v = params.value;\n  var active = String(v).toLowerCase() === 'active';\n  var color = active ? '#22c55e' : '#94a3b8';\n  return '<span style=\"display:inline-flex;align-items:center;gap:8px;\">'\n    + '<span style=\"width:9px;height:9px;border-radius:50%;background:' + color + ';display:inline-block;\"></span>'\n    + (v == null ? '' : v) + '</span>';\n}\n\nvar COLS = [\n  { headerName: 'Description', field: 'Description', flex: 1.3, minWidth: 140 },\n  { headerName: 'Type', field: 'Type', flex: 1.1, minWidth: 120 },\n  { headerName: 'Service Address', field: 'Service Address', flex: 1.3, minWidth: 150 },\n  { headerName: 'City', field: 'City', flex: 1, minWidth: 100 },\n  { headerName: 'State', field: 'State', width: 90, minWidth: 80 },\n  { headerName: 'Zip', field: 'Zip', width: 110, minWidth: 90 },\n  { headerName: 'Area (Sq. Ft)', field: 'Area (Sq. Ft)', width: 130, minWidth: 110, type: 'numericColumn' },\n  { headerName: 'Weather', field: 'Weather', width: 130, minWidth: 110, cellRenderer: weatherRenderer }\n];\n\nvar gridApi = null;\nvar lastSig = '';\n\nfunction getRows(model){ return (model && Array.isArray(model.data)) ? model.data : []; }\n\nfunction dataSig(model){\n  var r = getRows(model);\n  var first = r[0] && r[0].id;\n  var last = r[r.length - 1] && r[r.length - 1].id;\n  return (model && model.isLoading ? 'L' : '') + r.length + ':' + first + ':' + last;\n}\n\nfunction onCellClicked(e){\n  var row = e.data;\n  if (!row) return;\n  appsmith.updateModel({ clickedRowData: row });\n  appsmith.triggerEvent('onRowClick');\n}\n\nfunction render(model){\n  var gridDiv = document.querySelector('#myGrid');\n  if (!gridDiv) return;\n  gridDiv.innerHTML = '';\n  gridApi = agGrid.createGrid(gridDiv, {\n    columnDefs: COLS,\n    rowData: getRows(model),\n    domLayout: 'autoHeight',\n    pagination: true,\n    paginationPageSize: 20,\n    paginationPageSizeSelector: [10, 20, 30, 40, 50, 100],\n    animateRows: true,\n    defaultColDef: { resizable: true, sortable: true, minWidth: 90 },\n    popupParent: document.body,\n    getRowId: function(p){ return String(p.data.id); },\n    overlayNoRowsTemplate: '<span style=\"color:#94a3b8;font-style:italic;\">No locations found</span>',\n    onGridReady: function(p){ gridApi = p.api; },\n    onCellClicked: onCellClicked\n  });\n  lastSig = dataSig(model);\n}\n\nappsmith.onReady(function(){\n  render(appsmith.model);\n  appsmith.onModelChange(function(model){\n    if (!gridApi){ render(model); return; }\n    var sig = dataSig(model);\n    if (sig !== lastSig){\n      lastSig = sig;\n      gridApi.setGridOption('rowData', getRows(model));\n    }\n  });\n});\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 29,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body { background:#0f172a !important; margin:0; padding:0; }\n.app { width: 100%; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }\n.ag-theme-alpine { --ag-header-background-color: #0f172a; --ag-header-foreground-color: #FFFFFF; --ag-odd-row-background-color: #0f172a; --ag-background-color: #1E293B; --ag-row-hover-color: #1E293B; --ag-selected-row-background-color: #1E293B; --ag-foreground-color: #FFFFFF; --ag-border-color: #1E293B; --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; --ag-font-size: 14px; --ag-row-height: 44px; --ag-header-height: 48px; border-radius: 6px; border: 1px solid #1E293B; overflow: hidden; }\n.ag-theme-alpine .ag-row-odd { background-color: #0f172a !important; }\n.ag-theme-alpine .ag-row-even { background-color: #1E293B !important; }\n.ag-theme-alpine .ag-row-hover { background-color: rgba(255,255,255,0.05) !important; }\n.ag-theme-alpine .ag-cell { border-right: 1px solid rgba(255,255,255,0.04); line-height: 44px; }\n.ag-theme-alpine .ag-header { font-weight: 600; background: #0f172a; border-bottom: 2px solid #1E293B; }\n.ag-theme-alpine .ag-header-cell { border-right: 1px solid rgba(255,255,255,0.06); }\n.ag-theme-alpine .ag-header-cell-text { color: #FFFFFF; }\n.ag-theme-alpine .ag-header-cell-menu-button { opacity: 1 !important; }\n.ag-theme-alpine .ag-paging-panel { background: #0f172a; color: #FFFFFF; border-top: 2px solid #1E293B; }\n.ag-theme-alpine .ag-paging-panel * { color: #FFFFFF !important; }\n.ag-theme-alpine .ag-paging-panel .ag-picker-field-wrapper { background: #1E293B; border-color: #1E293B; color: #FFFFFF; }\n.ag-theme-alpine .ag-paging-button { color: #FFFFFF !important; opacity: 0.85; }\n.ag-theme-alpine .ag-paging-button:hover { opacity: 1; background: #1E293B; border-radius: 4px; }\n.ag-theme-alpine .ag-paging-button[disabled] { opacity: 0.4; }\n.ag-theme-alpine .ag-paging-button.ag-paging-button-current { background: #FFFFFF; color: #0f172a !important; border-radius: 50%; }\n.ag-menu, .ag-menu-option, .ag-tooltip { z-index: 999999 !important; }\n::-webkit-scrollbar { width: 10px; height: 10px; background: #0f172a; }\n::-webkit-scrollbar-track { background: #0f172a; }\n::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; border: 2px solid #0f172a; }\n::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }\n::-webkit-scrollbar-corner { background: #0f172a; }\n* { scrollbar-color: #1E293B #0f172a; scrollbar-width: thin; }\n",
+    "html": "<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n<div id=\"myGrid\" class=\"ag-theme-alpine app\"></div>",
+    "js": "\nfunction weatherRenderer(params){\n  var v = params.value;\n  var active = String(v).toLowerCase() === 'active';\n  var color = active ? '#22c55e' : '#94a3b8';\n  return '<span style=\"display:inline-flex;align-items:center;gap:8px;\">'\n    + '<span style=\"width:9px;height:9px;border-radius:50%;background:' + color + ';display:inline-block;\"></span>'\n    + (v == null ? '' : v) + '</span>';\n}\n\nvar COLS = [\n  { headerName: 'Description', field: 'Description', flex: 1.3, minWidth: 140 },\n  { headerName: 'Type', field: 'Type', flex: 1.1, minWidth: 120 },\n  { headerName: 'Service Address', field: 'Service Address', flex: 1.3, minWidth: 150 },\n  { headerName: 'City', field: 'City', flex: 1, minWidth: 100 },\n  { headerName: 'State', field: 'State', width: 90, minWidth: 80 },\n  { headerName: 'Zip', field: 'Zip', width: 110, minWidth: 90 },\n  { headerName: 'Area (Sq. Ft)', field: 'Area (Sq. Ft)', width: 130, minWidth: 110, type: 'numericColumn' },\n  { headerName: 'Weather', field: 'Weather', width: 130, minWidth: 110, cellRenderer: weatherRenderer }\n];\n\nvar gridApi = null;\nvar lastSig = '';\n\nfunction getRows(model){ return (model && Array.isArray(model.data)) ? model.data : []; }\n\nfunction dataSig(model){\n  var r = getRows(model);\n  var first = r[0] && r[0].id;\n  var last = r[r.length - 1] && r[r.length - 1].id;\n  return (model && model.isLoading ? 'L' : '') + r.length + ':' + first + ':' + last;\n}\n\nfunction onCellClicked(e){\n  var row = e.data;\n  if (!row) return;\n  appsmith.updateModel({ clickedRowData: row });\n  appsmith.triggerEvent('onRowClick');\n}\n\nfunction render(model){\n  var gridDiv = document.querySelector('#myGrid');\n  if (!gridDiv) return;\n  gridDiv.innerHTML = '';\n  gridApi = agGrid.createGrid(gridDiv, {\n    columnDefs: COLS,\n    rowData: getRows(model),\n    domLayout: 'autoHeight',\n    pagination: true,\n    paginationPageSize: 20,\n    paginationPageSizeSelector: [10, 20, 30, 40, 50, 100],\n    animateRows: true,\n    defaultColDef: { resizable: true, sortable: true, minWidth: 90 },\n    popupParent: document.body,\n    getRowId: function(p){ return String(p.data.id); },\n    overlayNoRowsTemplate: '<span style=\"color:#94a3b8;font-style:italic;\">No locations found</span>',\n    onGridReady: function(p){ gridApi = p.api; },\n    onCellClicked: onCellClicked\n  });\n  lastSig = dataSig(model);\n}\n\nappsmith.onReady(function(){\n  render(appsmith.model);\n  appsmith.onModelChange(function(model){\n    if (!gridApi){ render(model); return; }\n    var sig = dataSig(model);\n    if (sig !== lastSig){\n      lastSig = sig;\n      gridApi.setGridOption('rowData', getRows(model));\n    }\n  });\n});\n"
+  },
+  "version": 1,
+  "widgetId": "locgridwdg01",
+  "widgetName": "LocationsGrid"
+}
