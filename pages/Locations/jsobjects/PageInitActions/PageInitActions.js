@@ -9,5 +9,6 @@ export default {
 		getStates.run();
 		getTotalLocations.run();
 		getLocationLists.run();
+		fetch_locations_tree.run();
 	}
 }
