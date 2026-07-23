@@ -8,5 +8,6 @@ export default {
 		fetch_location_metrics.run();
 		getLocationAttributes.run();
 		getBillingAccounts.run();
+		fetch_monthly_view.run();
 	}
 }

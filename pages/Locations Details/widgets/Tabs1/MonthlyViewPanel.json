@@ -1,0 +1,58 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#0f172a",
+  "borderRadius": "0",
+  "borderWidth": "0",
+  "bottomRow": 160,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({ rows: fetch_monthly_view.data, isLoading: fetch_monthly_view.isLoading }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "monthlyviewk1",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 160,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "originalBottomRow": 160,
+  "originalTopRow": 1,
+  "parentColumnSpace": 13.83,
+  "parentId": "6cfklr74xs",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#0f172a;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.wrap{height:calc(var(--appsmith-ui-height)*1px);overflow:auto;padding:18px 22px;}\n.filter{margin-bottom:18px;}\n.filter label{display:block;font-size:13px;color:#60a5fa;font-weight:600;margin-bottom:6px;}\n.filter select{background:#1e293b;color:#fff;border:1px solid #334155;border-radius:6px;padding:8px 12px;font-size:14px;min-width:200px;outline:none;cursor:pointer;}\n.filter select:focus{border-color:#3b82f6;}\n.grp{margin-bottom:26px;}\n.ghead{display:flex;justify-content:space-between;align-items:baseline;padding:6px 2px 10px;border-bottom:1px solid #334155;margin-bottom:2px;}\n.gmonth{font-size:16px;font-weight:700;color:#f8fafc;}\n.gtot{font-size:14px;color:#cbd5e1;}\ntable{width:100%;border-collapse:collapse;font-size:14px;}\nthead th{color:#94a3b8;font-weight:700;text-align:right;padding:10px 14px;white-space:nowrap;border-bottom:1px solid #1e293b;font-size:13px;}\nthead th:first-child,thead th:nth-child(2),thead th:last-child{text-align:left;}\ntbody td{padding:11px 14px;text-align:right;white-space:nowrap;color:#e2e8f0;}\ntbody td:first-child,tbody td:nth-child(2),tbody td:last-child{text-align:left;}\ntbody tr:nth-child(odd){background:#1e293b;}\n.link{color:#60a5fa;cursor:pointer;font-weight:600;}\n.totrow td{font-weight:700;color:#f1f5f9;border-top:1px solid #334155;background:transparent !important;}\n.nodata{color:#64748b;font-style:italic;padding:12px 2px;}\n.empty{padding:40px;text-align:center;color:#64748b;font-style:italic;}\n::-webkit-scrollbar{width:10px;background:#0f172a;} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px;border:2px solid #0f172a;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\nfunction cur(n){return \"$\"+Number(n||0).toLocaleString(\"en-US\",{minimumFractionDigits:2,maximumFractionDigits:2});}\nfunction num(n){return Number(n||0).toLocaleString(\"en-US\",{minimumFractionDigits:2,maximumFractionDigits:2});}\nvar selUtil=\"ALL\";\nfunction render(){\n  var m=appsmith.model||{}; var all=m.rows||[];\n  var uset={}; all.forEach(function(r){ if(r.Utility) uset[r.Utility]=true; });\n  var utils=Object.keys(uset).sort();\n  if(selUtil!==\"ALL\" && utils.indexOf(selUtil)<0) selUtil=\"ALL\";\n  var rows=all.filter(function(r){ return selUtil===\"ALL\" || r.Utility===selUtil; });\n  rows.sort(function(a,b){ return String(b._sort||\"\").localeCompare(String(a._sort||\"\")); });\n  // group by Month, preserve order\n  var order=[], groups={};\n  rows.forEach(function(r){ var k=r.Month||\"\u2014\"; if(!groups[k]){groups[k]=[];order.push(k);} groups[k].push(r); });\n\n  var opts='<option value=\"ALL\"'+(selUtil===\"ALL\"?\" selected\":\"\")+'>All Utilities</option>'\n    + utils.map(function(u){ return '<option value=\"'+esc(u)+'\"'+(selUtil===u?\" selected\":\"\")+'>'+esc(u)+'</option>'; }).join('');\n  var html='<div class=\"filter\"><label>Utility Type</label><select id=\"utilSel\">'+opts+'</select></div>';\n\n  if(m.isLoading){ html+='<div class=\"empty\">Loading\u2026</div>'; }\n  else if(!order.length){ html+='<div class=\"empty\">No bill history for this location</div>'; }\n  else {\n    order.forEach(function(mon){\n      var g=groups[mon];\n      var tot=g.reduce(function(s,r){ return s+Number(r.Cost||0); },0);\n      html+='<div class=\"grp\"><div class=\"ghead\"><span class=\"gmonth\">'+esc(mon)+'</span><span class=\"gtot\">Total cost: '+cur(tot)+'</span></div>';\n      html+='<table><thead><tr><th>Bill ID</th><th>Utility</th><th>Cost</th><th>Usage</th><th>Start Date</th><th>End Date</th><th>Days of Service</th><th>Details</th></tr></thead><tbody>';\n      var totUse=0;\n      g.forEach(function(r){\n        var use=(r.Usage==null)?\"-\":(num(r.Usage)+(r.uom?(\" \"+r.uom):\"\"));\n        if(r.Usage!=null) totUse+=Number(r.Usage||0);\n        html+='<tr><td class=\"link\">'+esc(r[\"Bill ID\"])+'</td><td>'+esc(r.Utility)+'</td><td>'+cur(r.Cost)+'</td><td>'+use+'</td><td>'+esc(r[\"Start Date\"])+'</td><td>'+esc(r[\"End Date\"])+'</td><td>'+esc(r[\"Days of Service\"])+'</td><td class=\"link\">More Details</td></tr>';\n      });\n      html+='<tr class=\"totrow\"><td>Total:</td><td></td><td>'+cur(tot)+'</td><td>'+(totUse?num(totUse):\"-\")+'</td><td></td><td></td><td></td><td></td></tr>';\n      html+='</tbody></table></div>';\n    });\n  }\n  var root=document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML='<div class=\"wrap\">'+html+'</div>';\n  var sel=document.getElementById(\"utilSel\");\n  if(sel) sel.onchange=function(e){ selUtil=e.target.value; render(); };\n}\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body{margin:0;height:100%;background:#0f172a;font-family:'Open Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#e2e8f0;}\n*{box-sizing:border-box;}\n.wrap{height:calc(var(--appsmith-ui-height)*1px);overflow:auto;padding:18px 22px;}\n.filter{margin-bottom:18px;}\n.filter label{display:block;font-size:13px;color:#60a5fa;font-weight:600;margin-bottom:6px;}\n.filter select{background:#1e293b;color:#fff;border:1px solid #334155;border-radius:6px;padding:8px 12px;font-size:14px;min-width:200px;outline:none;cursor:pointer;}\n.filter select:focus{border-color:#3b82f6;}\n.grp{margin-bottom:26px;}\n.ghead{display:flex;justify-content:space-between;align-items:baseline;padding:6px 2px 10px;border-bottom:1px solid #334155;margin-bottom:2px;}\n.gmonth{font-size:16px;font-weight:700;color:#f8fafc;}\n.gtot{font-size:14px;color:#cbd5e1;}\ntable{width:100%;border-collapse:collapse;font-size:14px;}\nthead th{color:#94a3b8;font-weight:700;text-align:right;padding:10px 14px;white-space:nowrap;border-bottom:1px solid #1e293b;font-size:13px;}\nthead th:first-child,thead th:nth-child(2),thead th:last-child{text-align:left;}\ntbody td{padding:11px 14px;text-align:right;white-space:nowrap;color:#e2e8f0;}\ntbody td:first-child,tbody td:nth-child(2),tbody td:last-child{text-align:left;}\ntbody tr:nth-child(odd){background:#1e293b;}\n.link{color:#60a5fa;cursor:pointer;font-weight:600;}\n.totrow td{font-weight:700;color:#f1f5f9;border-top:1px solid #334155;background:transparent !important;}\n.nodata{color:#64748b;font-style:italic;padding:12px 2px;}\n.empty{padding:40px;text-align:center;color:#64748b;font-style:italic;}\n::-webkit-scrollbar{width:10px;background:#0f172a;} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px;border:2px solid #0f172a;}\n",
+    "html": "<!-- widget wraps html/body -->\n<div id=\"root\"></div>",
+    "js": "\nfunction esc(s){return String(s==null?\"\":s).replace(/&/g,\"&amp;\").replace(/</g,\"&lt;\").replace(/>/g,\"&gt;\");}\nfunction cur(n){return \"$\"+Number(n||0).toLocaleString(\"en-US\",{minimumFractionDigits:2,maximumFractionDigits:2});}\nfunction num(n){return Number(n||0).toLocaleString(\"en-US\",{minimumFractionDigits:2,maximumFractionDigits:2});}\nvar selUtil=\"ALL\";\nfunction render(){\n  var m=appsmith.model||{}; var all=m.rows||[];\n  var uset={}; all.forEach(function(r){ if(r.Utility) uset[r.Utility]=true; });\n  var utils=Object.keys(uset).sort();\n  if(selUtil!==\"ALL\" && utils.indexOf(selUtil)<0) selUtil=\"ALL\";\n  var rows=all.filter(function(r){ return selUtil===\"ALL\" || r.Utility===selUtil; });\n  rows.sort(function(a,b){ return String(b._sort||\"\").localeCompare(String(a._sort||\"\")); });\n  // group by Month, preserve order\n  var order=[], groups={};\n  rows.forEach(function(r){ var k=r.Month||\"\u2014\"; if(!groups[k]){groups[k]=[];order.push(k);} groups[k].push(r); });\n\n  var opts='<option value=\"ALL\"'+(selUtil===\"ALL\"?\" selected\":\"\")+'>All Utilities</option>'\n    + utils.map(function(u){ return '<option value=\"'+esc(u)+'\"'+(selUtil===u?\" selected\":\"\")+'>'+esc(u)+'</option>'; }).join('');\n  var html='<div class=\"filter\"><label>Utility Type</label><select id=\"utilSel\">'+opts+'</select></div>';\n\n  if(m.isLoading){ html+='<div class=\"empty\">Loading\u2026</div>'; }\n  else if(!order.length){ html+='<div class=\"empty\">No bill history for this location</div>'; }\n  else {\n    order.forEach(function(mon){\n      var g=groups[mon];\n      var tot=g.reduce(function(s,r){ return s+Number(r.Cost||0); },0);\n      html+='<div class=\"grp\"><div class=\"ghead\"><span class=\"gmonth\">'+esc(mon)+'</span><span class=\"gtot\">Total cost: '+cur(tot)+'</span></div>';\n      html+='<table><thead><tr><th>Bill ID</th><th>Utility</th><th>Cost</th><th>Usage</th><th>Start Date</th><th>End Date</th><th>Days of Service</th><th>Details</th></tr></thead><tbody>';\n      var totUse=0;\n      g.forEach(function(r){\n        var use=(r.Usage==null)?\"-\":(num(r.Usage)+(r.uom?(\" \"+r.uom):\"\"));\n        if(r.Usage!=null) totUse+=Number(r.Usage||0);\n        html+='<tr><td class=\"link\">'+esc(r[\"Bill ID\"])+'</td><td>'+esc(r.Utility)+'</td><td>'+cur(r.Cost)+'</td><td>'+use+'</td><td>'+esc(r[\"Start Date\"])+'</td><td>'+esc(r[\"End Date\"])+'</td><td>'+esc(r[\"Days of Service\"])+'</td><td class=\"link\">More Details</td></tr>';\n      });\n      html+='<tr class=\"totrow\"><td>Total:</td><td></td><td>'+cur(tot)+'</td><td>'+(totUse?num(totUse):\"-\")+'</td><td></td><td></td><td></td><td></td></tr>';\n      html+='</tbody></table></div>';\n    });\n  }\n  var root=document.getElementById(\"root\"); if(!root) return;\n  root.innerHTML='<div class=\"wrap\">'+html+'</div>';\n  var sel=document.getElementById(\"utilSel\");\n  if(sel) sel.onchange=function(e){ selUtil=e.target.value; render(); };\n}\nappsmith.onReady(function(){ render(); appsmith.onModelChange(render); });\n"
+  },
+  "version": 1,
+  "widgetId": "monthlyview01",
+  "widgetName": "MonthlyViewPanel"
+}
