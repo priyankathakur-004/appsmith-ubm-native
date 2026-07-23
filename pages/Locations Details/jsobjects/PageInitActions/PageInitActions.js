@@ -10,5 +10,6 @@ export default {
 		getBillingAccounts.run();
 		fetch_monthly_view.run();
 		fetch_location_monthly_attributes.run();
+		fetch_location_weather.run();
 	}
 }
