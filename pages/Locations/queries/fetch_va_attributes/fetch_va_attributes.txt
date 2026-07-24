@@ -1,0 +1,8 @@
+SELECT
+    sort_order      AS "Sort Order",
+    attribute_name  AS "Name",
+    attribute_type  AS "Type",
+    attribute_uom   AS "UoM"
+FROM bill_management_v2.virtual_accounts_attributes_metadata
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
+ORDER BY sort_order;

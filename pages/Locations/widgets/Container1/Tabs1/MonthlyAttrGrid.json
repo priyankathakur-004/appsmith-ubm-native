@@ -1,0 +1,64 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 120,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ ({ data: fetch_monthly_attributes.data, isLoading: fetch_monthly_attributes.isLoading }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "moattrgridk",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 120,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "originalBottomRow": 120,
+  "originalTopRow": 1,
+  "parentColumnSpace": 13.83,
+  "parentId": "canvmo00attr",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "html,body { background:#0f172a !important; margin:0; padding:0; }\n.app { width: 100%; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }\n.ag-theme-alpine { --ag-header-background-color: #0f172a; --ag-header-foreground-color: #FFFFFF; --ag-odd-row-background-color: #0f172a; --ag-background-color: #1E293B; --ag-row-hover-color: #1E293B; --ag-selected-row-background-color: #1E293B; --ag-foreground-color: #FFFFFF; --ag-border-color: #1E293B; --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; --ag-font-size: 14px; --ag-row-height: 44px; --ag-header-height: 48px; border-radius: 6px; border: 1px solid #1E293B; overflow: hidden; }\n.ag-theme-alpine .ag-row-odd { background-color: #0f172a !important; }\n.ag-theme-alpine .ag-row-even { background-color: #1E293B !important; }\n.ag-theme-alpine .ag-row-hover { background-color: rgba(255,255,255,0.05) !important; }\n.ag-theme-alpine .ag-cell { border-right: 1px solid rgba(255,255,255,0.04); line-height: 44px; }\n.ag-theme-alpine .ag-header { font-weight: 600; background: #0f172a; border-bottom: 2px solid #1E293B; }\n.ag-theme-alpine .ag-header-cell { border-right: 1px solid rgba(255,255,255,0.06); }\n.ag-theme-alpine .ag-header-cell-text { color: #FFFFFF; }\n.ag-theme-alpine .ag-header-cell-menu-button { opacity: 1 !important; }\n.ag-theme-alpine .ag-paging-panel { background: #0f172a; color: #FFFFFF; border-top: 2px solid #1E293B; }\n.ag-theme-alpine .ag-paging-panel * { color: #FFFFFF !important; }\n.ag-theme-alpine .ag-paging-panel .ag-picker-field-wrapper { background: #1E293B; border-color: #1E293B; color: #FFFFFF; }\n.ag-theme-alpine .ag-paging-button { color: #FFFFFF !important; opacity: 0.85; }\n.ag-theme-alpine .ag-paging-button:hover { opacity: 1; background: #1E293B; border-radius: 4px; }\n.ag-theme-alpine .ag-paging-button[disabled] { opacity: 0.4; }\n.ag-theme-alpine .ag-paging-button.ag-paging-button-current { background: #FFFFFF; color: #0f172a !important; border-radius: 50%; }\n.ag-menu, .ag-menu-option, .ag-tooltip { z-index: 999999 !important; }\n::-webkit-scrollbar { width: 10px; height: 10px; background: #0f172a; }\n::-webkit-scrollbar-track { background: #0f172a; }\n::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; border: 2px solid #0f172a; }\n::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }\n::-webkit-scrollbar-corner { background: #0f172a; }\n* { scrollbar-color: #1E293B #0f172a; scrollbar-width: thin; }\n",
+    "html": "<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n<div id=\"myGrid\" class=\"ag-theme-alpine app\"></div>",
+    "js": "\nfunction dash(p){ return (p.value==null||p.value==='') ? '\\u2013' : p.value; }\nvar COLS = [\n  { headerName: 'Sort Order', field: 'Sort Order', width: 130, minWidth: 100, type: 'numericColumn' },\n  { headerName: 'Name', field: 'Name', flex: 1.4, minWidth: 180 },\n  { headerName: 'Type', field: 'Type', flex: 0.8, minWidth: 110 },\n  { headerName: 'UoM', field: 'UoM', flex: 0.8, minWidth: 100, valueFormatter: dash },\n  { headerName: 'Locations', field: 'Locations', flex: 2, minWidth: 220 }\n];\nvar gridApi = null, lastSig = '';\nfunction getRows(model){ return (model && Array.isArray(model.data)) ? model.data : []; }\nfunction dataSig(model){\n  var r = getRows(model);\n  return (model && model.isLoading ? 'L' : '') + ':' + r.length + ':' + (r[0] && r[0][\"Sort Order\"]) + ':' + (r[r.length-1] && r[r.length-1][\"Sort Order\"]);\n}\nfunction render(model){\n  var gridDiv = document.querySelector('#myGrid');\n  if (!gridDiv) return;\n  gridDiv.innerHTML = '';\n  gridApi = agGrid.createGrid(gridDiv, {\n    columnDefs: COLS,\n    rowData: getRows(model),\n    domLayout: 'autoHeight',\n    pagination: true,\n    paginationPageSize: 20,\n    paginationPageSizeSelector: [10, 20, 30, 40, 50, 100],\n    animateRows: true,\n    defaultColDef: { resizable: true, sortable: true, minWidth: 90 },\n    popupParent: document.body,\n    overlayNoRowsTemplate: '<span style=\"color:#94a3b8;font-style:italic;\">No monthly attributes</span>',\n    onGridReady: function(p){ gridApi = p.api; }\n  });\n  lastSig = dataSig(model);\n}\nappsmith.onReady(function(){\n  render(appsmith.model);\n  appsmith.onModelChange(function(model){\n    if (!gridApi){ render(model); return; }\n    var sig = dataSig(model);\n    if (sig !== lastSig){ lastSig = sig; gridApi.setGridOption('rowData', getRows(model)); }\n  });\n});\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "html,body { background:#0f172a !important; margin:0; padding:0; }\n.app { width: 100%; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }\n.ag-theme-alpine { --ag-header-background-color: #0f172a; --ag-header-foreground-color: #FFFFFF; --ag-odd-row-background-color: #0f172a; --ag-background-color: #1E293B; --ag-row-hover-color: #1E293B; --ag-selected-row-background-color: #1E293B; --ag-foreground-color: #FFFFFF; --ag-border-color: #1E293B; --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; --ag-font-size: 14px; --ag-row-height: 44px; --ag-header-height: 48px; border-radius: 6px; border: 1px solid #1E293B; overflow: hidden; }\n.ag-theme-alpine .ag-row-odd { background-color: #0f172a !important; }\n.ag-theme-alpine .ag-row-even { background-color: #1E293B !important; }\n.ag-theme-alpine .ag-row-hover { background-color: rgba(255,255,255,0.05) !important; }\n.ag-theme-alpine .ag-cell { border-right: 1px solid rgba(255,255,255,0.04); line-height: 44px; }\n.ag-theme-alpine .ag-header { font-weight: 600; background: #0f172a; border-bottom: 2px solid #1E293B; }\n.ag-theme-alpine .ag-header-cell { border-right: 1px solid rgba(255,255,255,0.06); }\n.ag-theme-alpine .ag-header-cell-text { color: #FFFFFF; }\n.ag-theme-alpine .ag-header-cell-menu-button { opacity: 1 !important; }\n.ag-theme-alpine .ag-paging-panel { background: #0f172a; color: #FFFFFF; border-top: 2px solid #1E293B; }\n.ag-theme-alpine .ag-paging-panel * { color: #FFFFFF !important; }\n.ag-theme-alpine .ag-paging-panel .ag-picker-field-wrapper { background: #1E293B; border-color: #1E293B; color: #FFFFFF; }\n.ag-theme-alpine .ag-paging-button { color: #FFFFFF !important; opacity: 0.85; }\n.ag-theme-alpine .ag-paging-button:hover { opacity: 1; background: #1E293B; border-radius: 4px; }\n.ag-theme-alpine .ag-paging-button[disabled] { opacity: 0.4; }\n.ag-theme-alpine .ag-paging-button.ag-paging-button-current { background: #FFFFFF; color: #0f172a !important; border-radius: 50%; }\n.ag-menu, .ag-menu-option, .ag-tooltip { z-index: 999999 !important; }\n::-webkit-scrollbar { width: 10px; height: 10px; background: #0f172a; }\n::-webkit-scrollbar-track { background: #0f172a; }\n::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 4px; border: 2px solid #0f172a; }\n::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }\n::-webkit-scrollbar-corner { background: #0f172a; }\n* { scrollbar-color: #1E293B #0f172a; scrollbar-width: thin; }\n",
+    "html": "<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n<div id=\"myGrid\" class=\"ag-theme-alpine app\"></div>",
+    "js": "\nfunction dash(p){ return (p.value==null||p.value==='') ? '\\u2013' : p.value; }\nvar COLS = [\n  { headerName: 'Sort Order', field: 'Sort Order', width: 130, minWidth: 100, type: 'numericColumn' },\n  { headerName: 'Name', field: 'Name', flex: 1.4, minWidth: 180 },\n  { headerName: 'Type', field: 'Type', flex: 0.8, minWidth: 110 },\n  { headerName: 'UoM', field: 'UoM', flex: 0.8, minWidth: 100, valueFormatter: dash },\n  { headerName: 'Locations', field: 'Locations', flex: 2, minWidth: 220 }\n];\nvar gridApi = null, lastSig = '';\nfunction getRows(model){ return (model && Array.isArray(model.data)) ? model.data : []; }\nfunction dataSig(model){\n  var r = getRows(model);\n  return (model && model.isLoading ? 'L' : '') + ':' + r.length + ':' + (r[0] && r[0][\"Sort Order\"]) + ':' + (r[r.length-1] && r[r.length-1][\"Sort Order\"]);\n}\nfunction render(model){\n  var gridDiv = document.querySelector('#myGrid');\n  if (!gridDiv) return;\n  gridDiv.innerHTML = '';\n  gridApi = agGrid.createGrid(gridDiv, {\n    columnDefs: COLS,\n    rowData: getRows(model),\n    domLayout: 'autoHeight',\n    pagination: true,\n    paginationPageSize: 20,\n    paginationPageSizeSelector: [10, 20, 30, 40, 50, 100],\n    animateRows: true,\n    defaultColDef: { resizable: true, sortable: true, minWidth: 90 },\n    popupParent: document.body,\n    overlayNoRowsTemplate: '<span style=\"color:#94a3b8;font-style:italic;\">No monthly attributes</span>',\n    onGridReady: function(p){ gridApi = p.api; }\n  });\n  lastSig = dataSig(model);\n}\nappsmith.onReady(function(){\n  render(appsmith.model);\n  appsmith.onModelChange(function(model){\n    if (!gridApi){ render(model); return; }\n    var sig = dataSig(model);\n    if (sig !== lastSig){ lastSig = sig; gridApi.setGridOption('rowData', getRows(model)); }\n  });\n});\n"
+  },
+  "version": 1,
+  "widgetId": "moattrgrid01",
+  "widgetName": "MonthlyAttrGrid"
+}
