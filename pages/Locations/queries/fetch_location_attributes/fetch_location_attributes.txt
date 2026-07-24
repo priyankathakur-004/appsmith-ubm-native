@@ -1,11 +1,9 @@
 SELECT
-    ROW_NUMBER() OVER (ORDER BY attribute_name) AS "Sort Order",
-    attribute_name   AS "Name",
-    attribute_format AS "Type",
-    attribute_uom    AS "UoM"
-FROM (
-    SELECT DISTINCT attribute_name, attribute_format, attribute_uom
-    FROM bill_management_v2.custom_location_attributes
-    WHERE customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
-) t
-ORDER BY attribute_name;
+    sort_order      AS "Sort Order",
+    attribute_name  AS "Name",
+    attribute_type  AS "Type",
+    attribute_uom   AS "UoM"
+FROM bill_management_v2.location_metadata
+WHERE customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
+  AND deleted_at IS NULL
+ORDER BY sort_order;
