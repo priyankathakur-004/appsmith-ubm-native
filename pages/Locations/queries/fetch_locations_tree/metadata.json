@@ -29,7 +29,7 @@
     ],
     "name": "fetch_locations_tree",
     "pageId": "Locations",
-    "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": false
+    "runBehaviour": "MANUAL",
+    "userSetOnLoad": true
   }
 }
