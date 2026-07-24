@@ -1,0 +1,31 @@
+SELECT
+    m.sort_order      AS "Sort Order",
+    m.attribute_name  AS "Name",
+    m.attribute_type  AS "Type",
+    m.attribute_uom   AS "UoM",
+    CASE WHEN m.is_all_locations THEN (
+        SELECT STRING_AGG(loc, ' | ' ORDER BY lid)
+        FROM (
+            SELECT ld.location_id AS lid,
+                   COALESCE(ld.location_description, 'Site ' || ld.location_id) AS loc
+            FROM bill_management_v2.location_detail ld
+            WHERE ld.customer_id = m.customer_id
+        ) s
+    ) ELSE (
+        SELECT STRING_AGG(loc, ' | ' ORDER BY ord)
+        FROM (
+            SELECT mp.location_id,
+                   MIN(mp.id) AS ord,
+                   COALESCE(MAX(ld.location_description), 'Site ' || mp.location_id) AS loc
+            FROM bill_management_v2.location_monthly_attributes_mapping mp
+            LEFT JOIN bill_management_v2.location_detail ld
+                   ON ld.location_id = mp.location_id
+            WHERE mp.location_monthly_attributes_metadata_id = m.id
+              AND mp.location_id IS NOT NULL
+            GROUP BY mp.location_id
+        ) s
+    ) END              AS "Locations"
+FROM bill_management_v2.location_monthly_attributes_metadata m
+WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
+  AND m.deleted_at IS NULL
+ORDER BY m.sort_order;

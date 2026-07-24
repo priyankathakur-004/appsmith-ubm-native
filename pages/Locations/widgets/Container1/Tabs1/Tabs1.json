@@ -250,7 +250,11 @@
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onTabSelected"
+    }
+  ],
   "flexVerticalAlignment": "stretch",
   "isCanvas": true,
   "isLoading": false,
@@ -265,6 +269,7 @@
   "mobileRightColumn": 16,
   "mobileTopRow": 5,
   "needsErrorInfo": false,
+  "onTabSelected": "{{ (function(){ var t = Tabs1.selectedTab; if (t === 'Hierarchies') { fetch_locations_tree.run(); if (appsmith.store.hierLocationIds) { fetch_hierarchy_accounts.run(); } } else if (t === 'Location Attributes') { fetch_location_attributes.run(); } else if (t === 'Virtual Account Attributes') { fetch_va_attributes.run(); } else if (t === 'Monthly Attributes') { fetch_monthly_attributes.run(); } })() }}",
   "originalBottomRow": 131,
   "originalTopRow": 8,
   "parentColumnSpace": 14.453125,

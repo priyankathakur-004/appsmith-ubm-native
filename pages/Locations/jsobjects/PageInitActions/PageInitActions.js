@@ -9,5 +9,6 @@ export default {
 		getStates.run();
 		getTotalLocations.run();
 		getLocationLists.run();
+		// the hierarchy tree + accounts load when the Hierarchies tab is opened (see that tab's onTabSelected), not on page load
 	}
 }

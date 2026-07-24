@@ -1,0 +1,13 @@
+SELECT
+    lg.id,
+    lg.location_id,
+    lg.parent_id,
+    lg.name,
+    lt.location_description AS loc_desc,
+    lt.building_type        AS loc_type,
+    lt.location_address     AS service_address
+FROM bill_management_v2.location_groups lg
+LEFT JOIN bill_management_v2.location_detail lt
+       ON lt.location_id = lg.location_id
+WHERE lg.customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
+ORDER BY lg.name;
