@@ -5,4 +5,5 @@ SELECT
     attribute_uom   AS "UoM"
 FROM bill_management_v2.virtual_accounts_attributes_metadata
 WHERE customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
+   OR customer_id IS NULL
 ORDER BY sort_order;

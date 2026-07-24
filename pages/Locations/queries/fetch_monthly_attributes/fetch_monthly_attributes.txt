@@ -1,15 +1,19 @@
 SELECT
-    m.sort_order                                   AS "Sort Order",
-    m.attribute_name                               AS "Name",
-    m.attribute_type                               AS "Type",
-    m.attribute_uom                                AS "UoM",
-    STRING_AGG(DISTINCT COALESCE(ld.location_description, 'Site ' || v.location_id), ' | ') AS "Locations"
+    m.sort_order      AS "Sort Order",
+    m.attribute_name  AS "Name",
+    m.attribute_type  AS "Type",
+    m.attribute_uom   AS "UoM",
+    (
+      SELECT STRING_AGG(loc, ' | ' ORDER BY lid)
+      FROM (
+        SELECT DISTINCT v.location_id AS lid,
+               COALESCE(ld.location_description, 'Site ' || v.location_id) AS loc
+        FROM bill_management_v2.location_monthly_attributes_values v
+        LEFT JOIN bill_management_v2.location_detail ld
+               ON ld.location_id = v.location_id
+        WHERE v.location_monthly_attributes_metadata_id = m.id
+      ) s
+    )                 AS "Locations"
 FROM bill_management_v2.location_monthly_attributes_metadata m
-LEFT JOIN bill_management_v2.location_monthly_attributes_values v
-       ON v.location_monthly_attributes_metadata_id = m.id
-      AND COALESCE(BTRIM(v.attribute_value), '') <> ''
-LEFT JOIN bill_management_v2.location_detail ld
-       ON ld.location_id = v.location_id
 WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
-GROUP BY m.sort_order, m.attribute_name, m.attribute_type, m.attribute_uom
 ORDER BY m.sort_order;
