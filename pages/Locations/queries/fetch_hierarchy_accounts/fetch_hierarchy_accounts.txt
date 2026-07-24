@@ -1,12 +1,12 @@
 SELECT
-    va.account_code                                     AS "Billing Account",
-    COALESCE(v.pretty_name, va.vendor_code)             AS "Vendor",
-    STRING_AGG(DISTINCT INITCAP(va.commodity), ', ')    AS "Utility",
-    TO_CHAR(MAX(rnva.date_of_last_bill), 'MM/DD/YYYY')  AS "Last Bill",
-    COALESCE(MAX(st.account_status), 'Unknown')         AS "Open/Closed",
-    STRING_AGG(DISTINCT COALESCE(lt.location_description, 'Site ' || vap.location_id), ', ') AS "Locations",
-    STRING_AGG(DISTINCT lt.location_address, ' | ')     AS "Service Address",
-    MIN(va.id)                                          AS "_vaid"
+    vap.location_id                                     AS "loc",
+    va.account_code                                     AS "acct",
+    COALESCE(v.pretty_name, va.vendor_code)             AS "vendor",
+    STRING_AGG(DISTINCT INITCAP(va.commodity), ', ')    AS "utility",
+    TO_CHAR(MAX(rnva.date_of_last_bill), 'MM/DD/YYYY')  AS "lastbill",
+    COALESCE(MAX(st.account_status), 'Unknown')         AS "status",
+    MAX(lt.location_address)                            AS "addr",
+    MAX(COALESCE(lt.location_description, 'Site ' || vap.location_id)) AS "locname"
 FROM bill_management_v2.virtual_accounts_locations_pairing vap
 JOIN bill_management_v2.virtual_accounts va
       ON va.id = vap.virtual_account_id
@@ -20,5 +20,5 @@ LEFT JOIN bill_management_v2.location_detail lt
       ON lt.location_id = vap.location_id
 WHERE vap.location_id IN ({{ appsmith.store.hierLocationIds || '0' }})
   AND va.customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
-GROUP BY va.account_code, COALESCE(v.pretty_name, va.vendor_code)
-ORDER BY "Vendor", va.account_code;
+GROUP BY vap.location_id, va.account_code, COALESCE(v.pretty_name, va.vendor_code)
+ORDER BY va.account_code;
