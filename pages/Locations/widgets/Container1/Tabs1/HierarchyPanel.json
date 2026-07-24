@@ -66,5 +66,5 @@
   "version": 1,
   "widgetId": "hierpanel0001",
   "widgetName": "HierarchyPanel",
-  "onBillHistory": "{{ storeValue('bhLocId', (HierarchyPanel.model.billHistory || {}).locId); fetch_bill_history.run(); }}"
+  "onBillHistory": "{{ storeValue('bhAcct', (HierarchyPanel.model.billHistory || {}).acct); fetch_bill_history.run(); }}"
 }
