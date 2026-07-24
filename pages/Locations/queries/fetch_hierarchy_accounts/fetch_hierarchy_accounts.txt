@@ -1,7 +1,7 @@
 SELECT
     vap.location_id                                     AS "loc",
     va.account_code                                     AS "acct",
-    COALESCE(v.pretty_name, va.vendor_code)             AS "vendor",
+    COALESCE(NULLIF(BTRIM(cvpn.pretty_name), ''), pvn.pretty_name, va.vendor_code) AS "vendor",
     STRING_AGG(DISTINCT INITCAP(va.commodity), ', ')    AS "utility",
     TO_CHAR(MAX(rnva.date_of_last_bill), 'MM/DD/YYYY')  AS "lastbill",
     COALESCE(MAX(rnva.account_status), 'Unknown')       AS "status",
@@ -10,13 +10,16 @@ SELECT
 FROM bill_management_v2.virtual_accounts_locations_pairing vap
 JOIN bill_management_v2.virtual_accounts va
       ON va.id = vap.virtual_account_id
-LEFT JOIN bill_management_v2.vendors v
-      ON v.code = va.vendor_code
+LEFT JOIN bill_management_v2.providers_pretty_name pvn
+      ON pvn.code::text = va.vendor_code::text
+LEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn
+      ON cvpn.customer_id = va.customer_id AND cvpn.vendor_id = pvn.vendor_id
 LEFT JOIN bill_management_v2.reports_new_virtual_accounts rnva
       ON rnva.virtual_account_id = va.id AND rnva.customer_id = va.customer_id
 LEFT JOIN bill_management_v2.location_detail lt
       ON lt.location_id = vap.location_id
 WHERE vap.location_id IN ({{ appsmith.store.hierLocationIds || '0' }})
   AND va.customer_id = {{ CustomerSelect.selectedOptionValue || 0 }}
-GROUP BY vap.location_id, va.account_code, COALESCE(v.pretty_name, va.vendor_code)
+GROUP BY vap.location_id, va.account_code,
+         COALESCE(NULLIF(BTRIM(cvpn.pretty_name), ''), pvn.pretty_name, va.vendor_code)
 ORDER BY va.account_code;
