@@ -3,7 +3,7 @@
   "borderColor": "#E0DEDE",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
-  "bottomRow": 9,
+  "bottomRow": 8,
   "boxShadow": "none",
   "defaultModel": "{{\n{}\n}}",
   "dynamicBindingPathList": [
@@ -30,7 +30,7 @@
   "mobileRightColumn": 40,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "originalBottomRow": 9,
+  "originalBottomRow": 8,
   "originalTopRow": 1,
   "parentColumnSpace": 16.765625,
   "parentId": "0",
@@ -40,16 +40,16 @@
   "rightColumn": 40,
   "shouldScrollContents": false,
   "srcDoc": {
-    "css": "* { box-sizing:border-box; }\nhtml, body { margin:0; padding:0; background:transparent; }\nbody { font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif; -webkit-font-smoothing:antialiased; }\n.wrap { padding:2px 0; }\n.eyebrow { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#34d399; }\nh1 { margin:0; font-size:30px; line-height:1.1; letter-spacing:-.02em; font-weight:700; color:#f8fafc; }\n.sub { margin:6px 0 0; font-size:14px; color:#94a3b8; line-height:1.4; }\n",
-    "html": "<html lang=\"en\">\n  <head></head>\n  <body>\n    <div class=\"wrap\">\n      <p class=\"eyebrow\">Utility Bill Management</p>\n      <h1>Dashboard</h1>\n      <p class=\"sub\">Operational overview of bills moving through the processing pipeline</p>\n    </div>\n  </body>\n</html>\n",
-    "js": "// Static header \u2014 no data binding needed\nappsmith.onReady(function () {});\n"
+    "css": "* {\n  box-sizing: border-box;\n}\n\nhtml, body {\n  margin: 0;\n  padding: 0;\n  background: transparent;\n}\n\nbody {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n  -webkit-font-smoothing: antialiased;\n}\n\n.wrap {\n  padding: 2px 0;\n}\n\n.eyebrow {\n  margin: 0 0 8px;\n  font-size: 11px;\n  font-weight: 700;\n  letter-spacing: 0.14em;\n  text-transform: uppercase;\n  color: #34d399;\n}\n\nh1 {\n  margin: 0;\n  font-size: 30px;\n  line-height: 1.1;\n  letter-spacing: -0.02em;\n  font-weight: 700;\n  color: #f8fafc;\n}\n\n.sub {\n  margin: 6px 0 0;\n  font-size: 14px;\n  color: #94a3b8;\n  line-height: 1.4;\n}",
+    "html": "<html lang=\"en\">\n  <head></head>\n  <body>\n    <div class=\"wrap\">\n      <p class=\"eyebrow\">Utility Bill Management</p>\n      <h1>Dashboard</h1>\n    </div>\n  </body>\n</html>\n",
+    "js": "// Static header — no data binding needed\nappsmith.onReady(function () {});"
   },
   "topRow": 1,
   "type": "CUSTOM_WIDGET",
   "uncompiledSrcDoc": {
-    "css": "* { box-sizing:border-box; }\nhtml, body { margin:0; padding:0; background:transparent; }\nbody { font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif; -webkit-font-smoothing:antialiased; }\n.wrap { padding:2px 0; }\n.eyebrow { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#34d399; }\nh1 { margin:0; font-size:30px; line-height:1.1; letter-spacing:-.02em; font-weight:700; color:#f8fafc; }\n.sub { margin:6px 0 0; font-size:14px; color:#94a3b8; line-height:1.4; }\n",
-    "html": "<html lang=\"en\">\n  <head></head>\n  <body>\n    <div class=\"wrap\">\n      <p class=\"eyebrow\">Utility Bill Management</p>\n      <h1>Dashboard</h1>\n      <p class=\"sub\">Operational overview of bills moving through the processing pipeline</p>\n    </div>\n  </body>\n</html>\n",
-    "js": "// Static header \u2014 no data binding needed\nappsmith.onReady(function () {});\n"
+    "css": "* { box-sizing:border-box; }\nhtml, body { margin:0; padding:0; background:transparent; }\nbody { font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif; -webkit-font-smoothing:antialiased; }\n.wrap { padding:2px 0; }\n.eyebrow { margin:0 0 8px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#34d399; }\nh1 { margin:0; font-size:30px; line-height:1.1; letter-spacing:-.02em; font-weight:700; color:#f8fafc; }\n.sub { margin:6px 0 0; font-size:14px; color:#94a3b8; line-height:1.4; }\n",
+    "html": "<html lang=\"en\">\n  <head></head>\n  <body>\n    <div class=\"wrap\">\n      <p class=\"eyebrow\">Utility Bill Management</p>\n      <h1>Dashboard</h1>\n    </div>\n  </body>\n</html>\n",
+    "js": "// Static header — no data binding needed\nappsmith.onReady(function () {});\n"
   },
   "version": 1,
   "widgetId": "dshhdrwdg1",
