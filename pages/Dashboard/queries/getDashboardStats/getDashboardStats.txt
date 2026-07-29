@@ -1,8 +1,7 @@
 -- Pipeline stage counts per period for the selected customer.
 -- Grain: one row per analytics bill (abi.bill_id); a bill's stage = its latest
 -- bill_meta.workflow_state. Total = COUNT(DISTINCT bill_id), matching the UBM
--- "Dashboard for UBM Demo" (20,476 for customer 76013), NOT the bill+account
--- bills-grid total.
+-- "Dashboard for UBM Demo" (20,476 for customer 76013).
 WITH bills AS (
     SELECT DISTINCT ON (abi.bill_id)
            bm.workflow_state,
@@ -26,15 +25,15 @@ p (ord, label, since) AS (
         (4, 'All-Time',        NULL::timestamp)
 )
 SELECT
-    p.label AS period,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'bill_loaded')         AS loaded,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'integrity_check')     AS integrity,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'data_verification_1') AS verif1,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'data_verification_2') AS verif2,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'data_audit_1')        AS audit1,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'data_audit_2')        AS audit2,
-    COUNT(*) FILTER (WHERE b.workflow_state = 'processed')           AS processed,
-    COUNT(b.is_bill) AS total
+    p.label AS "Period",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'bill_loaded')         AS "Bills Loaded",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'integrity_check')     AS "Integrity Check",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_verification_1') AS "Data Verification I",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_verification_2') AS "Data Verification II",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_audit_1')        AS "Data Audit I",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_audit_2')        AS "Data Audit II",
+    COUNT(*) FILTER (WHERE b.workflow_state = 'processed')           AS "Processed",
+    COUNT(b.is_bill) AS "Total"
 FROM p
 LEFT JOIN bills b ON (p.since IS NULL OR b.created_at >= p.since)
 GROUP BY p.ord, p.label
