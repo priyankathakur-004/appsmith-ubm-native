@@ -1,6 +1,6 @@
 {
   "gitSyncId": "68f08f3128a92f6fcd2cb504_83a32ddf-e3c5-439b-b78d-586f3a445f18",
-  "id": "Home Page_getBills",
+  "id": "Dashboard_getBills",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
@@ -28,7 +28,7 @@
       }
     ],
     "name": "getBills",
-    "pageId": "Home Page",
+    "pageId": "Dashboard",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }

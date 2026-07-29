@@ -1,6 +1,6 @@
 {
   "gitSyncId": "68f07dbf79684f4c9d2eb04e_cb1b2841-6b05-4091-9845-af68cd86f4d2",
-  "id": "Home Page_getCustomers",
+  "id": "Dashboard_getCustomers",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
@@ -24,7 +24,7 @@
     },
     "dynamicBindingPathList": [],
     "name": "getCustomers",
-    "pageId": "Home Page",
+    "pageId": "Dashboard",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }

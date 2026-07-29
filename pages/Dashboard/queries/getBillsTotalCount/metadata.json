@@ -1,6 +1,6 @@
 {
   "gitSyncId": "68f08f3128a92f6fcd2cb504_9b2121c2-561a-456c-8214-af7f9198bafb",
-  "id": "Home Page_getBillsTotalCount",
+  "id": "Dashboard_getBillsTotalCount",
   "pluginId": "postgres-plugin",
   "pluginType": "DB",
   "unpublishedAction": {
@@ -28,7 +28,7 @@
       }
     ],
     "name": "getBillsTotalCount",
-    "pageId": "Home Page",
+    "pageId": "Dashboard",
     "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }

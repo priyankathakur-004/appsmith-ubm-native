@@ -1,9 +1,9 @@
 {
   "gitSyncId": "68f08f3128a92f6fcd2cb504_390f954b-41bc-49b6-9de0-c3bcc861ab71",
-  "id": "Home Page_FilterUtils",
+  "id": "Dashboard_FilterUtils",
   "unpublishedCollection": {
     "name": "FilterUtils",
-    "pageId": "Home Page",
+    "pageId": "Dashboard",
     "pluginId": "js-plugin",
     "pluginType": "JS",
     "variables": [
