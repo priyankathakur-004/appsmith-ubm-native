@@ -30,6 +30,18 @@
       "isDefault": true
     },
     {
+      "id": "Customer Info",
+      "isDefault": false
+    },
+    {
+      "id": "Vendors",
+      "isDefault": false
+    },
+    {
+      "id": "Utilities",
+      "isDefault": false
+    },
+    {
       "id": "Portfolio View",
       "isDefault": false
     },
@@ -46,6 +58,10 @@
       "isDefault": false
     },
     {
+      "id": "Bill Notifications",
+      "isDefault": false
+    },
+    {
       "id": "Locations",
       "isDefault": false
     },
@@ -58,27 +74,7 @@
       "isDefault": false
     },
     {
-      "id": "Login",
-      "isDefault": false
-    },
-    {
-      "id": "Dromo Upload",
-      "isDefault": false
-    },
-    {
-      "id": "Ag-grid",
-      "isDefault": false
-    },
-    {
       "id": "Analytics",
-      "isDefault": false
-    },
-    {
-      "id": "Utilities",
-      "isDefault": false
-    },
-    {
-      "id": "UBM API Explorer",
       "isDefault": false
     },
     {
@@ -90,19 +86,11 @@
       "isDefault": false
     },
     {
-      "id": "Vendors",
-      "isDefault": false
-    },
-    {
       "id": "Payments",
       "isDefault": false
     },
     {
-      "id": "Bill Notifications",
-      "isDefault": false
-    },
-    {
-      "id": "Customer Info",
+      "id": "UBM API Explorer",
       "isDefault": false
     },
     {
@@ -111,6 +99,18 @@
     },
     {
       "id": "Errors",
+      "isDefault": false
+    },
+    {
+      "id": "Login",
+      "isDefault": false
+    },
+    {
+      "id": "Ag-grid",
+      "isDefault": false
+    },
+    {
+      "id": "Dromo Upload",
       "isDefault": false
     }
   ],
