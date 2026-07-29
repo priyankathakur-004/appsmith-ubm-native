@@ -1,4 +1,15 @@
 export default {
+	// Runs on page load (this function is flagged run-on-load) so every table and
+	// the customer dropdown populate without relying on Appsmith's on-load
+	// inference, which doesn't fire the AUTOMATIC queries when only custom-widget
+	// models consume them. Mirrors the CustomerSelect.onOptionChange fetch set.
+	initPage() {
+		getCustomers.run();
+		fetch_unmapped_vas.run();
+		fetch_unpaired_vas.run();
+		fetch_unprocessed_bills.run();
+	},
+
 	// Row "Map" click from the Unmapped custom widget. The widget calls
 	// updateModel({selectedRow}) then fires onRowAction -> this method with the row.
 	// Stash the row so MapAccountModal's body can read it, then open the modal.
