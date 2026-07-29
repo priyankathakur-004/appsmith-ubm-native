@@ -1,5 +1,5 @@
 {
-  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "backgroundColor": "#0F172A",
   "borderColor": "#0f172a",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
@@ -18,9 +18,6 @@
     },
     {
       "key": "defaultModel"
-    },
-    {
-      "key": "backgroundColor"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -54,7 +51,7 @@
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "shouldScrollContents": true,
+  "shouldScrollContents": false,
   "srcDoc": {
     "css": ".ag-theme-alpine .ag-header-cell-menu-button {\n  opacity: 1 !important;\n  width: 20px !important;\n  height: 20px !important;\n  display: flex !important;\n  align-items: center;\n  justify-content: center;\n}\n\n.ag-theme-alpine .ag-icon-menu {\n  font-size: 16px !important;\n  opacity: 1 !important;\n  visibility: visible !important;\n}\n\n/* Make menu dropdown visible */\n.ag-menu,\n.ag-menu-option,\n.ag-tooltip {\n  z-index: 999999 !important;\n}\n\n/* ===== Dark theme overrides (fallback for legacy CSS themes) ===== */\n:root, .ag-theme-alpine, .ag-theme-quartz {\n  --ag-background-color: #1e293b;\n  --ag-foreground-color: #e2e8f0;\n  --ag-header-background-color: #182234;\n  --ag-header-foreground-color: #94a3b8;\n  --ag-border-color: #273244;\n  --ag-row-border-color: #273244;\n  --ag-odd-row-background-color: #1b2636;\n  --ag-row-hover-color: #243044;\n  --ag-control-panel-background-color: #1e293b;\n  --ag-menu-background-color: #1e293b;\n  --ag-popup-background-color: #1e293b;\n  --ag-subtle-text-color: #94a3b8;\n  --ag-selected-row-background-color: #243044;\n  --ag-input-focus-border-color: #34d399;\n}\nhtml, body { background: #0f172a; }\n\n\n/* ===== Bills heading ===== */\n.ubm-bills-head {\n  font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif;\n  font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #f8fafc;\n  padding: 4px 6px 14px;\n}\n.ubm-bills-head b { font-weight: 700; }\n.ubm-bills-head .sep { color: #64748b; margin: 0 8px; font-weight: 600; }\n.ubm-bills-head #billsCustomer { color: #34d399; }\n",
     "html": "<html lang=\"en\"> \n\t<head> <!-- Includes all JS & CSS for the JavaScript Data Grid --> \n<script src=\"https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js\"></script>\n\n\n\t</head> \n\t<body> <!-- Your Data Grid container --> \n\t  <div class=\"ubm-bills-head\"><b>Bills</b><span class=\"sep\">·</span><span id=\"billsCustomer\">UBM Demo</span></div>\n\t  <div id=\"myGrid\"></div> \n\t</body> \n</html>",
