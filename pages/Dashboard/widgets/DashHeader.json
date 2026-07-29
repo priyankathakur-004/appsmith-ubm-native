@@ -1,0 +1,57 @@
+{
+  "backgroundColor": "#0F172A",
+  "borderColor": "#E0DEDE",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 9,
+  "boxShadow": "none",
+  "defaultModel": "{{\n{}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "dshhdrk01",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 40,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "originalBottomRow": 9,
+  "originalTopRow": 1,
+  "parentColumnSpace": 16.765625,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 40,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "* { box-sizing:border-box; }\nhtml, body { margin:0; padding:0; background:transparent; }\nbody { font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif; -webkit-font-smoothing:antialiased; }\n.wrap { padding:2px 0; }\n.eyebrow { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#34d399; }\nh1 { margin:0; font-size:30px; line-height:1.1; letter-spacing:-.02em; font-weight:700; color:#f8fafc; }\n.sub { margin:6px 0 0; font-size:14px; color:#94a3b8; line-height:1.4; }\n",
+    "html": "<html lang=\"en\">\n  <head></head>\n  <body>\n    <div class=\"wrap\">\n      <p class=\"eyebrow\">Utility Bill Management</p>\n      <h1>Dashboard</h1>\n      <p class=\"sub\">Operational overview of bills moving through the processing pipeline</p>\n    </div>\n  </body>\n</html>\n",
+    "js": "// Static header \u2014 no data binding needed\nappsmith.onReady(function () {});\n"
+  },
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "* { box-sizing:border-box; }\nhtml, body { margin:0; padding:0; background:transparent; }\nbody { font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,sans-serif; -webkit-font-smoothing:antialiased; }\n.wrap { padding:2px 0; }\n.eyebrow { margin:0 0 6px; font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:#34d399; }\nh1 { margin:0; font-size:30px; line-height:1.1; letter-spacing:-.02em; font-weight:700; color:#f8fafc; }\n.sub { margin:6px 0 0; font-size:14px; color:#94a3b8; line-height:1.4; }\n",
+    "html": "<html lang=\"en\">\n  <head></head>\n  <body>\n    <div class=\"wrap\">\n      <p class=\"eyebrow\">Utility Bill Management</p>\n      <h1>Dashboard</h1>\n      <p class=\"sub\">Operational overview of bills moving through the processing pipeline</p>\n    </div>\n  </body>\n</html>\n",
+    "js": "// Static header \u2014 no data binding needed\nappsmith.onReady(function () {});\n"
+  },
+  "version": 1,
+  "widgetId": "dshhdrwdg1",
+  "widgetName": "DashHeader"
+}
