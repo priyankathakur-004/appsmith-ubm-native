@@ -11,7 +11,12 @@ WITH bills AS (
            btac.total_amount                            AS "Total Amount Due",
            btac.total_amount                            AS "Pay Amount",
            bm.workflow_state                            AS "Status",
-           bm.created_at                                AS created_at
+           bm.created_at                                AS created_at,
+           br.statement_date                            AS inv_date,
+           bm.bill_type                                 AS bill_type,
+           br.vendor_code                               AS vendor_code,
+           bi.commodity                                 AS utility,
+           bm.deleted_at                                AS deleted_at
     FROM bill_management_v2.bill_metas bm
     LEFT JOIN bill_management_v2.bill_metas_bill_records bmbr ON bmbr.bill_meta_id = bm.id AND bmbr.status = 'active'
     LEFT JOIN bill_management_v2.bill_records br ON br.id = bmbr.bill_record_id
@@ -33,7 +38,17 @@ WHERE ('{{ appsmith.store.drillStage || "all" }}' = 'all' OR "Status" = '{{ apps
       )
   AND (
         '{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}' = ''
-     OR "Billing ID" ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
-     OR "Vendor"     ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
+     OR "Billing ID"  ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
+     OR "Vendor"      ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
      OR "Bill Id"::text ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
-      );
+      )
+  AND ('{{ appsmith.store.drillVendor || "" }}'   = '' OR vendor_code = '{{ appsmith.store.drillVendor }}')
+  AND ('{{ appsmith.store.drillBillType || "" }}' = '' OR bill_type   = '{{ appsmith.store.drillBillType }}')
+  AND ('{{ appsmith.store.drillUtility || "" }}'  = '' OR utility     = '{{ appsmith.store.drillUtility }}')
+  AND ('{{ appsmith.store.drillCostFrom || "" }}' = '' OR "Total Amount Due" >= {{ appsmith.store.drillCostFrom || 0 }})
+  AND ('{{ appsmith.store.drillCostTo || "" }}'   = '' OR "Total Amount Due" <= {{ appsmith.store.drillCostTo || 0 }})
+  AND ('{{ appsmith.store.drillInvFrom || "" }}'  = '' OR inv_date >= '{{ appsmith.store.drillInvFrom }}')
+  AND ('{{ appsmith.store.drillInvTo || "" }}'    = '' OR inv_date <= '{{ appsmith.store.drillInvTo }}')
+  AND ('{{ appsmith.store.drillLoadedFrom || "" }}' = '' OR created_at >= '{{ appsmith.store.drillLoadedFrom }}')
+  AND ('{{ appsmith.store.drillLoadedTo || "" }}'   = '' OR created_at <= '{{ appsmith.store.drillLoadedTo }}')
+  AND ({{ appsmith.store.drillIncludeDeleted ? "TRUE" : "deleted_at IS NULL" }});
