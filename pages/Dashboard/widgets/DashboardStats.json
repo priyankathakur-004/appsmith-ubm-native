@@ -60,5 +60,5 @@
   "version": 1,
   "widgetId": "rdx9ugp33r",
   "widgetName": "DashboardStats",
-  "onDrill": "{{ storeValue('drillStage', (DashboardStats.model.drill||{}).stage); storeValue('drillPeriod', (DashboardStats.model.drill||{}).period); storeValue('drillTitle', (DashboardStats.model.drill||{}).title); storeValue('drillSearch', ''); storeValue('drillPageNo', 1); storeValue('drillPageSize', 50); getDrillBills.run(); getDrillBillsCount.run(); showModal('DrillModal'); }}"
+  "onDrill": "{{ storeValue('drillStage', (DashboardStats.model.drill||{}).stage); storeValue('drillPeriod', (DashboardStats.model.drill||{}).period); storeValue('drillTitle', (DashboardStats.model.drill||{}).title); storeValue('drillVendor',''); storeValue('drillBillType',''); storeValue('drillUtility',''); storeValue('drillCostFrom',''); storeValue('drillCostTo',''); storeValue('drillInvFrom',''); storeValue('drillInvTo',''); storeValue('drillLoadedFrom',''); storeValue('drillLoadedTo',''); storeValue('drillIncludeDeleted', false); storeValue('drillSearch',''); storeValue('drillPageNo', 1); storeValue('drillPageSize', 50); getDrillBills.run(); getDrillBillsCount.run(); showModal('DrillModal'); }}"
 }

@@ -48,7 +48,8 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "drill_canvas",
-      "widgetName": "DrillCanvas"
+      "widgetName": "DrillCanvas",
+      "backgroundColor": "#0F172A"
     }
   ],
   "detachFromLayout": true,
