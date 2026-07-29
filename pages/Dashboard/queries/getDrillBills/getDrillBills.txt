@@ -42,16 +42,16 @@ WHERE ('{{ appsmith.store.drillStage || "all" }}' = 'all' OR "Status" = '{{ apps
      OR "Vendor"      ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
      OR "Bill Id"::text ILIKE '%{{ (appsmith.store.drillSearch || "").replace(/'/g,"''") }}%'
       )
-  AND ('{{ appsmith.store.drillVendor || "" }}'   = '' OR vendor_code = '{{ appsmith.store.drillVendor }}')
-  AND ('{{ appsmith.store.drillBillType || "" }}' = '' OR bill_type   = '{{ appsmith.store.drillBillType }}')
-  AND ('{{ appsmith.store.drillUtility || "" }}'  = '' OR utility     = '{{ appsmith.store.drillUtility }}')
-  AND ('{{ appsmith.store.drillCostFrom || "" }}' = '' OR "Total Amount Due" >= {{ appsmith.store.drillCostFrom || 0 }})
-  AND ('{{ appsmith.store.drillCostTo || "" }}'   = '' OR "Total Amount Due" <= {{ appsmith.store.drillCostTo || 0 }})
-  AND ('{{ appsmith.store.drillInvFrom || "" }}'  = '' OR inv_date >= '{{ appsmith.store.drillInvFrom }}')
-  AND ('{{ appsmith.store.drillInvTo || "" }}'    = '' OR inv_date <= '{{ appsmith.store.drillInvTo }}')
-  AND ('{{ appsmith.store.drillLoadedFrom || "" }}' = '' OR created_at >= '{{ appsmith.store.drillLoadedFrom }}')
-  AND ('{{ appsmith.store.drillLoadedTo || "" }}'   = '' OR created_at <= '{{ appsmith.store.drillLoadedTo }}')
-  AND ({{ appsmith.store.drillIncludeDeleted ? "TRUE" : "deleted_at IS NULL" }})
+  {{ appsmith.store.drillVendor   ? "AND vendor_code = '" + String(appsmith.store.drillVendor).replace(/'/g,"''") + "'" : "" }}
+  {{ appsmith.store.drillBillType ? "AND bill_type = '" + String(appsmith.store.drillBillType).replace(/'/g,"''") + "'" : "" }}
+  {{ appsmith.store.drillUtility  ? "AND utility = '" + String(appsmith.store.drillUtility).replace(/'/g,"''") + "'" : "" }}
+  {{ appsmith.store.drillCostFrom ? 'AND "Total Amount Due" >= ' + Number(appsmith.store.drillCostFrom) : "" }}
+  {{ appsmith.store.drillCostTo   ? 'AND "Total Amount Due" <= ' + Number(appsmith.store.drillCostTo) : "" }}
+  {{ appsmith.store.drillInvFrom    ? "AND inv_date >= '" + appsmith.store.drillInvFrom + "'" : "" }}
+  {{ appsmith.store.drillInvTo      ? "AND inv_date <= '" + appsmith.store.drillInvTo + "'" : "" }}
+  {{ appsmith.store.drillLoadedFrom ? "AND created_at >= '" + appsmith.store.drillLoadedFrom + "'" : "" }}
+  {{ appsmith.store.drillLoadedTo   ? "AND created_at <= '" + appsmith.store.drillLoadedTo + "'" : "" }}
+  {{ appsmith.store.drillIncludeDeleted ? "" : "AND deleted_at IS NULL" }}
 ORDER BY "Total Amount Due" DESC NULLS LAST
 LIMIT {{ appsmith.store.drillPageSize || 50 }}
 OFFSET {{ ((appsmith.store.drillPageNo || 1) - 1) * (appsmith.store.drillPageSize || 50) }};
