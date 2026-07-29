@@ -1,0 +1,63 @@
+{
+  "backgroundColor": "transparent",
+  "borderColor": "transparent",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({}) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onReady"
+    }
+  ],
+  "events": [
+    "onReady"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "ex_pageinit_k",
+  "leftColumn": 60,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onReady": "{{ ExceptionsActions.initPage() }}",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "body{margin:0;background:transparent;}",
+    "html": "<div id=\"root\"></div>",
+    "js": "import React, { useEffect } from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App(){\n  useEffect(function(){\n    var fired=false;\n    var t=setTimeout(function(){ if(!fired && typeof appsmith.triggerEvent===\"function\"){ fired=true; appsmith.triggerEvent(\"onReady\"); } },350);\n    return function(){ clearTimeout(t); };\n  },[]);\n  return React.createElement(\"div\",null);\n}\nReactDOM.render(React.createElement(App,null),document.getElementById(\"root\"));\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body{margin:0;background:transparent;}",
+    "html": "<div id=\"root\"></div>",
+    "js": "import React, { useEffect } from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nfunction App(){\n  useEffect(function(){\n    var fired=false;\n    var t=setTimeout(function(){ if(!fired && typeof appsmith.triggerEvent===\"function\"){ fired=true; appsmith.triggerEvent(\"onReady\"); } },350);\n    return function(){ clearTimeout(t); };\n  },[]);\n  return React.createElement(\"div\",null);\n}\nReactDOM.render(React.createElement(App,null),document.getElementById(\"root\"));\n"
+  },
+  "version": 1,
+  "widgetId": "ex_pageinit_w",
+  "widgetName": "PageInit"
+}
