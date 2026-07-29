@@ -1,0 +1,29 @@
+-- Pipeline stage counts per period for the selected customer.
+-- One row per period; columns follow the dashboard order.
+-- "loaded" has no matching workflow_state, so it is 0 (matches UBM dashboard).
+WITH b AS (
+    SELECT id, workflow_state, created_at
+    FROM bill_management_v2.user_bills
+    WHERE customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+),
+p (ord, label, since) AS (
+    VALUES
+        (1, 'Since Yesterday', (CURRENT_DATE - INTERVAL '1 day')::timestamptz),
+        (2, 'Last 7 Days',     (CURRENT_DATE - INTERVAL '7 day')::timestamptz),
+        (3, 'Last 31 Days',    (CURRENT_DATE - INTERVAL '31 day')::timestamptz),
+        (4, 'All-Time',        NULL::timestamptz)
+)
+SELECT
+    p.label AS period,
+    0 AS loaded,
+    COUNT(*) FILTER (WHERE b.workflow_state = 'integrity_check')     AS integrity,
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_verification_1') AS verif1,
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_verification_2') AS verif2,
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_audit_1')        AS audit1,
+    COUNT(*) FILTER (WHERE b.workflow_state = 'data_audit_2')        AS audit2,
+    COUNT(*) FILTER (WHERE b.workflow_state = 'processed')           AS processed,
+    COUNT(b.id) AS total
+FROM p
+LEFT JOIN b ON (p.since IS NULL OR b.created_at >= p.since)
+GROUP BY p.ord, p.label
+ORDER BY p.ord;
