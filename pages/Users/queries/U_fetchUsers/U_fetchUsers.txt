@@ -15,6 +15,8 @@ WHERE EXISTS (
     FROM bill_management_v2.customers_users cu
     WHERE cu.user_id = u.id AND cu.deleted_at IS NULL
 )
-ORDER BY LOWER(u.profile->>'last_name'), LOWER(u.profile->>'first_name')
+ORDER BY LOWER(u.profile->>'last_name') ASC,
+         COALESCE(NULLIF(u.profile->>'role', ''), 'Customer') DESC,
+         LOWER(u.profile->>'first_name') ASC
 LIMIT 10000`
 }}
