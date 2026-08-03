@@ -38,6 +38,10 @@
       "isDefault": false
     },
     {
+      "id": "Users",
+      "isDefault": false
+    },
+    {
       "id": "Utilities",
       "isDefault": false
     },

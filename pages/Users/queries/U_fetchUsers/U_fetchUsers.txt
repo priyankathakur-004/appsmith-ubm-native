@@ -1,0 +1,15 @@
+{{
+`SELECT u.id                                            AS id,
+       u.profile->>'first_name'                        AS first_name,
+       u.profile->>'last_name'                         AS last_name,
+       u.email                                          AS email,
+       COALESCE(NULLIF(u.profile->>'role', ''), 'Customer') AS role,
+       CASE
+           WHEN NOT u.active           THEN 'Inactive'
+           WHEN u.last_login IS NULL   THEN 'Pending'
+           ELSE 'Active'
+       END                                              AS status
+FROM bill_management_v2.users u
+ORDER BY u.id
+LIMIT 10000`
+}}

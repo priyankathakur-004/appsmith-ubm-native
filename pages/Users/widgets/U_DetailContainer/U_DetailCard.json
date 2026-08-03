@@ -1,0 +1,58 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 108,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({ detail: U_fetchUserDetail.data, customers: U_fetchUserCustomers.data }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "udcardk001",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 300,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 5,
+  "needsErrorInfo": false,
+  "originalBottomRow": 108,
+  "originalTopRow": 5,
+  "parentColumnSpace": 16,
+  "parentId": "udetlcnv01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "*,*::before,*::after{box-sizing:border-box;}\nhtml,body{width:100%;}\nbody{margin:0;padding:4px 6px 10px;font-family:'Open Sans','Inter','Segoe UI',Arial,sans-serif;background:transparent;color:#e2e8f0;}\n.tabs{display:flex;gap:4px;border-bottom:1px solid #334155;margin-bottom:20px;}\n.tab{padding:10px 18px;font-size:14px;font-weight:600;color:#94a3b8;cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;user-select:none;}\n.tab:hover{color:#e2e8f0;}\n.tab.active{color:#f1f5f9;background:#1e293b;border-color:#334155;}\n.sect{margin-bottom:22px;}\n.sect-title{font-size:15px;font-weight:700;color:#93c5fd;margin-bottom:8px;}\n.stbl{width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;}\n.stbl td{padding:11px 16px;border-bottom:1px solid #334155;font-size:14px;}\n.stbl tr:last-child td{border-bottom:none;}\n.lbl{color:#94a3b8;width:340px;}\n.val{color:#f1f5f9;font-weight:600;}\n.audit{color:#cbd5e1;font-weight:400;}\n.link{color:#60a5fa;text-decoration:underline;cursor:pointer;}\n.ctbl{width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;font-size:14px;}\n.ctbl th{text-align:left;padding:12px 16px;color:#cbd5e1;font-weight:700;border-bottom:1px solid #334155;}\n.ctbl td{padding:12px 16px;color:#e2e8f0;border-bottom:1px solid #1e293b;}\n.ctbl tr:last-child td{border-bottom:none;}\n.idcell{color:#60a5fa;}\n.empty{padding:24px;text-align:center;color:#64748b;font-style:italic;}\n",
+    "html": "<html><body><div id=\"root\"></div></body></html>",
+    "js": "\nvar TAB = \"user\";\n\nfunction esc(s){ return (s==null||s===\"\") ? \"\u2014\" : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }\n\nfunction row(label, valueHtml, audit){\n  var auditCell = (audit === undefined) ? \"\" : \"<td class='audit'>\" + (audit || \"Admin System\") + \"</td>\";\n  return \"<tr><td class='lbl'>\" + label + \"</td><td class='val'>\" + valueHtml + \"</td>\" + auditCell + \"</tr>\";\n}\n\nfunction section(title, rowsHtml){\n  return \"<div class='sect'><div class='sect-title'>\" + title + \"</div>\" +\n         \"<table class='stbl'>\" + rowsHtml + \"</table></div>\";\n}\n\nfunction userTab(detail){\n  var d = (Array.isArray(detail) && detail[0]) || {};\n  var pill = d.active\n    ? \"<span style='color:#4ade80;'>&#9679; Active</span>\"\n    : \"<span style='color:#f87171;'>&#9679; Inactive</span>\";\n  var main = section(\"Main Information\",\n    row(\"ID\", esc(d.id)) +\n    row(\"First Name\", esc(d.first_name), \"Admin System\") +\n    row(\"Last Name\", esc(d.last_name), \"Admin System\") +\n    row(\"Email\", esc(d.email)) +\n    row(\"Phone number\", esc(d.phone), \"Admin System\") +\n    row(\"Notifications\", (d.notification ? esc(d.notification) : \"Email\"), \"Admin System\") +\n    row(\"Role\", (d.role ? esc(d.role) : \"Customer\"), \"Admin System\"));\n  var status = section(\"Status\", row(\"User status\", pill, \"Admin System\"));\n  var reset = section(\"Reset Password\",\n    \"<tr><td colspan='2' style='padding:12px 16px;'><span class='link'>Send reset password email</span></td></tr>\");\n  return main + status + reset;\n}\n\nfunction customersTab(customers){\n  var rows = Array.isArray(customers) ? customers : [];\n  var head = \"<tr><th>ID</th><th>Name</th><th>User Role</th><th>Job Title</th><th>Locations</th></tr>\";\n  var body = rows.length\n    ? rows.map(function(r){\n        return \"<tr><td class='idcell'>\" + esc(r.id) + \"</td><td>\" + esc(r.name) +\n               \"</td><td>\" + esc(r.user_role) + \"</td><td>\" + esc(r.job_title) +\n               \"</td><td>\" + esc(r.locations) + \"</td></tr>\";\n      }).join(\"\")\n    : \"<tr><td colspan='5' class='empty'>No customers</td></tr>\";\n  return \"<table class='ctbl'>\" + head + body + \"</table>\";\n}\n\nfunction render(model){\n  var m = model || {};\n  var root = document.getElementById(\"root\");\n  if (!root) return;\n  var tabs = \"<div class='tabs'>\" +\n    \"<div class='tab \" + (TAB === \"user\" ? \"active\" : \"\") + \"' data-tab='user'>User Info</div>\" +\n    \"<div class='tab \" + (TAB === \"customers\" ? \"active\" : \"\") + \"' data-tab='customers'>Customers</div>\" +\n    \"</div>\";\n  var content = (TAB === \"customers\") ? customersTab(m.customers) : userTab(m.detail);\n  root.innerHTML = tabs + \"<div class='body'>\" + content + \"</div>\";\n  var els = root.querySelectorAll(\".tab\");\n  for (var i = 0; i < els.length; i++){\n    els[i].addEventListener(\"click\", function(){\n      TAB = this.getAttribute(\"data-tab\");\n      render(appsmith.model);\n    });\n  }\n}\n\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(render); });\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 5,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "*,*::before,*::after{box-sizing:border-box;}\nhtml,body{width:100%;}\nbody{margin:0;padding:4px 6px 10px;font-family:'Open Sans','Inter','Segoe UI',Arial,sans-serif;background:transparent;color:#e2e8f0;}\n.tabs{display:flex;gap:4px;border-bottom:1px solid #334155;margin-bottom:20px;}\n.tab{padding:10px 18px;font-size:14px;font-weight:600;color:#94a3b8;cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0;user-select:none;}\n.tab:hover{color:#e2e8f0;}\n.tab.active{color:#f1f5f9;background:#1e293b;border-color:#334155;}\n.sect{margin-bottom:22px;}\n.sect-title{font-size:15px;font-weight:700;color:#93c5fd;margin-bottom:8px;}\n.stbl{width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;}\n.stbl td{padding:11px 16px;border-bottom:1px solid #334155;font-size:14px;}\n.stbl tr:last-child td{border-bottom:none;}\n.lbl{color:#94a3b8;width:340px;}\n.val{color:#f1f5f9;font-weight:600;}\n.audit{color:#cbd5e1;font-weight:400;}\n.link{color:#60a5fa;text-decoration:underline;cursor:pointer;}\n.ctbl{width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;font-size:14px;}\n.ctbl th{text-align:left;padding:12px 16px;color:#cbd5e1;font-weight:700;border-bottom:1px solid #334155;}\n.ctbl td{padding:12px 16px;color:#e2e8f0;border-bottom:1px solid #1e293b;}\n.ctbl tr:last-child td{border-bottom:none;}\n.idcell{color:#60a5fa;}\n.empty{padding:24px;text-align:center;color:#64748b;font-style:italic;}\n",
+    "html": "<html><body><div id=\"root\"></div></body></html>",
+    "js": "\nvar TAB = \"user\";\n\nfunction esc(s){ return (s==null||s===\"\") ? \"\u2014\" : String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }\n\nfunction row(label, valueHtml, audit){\n  var auditCell = (audit === undefined) ? \"\" : \"<td class='audit'>\" + (audit || \"Admin System\") + \"</td>\";\n  return \"<tr><td class='lbl'>\" + label + \"</td><td class='val'>\" + valueHtml + \"</td>\" + auditCell + \"</tr>\";\n}\n\nfunction section(title, rowsHtml){\n  return \"<div class='sect'><div class='sect-title'>\" + title + \"</div>\" +\n         \"<table class='stbl'>\" + rowsHtml + \"</table></div>\";\n}\n\nfunction userTab(detail){\n  var d = (Array.isArray(detail) && detail[0]) || {};\n  var pill = d.active\n    ? \"<span style='color:#4ade80;'>&#9679; Active</span>\"\n    : \"<span style='color:#f87171;'>&#9679; Inactive</span>\";\n  var main = section(\"Main Information\",\n    row(\"ID\", esc(d.id)) +\n    row(\"First Name\", esc(d.first_name), \"Admin System\") +\n    row(\"Last Name\", esc(d.last_name), \"Admin System\") +\n    row(\"Email\", esc(d.email)) +\n    row(\"Phone number\", esc(d.phone), \"Admin System\") +\n    row(\"Notifications\", (d.notification ? esc(d.notification) : \"Email\"), \"Admin System\") +\n    row(\"Role\", (d.role ? esc(d.role) : \"Customer\"), \"Admin System\"));\n  var status = section(\"Status\", row(\"User status\", pill, \"Admin System\"));\n  var reset = section(\"Reset Password\",\n    \"<tr><td colspan='2' style='padding:12px 16px;'><span class='link'>Send reset password email</span></td></tr>\");\n  return main + status + reset;\n}\n\nfunction customersTab(customers){\n  var rows = Array.isArray(customers) ? customers : [];\n  var head = \"<tr><th>ID</th><th>Name</th><th>User Role</th><th>Job Title</th><th>Locations</th></tr>\";\n  var body = rows.length\n    ? rows.map(function(r){\n        return \"<tr><td class='idcell'>\" + esc(r.id) + \"</td><td>\" + esc(r.name) +\n               \"</td><td>\" + esc(r.user_role) + \"</td><td>\" + esc(r.job_title) +\n               \"</td><td>\" + esc(r.locations) + \"</td></tr>\";\n      }).join(\"\")\n    : \"<tr><td colspan='5' class='empty'>No customers</td></tr>\";\n  return \"<table class='ctbl'>\" + head + body + \"</table>\";\n}\n\nfunction render(model){\n  var m = model || {};\n  var root = document.getElementById(\"root\");\n  if (!root) return;\n  var tabs = \"<div class='tabs'>\" +\n    \"<div class='tab \" + (TAB === \"user\" ? \"active\" : \"\") + \"' data-tab='user'>User Info</div>\" +\n    \"<div class='tab \" + (TAB === \"customers\" ? \"active\" : \"\") + \"' data-tab='customers'>Customers</div>\" +\n    \"</div>\";\n  var content = (TAB === \"customers\") ? customersTab(m.customers) : userTab(m.detail);\n  root.innerHTML = tabs + \"<div class='body'>\" + content + \"</div>\";\n  var els = root.querySelectorAll(\".tab\");\n  for (var i = 0; i < els.length; i++){\n    els[i].addEventListener(\"click\", function(){\n      TAB = this.getAttribute(\"data-tab\");\n      render(appsmith.model);\n    });\n  }\n}\n\nappsmith.onReady(function(){ render(appsmith.model); appsmith.onModelChange(render); });\n"
+  },
+  "version": 1,
+  "widgetId": "udcard0001",
+  "widgetName": "U_DetailCard"
+}
