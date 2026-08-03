@@ -10,6 +10,11 @@
            ELSE 'Active'
        END                                              AS status
 FROM bill_management_v2.users u
-ORDER BY u.id
+WHERE EXISTS (
+    SELECT 1
+    FROM bill_management_v2.customers_users cu
+    WHERE cu.user_id = u.id AND cu.deleted_at IS NULL
+)
+ORDER BY LOWER(u.profile->>'last_name'), LOWER(u.profile->>'first_name')
 LIMIT 10000`
 }}
