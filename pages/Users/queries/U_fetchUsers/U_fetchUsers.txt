@@ -10,11 +10,8 @@
            ELSE 'Active'
        END                                              AS status
 FROM bill_management_v2.users u
-WHERE EXISTS (
-    SELECT 1
-    FROM bill_management_v2.customers_users cu
-    WHERE cu.user_id = u.id AND cu.deleted_at IS NULL
-)
+WHERE u.deleted_at IS NULL
+  AND COALESCE(u.log_always_as_admin, false) = false
 ORDER BY LOWER(u.profile->>'last_name') ASC,
          COALESCE(NULLIF(u.profile->>'role', ''), 'Customer') DESC,
          LOWER(u.profile->>'first_name') ASC
