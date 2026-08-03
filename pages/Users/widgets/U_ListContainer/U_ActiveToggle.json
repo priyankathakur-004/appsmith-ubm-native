@@ -1,0 +1,43 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "alignWidget": "LEFT",
+  "animateLoading": true,
+  "bottomRow": 20,
+  "boxShadow": "none",
+  "defaultSwitchState": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicHeight": "AUTO_HEIGHT",
+  "dynamicTriggerPathList": [],
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "uactivek01",
+  "label": "Active users only",
+  "labelPosition": "Left",
+  "labelTextColor": "#f4f4f5",
+  "leftColumn": 34,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 20,
+  "mobileLeftColumn": 34,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 16,
+  "needsErrorInfo": false,
+  "originalBottomRow": 20,
+  "originalTopRow": 16,
+  "parentColumnSpace": 13.83,
+  "parentId": "ulistcnv01",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "topRow": 16,
+  "type": "SWITCH_WIDGET",
+  "version": 1,
+  "widgetId": "uactive001",
+  "widgetName": "U_ActiveToggle"
+}
