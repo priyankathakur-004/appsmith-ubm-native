@@ -1,0 +1,60 @@
+-- Rate Class Analysis: the ACTUAL billed charge line items behind the 12-month
+-- cost, so a modeled tariff's charges can be compared against what was really
+-- billed rather than total against total.
+--
+-- Grain = physical account (account_key) + statement month + charge description,
+-- matching RC_CustomerUsage. See that query for why the key is the earliest
+-- account code in a virtual account group rather than the group id itself: the
+-- group chains one stream across a supplier change, but supply and delivery sit
+-- in separate groups and are joined only by the utility's account number.
+--
+-- Two filters are load-bearing:
+--   bill_type='live' + workflow_state='processed' are the standard UBM filters —
+--     'historical' rows are back-loaded and inflate totals, and unprocessed bills
+--     are still moving through the workflow. Without both, nothing ties back.
+--   category <> 'Usage Information' drops the quantity-only rows (USE (U),
+--     Demand - Billed (U), Reactive Dem (U) …). Those always carry charge = 0 and
+--     exist to record meter readings; including them would inflate every quantity
+--     while adding nothing to cost.
+--
+-- NOTE on date basis: line items are keyed by statement_date, while the monthly
+-- baseline is the prorated calendar month from reports_customer_monthly_usage. A
+-- bill straddles two calendar months, so the two tie over a full year but never
+-- month by month. The JSObject reports the variance and treats the split as
+-- directional when the two disagree.
+WITH keyed AS (
+    SELECT
+        m.virtual_account_group_id,
+        (ARRAY_AGG(REGEXP_REPLACE(COALESCE(m.account_code,''),'\D','','g')
+                   ORDER BY m.time_period, m.account_code))[1] AS account_key
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.customer_id = {{ RC_CustomerSelect.selectedOptionValue || 76013 }}
+      AND m.utility_type = 'ELECTRIC'
+      AND COALESCE(m.account_code, '') <> ''
+    GROUP BY m.virtual_account_group_id
+)
+SELECT
+    k.account_key,
+    li.virtual_account_group_id,
+    li.account_code,
+    li.location_id,
+    li.vendor_name,
+    li.category,
+    TO_CHAR(date_trunc('month', li.statement_date), 'YYYY-MM-DD') AS month,
+    li.description,
+    MAX(li.uom)                                    AS uom,
+    ROUND(SUM(COALESCE(li.usage, 0))::numeric, 2)  AS qty,
+    ROUND(SUM(COALESCE(li.charge, 0))::numeric, 2) AS charge
+FROM bill_management_v2.analytics_billing_line_items li
+INNER JOIN keyed k ON k.virtual_account_group_id = li.virtual_account_group_id
+WHERE li.customer_id = {{ RC_CustomerSelect.selectedOptionValue || 76013 }}
+  AND UPPER(li.commodity) = 'ELECTRIC'
+  AND li.bill_type = 'live'
+  AND li.workflow_state = 'processed'
+  AND li.description IS NOT NULL
+  AND COALESCE(li.category, '') <> 'Usage Information'
+  AND li.statement_date >= date_trunc('month', CURRENT_DATE) - INTERVAL '24 months'
+GROUP BY k.account_key, li.virtual_account_group_id, li.account_code, li.location_id,
+         li.vendor_name, li.category, date_trunc('month', li.statement_date), li.description
+HAVING SUM(COALESCE(li.charge, 0)) <> 0
+ORDER BY k.account_key, date_trunc('month', li.statement_date) DESC;

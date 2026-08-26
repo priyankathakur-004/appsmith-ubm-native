@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_4129fbe3-e53a-41e8-822a-a0da07e60452",
-  "id": "Rate Class Analysis_RateClassData.runAnalysis",
+  "gitSyncId": "6a42383420f165a7650f6c4d_204682e6-1a6f-4e11-9177-b4117d923c73",
+  "id": "Rate Class Analysis_RateClassData.runCustomerAnalysis",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData.runAnalysis",
-    "name": "runAnalysis",
+    "fullyQualifiedName": "RateClassData.runCustomerAnalysis",
+    "name": "runCustomerAnalysis",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

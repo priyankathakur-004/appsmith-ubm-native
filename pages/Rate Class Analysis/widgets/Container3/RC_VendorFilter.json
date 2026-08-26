@@ -1,0 +1,67 @@
+{
+ "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+ "animateLoading": true,
+ "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+ "bottomRow": 31,
+ "boxShadow": "none",
+ "defaultOptionValue": "",
+ "dynamicBindingPathList": [
+  {
+   "key": "sourceData"
+  },
+  {
+   "key": "borderRadius"
+  },
+  {
+   "key": "accentColor"
+  },
+  {
+   "key": "isVisible"
+  }
+ ],
+ "dynamicHeight": "FIXED",
+ "dynamicPropertyPathList": [],
+ "dynamicTriggerPathList": [
+  {
+   "key": "onOptionChange"
+  }
+ ],
+ "isDisabled": false,
+ "isFilterable": true,
+ "isLoading": false,
+ "isRequired": false,
+ "isVisible": "{{ appsmith.store.rc_screen === 3 }}",
+ "key": "rcvendfil01",
+ "labelAlignment": "left",
+ "labelPosition": "Top",
+ "labelText": "Utility",
+ "labelTextColor": "#f4f4f5",
+ "labelTextSize": "0.875rem",
+ "labelWidth": 5,
+ "leftColumn": 33,
+ "maxDynamicHeight": 9000,
+ "minDynamicHeight": 4,
+ "minWidth": 450,
+ "mobileBottomRow": 48,
+ "mobileLeftColumn": 1,
+ "mobileRightColumn": 21,
+ "mobileTopRow": 40,
+ "needsErrorInfo": false,
+ "onOptionChange": "{{ storeValue(\"rc_f_vendor\", this.selectedOptionValue) }}",
+ "optionLabel": "label",
+ "optionValue": "value",
+ "parentColumnSpace": 13.83349609375,
+ "parentId": "zbxesfkigw",
+ "parentRowSpace": 10,
+ "placeholderText": "Utility",
+ "renderMode": "CANVAS",
+ "responsiveBehavior": "fill",
+ "rightColumn": 49,
+ "serverSideFiltering": false,
+ "sourceData": "{{ RateClassData.vendorOptions() }}",
+ "topRow": 23,
+ "type": "SELECT_WIDGET",
+ "version": 1,
+ "widgetId": "rcselven001",
+ "widgetName": "RC_VendorFilter"
+}

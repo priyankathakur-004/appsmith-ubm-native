@@ -1,0 +1,101 @@
+-- Rate Class Analysis, PORTFOLIO mode: 24 months of electric usage, demand and
+-- actual cost, one row per PHYSICAL ACCOUNT per month.
+--
+-- Getting the grain right takes two steps, because UBM splits a single metered
+-- account two different ways.
+--
+-- 1. ACROSS TIME. A change of supplier opens a new virtual account under a
+--    supplier-assigned number that shares nothing with the utility's, so the same
+--    stream appears as two unrelated accounts. virtual_account_group_id already
+--    chains those together (e.g. 100 009 621 523 -> 128538), so grouping on it
+--    stitches a mid-window supplier change back into one continuous series.
+--
+-- 2. ACROSS STREAMS. In a deregulated market the same meter is billed twice — a
+--    "Supply Only" invoice from the supplier and a "Distribution Only" invoice
+--    from the utility — and each is its own virtual account group. The group id
+--    does NOT join them. What does is the utility's account number: a supply
+--    chain always begins under it before moving to the supplier's number, so the
+--    EARLIEST account code in a group is the utility number for both chains. That
+--    shared key is account_key below, and it is the true physical account.
+--
+-- Treating either split as a separate account would be wrong twice over: each
+-- half gets priced against a bundled utility tariff it isn't comparable to, the
+-- supply half carries no demand at all, and the site's real cost (supply +
+-- delivery together) is never assembled.
+--
+-- Consumption is deliberately NOT summed across the two streams: the same kWh
+-- appears on both bills — as total_consumption on the delivery bill and as
+-- total_gen_consumption on the supply bill. The delivery figure is authoritative
+-- because it is the metered volume; the supply figure is the fallback for a month
+-- where only the supplier billed.
+WITH base AS (
+    SELECT
+        m.*,
+        REGEXP_REPLACE(COALESCE(m.account_code, ''), '\D', '', 'g') AS acct_norm
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.customer_id = {{ RC_CustomerSelect.selectedOptionValue || 76013 }}
+      AND m.utility_type = 'ELECTRIC'
+      AND m.time_period >= date_trunc('month', CURRENT_DATE) - INTERVAL '24 months'
+),
+-- The earliest account code in each virtual account group: the utility's number,
+-- which the supply chain and the delivery chain both start from.
+grp_key AS (
+    SELECT
+        virtual_account_group_id,
+        (ARRAY_AGG(acct_norm ORDER BY time_period, acct_norm))[1] AS account_key
+    FROM base
+    WHERE acct_norm <> ''
+    GROUP BY virtual_account_group_id
+)
+SELECT
+    g.account_key,
+    -- Show the utility's account number rather than the supplier's: it is the one
+    -- the customer recognises and the one Derek's workbook is keyed on.
+    COALESCE(
+        MAX(b.account_code) FILTER (WHERE b.bill_type <> 'Supply Only'),
+        MAX(b.account_code) FILTER (WHERE b.bill_type =  'Supply Only')
+    ) AS account_code,
+    COALESCE(
+        MAX(b.vendor_name)  FILTER (WHERE b.bill_type <> 'Supply Only'),
+        MAX(b.vendor_name)  FILTER (WHERE b.bill_type =  'Supply Only')
+    ) AS vendor_name,
+    MAX(b.vendor_name)      FILTER (WHERE b.bill_type = 'Supply Only') AS supplier_name,
+    -- Non-null only once a supplier change has happened: the new account code
+    -- differs from the key the chain started under.
+    MAX(b.account_code)     FILTER (WHERE b.bill_type = 'Supply Only'
+                                      AND b.acct_norm <> g.account_key) AS supply_account_code,
+    MAX(b.location_id)                                        AS location_id,
+    MAX(COALESCE(b.location_description, b.location_address)) AS location_name,
+    MAX(b.location_zip)                                       AS postcode,
+    MAX(b.location_state)                                     AS state,
+    MAX(b.account_status)                                     AS account_status,
+    STRING_AGG(DISTINCT b.bill_type, ' + ')                   AS bill_types,
+    COUNT(DISTINCT b.virtual_account_group_id)                AS stream_count,
+    TO_CHAR(b.time_period, 'YYYY-MM-DD')                      AS month,
+    MAX(b.total_consumption_uom)                              AS uom,
+
+    -- Metered volume, counted once. Never the sum of the two streams.
+    ROUND(COALESCE(
+        SUM(COALESCE(b.total_consumption, 0))     FILTER (WHERE b.bill_type <> 'Supply Only'),
+        SUM(COALESCE(b.total_gen_consumption, 0)) FILTER (WHERE b.bill_type =  'Supply Only')
+    )::numeric, 2) AS kwh,
+
+    -- Demand is a peak, so max across rows; only the delivery bill carries it.
+    ROUND(MAX(COALESCE(b.max_demand, 0))::numeric, 2) AS kw,
+
+    -- What the site actually paid = both invoices together.
+    ROUND(SUM(COALESCE(b.total_charges, 0))::numeric, 2) AS actual_charges,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type =  'Supply Only'), 0)::numeric, 2) AS supply_charges,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type <> 'Supply Only'), 0)::numeric, 2) AS delivery_charges,
+
+    ROUND(SUM(COALESCE(b.total_charges_consumption, 0))::numeric, 2) AS chg_consumption,
+    ROUND(SUM(COALESCE(b.total_charges_demand, 0))::numeric, 2)      AS chg_demand,
+    ROUND(SUM(COALESCE(b.total_charges_customer, 0))::numeric, 2)    AS chg_customer,
+    ROUND(SUM(COALESCE(b.total_charges_commodity, 0))::numeric, 2)   AS chg_commodity,
+    ROUND(SUM(COALESCE(b.total_charges_generation, 0))::numeric, 2)  AS chg_generation,
+    ROUND(SUM(COALESCE(b.total_charges_taxes, 0))::numeric, 2)       AS chg_taxes,
+    ROUND(SUM(COALESCE(b.total_charges_other, 0))::numeric, 2)       AS chg_other
+FROM base b
+INNER JOIN grp_key g ON g.virtual_account_group_id = b.virtual_account_group_id
+GROUP BY g.account_key, b.time_period
+ORDER BY location_name, account_code, b.time_period DESC;

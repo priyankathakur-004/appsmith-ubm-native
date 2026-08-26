@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_4129fbe3-e53a-41e8-822a-a0da07e60452",
-  "id": "Rate Class Analysis_RateClassData.runAnalysis",
+  "gitSyncId": "6a42383420f165a7650f6c4d_42b3bec0-63f9-4b8b-8c7a-db78fbe62af8",
+  "id": "Rate Class Analysis_RateClassData._normUtility",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -8,7 +8,7 @@
       "encodeParamsToggle": true,
       "jsArguments": [],
       "paginationType": "NONE",
-      "timeoutInMillisecond": 600000
+      "timeoutInMillisecond": 10000
     },
     "collectionId": "Rate Class Analysis_RateClassData",
     "confirmBeforeExecute": false,
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData.runAnalysis",
-    "name": "runAnalysis",
+    "fullyQualifiedName": "RateClassData._normUtility",
+    "name": "_normUtility",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false
