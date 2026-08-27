@@ -1137,12 +1137,30 @@ export default {
 					actual: Number(r.actual_charges) || 0,
 					supply: Number(r.supply_charges) || 0,
 					delivery: Number(r.delivery_charges) || 0,
-					fullService: Number(r.full_service_charges) || 0
+					fullService: Number(r.full_service_charges) || 0,
+					// UBM's own classification of the bill. This is the actual side of the
+					// charge comparison — see _buildLineItemCompare for why the line-item
+					// table cannot be used for it.
+					chg: {
+						consumption: Number(r.chg_consumption) || 0,
+						generation:  Number(r.chg_generation)  || 0,
+						commodity:   Number(r.chg_commodity)   || 0,
+						demand:      Number(r.chg_demand)      || 0,
+						customer:    Number(r.chg_customer)    || 0,
+						taxes:       Number(r.chg_taxes)       || 0,
+						other:       Number(r.chg_other)       || 0
+					}
 				}));
 				const actualAnnual = months.reduce((s, m) => s + m.actual, 0);
 				const supplyAnnual = months.reduce((s, m) => s + m.supply, 0);
 				const deliveryAnnual = months.reduce((s, m) => s + m.delivery, 0);
 				const fullServiceAnnual = months.reduce((s, m) => s + m.fullService, 0);
+				const CHG_KEYS = ["consumption","generation","commodity","demand","customer","taxes","other"];
+				const chgTotals = {};
+				for (const k of CHG_KEYS) chgTotals[k] = months.reduce((s, m) => s + (m.chg ? m.chg[k] : 0), 0);
+				// Whatever the categories do not account for. Carried explicitly so the
+				// comparison still totals to what was actually billed.
+				chgTotals.unclassified = actualAnnual - CHG_KEYS.reduce((s, k) => s + chgTotals[k], 0);
 				// A competitive contract exists only where the supplier billed separately.
 				// A Full Service invoice is the utility doing both, so there is no
 				// contract to compare and reporting a saving against one would be
@@ -1173,7 +1191,7 @@ export default {
 					continue;
 				}
 				specs.push({ id, name, site, acctCode, vendor, zip, country, state, months,
-					actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply,
+					actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply, chgTotals,
 					supplier: firstOf("supplier_name"),
 					supplyAcct: firstOf("supply_account_code"),
 					billTypes: firstOf("bill_types"),
@@ -1317,7 +1335,8 @@ export default {
 					status,
 					note
 				}));
-				if (top) forLineItems.push({ locationId: Number(s.id), locationName: s.name, months: s.months, ranked });
+				if (top) forLineItems.push({ locationId: s.id, locationName: s.name, months: s.months,
+					chgTotals: s.chgTotals, actualAnnual: s.actualAnnual, ranked });
 			}
 			portfolio.sort((a, b) => (b.savings || 0) - (a.savings || 0) || b.actual_annual - a.actual_annual);
 
@@ -1445,154 +1464,99 @@ export default {
 	//   locs -> [{ locationId, locationName, months, ranked }]
 	// Returns { "<locationId>": compareObject }. Runs RC_ActualLineItems ONCE for
 	// the whole customer and slices it per location and per window.
+	// Build the actual-versus-modeled charge comparison for every account in `locs`.
+	//   locs -> [{ locationId, locationName, chgTotals, actualAnnual, ranked }]
+	// Returns { "<accountKey>": compareObject }.
+	//
+	// The actual side comes from UBM's charge categories on the monthly feed, NOT
+	// from the billing line-item table. That table was tried first and rejected: it
+	// holds only a fraction of what was actually billed for these accounts — 60% on
+	// one customer, 34% on another, and on some accounts no distribution or demand
+	// charge at all. A comparison built on it understates what was paid by roughly
+	// a third to a half and makes every contract look better than it was. The
+	// categories reconcile to the same total_charges figure the rest of the page
+	// uses, so the totals here cannot drift from the Accounts tab.
 	async _buildLineItemCompare(customerId, locs) {
 		const out = {};
 		if (!locs || !locs.length) return out;
 
-		let liRows = [];
-		try {
-			const raw = await RC_ActualLineItems.run();
-			liRows = Array.isArray(raw) ? raw : [];
-		} catch (e) {
-			// A failure here must not take the rate analysis down with it — the
-			// ranking above is still valid without the line-item split.
-			for (const l of locs) {
-				out[String(l.locationId)] = { locationName: l.locationName, error: "Could not load billed line items: " + ((e && e.message) || e) };
-			}
-			return out;
-		}
-
-		// Bucket by account_key, the same key the analysis uses, so a site's supply
-		// and delivery charges land together on the account they belong to.
-		const byLoc = new Map();
-		for (const r of liRows) {
-			const id = String(r.account_key != null ? r.account_key
-				: (r.virtual_account_id != null ? r.virtual_account_id : r.location_id));
-			if (!byLoc.has(id)) byLoc.set(id, []);
-			byLoc.get(id).push(r);
-		}
-
 		for (const l of locs) {
 			const id = String(l.locationId);
-			const windowMonths = {};
-			for (const m of l.months) windowMonths[String(m.month)] = true;
-			const baselineTotal = l.months.reduce((t, m) => t + (Number(m.actual) || 0), 0);
+			const c = l.chgTotals || {};
+			const num = (v) => Number(v) || 0;
 
-			// Only the months this location was actually modeled on.
-			const rowsIn = (byLoc.get(id) || []).filter(r => windowMonths[String(r.month)]);
-
-			// Compare against the utility's standard offer first. That is the question
-			// being asked — "what would we have paid had we stayed with the utility,
-			// charge by charge" — and it is a different rate from the cheapest one the
-			// account could switch to. Fall back to the best comparable rate only when
-			// no standard offer could be priced, so there is always something to show.
+			// The rate the comparison is against: the recommendation if there is one,
+			// otherwise the best comparable rate, so there is always something to show.
 			const ranked = l.ranked || [];
 			const rate = ranked.find(r => r.isUtilityDefaultPick && r.modeledAnnualCost != null)
 				|| ranked.find(r => r.isBest)
 				|| ranked.find(r => r.annualSavings != null && !r.nonService && !r.deliveryOnly && !r.demandIncomplete)
 				|| null;
 
-			if (!rowsIn.length) {
-				out[id] = {
-					locationId: l.locationId, locationName: l.locationName,
-					error: `No billed line items found for these ${l.months.length} month(s). analytics_billing_line_items has no live/processed ELECTRIC rows in this window — the monthly totals come from a different table, so a per-charge split isn't available here.`,
-					baselineTotal: Number(baselineTotal.toFixed(2))
-				};
-				continue;
-			}
-
-			// Actual side: sum each description across the window.
-			const actMap = new Map();
-			for (const r of rowsIn) {
-				const name = String(r.description || "").trim();
-				if (!name) continue;
-				const unit = String(r.uom || "").trim();
-				const key = name + "|" + unit;
-				const g = actMap.get(key) || { name, unit, qty: 0, cost: 0, category: r.category || "" };
-				g.qty += Number(r.qty) || 0;
-				g.cost += Number(r.charge) || 0;
-				actMap.set(key, g);
-			}
-			const actualLines = Array.from(actMap.values())
-				.map(g => ({ name: g.name, unit: g.unit, qty: g.qty, cost: g.cost, bucket: RateClassData._lineBucket(g.name, g.unit, g.category) }))
-				.sort((a, b) => b.cost - a.cost);
-			const actualTotal = actualLines.reduce((t, x) => t + x.cost, 0);
-
-			// Modeled side: the tariff's charge lines, already grouped by
-			// _normalizeCalcResponse.
-			const modeledLines = (rate && Array.isArray(rate.lines) ? rate.lines : [])
-				.map(x => ({ name: x.name, unit: x.qty_unit, qty: x.qty, cost: x.cost, bucket: RateClassData._lineBucket(x.name, x.qty_unit, null) }))
-				.sort((a, b) => b.cost - a.cost);
-			const modeledTotal = modeledLines.reduce((t, x) => t + x.cost, 0);
-
-			// Two-level comparison: GROUP is the like-for-like level (see _BUCKET_GROUP
-			// for why the finer buckets can't be compared directly); the buckets and
-			// the raw lines hang underneath it as detail.
-			const gmap = new Map();
-			const touchG = (g) => {
-				if (!gmap.has(g)) gmap.set(g, { group: g, actual: 0, modeled: 0, buckets: new Map() });
-				return gmap.get(g);
+			// Modeled side. Genability splits a bill into energy, demand and other;
+			// "other" is the fixed and rider portion and carries named lines, so
+			// tax-named lines are pulled out of it to face the actual taxes figure.
+			const lines = (rate && Array.isArray(rate.lines)) ? rate.lines : [];
+			const mTax = lines
+				.filter(x => /\btax/i.test(String(x.name || "")))
+				.reduce((t, x) => t + num(x.cost), 0);
+			const m = {
+				energy: rate ? num(rate.modeledEnergy) : 0,
+				demand: rate ? num(rate.modeledDemand) : 0,
+				taxes: mTax,
+				fixed: rate ? num(rate.modeledOther) - mTax : 0
 			};
-			const touchB = (G, b) => {
-				if (!G.buckets.has(b)) G.buckets.set(b, { bucket: b, actual: 0, modeled: 0, actualLines: [], modeledLines: [] });
-				return G.buckets.get(b);
-			};
-			const groupOf = (b) => RateClassData._BUCKET_GROUP[b] || "Other";
-			for (const x of actualLines) {
-				const G = touchG(groupOf(x.bucket)); G.actual += x.cost;
-				const B = touchB(G, x.bucket); B.actual += x.cost; B.actualLines.push(x);
-			}
-			for (const x of modeledLines) {
-				const G = touchG(groupOf(x.bucket)); G.modeled += x.cost;
-				const B = touchB(G, x.bucket); B.modeled += x.cost; B.modeledLines.push(x);
-			}
-			const bOrder = RateClassData._BUCKET_ORDER;
-			const gOrder = RateClassData._GROUP_ORDER;
-			const trimLine = (x) => ({ name: x.name, unit: x.unit, qty: Number(x.qty.toFixed(2)), cost: Number(x.cost.toFixed(2)) });
-			const groups = Array.from(gmap.values())
-				.map(G => ({
-					group: G.group,
-					actual: Number(G.actual.toFixed(2)),
-					modeled: Number(G.modeled.toFixed(2)),
-					delta: Number((G.modeled - G.actual).toFixed(2)),
-					// One side has money here and the other has none: the two bills are
-					// structurally different, not just differently priced.
-					oneSided: (G.actual > 1 && G.modeled < 1) || (G.modeled > 1 && G.actual < 1),
-					buckets: Array.from(G.buckets.values())
-						.map(b => ({
-							bucket: b.bucket,
-							actual: Number(b.actual.toFixed(2)),
-							modeled: Number(b.modeled.toFixed(2)),
-							delta: Number((b.modeled - b.actual).toFixed(2)),
-							actualLines: b.actualLines.map(trimLine),
-							modeledLines: b.modeledLines.map(trimLine)
-						}))
-						.sort((a, b) => {
-							const d = bOrder.indexOf(a.bucket) - bOrder.indexOf(b.bucket);
-							return d !== 0 ? d : b.actual - a.actual;
-						})
-				}))
-				.sort((a, b) => {
-					const d = gOrder.indexOf(a.group) - gOrder.indexOf(b.group);
-					return d !== 0 ? d : b.actual - a.actual;
-				});
 
-			// Charges the customer really pays that the modeled tariff produces no
-			// counterpart for (most often taxes and local surcharges, which Genability
-			// does not always carry). That money would still be owed on the new rate,
-			// so it inflates the headline saving by roughly this amount — say so
-			// rather than letting the comparison imply the charge disappears.
-			const structuralGap = groups
-				.filter(g => g.oneSided && g.actual > g.modeled)
-				.reduce((t, g) => t + (g.actual - g.modeled), 0);
-			const gapGroups = groups.filter(g => g.oneSided && g.actual > g.modeled).map(g => g.group);
+			// A real bill unbundles the per-kWh cost across consumption, generation
+			// and commodity lines while a tariff models one bundled energy charge, so
+			// those three are compared as one group. Splitting them would report a
+			// large shortfall in one and an equal excess in another that mean nothing.
+			const aEnergy = num(c.consumption) + num(c.generation) + num(c.commodity);
+			const demandItemised = num(c.demand) > 0;
 
-			// The two totals come from different tables on different date bases —
-			// line items are keyed by statement_date, the monthly baseline by the
-			// prorated calendar month — so they will not tie exactly. Surface the gap
-			// instead of letting it silently distort the comparison.
-			const variance = actualTotal - baselineTotal;
-			const variancePct = baselineTotal !== 0 ? (variance / baselineTotal) * 100 : null;
+			const groups = [];
+			if (demandItemised) {
+				groups.push({ group: "Energy (per kWh)", actual: aEnergy, modeled: m.energy,
+					basis: "actual = consumption + generation + commodity" });
+				groups.push({ group: "Demand (per kW)", actual: num(c.demand), modeled: m.demand,
+					basis: "actual = demand charges on the bill" });
+			} else {
+				// Some utilities book no separate demand charge and carry the whole
+				// amount as consumption. Splitting energy from demand on the actual side
+				// would then be invented, and shows as a large offsetting difference in
+				// both rows that nets to nothing.
+				groups.push({ group: "Energy + demand (combined)", actual: aEnergy + num(c.demand),
+					modeled: m.energy + m.demand,
+					basis: "this bill books no separate demand charge, so the two cannot be split on the actual side without inventing the division" });
+			}
+			groups.push({ group: "Fixed charges & riders", actual: num(c.customer) + num(c.other), modeled: m.fixed,
+				basis: "actual = customer charge + other" });
+			groups.push({ group: "Taxes", actual: num(c.taxes), modeled: m.taxes,
+				basis: "actual = taxes; modeled = tax-named lines in the rate" });
+			if (Math.abs(num(c.unclassified)) > 0.5) {
+				groups.push({ group: "Unclassified", actual: num(c.unclassified), modeled: 0,
+					basis: "billed cost UBM assigns to no category; shown rather than spread across the groups so the total stays exact" });
+			}
+
+			for (const g of groups) {
+				g.actual = Number(g.actual.toFixed(2));
+				g.modeled = Number(g.modeled.toFixed(2));
+				g.delta = Number((g.modeled - g.actual).toFixed(2));
+				g.oneSided = (g.actual > 1 && g.modeled < 1) || (g.modeled > 1 && g.actual < 1);
+				g.modeledLines = lines
+					.filter(x => RateClassData._groupOfModeledLine(x, demandItemised) === g.group)
+					.map(x => ({ name: x.name, unit: x.qty_unit, qty: Number(num(x.qty).toFixed(2)), cost: Number(num(x.cost).toFixed(2)) }));
+			}
+
+			const actualTotal = groups.reduce((t, g) => t + g.actual, 0);
+			const modeledTotal = m.energy + m.demand + m.fixed + m.taxes;
+
+			// Charges really paid that the modeled rate produces no counterpart for —
+			// most often taxes, which Genability does not carry. That money is still
+			// owed on the utility rate, so it inflates the headline difference by
+			// roughly this much.
+			const gapGroups = groups.filter(g => g.oneSided && g.actual > g.modeled);
+			const structuralGap = gapGroups.reduce((t, g) => t + (g.actual - g.modeled), 0);
 
 			out[id] = {
 				locationId: l.locationId,
@@ -1603,26 +1567,34 @@ export default {
 				rate: rate ? {
 					tariffName: rate.tariffName, code: rate.tariffCode, utility: rate.lseName,
 					isBest: !!rate.isBest, tou: !!rate.isTOU, da: !!rate.isDA, rtp: !!rate.isRTP,
-					// Whether this is the "had we stayed with the utility" baseline or a
-					// fallback — the reader needs to know which question the split answers.
 					isUtilityDefault: !!rate.isUtilityDefaultPick
 				} : null,
 				actualTotal: Number(actualTotal.toFixed(2)),
 				modeledTotal: Number(modeledTotal.toFixed(2)),
-				baselineTotal: Number(baselineTotal.toFixed(2)),
-				variance: Number(variance.toFixed(2)),
-				variancePct: variancePct == null ? null : Number(variancePct.toFixed(1)),
-				// Above ~5% the two sources genuinely disagree about this window and the
-				// per-charge split should be read as directional only.
-				varianceHigh: variancePct != null && Math.abs(variancePct) > 5,
+				baselineTotal: Number(num(l.actualAnnual).toFixed(2)),
+				// The categories are sourced from the same figure as the Accounts tab,
+				// so these agree by construction; the check is kept as a guard.
+				variance: Number((actualTotal - num(l.actualAnnual)).toFixed(2)),
+				variancePct: num(l.actualAnnual) ? Number(((actualTotal - num(l.actualAnnual)) / num(l.actualAnnual) * 100).toFixed(1)) : null,
+				varianceHigh: num(l.actualAnnual) ? Math.abs(actualTotal - num(l.actualAnnual)) / num(l.actualAnnual) > 0.005 : false,
 				structuralGap: Number(structuralGap.toFixed(2)),
-				gapGroups,
-				groups,
-				actualLines: actualLines.map(x => ({ name: x.name, unit: x.unit, qty: Number(x.qty.toFixed(2)), cost: Number(x.cost.toFixed(2)), bucket: x.bucket })),
-				modeledLines: modeledLines.map(x => ({ name: x.name, unit: x.unit, qty: Number(x.qty.toFixed(2)), cost: Number(x.cost.toFixed(2)), bucket: x.bucket }))
+				gapGroups: gapGroups.map(g => g.group),
+				groups
 			};
 		}
 		return out;
+	},
+
+	// Which comparison group a modeled charge line belongs to. Genability already
+	// classified the totals; this only has to place the named lines underneath the
+	// right heading so the reader can see what makes up each figure.
+	_groupOfModeledLine(line, demandItemised) {
+		const n = String(line && line.name || "");
+		const u = String(line && line.qty_unit || "").toLowerCase();
+		if (/\btax/i.test(n)) return "Taxes";
+		if (u === "kwh") return demandItemised ? "Energy (per kWh)" : "Energy + demand (combined)";
+		if (u === "kw") return demandItemised ? "Demand (per kW)" : "Energy + demand (combined)";
+		return "Fixed charges & riders";
 	},
 
 	// =====================================================================
