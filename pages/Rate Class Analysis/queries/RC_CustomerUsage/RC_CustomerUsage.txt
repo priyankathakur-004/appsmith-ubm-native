@@ -23,6 +23,12 @@
 -- supply half carries no demand at all, and the site's real cost (supply +
 -- delivery together) is never assembled.
 --
+-- A third bill_type exists alongside these two: "Full Service", where the utility
+-- both supplies and delivers on a single invoice. Those accounts have no
+-- competitive contract, so they are reported separately and kept out of the
+-- contract-versus-utility figure; for them the useful question is whether a
+-- different utility rate would be cheaper, not whether a contract beat the utility.
+--
 -- Consumption is deliberately NOT summed across the two streams: the same kWh
 -- appears on both bills — as total_consumption on the delivery bill and as
 -- total_gen_consumption on the supply bill. The delivery figure is authoritative
@@ -85,8 +91,13 @@ SELECT
 
     -- What the site actually paid = both invoices together.
     ROUND(SUM(COALESCE(b.total_charges, 0))::numeric, 2) AS actual_charges,
-    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type =  'Supply Only'), 0)::numeric, 2) AS supply_charges,
-    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type <> 'Supply Only'), 0)::numeric, 2) AS delivery_charges,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2)       AS supply_charges,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type = 'Distribution Only'), 0)::numeric, 2) AS delivery_charges,
+    -- A "Full Service" bill is the utility supplying and delivering on one
+    -- invoice, i.e. the site never went competitive. Folding it into delivery
+    -- would report a site with no supply cost at all, and would put an account
+    -- that has no contract into a contract-versus-utility comparison.
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges,0)) FILTER (WHERE b.bill_type = 'Full Service'), 0)::numeric, 2)      AS full_service_charges,
 
     ROUND(SUM(COALESCE(b.total_charges_consumption, 0))::numeric, 2) AS chg_consumption,
     ROUND(SUM(COALESCE(b.total_charges_demand, 0))::numeric, 2)      AS chg_demand,

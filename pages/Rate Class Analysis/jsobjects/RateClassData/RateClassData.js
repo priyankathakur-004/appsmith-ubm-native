@@ -1130,14 +1130,17 @@ export default {
 					// and the only figure comparable to a bundled utility tariff.
 					actual: Number(r.actual_charges) || 0,
 					supply: Number(r.supply_charges) || 0,
-					delivery: Number(r.delivery_charges) || 0
+					delivery: Number(r.delivery_charges) || 0,
+					fullService: Number(r.full_service_charges) || 0
 				}));
 				const actualAnnual = months.reduce((s, m) => s + m.actual, 0);
 				const supplyAnnual = months.reduce((s, m) => s + m.supply, 0);
 				const deliveryAnnual = months.reduce((s, m) => s + m.delivery, 0);
-				// A site with no supply invoice at all is on utility default service, so
-				// there is no contract to compare — flag it rather than reporting a
-				// saving against a contract that does not exist.
+				const fullServiceAnnual = months.reduce((s, m) => s + m.fullService, 0);
+				// A competitive contract exists only where the supplier billed separately.
+				// A Full Service invoice is the utility doing both, so there is no
+				// contract to compare and reporting a saving against one would be
+				// inventing it.
 				const hasSupply = supplyAnnual !== 0;
 
 				// Arcadia/Genability only covers U.S. utilities — a non-U.S. postcode
@@ -1155,7 +1158,7 @@ export default {
 					continue;
 				}
 				specs.push({ id, name, site, acctCode, vendor, zip, country, state, months,
-					actualAnnual, supplyAnnual, deliveryAnnual, hasSupply,
+					actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply,
 					supplier: firstOf("supplier_name"),
 					supplyAcct: firstOf("supply_account_code"),
 					billTypes: firstOf("bill_types"),
@@ -1219,6 +1222,7 @@ export default {
 					bill_types: s.billTypes || "",
 					supply_annual: Number((s.supplyAnnual || 0).toFixed(2)),
 					delivery_annual: Number((s.deliveryAnnual || 0).toFixed(2)),
+					full_service_annual: Number((s.fullServiceAnnual || 0).toFixed(2)),
 					has_supply: !!s.hasSupply,
 					zip: s.zip,
 					months: s.monthCount,
@@ -1249,7 +1253,9 @@ export default {
 					note = "Recommendation withheld — kW readings missing or implausible for this site, so modeled demand charges (and therefore savings) can't be trusted.";
 				} else if (!s.hasSupply) {
 					status = "Utility supply";
-					note = "No supply invoice in this window — the site appears to be on utility default service, so there is no supply contract to compare against.";
+					note = (s.fullServiceAnnual > 0)
+						? "Billed Full Service — the utility supplies and delivers on one invoice, so there is no competitive contract to compare against. The alternative-rate figure still applies: it is what a different utility rate would have cost."
+						: "No supply invoice in this window, so there is no supply contract to compare against.";
 				} else if (!best) {
 					status = "No saving";
 					note = "No rate class modeled cheaper than the current cost.";
@@ -1663,7 +1669,11 @@ export default {
 		// on the row (standard offer where one exists, otherwise the cheapest
 		// qualifying rate) so the header cannot say one thing while the column
 		// beneath it says another.
-		const modeled = rows.filter(r => r.utility_default_annual != null);
+		// Only accounts with a competitive supply contract belong in a
+		// contract-versus-utility figure. Full Service accounts are already on the
+		// utility, so including them would compare the utility against itself.
+		const modeled = rows.filter(r => r.utility_default_annual != null && r.has_supply);
+		const noContract = rows.filter(r => !r.has_supply).length;
 		const cheapest = modeled.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 		const actualAll = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const actualModeled = modeled.reduce((t, r) => t + (r.actual_annual || 0), 0);
@@ -1671,15 +1681,19 @@ export default {
 		const peak = rows.reduce((t, r) => Math.max(t, r.peak_kw || 0), 0);
 		const supply = rows.reduce((t, r) => t + (r.supply_annual || 0), 0);
 		const delivery = rows.reduce((t, r) => t + (r.delivery_annual || 0), 0);
+		const fullSvc = rows.reduce((t, r) => t + (r.full_service_annual || 0), 0);
 		// Positive = the supply contracts came in under the utility.
 		const diff = cheapest - actualModeled;
 		const card = (label, value, sub, tone) => ({ label, value, sub: sub || "", tone: tone || "" });
 		const money = v => "$" + Math.round(v).toLocaleString();
 		return [
 			card("Accounts", String(rows.length), m.notModeled ? `${m.notModeled} not modeled` : "all modeled"),
-			card("Total actual cost", money(actualAll), `supply ${money(supply)} · delivery ${money(delivery)}`),
+			card("Total actual cost", money(actualAll),
+				`supply ${money(supply)} · delivery ${money(delivery)}`
+					+ (fullSvc > 0 ? ` · full service ${money(fullSvc)}` : "")),
 			card("Utility cost", modeled.length ? money(cheapest) : "—",
-				modeled.length < rows.length ? `${modeled.length} of ${rows.length} accounts priced` : "same basis as the table"),
+				`${modeled.length} account(s) with a supply contract`
+					+ (noContract ? ` · ${noContract} on utility supply, excluded` : "")),
 			card("Contract vs utility", modeled.length ? (diff >= 0 ? "+" : "-") + money(Math.abs(diff)) : "—",
 				// Only the accounts carrying a utility figure are in this comparison,
 				// so say so rather than implying it covers the whole portfolio.
