@@ -914,9 +914,17 @@ export default {
 		// onto, priced on the same 12 months. Where a utility publishes more than one,
 		// take the one with the most customers on it — that is the standard offer
 		// rather than a niche default.
+		// The intent is to price the schedule the site would fall onto had it never
+		// gone competitive. In practice these utilities publish their DEFAULT-typed
+		// schedules for residential service and every commercial rate comes back
+		// ALTERNATIVE, so on a commercial account there is usually no DEFAULT to
+		// find and the comparison would be blank. Where that happens, fall back to
+		// the cheapest rate the account qualifies for and record which basis was
+		// used, rather than leaving the column empty.
 		const defaults = ok.filter(r => r.isUtilityDefault && r.modeledAnnualCost != null)
 			.sort((a, b) => b.customerCount - a.customerCount);
-		const utilityDefault = defaults[0] || null;
+		const utilityDefault = defaults[0] || ok.find(r => r.modeledAnnualCost != null) || null;
+		const utilityDefaultBasis = defaults.length ? "utility standard offer" : "cheapest qualifying rate";
 		if (utilityDefault) {
 			results.forEach(r => { r.isUtilityDefaultPick = (r.masterTariffId === utilityDefault.masterTariffId); });
 		}
@@ -933,6 +941,7 @@ export default {
 			actualAnnual,
 			utilityDefaultCost,
 			utilityDefaultName: utilityDefault ? utilityDefault.tariffName : null,
+			utilityDefaultBasis: utilityDefault ? utilityDefaultBasis : null,
 			utilityDefaultCode: utilityDefault ? utilityDefault.tariffCode : null,
 			utilityDefaultIsTOU: utilityDefault ? !!utilityDefault.isTOU : false,
 			contractSavings,
@@ -1261,6 +1270,7 @@ export default {
 					// versus what the utility's standard offer would have cost over the same
 					// 12 months. Positive = the supply contract came in cheaper.
 					utility_default: m.utilityDefaultName || "",
+					utility_default_basis: m.utilityDefaultBasis || "",
 					utility_default_code: m.utilityDefaultCode || "",
 					utility_default_annual: m.utilityDefaultCost == null ? null : Number(m.utilityDefaultCost.toFixed(2)),
 					contract_savings: m.contractSavings == null ? null : Number(m.contractSavings.toFixed(2)),
@@ -1617,8 +1627,11 @@ export default {
 		}
 		if (m.demandSuspect) parts.push(`⚠ ${m.demandSuspect} account(s) have unreliable kW data — no recommendation made for those`);
 		if (m.notModeled) parts.push(`${m.notModeled} account(s) could not be modeled`);
+		// Capped accounts are also pushed onto the skipped list, so report the two
+		// groups separately rather than counting the same accounts twice.
 		if (m.capped) parts.push(`⚠ ${m.capped} lower-spend account(s) not run — capped at ${RateClassData._MAX_LOCATIONS}`);
-		if (m.skipped && m.skipped.length) parts.push(`${m.skipped.length} account(s) skipped (see the skipped list)`);
+		const otherSkipped = (m.skipped || []).length - (m.capped || 0);
+		if (otherSkipped > 0) parts.push(`${otherSkipped} account(s) skipped for other reasons (see the Not modeled tab)`);
 		return parts.join("  •  ");
 	},
 
@@ -1646,8 +1659,12 @@ export default {
 		const rows = RateClassData.portfolioRows();
 		const m = appsmith.store.rc_portfolio_meta || {};
 		if (!rows.length) return [];
-		const modeled = rows.filter(r => r.utility_default_annual != null || r.modeled_annual != null);
-		const cheapest = rows.reduce((t, r) => t + (r.modeled_annual != null ? r.modeled_annual : 0), 0);
+		// Card and table must report the same quantity. Both use the utility figure
+		// on the row (standard offer where one exists, otherwise the cheapest
+		// qualifying rate) so the header cannot say one thing while the column
+		// beneath it says another.
+		const modeled = rows.filter(r => r.utility_default_annual != null);
+		const cheapest = modeled.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 		const actualAll = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const actualModeled = modeled.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const kwh = rows.reduce((t, r) => t + (r.annual_kwh || 0), 0);
@@ -1661,12 +1678,15 @@ export default {
 		return [
 			card("Accounts", String(rows.length), m.notModeled ? `${m.notModeled} not modeled` : "all modeled"),
 			card("Total actual cost", money(actualAll), `supply ${money(supply)} · delivery ${money(delivery)}`),
-			card("Lowest utility cost", modeled.length ? money(cheapest) : "—",
-				modeled.length < rows.length ? `${modeled.length} of ${rows.length} accounts` : "cheapest applicable rate"),
+			card("Utility cost", modeled.length ? money(cheapest) : "—",
+				modeled.length < rows.length ? `${modeled.length} of ${rows.length} accounts priced` : "same basis as the table"),
 			card("Contract vs utility", modeled.length ? (diff >= 0 ? "+" : "-") + money(Math.abs(diff)) : "—",
-				diff >= 0 ? "contract cost less" : "utility would have cost less",
+				// Only the accounts carrying a utility figure are in this comparison,
+				// so say so rather than implying it covers the whole portfolio.
+				(diff >= 0 ? "contract cost less" : "utility would have cost less")
+					+ (modeled.length < rows.length ? ` · ${modeled.length} of ${rows.length}` : ""),
 				diff >= 0 ? "pos" : "neg"),
-			card("Difference %", (modeled.length && actualModeled) ? ((diff / cheapest) * 100).toFixed(1) + "%" : "—",
+			card("Difference %", (modeled.length && cheapest) ? ((diff / cheapest) * 100).toFixed(1) + "%" : "—",
 				"of the utility cost", diff >= 0 ? "pos" : "neg"),
 			card("Total consumption", Math.round(kwh).toLocaleString() + " kWh", `${rows.length} account(s)`),
 			card("Peak demand", Math.round(peak).toLocaleString() + " kW", "highest across accounts")
