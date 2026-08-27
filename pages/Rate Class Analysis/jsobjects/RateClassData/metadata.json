@@ -36,6 +36,14 @@
         "value": "40"
       },
       {
+        "name": "_RETRIES",
+        "value": "3"
+      },
+      {
+        "name": "_RETRY_BASE_MS",
+        "value": "400"
+      },
+      {
         "name": "_UTILITY_ALIASES",
         "value": "{\n\t\t\"penelec\": \"pennsylvania electric\",\n\t\t\"met ed\": \"metropolitan edison\",\n\t\t\"metconstellation\": \"metropolitan edison\",\n\t\t\"ppl\": \"ppl electric\",\n\t\t\"west penn power\": \"west penn power\",\n\t\t\"ohio edison\": \"ohio edison\",\n\t\t\"aep ohio\": \"ohio power\",\n\t\t\"comed\": \"commonwealth edison\",\n\t\t\"com ed\": \"commonwealth edison\",\n\t\t\"jcpl\": \"jersey central power\",\n\t\t\"pseg\": \"public service electric\"\n\t}"
       },

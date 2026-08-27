@@ -233,24 +233,51 @@ export default {
 	// =====================================================================
 	// Genability fetch helpers
 	// =====================================================================
+	// Transient network failures are common enough against Genability that a single
+	// attempt is not safe: a dropped call removes a rate from the ranking with no
+	// trace, and if it was the cheapest the reported saving changes between runs.
+	// Retries are spaced out rather than immediate because the usual causes (rate
+	// limiting, a brief connection reset) do not clear instantly.
+	_RETRIES: 3,
+	_RETRY_BASE_MS: 400,
+
+	async _withRetry(label, fn) {
+		let last = null;
+		for (let attempt = 0; attempt <= RateClassData._RETRIES; attempt++) {
+			if (attempt > 0) {
+				const wait = RateClassData._RETRY_BASE_MS * Math.pow(2, attempt - 1);
+				await new Promise(res => setTimeout(res, wait));
+			}
+			try {
+				const out = await fn();
+				if (out && out.__retryable) { last = out.__retryable; continue; }
+				return out;
+			} catch (e) {
+				last = (e && e.message) || String(e);
+			}
+		}
+		await storeValue("rc_last_fetch_err", `${label} failed after ${RateClassData._RETRIES + 1} attempts: ${last}`);
+		return { __failed: last || "unknown error" };
+	},
+
 	async _fetchLses(zip) {
-		try {
+		const out = await RateClassData._withRetry(`/lses ${zip}`, async () => {
 			const url = `${RateClassData._GENABILITY_BASE}/rest/public/lses?zipCode=${encodeURIComponent(zip)}&serviceTypes=ELECTRICITY`;
 			const res = await fetch(url, {
 				method: "GET",
 				headers: { "Authorization": RateClassData._GENABILITY_AUTH, "Accept": "application/json" }
 			});
+			// 5xx and 429 are worth another attempt; a 4xx will not fix itself.
 			if (!res.ok) {
-				await storeValue("rc_last_fetch_err", `HTTP ${res.status} from /lses`);
-				return [];
+				if (res.status >= 500 || res.status === 429) return { __retryable: `HTTP ${res.status}` };
+				return { __failed: `HTTP ${res.status} from /lses` };
 			}
 			const data = await res.json();
 			const arr = (data && (data.results || data.data)) || [];
 			return Array.isArray(arr) ? arr : [];
-		} catch (e) {
-			await storeValue("rc_last_fetch_err", (e && e.message) || "network/CORS error on /lses");
-			return [];
-		}
+		});
+		if (out && out.__failed) return [];
+		return Array.isArray(out) ? out : [];
 	},
 
 	// Pull every active electric tariff for the LSE. Genability caps a page at
@@ -273,22 +300,22 @@ export default {
 				`pageStart=${page * pageSize}`,
 				`pageCount=${pageSize}`
 			].join("&");
-			let arr;
-			try {
+			const got = await RateClassData._withRetry(`/tariffs lse ${lseId} page ${page}`, async () => {
 				const res = await fetch(`${RateClassData._GENABILITY_BASE}/rest/public/tariffs?${params}`, {
 					method: "GET",
 					headers: { "Authorization": RateClassData._GENABILITY_AUTH, "Accept": "application/json" }
 				});
 				if (!res.ok) {
-					await storeValue("rc_last_fetch_err", `HTTP ${res.status} from /tariffs (lse ${lseId})`);
-					break;
+					if (res.status >= 500 || res.status === 429) return { __retryable: `HTTP ${res.status}` };
+					return { __failed: `HTTP ${res.status} from /tariffs (lse ${lseId})` };
 				}
 				const data = await res.json();
-				arr = (data && (data.results || data.data)) || [];
-			} catch (e) {
-				await storeValue("rc_last_fetch_err", (e && e.message) || "network/CORS error on /tariffs");
-				break;
-			}
+				return (data && (data.results || data.data)) || [];
+			});
+			// A page that never came back would silently shorten the tariff list, so
+			// stop rather than pretend the list is complete.
+			if (got && got.__failed) { all.__incomplete = true; break; }
+			const arr = got;
 			if (!Array.isArray(arr) || arr.length === 0) break;
 			for (const t of arr) all.push(t);
 			if (arr.length < pageSize) break; // last page
@@ -297,7 +324,7 @@ export default {
 	},
 
 	async _calcTariff(tariff, body) {
-		try {
+		const out = await RateClassData._withRetry(`/calculate ${tariff.masterTariffId}`, async () => {
 			const res = await fetch(`${RateClassData._GENABILITY_BASE}/rest/public/calculate/${tariff.masterTariffId}`, {
 				method: "POST",
 				headers: {
@@ -310,13 +337,14 @@ export default {
 			let data;
 			try { data = await res.json(); } catch (_) { data = null; }
 			if (!res.ok) {
+				if (res.status >= 500 || res.status === 429) return { __retryable: `HTTP ${res.status}` };
 				const errMsg = data ? JSON.stringify(data).slice(0, 300) : `HTTP ${res.status}`;
-				return RateClassData._normalizeCalcResponse({ __error: `HTTP ${res.status}: ${errMsg}` }, tariff);
+				return { __failed: `HTTP ${res.status}: ${errMsg}` };
 			}
-			return RateClassData._normalizeCalcResponse(data, tariff);
-		} catch (e) {
-			return RateClassData._normalizeCalcResponse({ __error: (e && e.message) || "Network error" }, tariff);
-		}
+			return data;
+		});
+		if (out && out.__failed) return RateClassData._normalizeCalcResponse({ __error: out.__failed }, tariff);
+		return RateClassData._normalizeCalcResponse(out, tariff);
 	},
 
 	// Build a single annual /calculate body: one consumption (and demand) input
@@ -476,6 +504,8 @@ export default {
 		if (m.demandMissing) parts.push(`⚠ ${m.demandMissingMonths} month(s) show 0 kW despite significant usage — demand charges under-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.demandSpikeMonths) parts.push(`⚠ ${m.demandSpikeMonths} month(s) show an impossibly high kW vs. usage (bad demand reading) — demand charges over-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.demandUnderMonths) parts.push(`⚠ ${m.demandUnderMonths} month(s) show a kW far too low for the usage (load factor > 100%, bad reading) — demand charges under-modeled, so modeled costs & savings are unreliable (informational only)`);
+		if (m.erroredCount) parts.push(`⚠ ${m.erroredCount} rate(s) could not be priced after retries and are excluded — the cheapest rate shown may not be the cheapest available`);
+		if (m.tariffListIncomplete) parts.push("⚠ the tariff list came back incomplete — some rate classes may be missing");
 		if (m.truncated) parts.push(`(capped at ${RateClassData._MAX_TARIFFS} tariffs)`);
 		if (m.stale && m.dataThrough) parts.push(`⚠ usage data ends ${m.dataThrough} — stale, modeled on current rates`);
 		return parts.join("  •  ");
@@ -920,6 +950,12 @@ export default {
 			demandSuspect: demandSuspect,
 			peakKw: peakKw,
 			ridersDropped,
+			// A rate that errored is excluded from the ranking. If that rate would have
+			// been the cheapest, the headline moves — so the count is surfaced rather
+			// than left for someone to notice a short list.
+			erroredCount: failed.length,
+			erroredRates: failed.map(r => `${r.tariffCode || r.tariffName}: ${String(r.error).slice(0, 120)}`),
+			tariffListIncomplete: !!allTariffs.__incomplete,
 			totalReturned: allTariffs.length,
 			truncated,
 			dataThrough: months[0] ? months[0].month : null,
