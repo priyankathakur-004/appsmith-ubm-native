@@ -712,6 +712,12 @@ export default {
 			// "EV Public Charging", "EV Level 3 DC Fast Charger", etc. Match the "EV"
 			// abbreviation only as a whole word AND alongside a charging context, so
 			// legitimate rates ("Level"/"Development") aren't caught by accident.
+			// Unmetered schedules exist for street lighting, signage and similar fixed
+			// loads billed on assumed usage. They model cheap because they carry no
+			// demand component, so on a metered account they win as a bogus "best" —
+			// seen taking the top slot on 5,980 kWh and 71,700 kWh accounts alike.
+			// A site with a meter reading cannot take one.
+			if (/\bunmeter(ed)?\b/.test(nm)) return false;
 			const isEvCharging = nm.indexOf("electric vehicle") >= 0
 				|| nm.indexOf("vehicle charging") >= 0
 				|| (/\bev\b/.test(nm) && (/charg/.test(nm) || /\bdc fast\b/.test(nm) || /fast charger/.test(nm)));
@@ -1157,6 +1163,15 @@ export default {
 					skipped.push({ id, name, zip, actualAnnual, reason: "No usable months in the last 24 months" });
 					continue;
 				}
+				// No consumption means there is nothing for a tariff to price against:
+				// every rate returns its fixed charge only, and comparing that to a real
+				// bill is meaningless. Seen on unmetered and standby accounts.
+				const totalKwh = months.reduce((s, m) => s + m.kwh, 0);
+				if (totalKwh <= 0) {
+					skipped.push({ id, name, zip, actualAnnual,
+						reason: `No consumption recorded across ${months.length} month(s) — nothing for a rate to price` });
+					continue;
+				}
 				specs.push({ id, name, site, acctCode, vendor, zip, country, state, months,
 					actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply,
 					supplier: firstOf("supplier_name"),
@@ -1280,7 +1295,11 @@ export default {
 					utility_default_code: m.utilityDefaultCode || "",
 					utility_default_annual: m.utilityDefaultCost == null ? null : Number(m.utilityDefaultCost.toFixed(2)),
 					contract_savings: m.contractSavings == null ? null : Number(m.contractSavings.toFixed(2)),
-					contract_savings_pct: m.contractSavingsPct == null ? null : Number(m.contractSavingsPct.toFixed(1)),
+					// A percentage of a base this small is arithmetic noise: a $150 utility
+					// figure against a $35,000 bill prints -2511%, which says nothing except
+					// that the two are not comparable. Withhold it; the dollar column stands.
+					contract_savings_pct: (m.contractSavingsPct == null || !(m.utilityDefaultCost > 100))
+						? null : Number(m.contractSavingsPct.toFixed(1)),
 					status,
 					note
 				}));
@@ -1297,7 +1316,10 @@ export default {
 			// Contract-vs-utility rolls up over the accounts where a standard offer was
 			// actually found and priced; accounts without one are counted separately so
 			// the total is never quietly built from a subset.
-			const withDefault = portfolio.filter(r => r.contract_savings != null);
+			// Same basis as the header cards: only accounts holding a competitive
+			// supply contract. Including Full Service accounts here made the summary
+			// line contradict the cards directly above it.
+			const withDefault = portfolio.filter(r => r.contract_savings != null && r.has_supply);
 			const totalUtilityDefault = withDefault.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 			const totalActualWithDefault = withDefault.reduce((t, r) => t + (r.actual_annual || 0), 0);
 			const totalContractSavings = totalUtilityDefault - totalActualWithDefault;
