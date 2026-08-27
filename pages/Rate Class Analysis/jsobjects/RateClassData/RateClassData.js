@@ -1285,6 +1285,8 @@ export default {
 					modeled_annual: top && top.modeledAnnualCost != null ? Number(top.modeledAnnualCost.toFixed(2)) : null,
 					savings: (best && best.annualSavings != null) ? Number(best.annualSavings.toFixed(2)) : null,
 					savings_pct: (best && best.savingsPct != null) ? Number(best.savingsPct.toFixed(1)) : null,
+					demand_suspect: !!m.demandSuspect,
+					peak_kw_suspect: !!(m.demandSpikeMonths || m.demandUnderMonths),
 					rates_modeled: m.modeledCount || 0,
 					rates_returned: m.totalReturned || 0,
 					// The headline number for this engagement: what the site actually paid
@@ -1297,12 +1299,20 @@ export default {
 					utility_default_basis: m.utilityDefaultBasis || "",
 					utility_default_code: m.utilityDefaultCode || "",
 					utility_default_annual: m.utilityDefaultCost == null ? null : Number(m.utilityDefaultCost.toFixed(2)),
-					contract_savings: (m.contractSavings == null || !s.hasSupply)
+					// Withheld on the same terms as the recommendation. Where the kW readings
+					// are missing or impossible the modeled demand charge is wrong, and it
+					// is the largest component on a demand-metered site — one account with
+					// a 354,048 kW spike against 2.4m kWh priced at $5.3m and single-
+					// handedly turned a portfolio that was losing money into a $4.2m
+					// saving. A number that wrong should not appear at all, let alone be
+					// summed into a total.
+					contract_savings: (m.contractSavings == null || !s.hasSupply || m.demandSuspect)
 						? null : Number(m.contractSavings.toFixed(2)),
 					// A percentage of a base this small is arithmetic noise: a $150 utility
 					// figure against a $35,000 bill prints -2511%, which says nothing except
 					// that the two are not comparable. Withhold it; the dollar column stands.
-					contract_savings_pct: (m.contractSavingsPct == null || !(m.utilityDefaultCost > 100))
+					contract_savings_pct: (m.contractSavingsPct == null || m.demandSuspect
+						|| !s.hasSupply || !(m.utilityDefaultCost > 100))
 						? null : Number(m.contractSavingsPct.toFixed(1)),
 					status,
 					note
@@ -1323,7 +1333,7 @@ export default {
 			// Same basis as the header cards: only accounts holding a competitive
 			// supply contract. Including Full Service accounts here made the summary
 			// line contradict the cards directly above it.
-			const withDefault = portfolio.filter(r => r.contract_savings != null && r.has_supply);
+			const withDefault = portfolio.filter(r => r.contract_savings != null && r.has_supply && !r.demand_suspect);
 			const totalUtilityDefault = withDefault.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 			const totalActualWithDefault = withDefault.reduce((t, r) => t + (r.actual_annual || 0), 0);
 			// Summed from the per-account figures for the same reason as the cards.
@@ -1699,8 +1709,13 @@ export default {
 		// Only accounts with a competitive supply contract belong in a
 		// contract-versus-utility figure. Full Service accounts are already on the
 		// utility, so including them would compare the utility against itself.
-		const modeled = rows.filter(r => r.utility_default_annual != null && r.has_supply);
+		// The set behind every figure in this header: a competitive contract to
+		// compare, a priced utility rate, and demand data sound enough to trust the
+		// pricing. An account failing the last test can be off by an order of
+		// magnitude, so it is reported on its own row and kept out of the totals.
+		const modeled = rows.filter(r => r.utility_default_annual != null && r.has_supply && !r.demand_suspect);
 		const noContract = rows.filter(r => !r.has_supply).length;
+		const suspect = rows.filter(r => r.has_supply && r.demand_suspect).length;
 		const cheapest = modeled.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 		const actualAll = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const actualModeled = modeled.reduce((t, r) => t + (r.actual_annual || 0), 0);
@@ -1708,7 +1723,12 @@ export default {
 		// cannot disagree with the rows beneath it.
 		const rowDiff = modeled.reduce((t, r) => t + (r.contract_savings || 0), 0);
 		const kwh = rows.reduce((t, r) => t + (r.annual_kwh || 0), 0);
-		const peak = rows.reduce((t, r) => Math.max(t, r.peak_kw || 0), 0);
+		// Take the peak from accounts whose demand readings are trustworthy. The
+		// highest figure in a portfolio is exactly where a metering error surfaces,
+		// so reporting the raw maximum reports the worst reading as fact.
+		const sane = rows.filter(r => !r.peak_kw_suspect);
+		const peak = (sane.length ? sane : rows).reduce((t, r) => Math.max(t, r.peak_kw || 0), 0);
+		const suspectPeaks = rows.length - sane.length;
 		const supply = rows.reduce((t, r) => t + (r.supply_annual || 0), 0);
 		const delivery = rows.reduce((t, r) => t + (r.delivery_annual || 0), 0);
 		const fullSvc = rows.reduce((t, r) => t + (r.full_service_annual || 0), 0);
@@ -1722,8 +1742,10 @@ export default {
 				`supply ${money(supply)} · delivery ${money(delivery)}`
 					+ (fullSvc > 0 ? ` · full service ${money(fullSvc)}` : "")),
 			card("Utility cost", modeled.length ? money(cheapest) : "—",
-				`${modeled.length} account(s) with a supply contract`
-					+ (noContract ? ` · ${noContract} on utility supply, excluded` : "")),
+				`${modeled.length} account(s) compared`
+					+ (noContract ? ` · ${noContract} on utility supply` : "")
+					+ (suspect ? ` · ${suspect} with unsound kW` : "")
+					+ ((noContract || suspect) ? ", excluded" : "")),
 			card("Contract vs utility", modeled.length ? (diff >= 0 ? "+" : "-") + money(Math.abs(diff)) : "—",
 				// Only the accounts carrying a utility figure are in this comparison,
 				// so say so rather than implying it covers the whole portfolio.
@@ -1733,7 +1755,8 @@ export default {
 			card("Difference %", (modeled.length && cheapest) ? ((diff / cheapest) * 100).toFixed(1) + "%" : "—",
 				"of the utility cost", diff >= 0 ? "pos" : "neg"),
 			card("Total consumption", Math.round(kwh).toLocaleString() + " kWh", `${rows.length} account(s)`),
-			card("Peak demand", Math.round(peak).toLocaleString() + " kW", "highest across accounts")
+			card("Peak demand", Math.round(peak).toLocaleString() + " kW",
+				suspectPeaks ? `highest of ${sane.length} accounts with sound kW data` : "highest across accounts")
 		];
 	},
 
