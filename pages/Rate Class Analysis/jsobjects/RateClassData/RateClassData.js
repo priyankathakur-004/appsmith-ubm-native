@@ -1290,11 +1290,15 @@ export default {
 					// The headline number for this engagement: what the site actually paid
 					// versus what the utility's standard offer would have cost over the same
 					// 12 months. Positive = the supply contract came in cheaper.
+					// Only meaningful where a competitive contract exists. On utility supply
+					// this would be the utility compared against itself, so it is withheld
+					// and the alternative-rate column carries the useful number instead.
 					utility_default: m.utilityDefaultName || "",
 					utility_default_basis: m.utilityDefaultBasis || "",
 					utility_default_code: m.utilityDefaultCode || "",
 					utility_default_annual: m.utilityDefaultCost == null ? null : Number(m.utilityDefaultCost.toFixed(2)),
-					contract_savings: m.contractSavings == null ? null : Number(m.contractSavings.toFixed(2)),
+					contract_savings: (m.contractSavings == null || !s.hasSupply)
+						? null : Number(m.contractSavings.toFixed(2)),
 					// A percentage of a base this small is arithmetic noise: a $150 utility
 					// figure against a $35,000 bill prints -2511%, which says nothing except
 					// that the two are not comparable. Withhold it; the dollar column stands.
@@ -1322,7 +1326,8 @@ export default {
 			const withDefault = portfolio.filter(r => r.contract_savings != null && r.has_supply);
 			const totalUtilityDefault = withDefault.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 			const totalActualWithDefault = withDefault.reduce((t, r) => t + (r.actual_annual || 0), 0);
-			const totalContractSavings = totalUtilityDefault - totalActualWithDefault;
+			// Summed from the per-account figures for the same reason as the cards.
+			const totalContractSavings = withDefault.reduce((t, r) => t + (r.contract_savings || 0), 0);
 			const pmeta = {
 				customerId,
 				locationsFound: byLoc.size,
@@ -1699,13 +1704,16 @@ export default {
 		const cheapest = modeled.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 		const actualAll = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const actualModeled = modeled.reduce((t, r) => t + (r.actual_annual || 0), 0);
+		// Add up the column rather than recomputing the comparison, so the header
+		// cannot disagree with the rows beneath it.
+		const rowDiff = modeled.reduce((t, r) => t + (r.contract_savings || 0), 0);
 		const kwh = rows.reduce((t, r) => t + (r.annual_kwh || 0), 0);
 		const peak = rows.reduce((t, r) => Math.max(t, r.peak_kw || 0), 0);
 		const supply = rows.reduce((t, r) => t + (r.supply_annual || 0), 0);
 		const delivery = rows.reduce((t, r) => t + (r.delivery_annual || 0), 0);
 		const fullSvc = rows.reduce((t, r) => t + (r.full_service_annual || 0), 0);
 		// Positive = the supply contracts came in under the utility.
-		const diff = cheapest - actualModeled;
+		const diff = rowDiff;
 		const card = (label, value, sub, tone) => ({ label, value, sub: sub || "", tone: tone || "" });
 		const money = v => "$" + Math.round(v).toLocaleString();
 		return [
