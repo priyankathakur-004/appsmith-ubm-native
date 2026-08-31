@@ -49,7 +49,7 @@
       },
       {
         "name": "_UTILITY_ALIASES",
-        "value": "{\n\t\t\"penelec\": \"pennsylvania electric\",\n\t\t\"met ed\": \"metropolitan edison\",\n\t\t\"metconstellation\": \"metropolitan edison\",\n\t\t\"ppl\": \"ppl electric\",\n\t\t\"west penn power\": \"west penn power\",\n\t\t\"ohio edison\": \"ohio edison\",\n\t\t\"aep ohio\": \"ohio power\",\n\t\t\"comed\": \"commonwealth edison\",\n\t\t\"com ed\": \"commonwealth edison\",\n\t\t\"jcpl\": \"jersey central power\",\n\t\t\"pseg\": \"public service electric\"\n\t}"
+        "value": "{\n  \"penelec\": \"pennsylvania electric\",\n  \"met ed\": \"metropolitan edison\",\n  \"metconstellation\": \"metropolitan edison\",\n  \"ppl\": \"ppl electric\",\n  \"west penn power\": \"west penn power\",\n  \"ohio edison\": \"ohio edison\",\n  \"aep ohio\": \"ohio power\",\n  \"comed\": \"commonwealth edison\",\n  \"com ed\": \"commonwealth edison\",\n  \"jcpl\": \"jersey central power\",\n  \"pseg\": \"public service electric\"\n}"
       }
     ]
   }

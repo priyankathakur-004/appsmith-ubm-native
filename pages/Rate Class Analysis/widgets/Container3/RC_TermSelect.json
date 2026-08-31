@@ -1,64 +1,64 @@
 {
- "accentColor": "{{appsmith.theme.colors.primaryColor}}",
- "animateLoading": true,
- "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
- "bottomRow": 31,
- "boxShadow": "none",
- "defaultOptionValue": 12,
- "dynamicBindingPathList": [
-  {
-   "key": "sourceData"
-  },
-  {
-   "key": "borderRadius"
-  },
-  {
-   "key": "accentColor"
-  }
- ],
- "dynamicHeight": "FIXED",
- "dynamicPropertyPathList": [],
- "dynamicTriggerPathList": [
-  {
-   "key": "onOptionChange"
-  }
- ],
- "isDisabled": false,
- "isFilterable": true,
- "isLoading": false,
- "isRequired": false,
- "isVisible": true,
- "key": "rctermsel01",
- "labelAlignment": "left",
- "labelPosition": "Top",
- "labelText": "Analysis term",
- "labelTextColor": "#f4f4f5",
- "labelTextSize": "0.875rem",
- "labelWidth": 5,
- "leftColumn": 1,
- "maxDynamicHeight": 9000,
- "minDynamicHeight": 4,
- "minWidth": 450,
- "mobileBottomRow": 48,
- "mobileLeftColumn": 1,
- "mobileRightColumn": 21,
- "mobileTopRow": 40,
- "needsErrorInfo": false,
- "onOptionChange": "{{ RateClassData.onTermChange() }}",
- "optionLabel": "label",
- "optionValue": "value",
- "parentColumnSpace": 13.83349609375,
- "parentId": "zbxesfkigw",
- "parentRowSpace": 10,
- "placeholderText": "Analysis term",
- "renderMode": "CANVAS",
- "responsiveBehavior": "fill",
- "rightColumn": 15,
- "serverSideFiltering": false,
- "sourceData": "{{ RateClassData.termOptions() }}",
- "topRow": 23,
- "type": "SELECT_WIDGET",
- "version": 1,
- "widgetId": "rcseltrm001",
- "widgetName": "RC_TermSelect"
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 22,
+  "boxShadow": "none",
+  "defaultOptionValue": 12,
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isDisabled": false,
+  "isFilterable": true,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "rctermsel01",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelText": "Analysis term",
+  "labelTextColor": "#f4f4f5",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 35,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 48,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 40,
+  "needsErrorInfo": false,
+  "onOptionChange": "{{ RateClassData.onTermChange() }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 13.83349609375,
+  "parentId": "zbxesfkigw",
+  "parentRowSpace": 10,
+  "placeholderText": "Analysis term",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 49,
+  "serverSideFiltering": false,
+  "sourceData": "{{ RateClassData.termOptions() }}",
+  "topRow": 14,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "rcseltrm001",
+  "widgetName": "RC_TermSelect"
 }

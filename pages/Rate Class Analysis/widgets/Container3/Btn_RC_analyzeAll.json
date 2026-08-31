@@ -1,54 +1,54 @@
 {
- "animateLoading": true,
- "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
- "bottomRow": 21,
- "boxShadow": "none",
- "buttonColor": "#ffffff",
- "buttonVariant": "PRIMARY",
- "disabledWhenInvalid": false,
- "dynamicBindingPathList": [
-  {
-   "key": "borderRadius"
-  },
-  {
-   "key": "isDisabled"
-  },
-  {
-   "key": "text"
-  }
- ],
- "dynamicTriggerPathList": [
-  {
-   "key": "onClick"
-  }
- ],
- "isDefaultClickDisabled": true,
- "isDisabled": "{{ !!appsmith.store.rc_loading || !!appsmith.store.rc_inv_loading || (appsmith.store.rc_inventory || []).length === 0 }}",
- "isLoading": false,
- "isVisible": true,
- "key": "rcanalyzeall",
- "leftColumn": 43,
- "minWidth": 40,
- "mobileBottomRow": 36,
- "mobileLeftColumn": 1,
- "mobileRightColumn": 21,
- "mobileTopRow": 32,
- "needsErrorInfo": false,
- "onClick": "{{ RateClassData.runAllAccounts() }}",
- "parentColumnSpace": 13.83,
- "parentId": "zbxesfkigw",
- "parentRowSpace": 10,
- "placement": "CENTER",
- "recaptchaType": "V3",
- "renderMode": "CANVAS",
- "resetFormOnClick": false,
- "responsiveBehavior": "hug",
- "rightColumn": 55,
- "text": "{{ (appsmith.store.rc_inventory || []).length ? \"Run all (\" + (appsmith.store.rc_inventory || []).filter(a => a.runnable).length + \")\" : \"Run all\" }}",
- "tooltip": "Price every eligible electric account for this customer against its own recent months. Takes a minute or two per account.",
- "topRow": 17,
- "type": "BUTTON_WIDGET",
- "version": 1,
- "widgetId": "rcbtnall001",
- "widgetName": "Btn_RC_analyzeAll"
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 21,
+  "boxShadow": "none",
+  "buttonColor": "#ffffff",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": "{{ !!appsmith.store.rc_loading || !!appsmith.store.rc_inv_loading || (appsmith.store.rc_inventory || []).length === 0 }}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rcanalyzeall",
+  "leftColumn": 50,
+  "minWidth": 40,
+  "mobileBottomRow": 36,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 32,
+  "needsErrorInfo": false,
+  "onClick": "{{ RateClassData.runAllAccounts() }}",
+  "parentColumnSpace": 13.83,
+  "parentId": "zbxesfkigw",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 57,
+  "text": "{{ (appsmith.store.rc_inventory || []).length ? \"Run all (\" + (appsmith.store.rc_inventory || []).filter(a => a.runnable).length + \")\" : \"Run all\" }}",
+  "tooltip": "Price every eligible electric account for this customer against its own recent months. Takes a minute or two per account.",
+  "topRow": 17,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "rcbtnall001",
+  "widgetName": "Btn_RC_analyzeAll"
 }

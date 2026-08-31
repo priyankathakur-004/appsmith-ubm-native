@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 13,
+  "bottomRow": 11,
   "dynamicBindingPathList": [
     {
       "key": "fontFamily"
@@ -15,7 +15,7 @@
   "isLoading": false,
   "isVisible": true,
   "key": "h9k2mqp4wz7",
-  "leftColumn": 1,
+  "leftColumn": 0,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "minWidth": 450,
@@ -37,7 +37,7 @@
   "text": "Pick a customer to list its electric accounts, then run one account or all of them",
   "textAlign": "LEFT",
   "textColor": "#f4f4f5",
-  "topRow": 9,
+  "topRow": 7,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
   "version": 1,

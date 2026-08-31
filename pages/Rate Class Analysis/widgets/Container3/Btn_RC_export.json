@@ -1,51 +1,51 @@
 {
- "animateLoading": true,
- "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
- "bottomRow": 21,
- "boxShadow": "none",
- "buttonColor": "#ffffff",
- "buttonVariant": "SECONDARY",
- "disabledWhenInvalid": false,
- "dynamicBindingPathList": [
-  {
-   "key": "borderRadius"
-  },
-  {
-   "key": "isDisabled"
-  }
- ],
- "dynamicTriggerPathList": [
-  {
-   "key": "onClick"
-  }
- ],
- "isDefaultClickDisabled": true,
- "isDisabled": "{{ !!appsmith.store.rc_loading || (appsmith.store.rc_portfolio || []).length === 0 }}",
- "isLoading": false,
- "isVisible": true,
- "key": "rcexportcsv",
- "leftColumn": 56,
- "minWidth": 40,
- "mobileBottomRow": 36,
- "mobileLeftColumn": 1,
- "mobileRightColumn": 21,
- "mobileTopRow": 32,
- "needsErrorInfo": false,
- "onClick": "{{ RateClassData.exportWorkbook() }}",
- "parentColumnSpace": 13.83,
- "parentId": "zbxesfkigw",
- "parentRowSpace": 10,
- "placement": "CENTER",
- "recaptchaType": "V3",
- "renderMode": "CANVAS",
- "resetFormOnClick": false,
- "responsiveBehavior": "hug",
- "rightColumn": 64,
- "text": "Export Excel",
- "tooltip": "Download the analysis as an Excel workbook: executive summary, account detail, tariff results, actual vs modeled and methodology",
- "topRow": 17,
- "type": "BUTTON_WIDGET",
- "version": 1,
- "widgetId": "rcbtnexp001",
- "widgetName": "Btn_RC_export"
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 21,
+  "boxShadow": "none",
+  "buttonColor": "#ffffff",
+  "buttonVariant": "SECONDARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isDisabled"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": "{{ !!appsmith.store.rc_loading || (appsmith.store.rc_portfolio || []).length === 0 }}",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "rcexportcsv",
+  "leftColumn": 57,
+  "minWidth": 40,
+  "mobileBottomRow": 36,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 21,
+  "mobileTopRow": 32,
+  "needsErrorInfo": false,
+  "onClick": "{{ RateClassData.exportWorkbook() }}",
+  "parentColumnSpace": 13.83,
+  "parentId": "zbxesfkigw",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "text": "Export Excel",
+  "tooltip": "Download the analysis as an Excel workbook: executive summary, account detail, tariff results, actual vs modeled and methodology",
+  "topRow": 17,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "rcbtnexp001",
+  "widgetName": "Btn_RC_export"
 }
