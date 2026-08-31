@@ -2,6 +2,7 @@
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 6,
+  "bottomRowBeforeCollapse": 6,
   "boxShadow": "none",
   "buttonColor": "#ffffff",
   "buttonVariant": "TERTIARY",
@@ -34,6 +35,8 @@
   "mobileTopRow": 2,
   "needsErrorInfo": false,
   "onClick": "{{ RateClassData.goBack() }}",
+  "originalBottomRow": 6,
+  "originalTopRow": 2,
   "parentColumnSpace": 13.83,
   "parentId": "xy7b3pkdpf",
   "parentRowSpace": 10,
@@ -44,10 +47,11 @@
   "responsiveBehavior": "hug",
   "rightColumn": 2,
   "text": "",
+  "tooltip": "Discard these results and go back to the account list",
   "topRow": 2,
+  "topRowBeforeCollapse": 2,
   "type": "BUTTON_WIDGET",
   "version": 1,
   "widgetId": "si8uhk6tx4",
-  "widgetName": "Btn_RC_backFromResults",
-  "tooltip": "Discard these results and go back to the account list"
+  "widgetName": "Btn_RC_backFromResults"
 }
