@@ -1,7 +1,7 @@
 {
  "animateLoading": true,
  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
- "bottomRow": 6,
+ "bottomRow": 4,
  "dynamicBindingPathList": [
   {
    "key": "fontFamily"
@@ -27,8 +27,8 @@
  "mobileRightColumn": 30,
  "mobileTopRow": 2,
  "needsErrorInfo": false,
- "originalBottomRow": 6,
- "originalTopRow": 2,
+ "originalBottomRow": 4,
+ "originalTopRow": 0,
  "overflow": "NONE",
  "parentColumnSpace": 30.21875,
  "parentId": "xy7b3pkdpf",
@@ -40,7 +40,7 @@
  "text": "{{ (appsmith.store.rc_portfolio || []).length ? (appsmith.store.rc_single_account ? \"Rate Class Analysis — Account result\" : \"Rate Class Analysis — All accounts\") : \"Rate Class Analysis — Accounts\" }}",
  "textAlign": "LEFT",
  "textColor": "#ffffff",
- "topRow": 2,
+ "topRow": 0,
  "type": "TEXT_WIDGET",
  "version": 1,
  "widgetId": "065t20yook",
