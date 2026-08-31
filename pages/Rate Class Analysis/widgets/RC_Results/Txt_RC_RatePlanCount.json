@@ -37,7 +37,7 @@
  "responsiveBehavior": "fill",
  "rightColumn": 30,
  "shouldTruncate": false,
- "text": "{{ appsmith.store.rc_inv_loading ? \"Loading accounts…\" : ((appsmith.store.rc_portfolio || []).length ? (appsmith.store.rc_single_account ? RateClassData.analysisSummary() : RateClassData.portfolioSummary()) : \"Nothing has been sent to the tariff API yet — press Run on an account, or Run all.\") }}",
+ "text": "{{ appsmith.store.rc_inv_loading ? \"Loading this customer's accounts…\" : ((appsmith.store.rc_portfolio || []).length ? (appsmith.store.rc_single_account ? RateClassData.analysisSummary() : RateClassData.portfolioSummary()) : ((appsmith.store.rc_inventory || []).length ? \"Nothing analysed yet. Press Run on any account to compare it against every rate its utility offers, or Run all to do the whole portfolio — allow a minute or two per account.\" : \"Pick a customer above to see its electric accounts.\")) }}",
  "textAlign": "LEFT",
  "textColor": "#d4d4d8",
  "topRow": 8,
