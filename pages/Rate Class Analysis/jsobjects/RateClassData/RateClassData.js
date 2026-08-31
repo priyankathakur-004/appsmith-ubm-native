@@ -1,236 +1,141 @@
 export default {
 	// =====================================================================
-	// Rate Class Analysis  (rebuilt per Sunny's "live data" requirement)
+	// Rate Class Analysis
 	//
-	// Old flow: user typed zip + consumption + demand, picked tariffs by hand,
-	// got a single-month cost per tariff.
+	// Pick a customer and the page lists every electric account it has, with the
+	// usage that would be priced. Nothing reaches the tariff API until the user
+	// asks for it: Run prices one account, Run all prices the whole portfolio.
+	// Listing the accounts is a single UBM query and returns in about a second,
+	// where pricing them takes minutes — so which accounts are worth minutes is the
+	// user's call, not the page's.
 	//
-	// New flow: user picks a Customer + Location. We auto-load the last 12 months
-	// of electric consumption (kWh), demand (kW) and the actual charges paid
-	// (RC_LocationUsage), look up the serving utilities by the location's zip,
-	// pull every electric tariff, and model a full ANNUAL bill for each tariff in
-	// ONE Genability /calculate call (12 monthly inputs per call — not 12 calls).
-	// We then compare each tariff's modeled annual cost against the actual annual
-	// cost and rank by savings, highlighting the best rate.
+	// A run prices each account's own last N months against every rate class its
+	// serving utility publishes, compares that against what the account actually
+	// paid, and exports the whole thing as an Excel workbook.
 	//
-	// All Genability calls go through fetch() (same pattern the old runCalculate
-	// used) so we never depend on the bound REST queries or on hidden widgets.
+	// The grain throughout is the PHYSICAL account (account_key from
+	// RC_CustomerUsage), never the virtual account and never the bill type. In a
+	// deregulated market UBM bills one meter twice — a Supply Only invoice from the
+	// supplier and a Distribution Only invoice from the utility — and the two must
+	// be assembled back into one account before anything is priced, or each half
+	// gets compared against a bundled utility tariff it is not comparable to. See
+	// the header of RC_CustomerUsage for how that key is built.
+	//
+	// All Genability calls go through fetch() so we never depend on the bound REST
+	// queries or on hidden widgets.
 	// =====================================================================
 
 	// ---- Genability API config (Basic token shared with the REST datasource) ----
 	_GENABILITY_BASE: "https://api.genability.com",
 	_GENABILITY_AUTH: "Basic ZjVjOGRlNmYtZTYyMi00ZTY3LTljNjctN2Y0MDg3ODFmMDQ5OmNkZTk1ZTQwLWYxNDUtNGQzNy05ZTdiLWNhYzFkY2M1ZmRkYw==",
 
-	// Cap the number of tariffs we model in one run so a zip with hundreds of
-	// tariffs can't lock up the browser. If we hit the cap we tell the user.
+	// Cap the number of tariffs modeled for ONE account so a zip with hundreds of
+	// tariffs can't lock up the browser. If we hit the cap we say so.
 	_MAX_TARIFFS: 80,
-	// How many Genability calc calls run concurrently. Keeps the UI responsive
-	// and stays well under Genability's rate limits.
+	// How many Genability calc calls run concurrently for a single account.
 	_CALC_CONCURRENCY: 6,
 
-	// ---- Portfolio ("all accounts") mode ----
-	// Locations analysed concurrently. Each one runs up to _PORTFOLIO_CALC_CONCURRENCY
-	// calc calls, so in-flight Genability requests peak at the product of the two —
-	// kept at 12 for the same reason _CALC_CONCURRENCY is 6 on the single-location
-	// screen (responsive UI, comfortably inside Genability's rate limits).
+	// ---- Multi-account ("Run all") runs ----
+	// Accounts analysed concurrently. Each one runs up to _PORTFOLIO_CALC_CONCURRENCY
+	// calc calls, so in-flight Genability requests peak at the product of the two.
 	_LOC_CONCURRENCY: 2,
 	_PORTFOLIO_CALC_CONCURRENCY: 6,
-	// Hard cap on locations modeled in one portfolio run. A large customer can have
-	// hundreds of sites; at ~40 rate classes each that is thousands of API calls and
-	// a browser tab that never finishes. Above the cap we model the highest-spend
-	// locations (that is where the savings are) and say so in the summary.
-	_MAX_LOCATIONS: 40,
+	// Accounts are run in BATCHES, not capped. An earlier build stopped at 40
+	// accounts, which quietly changed the answer for a large customer: the totals
+	// covered a subset while reading as the whole portfolio. Batching keeps the tab
+	// responsive and the API within its limits without dropping anything — every
+	// eligible account is priced, however many there are.
+	_BATCH_SIZE: 6,
+	// A breather between batches so the tab can paint its progress and Genability
+	// isn't hit in one unbroken stream.
+	_BATCH_PAUSE_MS: 250,
 
 	// =====================================================================
 	// Dropdown option getters
 	// =====================================================================
-	// Reads from the store, NOT RC_fetchCustomers.data. Same reason as
-	// locationOptions: reading a query's .data in the JSObject while the query is
-	// also triggered (here it's run on load via initPage) raises Appsmith's
-	// "Reactive dependency misuse" error and breaks the whole JSObject.
+	// Reads from the store, never from the customer query's own result property.
+	// Same reason as locationOptions: an object that both triggers a query and
+	// reads back its result raises Appsmith's "Reactive dependency misuse" error,
+	// which breaks evaluation of every function here, not just this one. The
+	// initPage handler captures the run's RETURN value into the store instead.
 	customerOptions() {
 		const arr = appsmith.store.rc_customer_opts;
 		const list = Array.isArray(arr) ? arr : [];
 		return list.map(c => ({ label: c.name, value: c.id }));
 	},
 
-	// Reads from the store, NOT RC_fetchLocations.data — reading a query's .data
-	// here while onCustomerChange() also .run()s it triggers Appsmith's
-	// "Reactive dependency misuse" error (one entity both triggering and reading
-	// the same query), which breaks evaluation of the whole JSObject.
+	// Reads from the store rather than from the location query's own result
+	// property: onCustomerChange triggers that query, and one entity both
+	// triggering a query and reading it back is the "Reactive dependency misuse"
+	// case that breaks evaluation of the whole object.
+	// Leads with "All locations" because the dropdown narrows the account table
+	// rather than choosing what to analyse — without a way back to everything, a
+	// user who picks a location is stuck looking at part of the portfolio.
 	locationOptions() {
 		const arr = appsmith.store.rc_location_opts;
 		const list = Array.isArray(arr) ? arr : [];
-		return list.map(l => ({ label: l.name, value: l.id }));
+		return [{ label: "All locations", value: "" }]
+			.concat(list.map(l => ({ label: l.name, value: l.id })));
 	},
 
 	// =====================================================================
-	// Selection handlers (wired to the SELECT widgets' onOptionChange)
+	// Selection handlers
 	// =====================================================================
+	// Picking a customer loads the ACCOUNT INVENTORY and nothing else. This is the
+	// whole point of the flow: one UBM query, about a second, and the user can see
+	// every electric account with the usage that would be priced before deciding
+	// what is worth spending minutes of tariff API time on. No pricing runs here.
 	async onCustomerChange() {
-		await storeValue("rc_results", []);
-		await storeValue("rc_usage", []);
-		await storeValue("rc_location_opts", []);
-		await storeValue("rc_lineitems", null);
-		await storeValue("rc_portfolio", []);
-		await storeValue("rc_portfolio_meta", {});
-		await storeValue("rc_portfolio_lineitems", {});
-		await storeValue("rc_screen", 1);
+		await RateClassData._clearRun();
+		await storeValue("rc_inventory", []);
+		await storeValue("rc_f_site", "");
+		await storeValue("rc_f_vendor", "");
+		await storeValue("rc_screen", 4);
 		const res = await RC_fetchLocations.run();
 		const arr = Array.isArray(res) ? res : ((res && (res.data || res.body)) || []);
 		await storeValue("rc_location_opts", Array.isArray(arr) ? arr : []);
-		await storeValue("rc_inventory", []);
-		await storeValue("rc_screen", 4);
 		await RateClassData.loadInventory();
 	},
 
-	// Picking a location kicks off the whole analysis.
+	// The location dropdown narrows the account list. It used to launch the
+	// analysis, which is exactly the behaviour this flow removes: selecting
+	// something should never start a run that takes minutes.
 	async onLocationChange() {
-		await RateClassData.runAnalysis();
+		const id = (typeof RC_LocationSelect !== "undefined") ? RC_LocationSelect.selectedOptionValue : "";
+		return storeValue("rc_f_location", id == null ? "" : String(id));
 	},
 
-	// =====================================================================
-	// Orchestrator
-	// =====================================================================
-	async runAnalysis() {
-		const customerId = (typeof RC_CustomerSelect !== "undefined") ? RC_CustomerSelect.selectedOptionValue : null;
-		const locationId = (typeof RC_LocationSelect !== "undefined") ? RC_LocationSelect.selectedOptionValue : null;
-		if (!customerId || !locationId) {
-			showAlert("Pick a customer and a location first", "warning");
-			return;
-		}
+	// Changing the term changes which months would be priced, so the inventory has
+	// to be rebuilt on the new window — otherwise the table shows a 12-month figure
+	// while the run would price 24.
+	async onTermChange() {
+		const t = (typeof RC_TermSelect !== "undefined") ? RC_TermSelect.selectedOptionValue : 12;
+		await storeValue("rc_term", t);
+		if ((appsmith.store.rc_inventory || []).length) await RateClassData.loadInventory();
+	},
 
-		// Cache: skip the whole pipeline if we've already analysed this location.
-		// The version prefix invalidates entries from older builds whose result
-		// shape differs (e.g. before the ALTERNATIVE rate-class fix) — appsmith
-		// store persists across reloads, so without this an old cached result
-		// would keep showing after a code change.
-		const cacheKey = `v6:${customerId}:${locationId}`;
-		const cache = appsmith.store.rc_cache || {};
-		if (cache[cacheKey]) {
-			await storeValue("rc_usage", cache[cacheKey].usage);
-			await storeValue("rc_results", cache[cacheKey].results);
-			await storeValue("rc_meta", cache[cacheKey].meta);
-			await storeValue("rc_all_tariffs", cache[cacheKey].allTariffs || []);
-			await storeValue("rc_screen", 2);
-			return;
-		}
-
-		await storeValue("rc_loading", true);
-		await storeValue("rc_progress", "Loading 12 months of usage…");
+	// Everything a completed run wrote. Kept in one place so selecting a customer,
+	// starting a run and resetting cannot drift apart and leave one customer's
+	// results sitting under another customer's account list.
+	//
+	// Written non-persistently (the third argument): a portfolio run holds every
+	// priced rate and its charge lines for every account, which is far more than
+	// localStorage will take, and a persisted copy would also serve a stale result
+	// back after a code change.
+	async _clearRun() {
+		await storeValue("rc_results", [], false);
+		await storeValue("rc_usage", [], false);
+		await storeValue("rc_all_tariffs", [], false);
+		await storeValue("rc_meta", {}, false);
+		await storeValue("rc_lineitems", null, false);
+		await storeValue("rc_portfolio", [], false);
+		await storeValue("rc_portfolio_meta", {}, false);
+		await storeValue("rc_portfolio_lineitems", {}, false);
+		await storeValue("rc_rates_by_acct", {}, false);
+		await storeValue("rc_accounts", {}, false);
+		await storeValue("rc_single_account", "", false);
 		await storeValue("rc_status", "");
-		// Clear any prior analysis up front so an early exit (no usage, non-US, no
-		// tariffs…) shows only its status message — not the previous location's
-		// results/summary lingering below. Success sets rc_screen back to 2.
-		await storeValue("rc_results", []);
-		await storeValue("rc_meta", {});
-		await storeValue("rc_all_tariffs", []);
-		await storeValue("rc_screen", 1);
-
-		try {
-			// --- 1. Load the location's last 12 months of usage + actual cost ---
-			const usageRaw = await RC_LocationUsage.run();
-			let usage = Array.isArray(usageRaw) ? usageRaw : [];
-			if (!usage.length) {
-				const msg = "Step 1: RC_LocationUsage returned 0 rows for this customer/location. The location may have no ELECTRIC bills, or utility_type isn't 'ELECTRIC'. Run RC_LocationUsage manually to check.";
-				showAlert("No electric usage found for this location", "warning");
-				await storeValue("rc_status", msg);
-				await storeValue("rc_loading", false);
-				return;
-			}
-			// Drop stray ancient months. A data gap can make "the latest 12 rows"
-			// span years (e.g. 10 recent months + two rows from 2020–21), which
-			// builds a multi-year /calculate window Genability rejects — every rate
-			// then errors. Keep only months within 13 months of the most recent.
-			{
-				const desc = usage.slice().sort((a, b) => (a.month < b.month ? 1 : -1));
-				const newest = moment(desc[0].month);
-				usage = desc.filter(r => newest.diff(moment(r.month), "months") <= 13);
-			}
-			await storeValue("rc_status", `Step 1 OK: ${usage.length} months of usage loaded.`);
-			const months = usage.map(r => ({
-				month: r.month,
-				kwh: Number(r.kwh) || 0,
-				kw: Number(r.kw) || 0,
-				actual: Number(r.actual_charges) || 0
-			}));
-			const zip = RateClassData._pickStr(usage[0], ["postcode"]);
-			const locationName = RateClassData._pickStr(usage[0], ["location_name"]);
-			const country = RateClassData._pickStr(usage[0], ["country"]);
-			const state = RateClassData._pickStr(usage[0], ["state"]);
-			const actualAnnual = months.reduce((s, m) => s + m.actual, 0);
-			const monthCount = months.length;
-			await storeValue("rc_usage", usage);
-
-			// Guard: Genability/Arcadia only covers U.S. utilities. A non-U.S.
-			// postal code (e.g. a Mexican CP) collides with a 5-digit U.S. ZIP and
-			// resolves to the wrong utility (e.g. Aguascalientes CP 20355 → Pepco
-			// in Washington DC), producing a meaningless comparison. Refuse rather
-			// than model it. Empty/US country is allowed through.
-			if (country && !RateClassData._isUSCountry(country)) {
-				const msg = `This location is in ${country}${state ? ", " + state : ""}. The Arcadia/Genability tariff database only covers U.S. utilities, so rate-class modeling isn't available here (a non-U.S. postcode would be mis-matched to a U.S. ZIP).`;
-				showAlert("Non-U.S. location — tariff modeling not available", "warning");
-				await storeValue("rc_status", msg);
-				await storeValue("rc_loading", false);
-				return;
-			}
-
-			if (!zip || String(zip).trim().length < 3) {
-				const msg = "Step 1: usage loaded but the location has no postcode — cannot look up tariffs.";
-				showAlert("This location has no postcode on file — cannot look up tariffs", "warning");
-				await storeValue("rc_status", msg);
-				await storeValue("rc_loading", false);
-				return;
-			}
-
-			// --- 2-5. Tariff lookup, modeling and ranking. Shared verbatim with the
-			// portfolio run (_analyzeLocation) so a single-location result and the
-			// same location inside an "all accounts" run can never disagree.
-			const out = await RateClassData._analyzeLocation(
-				months,
-				{ zip, locationName, actualAnnual, monthCount },
-				{ lses: {}, tariffs: {} },
-				{
-					concurrency: RateClassData._CALC_CONCURRENCY,
-					onProgress: (m) => storeValue("rc_progress", m),
-					onNote: (m) => storeValue("rc_status", m)
-				}
-			);
-			if (out.error) {
-				showAlert(out.alert || "Analysis could not run for this location", "warning");
-				await storeValue("rc_status", out.error);
-				await storeValue("rc_loading", false);
-				return;
-			}
-			const ranked = out.ranked;
-			const meta = out.meta;
-			await storeValue("rc_all_tariffs", out.allTariffs);
-
-			// --- 6. Pull the ACTUAL billed line items for the same window and compare
-			// them against the recommended rate's modeled charges. ---
-			await storeValue("rc_progress", "Comparing billed line items…");
-			const liCompare = await RateClassData._buildLineItemCompare(
-				customerId, [{ locationId: Number(locationId), locationName, months }], ranked
-			);
-			await storeValue("rc_lineitems", liCompare[String(locationId)] || null);
-
-			await storeValue("rc_results", ranked);
-			await storeValue("rc_meta", meta);
-			await storeValue("rc_status", "");
-			await storeValue("rc_screen", 2);
-
-			// Cache for instant re-selection.
-			const newCache = Object.assign({}, appsmith.store.rc_cache || {});
-			newCache[cacheKey] = { usage, results: ranked, meta, allTariffs: allTariffsTagged };
-			await storeValue("rc_cache", newCache);
-		} catch (e) {
-			const msg = "Analysis failed: " + ((e && e.message) || e);
-			showAlert(msg, "error");
-			await storeValue("rc_status", msg);
-		} finally {
-			await storeValue("rc_loading", false);
-			await storeValue("rc_progress", "");
-		}
+		await storeValue("rc_progress", "");
 	},
 
 	// =====================================================================
@@ -1040,90 +945,256 @@ export default {
 	// =====================================================================
 	// Account inventory
 	// =====================================================================
-	// What the customer actually has, listed before any analysis runs. This is a
-	// single UBM query and returns in about a second, where pricing every account
-	// against every qualifying tariff takes minutes. Showing the inventory first
-	// lets someone see the accounts, spot missing or odd data, and choose what to
-	// run rather than committing to the whole portfolio blind.
+	// What the customer actually has, listed before any analysis runs. One UBM
+	// query, about a second, against minutes to price every account against every
+	// qualifying tariff. Showing the inventory first lets someone see the accounts,
+	// spot missing or odd data, and choose what to run rather than committing to
+	// the whole portfolio blind.
+	//
+	// The rows are built from the same grouping and the same window rule the run
+	// uses, so the usage shown here is exactly the usage that would be priced. If
+	// the table says 165,550 kWh over 12 months, that is what goes to Arcadia.
 	async loadInventory() {
 		const customerId = (typeof RC_CustomerSelect !== "undefined") ? RC_CustomerSelect.selectedOptionValue : null;
 		if (!customerId) return;
 		await storeValue("rc_inv_loading", true);
-		await storeValue("rc_inventory", []);
+		await storeValue("rc_progress", "Loading accounts…");
+		await storeValue("rc_inventory", [], false);
 		try {
 			const raw = await RC_CustomerUsage.run();
 			const rows = Array.isArray(raw) ? raw : [];
+			// Key on the physical account. Grouping on the virtual account or on the
+			// bill type would list one meter twice \u2014 once as Supply Only and once as
+			// Distribution Only \u2014 and the user would be choosing between two halves of
+			// the same account, neither of which can be priced on its own.
 			const byAcct = new Map();
 			for (const r of rows) {
-				const key = String(r.account_key != null ? r.account_key
-					: (r.virtual_account_id != null ? r.virtual_account_id : r.location_id));
+				const key = String(r.account_key != null ? r.account_key : r.location_id);
 				if (!byAcct.has(key)) byAcct.set(key, []);
 				byAcct.get(key).push(r);
 			}
-			const term = RateClassData.analysisTerm();
 			const inv = [];
 			for (const [key, list] of byAcct.entries()) {
-				// Same window rule the analysis uses, so the usage shown here is the
-				// usage that would be priced.
-				const desc = list.slice().sort((a, b) => (a.month < b.month ? 1 : -1)).slice(0, term);
-				if (!desc.length) continue;
-				const newest = moment(desc[0].month);
-				const kept = desc.filter(r => newest.diff(moment(r.month), "months") <= term + 1);
-				const firstOf = (k) => { for (const r of list) { const v = RateClassData._pickStr(r, [k]); if (v) return v; } return ""; };
-				const sum = (k) => kept.reduce((s, r) => s + (Number(r[k]) || 0), 0);
-				const site = firstOf("location_name") || `Account ${key}`;
-				const acct = firstOf("account_code") || firstOf("client_account") || String(key);
-				const supply = sum("supply_charges"), delivery = sum("delivery_charges"), full = sum("full_service_charges");
+				const spec = RateClassData._accountSpec(key, list);
+				if (!spec) continue;
 				inv.push({
 					account_key: key,
-					site: site,
-					account_code: acct,
-					zip: firstOf("postcode"),
-					utility: firstOf("vendor_name"),
-					bill_types: firstOf("bill_types"),
-					months: kept.length,
-					period_from: kept.length ? kept[kept.length - 1].month.slice(0, 7) : "",
-					period_to: kept.length ? kept[0].month.slice(0, 7) : "",
-					annual_kwh: Math.round(sum("kwh")),
-					peak_kw: kept.reduce((mx, r) => Math.max(mx, Number(r.kw) || 0), 0),
-					actual_annual: Number(sum("actual_charges").toFixed(2)),
-					supply_annual: Number(supply.toFixed(2)),
-					delivery_annual: Number(delivery.toFixed(2)),
-					full_service_annual: Number(full.toFixed(2)),
-					has_supply: supply !== 0,
-					// Surfaced here so a gap is visible before anyone spends minutes
-					// pricing an account whose inputs cannot support a comparison.
-					issue: RateClassData._inventoryIssue(kept, firstOf("postcode"), firstOf("country"))
+					site: spec.site,
+					location_id: spec.locationId,
+					account_code: spec.acctCode || String(key),
+					virtual_accounts: spec.vaLabel,
+					zip: spec.zip,
+					utility: spec.vendor,
+					supplier: spec.supplierLabel,
+					account_status: spec.accountStatus,
+					bill_types: spec.billTypes,
+					months: spec.monthCount,
+					period_from: spec.periodFrom,
+					period_to: spec.periodTo,
+					annual_kwh: Math.round(spec.annualKwh),
+					peak_kw: spec.peakKw,
+					actual_annual: Number(spec.actualAnnual.toFixed(2)),
+					supply_annual: Number(spec.supplyAnnual.toFixed(2)),
+					delivery_annual: Number(spec.deliveryAnnual.toFixed(2)),
+					full_service_annual: Number(spec.fullServiceAnnual.toFixed(2)),
+					has_supply: spec.hasSupply,
+					// The reason an account cannot be priced, or a warning about the data it
+					// would be priced on. Surfaced here so a gap is visible BEFORE anyone
+					// spends minutes on an account whose inputs cannot support a comparison,
+					// and so the count in the results is never unexplained.
+					blocker: spec.blocker,
+					issue: spec.blocker || spec.warning,
+					runnable: !spec.blocker
 				});
 			}
 			inv.sort((a, b) => b.actual_annual - a.actual_annual);
-			await storeValue("rc_inventory", inv);
+			await storeValue("rc_inventory", inv, false);
 		} catch (e) {
 			await storeValue("rc_status", "Could not load the account list: " + ((e && e.message) || e));
 		} finally {
 			await storeValue("rc_inv_loading", false);
+			await storeValue("rc_progress", "");
 		}
 	},
 
-	// Problems worth seeing before running, phrased as what it means for the
-	// analysis rather than as a data-quality verdict.
-	_inventoryIssue(months, zip, country) {
-		if (country && !RateClassData._isUSCountry(country)) return "Outside the US — Arcadia covers US utilities only";
-		if (!zip || String(zip).trim().length < 3) return "No postcode — cannot look up tariffs";
-		const kwh = months.reduce((s, m) => s + (Number(m.kwh) || 0), 0);
-		if (kwh <= 0) return "No consumption recorded — nothing for a rate to price";
-		if (months.length < 12) return `Only ${months.length} month(s) of data`;
-		const zeroKw = months.filter(m => (Number(m.kwh) || 0) >= 5000 && (Number(m.kw) || 0) <= 0).length;
-		if (zeroKw) return `${zeroKw} month(s) with usage but no demand reading`;
-		const spike = months.filter(m => (Number(m.kw) || 0) > 50 && (Number(m.kwh) || 0) > 0
-			&& ((Number(m.kwh) || 0) / ((Number(m.kw) || 1) * 730)) < 0.02).length;
-		if (spike) return `${spike} month(s) with an implausibly high demand reading`;
+	// =====================================================================
+	// One account, assembled from its monthly rows
+	// =====================================================================
+	// The single place a physical account's identity, window and totals are worked
+	// out. Both the inventory listing and the run call it, so the table can never
+	// describe an account differently from the way it is priced \u2014 the earlier build
+	// had two copies of this logic and they had already begun to drift (the run
+	// checked country, the listing did not).
+	//
+	// Returns null only when the account has no months at all.
+	_accountSpec(key, list) {
+		if (!list || !list.length) return null;
+		// Identity fields are read across the whole series rather than off list[0]:
+		// several of them (a post-change supply account code, a supplier name) are
+		// null for the earlier months, so depending on which row happens to arrive
+		// first would silently drop them.
+		const firstOf = (k) => {
+			for (const row of list) { const v = RateClassData._pickStr(row, [k]); if (v) return v; }
+			return "";
+		};
+		const term = RateClassData.analysisTerm();
+		// Newest `term` months, then drop anything more than a month older than that
+		// window: a data gap would otherwise build a multi-year /calculate window
+		// Genability rejects, and every rate would come back errored.
+		const desc = list.slice().sort((a, b) => (a.month < b.month ? 1 : -1)).slice(0, term);
+		const newest = moment(desc[0].month);
+		const kept = desc.filter(r => newest.diff(moment(r.month), "months") <= term + 1);
+		const months = kept.map(r => ({
+			month: r.month,
+			kwh: Number(r.kwh) || 0,
+			kw: Number(r.kw) || 0,
+			// Actual cost is both invoices together — that is what the site paid, and
+			// the only figure comparable to a bundled utility tariff.
+			actual: Number(r.actual_charges) || 0,
+			supply: Number(r.supply_charges) || 0,
+			delivery: Number(r.delivery_charges) || 0,
+			fullService: Number(r.full_service_charges) || 0,
+			// UBM's own classification of the bill. This is the actual side of the
+			// charge comparison — see _buildLineItemCompare for why the line-item table
+			// cannot be used for it.
+			chg: {
+				consumption: Number(r.chg_consumption) || 0,
+				generation:  Number(r.chg_generation)  || 0,
+				commodity:   Number(r.chg_commodity)   || 0,
+				demand:      Number(r.chg_demand)      || 0,
+				customer:    Number(r.chg_customer)    || 0,
+				taxes:       Number(r.chg_taxes)       || 0,
+				other:       Number(r.chg_other)       || 0
+			},
+			// Same categories, supplier's invoice only. The delivery side is the
+			// remainder, so only one of the two needs carrying.
+			chgSup: {
+				consumption: Number(r.chg_consumption_sup) || 0,
+				generation:  Number(r.chg_generation_sup)  || 0,
+				commodity:   Number(r.chg_commodity_sup)   || 0,
+				demand:      Number(r.chg_demand_sup)      || 0,
+				customer:    Number(r.chg_customer_sup)    || 0,
+				taxes:       Number(r.chg_taxes_sup)       || 0,
+				other:       Number(r.chg_other_sup)       || 0
+			}
+		}));
+
+		const site = firstOf("location_name") || `Account ${key}`;
+		const acctCode = firstOf("account_code") || firstOf("client_account") || String(key);
+		const zip = firstOf("postcode");
+		const country = firstOf("country");
+		const state = firstOf("state");
+		// The bill's vendor is the serving utility. Passing it into the run stops
+		// co-op and muni schedules that merely overlap the ZIP from being priced as
+		// switchable options — a co-op serves a defined membership territory.
+		const vendor = firstOf("vendor_name");
+		const supplyVa = firstOf("supply_va_ids");
+		const deliveryVa = firstOf("delivery_va_ids");
+		const supplyAcct = firstOf("supply_account_code");
+		const supplier = firstOf("supplier_name");
+
+		const sum = (f) => months.reduce((t, m) => t + f(m), 0);
+		const actualAnnual = sum(m => m.actual);
+		const supplyAnnual = sum(m => m.supply);
+		const deliveryAnnual = sum(m => m.delivery);
+		const fullServiceAnnual = sum(m => m.fullService);
+		const annualKwh = sum(m => m.kwh);
+		const peakKw = months.reduce((mx, m) => Math.max(mx, m.kw), 0);
+		const CHG_KEYS = ["consumption","generation","commodity","demand","customer","taxes","other"];
+		const chgTotals = {}, chgSupply = {};
+		for (const k of CHG_KEYS) {
+			chgTotals[k] = sum(m => m.chg[k]);
+			chgSupply[k] = sum(m => m.chgSup[k]);
+		}
+		// Whatever the categories do not account for. Carried explicitly so the
+		// comparison still totals to what was actually billed.
+		chgTotals.unclassified = actualAnnual - CHG_KEYS.reduce((t, k) => t + chgTotals[k], 0);
+		chgSupply.unclassified = supplyAnnual - CHG_KEYS.reduce((t, k) => t + chgSupply[k], 0);
+		// A competitive contract exists only where the supplier billed separately. A
+		// Full Service invoice is the utility doing both, so there is no contract to
+		// compare and reporting a saving against one would be inventing it.
+		const hasSupply = supplyAnnual !== 0;
+
+		const vaLabel = [supplyVa ? supplyVa + " (supply)" : "", deliveryVa ? deliveryVa + " (delivery)" : ""]
+			.filter(Boolean).join(" / ");
+		// UBM records vendor_name as the utility on the supply invoice too, so the
+		// competitive supplier's trading name usually isn't recoverable. Where it
+		// isn't, the supply account number identifies the supplier instead.
+		const supplierLabel = (supplier && RateClassData._normUtility(supplier) !== RateClassData._normUtility(vendor))
+			? supplier
+			: (supplyAcct ? `acct ${supplyAcct}` : (hasSupply ? "not distinguished in UBM" : ""));
+
+		return {
+			id: String(key), site, acctCode,
+			// Label carries the account number: with several accounts per site the site
+			// name alone doesn't identify a row.
+			name: acctCode ? `${site} — ${acctCode}` : site,
+			locationId: RateClassData._pickNum(list[0], ["location_id"]),
+			zip, country, state, vendor,
+			supplier, supplierLabel, supplyAcct,
+			vaLabel, supplyVa, deliveryVa,
+			accountStatus: firstOf("account_status"),
+			billTypes: firstOf("bill_types"),
+			uom: firstOf("uom") || "kWh",
+			months, monthCount: months.length,
+			periodFrom: months.length ? months[months.length - 1].month.slice(0, 7) : "",
+			periodTo: months.length ? months[0].month.slice(0, 7) : "",
+			annualKwh, peakKw,
+			actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply,
+			chgTotals, chgSupply,
+			blocker: RateClassData._blockingIssue(months, zip, country, state, vendor),
+			warning: RateClassData._dataWarning(months, vendor)
+		};
+	},
+
+	// Why this account cannot be priced at all. Anything returned here keeps the
+	// account out of a run and onto the Not modeled list with this text as the
+	// reason — never dropped silently, because a results count that doesn't match
+	// the account count with no explanation is worse than no result.
+	_blockingIssue(months, zip, country, state, vendor) {
+		if (!months || !months.length) return "No bills in the last 24 months — nothing to price";
+		// Arcadia/Genability only covers U.S. utilities. A non-U.S. postal code
+		// collides with a five-digit U.S. ZIP and resolves to the wrong utility (a
+		// Mexican CP 20355 → Pepco in Washington DC), producing a meaningless
+		// comparison. Refuse rather than model it.
+		if (country && !RateClassData._isUSCountry(country)) {
+			return `Outside the US (${country}${state ? ", " + state : ""}) — Arcadia covers U.S. utilities only`;
+		}
+		if (!zip || String(zip).trim().length < 3) return "No ZIP on file — cannot look up tariffs";
+		// No consumption means there is nothing for a tariff to price against: every
+		// rate returns its fixed charge only, and comparing that to a real bill is
+		// meaningless. Seen on unmetered and standby accounts.
+		const kwh = months.reduce((t, m) => t + (Number(m.kwh) || 0), 0);
+		if (kwh <= 0) return `No consumption across ${months.length} month(s) — nothing for a rate to price`;
+		const paid = months.reduce((t, m) => t + (Number(m.actual) || 0), 0);
+		if (paid === 0) return "No billed cost recorded — nothing to compare a modeled cost against";
 		return "";
 	},
 
+	// Problems that don't stop the run but change how much the answer is worth.
+	// Phrased as what it means for the analysis rather than as a data-quality
+	// verdict, because that is the decision the reader is making.
+	_dataWarning(months, vendor) {
+		const term = RateClassData.analysisTerm();
+		if (!vendor) return "No utility on the bills — every utility serving the ZIP will be priced";
+		if (months.length < term) return `Only ${months.length} of ${term} months of data`;
+		const zeroKw = months.filter(m => (Number(m.kwh) || 0) >= 5000 && (Number(m.kw) || 0) <= 0).length;
+		if (zeroKw) return `${zeroKw} month(s) with usage but no demand reading — demand charges under-modeled`;
+		const spike = months.filter(m => (Number(m.kw) || 0) > 50 && (Number(m.kwh) || 0) > 0
+			&& ((Number(m.kwh) || 0) / ((Number(m.kw) || 1) * 730)) < 0.02).length;
+		if (spike) return `${spike} month(s) with an implausibly high demand reading — demand charges over-modeled`;
+		const under = months.filter(m => (Number(m.kw) || 0) > 0
+			&& ((Number(m.kwh) || 0) / ((Number(m.kw) || 1) * 730)) > 1.0).length;
+		if (under) return `${under} month(s) with a demand reading too low for the usage — demand charges under-modeled`;
+		return "";
+	},
+
+	// The account table, narrowed by the location dropdown if one is set.
 	inventoryRows() {
 		const a = appsmith.store.rc_inventory;
-		return Array.isArray(a) ? a : [];
+		const rows = Array.isArray(a) ? a : [];
+		const loc = appsmith.store.rc_f_location || "";
+		return loc ? rows.filter(r => String(r.location_id) === String(loc)) : rows;
 	},
 
 	// Run one account. Shares the whole pipeline with the all-accounts run so the
@@ -1135,14 +1206,21 @@ export default {
 		return RateClassData.runCustomerAnalysis(String(key));
 	},
 
+	// Run every eligible account the table is currently showing. Wired to Run all.
+	async runAllAccounts() {
+		return RateClassData.runCustomerAnalysis(null);
+	},
+
 	// =====================================================================
-	// Portfolio mode — model EVERY account of the customer in one run
+	// The run
 	// =====================================================================
-	// Wired to Btn_RC_analyzeAll. Loads 24 months of usage for all locations in
-	// one query, takes each location's own latest 12 months, runs the shared
-	// per-location pipeline over them, and rolls the result up to a customer-level
-	// savings figure. Locations that cannot be modeled are reported with a reason
-	// rather than dropped, so the rollup is never quietly incomplete.
+	// One entry point for both buttons. `onlyKey` set = the Run button on a single
+	// account row; null = Run all. They take the same path deliberately: an account
+	// priced on its own and the same account inside a portfolio run must not be
+	// able to disagree, and two code paths would eventually let them.
+	//
+	// Accounts that cannot be modeled are reported with a reason rather than
+	// dropped, so the rollup is never quietly incomplete.
 	async runCustomerAnalysis(onlyKey) {
 		const customerId = (typeof RC_CustomerSelect !== "undefined") ? RC_CustomerSelect.selectedOptionValue : null;
 		if (!customerId) {
@@ -1151,239 +1229,176 @@ export default {
 		}
 
 		await storeValue("rc_loading", true);
+		// Clear first, then set the progress line: _clearRun resets rc_progress, so
+		// setting the message before it would leave the user staring at a blank
+		// status line while the 24-month query runs.
+		await RateClassData._clearRun();
 		await storeValue("rc_progress", "Loading usage for every account…");
-		await storeValue("rc_status", "");
-		await storeValue("rc_results", []);
-		await storeValue("rc_meta", {});
-		await storeValue("rc_all_tariffs", []);
-		await storeValue("rc_lineitems", null);
-		await storeValue("rc_portfolio", []);
-		await storeValue("rc_portfolio_meta", {});
-		await storeValue("rc_portfolio_lineitems", {});
 		await storeValue("rc_screen", 1);
 
 		try {
-			// --- 1. One query for all locations, 24 months ---
+			// --- 1. One query for every account, 24 months ---
 			const raw = await RC_CustomerUsage.run();
 			const rows = Array.isArray(raw) ? raw : [];
 			if (!rows.length) {
-				const msg = "RC_CustomerUsage returned 0 rows for this customer. No ELECTRIC usage is recorded in reports_customer_monthly_usage for the last 24 months.";
+				const msg = "No ELECTRIC usage is recorded for this customer in the last 24 months, so there is nothing to price.";
 				showAlert("No electric usage found for this customer", "warning");
 				await storeValue("rc_status", msg);
 				await storeValue("rc_loading", false);
+				await storeValue("rc_screen", 4);
 				return;
 			}
 
-			// --- 2. Group by location, take each location's own latest 12 months ---
-			// Per-location rather than one customer-wide window: sites stop and start
+			// --- 2. Assemble physical accounts, each on its own window ---
+			// Per-account rather than one customer-wide window: sites stop and start
 			// billing at different times, so a shared window would model a closed site
-			// against months it has no bills for (and read as a huge fake saving).
-			// Key on account_key — the physical account, with its supply and delivery
-			// invoices already combined and any supplier change already stitched by the
-			// query. Keying on the virtual account would split each site into a supply
-			// row and a delivery row and price both against a bundled utility tariff
-			// neither is comparable to; keying on the virtual account GROUP would still
-			// leave the two streams apart, since they sit in different groups; keying on
-			// the location would merge accounts whose loads differ by orders of
-			// magnitude into a profile that doesn't exist.
-			const byLoc = new Map();
+			// against months it has no bills for and read as a huge fake saving.
+			const byAcct = new Map();
 			for (const r of rows) {
-				const id = String(r.account_key != null ? r.account_key
-					: (r.virtual_account_id != null ? r.virtual_account_id : r.location_id));
-				if (!byLoc.has(id)) byLoc.set(id, []);
-				byLoc.get(id).push(r);
+				const id = String(r.account_key != null ? r.account_key : r.location_id);
+				if (!byAcct.has(id)) byAcct.set(id, []);
+				byAcct.get(id).push(r);
 			}
 
 			const specs = [];
 			const skipped = [];
-			for (const [id, list] of byLoc.entries()) {
-				// Identity fields are read across the whole series rather than off list[0]:
-				// several of them (a post-change supply account code, a supplier name) are
-				// null for the earlier months, so depending on which row happens to arrive
-				// first would silently drop them.
-				const firstOf = (key) => {
-					for (const row of list) {
-						const v = RateClassData._pickStr(row, [key]);
-						if (v) return v;
-					}
-					return "";
-				};
-				const first = list[0] || {};
-				const site = firstOf("location_name") || `Location ${id}`;
-				const acctCode = firstOf("account_code") || firstOf("client_account");
-				// Label carries the account number: with several accounts per site the
-				// site name alone doesn't identify a row.
-				const name = acctCode ? `${site} — ${acctCode}` : site;
-				const zip = firstOf("postcode");
-				const country = firstOf("country");
-				const state = firstOf("state");
-				// The bill's vendor is the serving utility, which stops co-op and muni
-				// schedules in the same ZIP from being priced as switchable options.
-				const vendor = firstOf("vendor_name");
-
-				// Same window rule as the single-location screen: newest 12 months, then
-				// drop anything more than 13 months older than the newest, so a data gap
-				// can't build a multi-year /calculate window Genability rejects.
-				const term = RateClassData.analysisTerm();
-				const desc = list.slice().sort((a, b) => (a.month < b.month ? 1 : -1)).slice(0, term);
-				const newest = moment(desc[0].month);
-				// One month of slack past the term so a data gap can't build a window
-				// wider than Genability will accept.
-				const kept = desc.filter(r => newest.diff(moment(r.month), "months") <= term + 1);
-				const months = kept.map(r => ({
-					month: r.month,
-					kwh: Number(r.kwh) || 0,
-					kw: Number(r.kw) || 0,
-					// Actual cost is both invoices together — that is what the site paid,
-					// and the only figure comparable to a bundled utility tariff.
-					actual: Number(r.actual_charges) || 0,
-					supply: Number(r.supply_charges) || 0,
-					delivery: Number(r.delivery_charges) || 0,
-					fullService: Number(r.full_service_charges) || 0,
-					// UBM's own classification of the bill. This is the actual side of the
-					// charge comparison — see _buildLineItemCompare for why the line-item
-					// table cannot be used for it.
-					chg: {
-						consumption: Number(r.chg_consumption) || 0,
-						generation:  Number(r.chg_generation)  || 0,
-						commodity:   Number(r.chg_commodity)   || 0,
-						demand:      Number(r.chg_demand)      || 0,
-						customer:    Number(r.chg_customer)    || 0,
-						taxes:       Number(r.chg_taxes)       || 0,
-						other:       Number(r.chg_other)       || 0
-					}
-				}));
-				const actualAnnual = months.reduce((s, m) => s + m.actual, 0);
-				const supplyAnnual = months.reduce((s, m) => s + m.supply, 0);
-				const deliveryAnnual = months.reduce((s, m) => s + m.delivery, 0);
-				const fullServiceAnnual = months.reduce((s, m) => s + m.fullService, 0);
-				const CHG_KEYS = ["consumption","generation","commodity","demand","customer","taxes","other"];
-				const chgTotals = {};
-				for (const k of CHG_KEYS) chgTotals[k] = months.reduce((s, m) => s + (m.chg ? m.chg[k] : 0), 0);
-				// Whatever the categories do not account for. Carried explicitly so the
-				// comparison still totals to what was actually billed.
-				chgTotals.unclassified = actualAnnual - CHG_KEYS.reduce((s, k) => s + chgTotals[k], 0);
-				// A competitive contract exists only where the supplier billed separately.
-				// A Full Service invoice is the utility doing both, so there is no
-				// contract to compare and reporting a saving against one would be
-				// inventing it.
-				const hasSupply = supplyAnnual !== 0;
-
-				// Arcadia/Genability only covers U.S. utilities — a non-U.S. postcode
-				// collides with a 5-digit U.S. ZIP and resolves to the wrong utility.
-				if (country && !RateClassData._isUSCountry(country)) {
-					skipped.push({ id, name, zip, actualAnnual, reason: `Non-U.S. location (${country}${state ? ", " + state : ""}) — Arcadia covers U.S. utilities only` });
+			for (const [id, list] of byAcct.entries()) {
+				const spec = RateClassData._accountSpec(id, list);
+				if (!spec) {
+					skipped.push({ id, name: `Account ${id}`, zip: "", actualAnnual: 0,
+						reason: "No bills in the last 24 months — nothing to price" });
 					continue;
 				}
-				if (!zip || String(zip).trim().length < 3) {
-					skipped.push({ id, name, zip: "", actualAnnual, reason: "No postcode on file — cannot look up tariffs" });
+				if (spec.blocker) {
+					skipped.push({ id, name: spec.name, zip: spec.zip, actualAnnual: spec.actualAnnual,
+						reason: spec.blocker });
 					continue;
 				}
-				if (!months.length) {
-					skipped.push({ id, name, zip, actualAnnual, reason: "No usable months in the last 24 months" });
-					continue;
-				}
-				// No consumption means there is nothing for a tariff to price against:
-				// every rate returns its fixed charge only, and comparing that to a real
-				// bill is meaningless. Seen on unmetered and standby accounts.
-				const totalKwh = months.reduce((s, m) => s + m.kwh, 0);
-				if (totalKwh <= 0) {
-					skipped.push({ id, name, zip, actualAnnual,
-						reason: `No consumption recorded across ${months.length} month(s) — nothing for a rate to price` });
-					continue;
-				}
-				specs.push({ id, name, site, acctCode, vendor, zip, country, state, months,
-					actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply, chgTotals,
-					supplier: firstOf("supplier_name"),
-					supplyAcct: firstOf("supply_account_code"),
-					billTypes: firstOf("bill_types"),
-					monthCount: months.length });
+				specs.push(spec);
 			}
 
-			// Running a single account takes the same path as the whole portfolio, so
-			// the two cannot disagree about the same account. Filter in place only
-			// when a key was given; assigning the unfiltered array to a second name
-			// and then clearing it would empty both, since they are one array.
+			// A single-account run takes the same path as the whole portfolio, so the
+			// two cannot disagree about the same account. Filter in place only when a
+			// key was given; assigning the unfiltered array to a second name and then
+			// clearing it would empty both, since they are one array.
+			let scopeLabel = "all accounts";
 			if (onlyKey) {
-				const only = specs.filter(s => String(s.id) === String(onlyKey));
+				const only = specs.filter(sp => String(sp.id) === String(onlyKey));
 				if (!only.length) {
-					const why = (skipped.find(s => String(s.id) === String(onlyKey)) || {}).reason
+					const why = (skipped.find(sp => String(sp.id) === String(onlyKey)) || {}).reason
 						|| "not present in the usage data";
 					showAlert("That account cannot be analysed — " + why, "warning");
 					await storeValue("rc_status", "Account " + onlyKey + ": " + why);
 					await storeValue("rc_loading", false);
+					await storeValue("rc_screen", 4);
 					return;
 				}
+				scopeLabel = only[0].name;
 				specs.length = 0;
-				for (const s of only) specs.push(s);
+				for (const sp of only) specs.push(sp);
+				// Only this account's exclusions are relevant to a single-account run;
+				// carrying the rest would report the whole portfolio's skips under a
+				// heading that says one account.
+				skipped.length = 0;
 			}
 
-			// Highest actual spend first: that is where the savings are, and it is the
-			// order the cap keeps.
+			// Highest actual spend first: that is where the money is, and it is the
+			// order the user sees progress in.
 			specs.sort((a, b) => b.actualAnnual - a.actualAnnual);
-			let capped = 0;
-			let toRun = specs;
-			if (specs.length > RateClassData._MAX_LOCATIONS) {
-				capped = specs.length - RateClassData._MAX_LOCATIONS;
-				toRun = specs.slice(0, RateClassData._MAX_LOCATIONS);
-				for (const s of specs.slice(RateClassData._MAX_LOCATIONS)) {
-					skipped.push({ id: s.id, name: s.name, zip: s.zip, actualAnnual: s.actualAnnual, reason: `Not modeled — run capped at ${RateClassData._MAX_LOCATIONS} locations (highest spend first)` });
-				}
-			}
 
-			if (!toRun.length) {
-				const msg = `Found ${byLoc.size} location(s) but none could be modeled. Reasons: ${skipped.slice(0, 5).map(s => s.name + " — " + s.reason).join("; ")}`;
-				showAlert("No locations could be modeled", "warning");
+			if (!specs.length) {
+				const msg = `Found ${byAcct.size} account(s) but none can be modeled. ${skipped.slice(0, 5).map(sp => sp.name + " — " + sp.reason).join("; ")}`;
+				showAlert("No accounts could be modeled", "warning");
 				await storeValue("rc_status", msg);
+				await storeValue("rc_portfolio_meta", { locationsFound: byAcct.size, locationsRun: 0, skipped }, false);
 				await storeValue("rc_loading", false);
+				await storeValue("rc_screen", 4);
 				return;
 			}
 
-			// --- 3. Run the shared pipeline per location, a few at a time ---
+			// --- 3. Price the accounts, in batches ---
+			// No cap. The run works through every eligible account in batches of
+			// _BATCH_SIZE, each batch running _LOC_CONCURRENCY accounts at a time, with
+			// a pause between batches so the tab can paint its progress. A cap would be
+			// faster and wrong: it silently changes which accounts the totals cover.
 			const cache = { lses: {}, tariffs: {} };
-			let doneLocs = 0;
-			const total = toRun.length;
-			const analysed = await RateClassData._mapLimit(toRun, RateClassData._LOC_CONCURRENCY, async (spec) => {
-				const out = await RateClassData._analyzeLocation(
-					spec.months,
-					{ zip: spec.zip, locationName: spec.name, servingUtility: spec.vendor,
-					  actualAnnual: spec.actualAnnual, monthCount: spec.monthCount },
-					cache,
-					{ concurrency: RateClassData._PORTFOLIO_CALC_CONCURRENCY }
-				);
-				doneLocs += 1;
-				await storeValue("rc_progress", `Modeling accounts… ${doneLocs}/${total} — ${spec.name}`);
-				return { spec, out };
-			});
+			const total = specs.length;
+			let doneAccts = 0;
+			const analysed = [];
+			const batches = Math.ceil(total / RateClassData._BATCH_SIZE);
+			for (let b = 0; b < batches; b++) {
+				const batch = specs.slice(b * RateClassData._BATCH_SIZE, (b + 1) * RateClassData._BATCH_SIZE);
+				const part = await RateClassData._mapLimit(batch, RateClassData._LOC_CONCURRENCY, async (spec) => {
+					await storeValue("rc_progress",
+						`Analysing account ${Math.min(doneAccts + 1, total)} of ${total} — ${spec.name} (pricing every rate its utility publishes; this takes a minute or two per account)`);
+					const out = await RateClassData._analyzeLocation(
+						spec.months,
+						{ zip: spec.zip, locationName: spec.name, servingUtility: spec.vendor,
+						  actualAnnual: spec.actualAnnual, monthCount: spec.monthCount },
+						cache,
+						{ concurrency: RateClassData._PORTFOLIO_CALC_CONCURRENCY }
+					);
+					doneAccts += 1;
+					await storeValue("rc_progress", `Analysed ${doneAccts} of ${total} account(s) — last: ${spec.name}`);
+					return { spec, out };
+				});
+				for (const x of part) analysed.push(x);
+				if (b < batches - 1) await new Promise(res => setTimeout(res, RateClassData._BATCH_PAUSE_MS));
+			}
 
 			// --- 4. Roll up ---
+			await storeValue("rc_progress", "Building the comparison…");
 			const portfolio = [];
 			const forLineItems = [];
+			// Every priced rate for every account, keyed by account. The results tabs
+			// and the workbook both read it, so the rate list a user sees on screen is
+			// the same one that exports.
+			const ratesByAcct = {};
+			const acctIndex = {};
 			for (const a of analysed) {
 				if (!a) continue;
-				const s = a.spec, out = a.out;
-				const annualKwh = s.months.reduce((t, m) => t + m.kwh, 0);
-				const peakKw = s.months.reduce((mx, m) => Math.max(mx, m.kw), 0);
+				const sp = a.spec, out = a.out;
 				const base = {
-					location_id: s.id,                  // account_key — the drill-down key
-					location: s.name,
-					site: s.site || "",
-					account_code: s.acctCode || "",
-					vendor: s.vendor || "",
-					supplier: s.supplier || "",
-					supply_account_code: s.supplyAcct || "",
-					bill_types: s.billTypes || "",
-					supply_annual: Number((s.supplyAnnual || 0).toFixed(2)),
-					delivery_annual: Number((s.deliveryAnnual || 0).toFixed(2)),
-					full_service_annual: Number((s.fullServiceAnnual || 0).toFixed(2)),
-					has_supply: !!s.hasSupply,
-					zip: s.zip,
-					months: s.monthCount,
-					annual_kwh: Math.round(annualKwh),
-					peak_kw: Math.round(peakKw),
-					actual_annual: Number(s.actualAnnual.toFixed(2))
+					location_id: sp.id,                 // account_key — the drill-down key
+					location: sp.name,
+					site: sp.site || "",
+					account_code: sp.acctCode || "",
+					virtual_accounts: sp.vaLabel || "",
+					vendor: sp.vendor || "",
+					supplier: sp.supplierLabel || "",
+					supply_account_code: sp.supplyAcct || "",
+					account_status: sp.accountStatus || "",
+					bill_types: sp.billTypes || "",
+					period_from: sp.periodFrom,
+					period_to: sp.periodTo,
+					supply_annual: Number((sp.supplyAnnual || 0).toFixed(2)),
+					delivery_annual: Number((sp.deliveryAnnual || 0).toFixed(2)),
+					full_service_annual: Number((sp.fullServiceAnnual || 0).toFixed(2)),
+					has_supply: !!sp.hasSupply,
+					zip: sp.zip,
+					months: sp.monthCount,
+					annual_kwh: Math.round(sp.annualKwh),
+					peak_kw: Math.round(sp.peakKw),
+					actual_annual: Number(sp.actualAnnual.toFixed(2)),
+					warning: sp.warning || ""
 				};
+				// Month rows and charge categories ride along so the workbook can print
+				// the billed history without re-querying.
+				acctIndex[sp.id] = {
+					id: sp.id, name: sp.name, site: sp.site, acctCode: sp.acctCode,
+					vaLabel: sp.vaLabel, zip: sp.zip, vendor: sp.vendor,
+					supplierLabel: sp.supplierLabel, accountStatus: sp.accountStatus,
+					periodFrom: sp.periodFrom, periodTo: sp.periodTo,
+					months: sp.months, monthCount: sp.monthCount,
+					annualKwh: sp.annualKwh, peakKw: sp.peakKw,
+					actualAnnual: sp.actualAnnual, supplyAnnual: sp.supplyAnnual,
+					deliveryAnnual: sp.deliveryAnnual, fullServiceAnnual: sp.fullServiceAnnual,
+					hasSupply: sp.hasSupply, chgTotals: sp.chgTotals, chgSupply: sp.chgSupply,
+					warning: sp.warning
+				};
+
 				if (out.error) {
+					ratesByAcct[sp.id] = [];
 					portfolio.push(Object.assign(base, {
 						utility: "", tariff: "", code: "",
 						modeled_annual: null, savings: null, savings_pct: null,
@@ -1392,6 +1407,7 @@ export default {
 					continue;
 				}
 				const ranked = out.ranked || [];
+				ratesByAcct[sp.id] = ranked;
 				const best = ranked.find(r => r.isBest) || null;
 				const top = best || ranked.find(r => r.annualSavings != null && !r.nonService && !r.deliveryOnly && !r.demandIncomplete) || null;
 				const m = out.meta || {};
@@ -1400,21 +1416,26 @@ export default {
 					status = "No comparable rate";
 					note = "Every rate Arcadia returned was a rider, delivery-only, non-full-service or errored.";
 				} else if (!best && m.demandSuspect) {
-					// Ranked for reference but no pick: with demand missing/spurious the
+					// Ranked for reference but no pick: with demand missing or spurious the
 					// top rate is under- or over-modeled and cannot be recommended.
 					status = "Demand data unreliable";
-					note = "Recommendation withheld — kW readings missing or implausible for this site, so modeled demand charges (and therefore savings) can't be trusted.";
-				} else if (!s.hasSupply) {
+					note = "Recommendation withheld — kW readings missing or implausible for this account, so modeled demand charges (and therefore savings) can't be trusted.";
+				} else if (!sp.hasSupply) {
 					status = "Utility supply";
-					note = (s.fullServiceAnnual > 0)
+					note = (sp.fullServiceAnnual > 0)
 						? "Billed Full Service — the utility supplies and delivers on one invoice, so there is no competitive contract to compare against. The alternative-rate figure still applies: it is what a different utility rate would have cost."
 						: "No supply invoice in this window, so there is no supply contract to compare against.";
 				} else if (!best) {
 					status = "No saving";
 					note = "No rate class modeled cheaper than the current cost.";
 				}
+				// The data warning is appended rather than assigned: it survives
+				// whichever status branch fired above. An earlier version assigned it
+				// first and every branch then overwrote it, so a short-history or
+				// bad-demand account was priced with the caveat silently dropped.
+				if (sp.warning) note = note ? (note + " " + sp.warning) : sp.warning;
 				portfolio.push(Object.assign(base, {
-					utility: top ? top.lseName : "",
+					utility: top ? top.lseName : (m.lseNames || [])[0] || "",
 					tariff: top ? top.tariffName : "",
 					code: top ? top.tariffCode : "",
 					tou: top ? !!top.isTOU : false,
@@ -1427,65 +1448,70 @@ export default {
 					peak_kw_suspect: !!(m.demandSpikeMonths || m.demandUnderMonths),
 					rates_modeled: m.modeledCount || 0,
 					rates_returned: m.totalReturned || 0,
-					// The headline number for this engagement: what the site actually paid
-					// versus what the utility's standard offer would have cost over the same
-					// 12 months. Positive = the supply contract came in cheaper.
-					// Only meaningful where a competitive contract exists. On utility supply
-					// this would be the utility compared against itself, so it is withheld
-					// and the alternative-rate column carries the useful number instead.
+					// The headline number for this engagement: what the account actually paid
+					// versus what the utility rate would have cost over the same months.
+					// Positive = the supply contract came in cheaper. Only meaningful where a
+					// competitive contract exists; on utility supply this would be the utility
+					// compared against itself, so it is withheld and the alternative-rate
+					// column carries the useful number instead.
 					utility_default: m.utilityDefaultName || "",
 					utility_default_basis: m.utilityDefaultBasis || "",
 					utility_default_code: m.utilityDefaultCode || "",
 					utility_default_annual: m.utilityDefaultCost == null ? null : Number(m.utilityDefaultCost.toFixed(2)),
 					// Withheld on the same terms as the recommendation. Where the kW readings
-					// are missing or impossible the modeled demand charge is wrong, and it
-					// is the largest component on a demand-metered site — one account with
-					// a 354,048 kW spike against 2.4m kWh priced at $5.3m and single-
-					// handedly turned a portfolio that was losing money into a $4.2m
-					// saving. A number that wrong should not appear at all, let alone be
-					// summed into a total.
-					contract_savings: (m.contractSavings == null || !s.hasSupply || m.demandSuspect)
+					// are missing or impossible the modeled demand charge is wrong, and it is
+					// the largest component on a demand-metered account — one account with a
+					// 354,048 kW spike against 2.4m kWh priced at $5.3m and single-handedly
+					// turned a portfolio that was losing money into a $4.2m saving. A number
+					// that wrong should not appear at all, let alone be summed into a total.
+					contract_savings: (m.contractSavings == null || !sp.hasSupply || m.demandSuspect)
 						? null : Number(m.contractSavings.toFixed(2)),
 					// A percentage of a base this small is arithmetic noise: a $150 utility
 					// figure against a $35,000 bill prints -2511%, which says nothing except
 					// that the two are not comparable. Withhold it; the dollar column stands.
 					contract_savings_pct: (m.contractSavingsPct == null || m.demandSuspect
-						|| !s.hasSupply || !(m.utilityDefaultCost > 100))
+						|| !sp.hasSupply || !(m.utilityDefaultCost > 100))
 						? null : Number(m.contractSavingsPct.toFixed(1)),
 					status,
 					note
 				}));
-				if (top) forLineItems.push({ locationId: s.id, locationName: s.name, months: s.months,
-					chgTotals: s.chgTotals, actualAnnual: s.actualAnnual, ranked });
+				if (top) forLineItems.push({ locationId: sp.id, locationName: sp.name, months: sp.months,
+					chgTotals: sp.chgTotals, actualAnnual: sp.actualAnnual, ranked });
 			}
 			portfolio.sort((a, b) => (b.savings || 0) - (a.savings || 0) || b.actual_annual - a.actual_annual);
 
-			// --- 5. Billed line items vs. the picked rate's modeled charges ---
-			await storeValue("rc_progress", "Comparing billed line items…");
+			// --- 5. Actual charges vs. the picked rate's modeled charges ---
+			await storeValue("rc_progress", "Comparing billed charges…");
 			const liByLoc = await RateClassData._buildLineItemCompare(customerId, forLineItems);
 
 			const totalActual = portfolio.reduce((t, r) => t + (r.actual_annual || 0), 0);
 			const totalSavings = portfolio.reduce((t, r) => t + (r.savings > 0 ? r.savings : 0), 0);
-			// Contract-vs-utility rolls up over the accounts where a standard offer was
+			// Contract-vs-utility rolls up over the accounts where a utility rate was
 			// actually found and priced; accounts without one are counted separately so
-			// the total is never quietly built from a subset.
-			// Same basis as the header cards: only accounts holding a competitive
-			// supply contract. Including Full Service accounts here made the summary
-			// line contradict the cards directly above it.
+			// the total is never quietly built from a subset. Same basis as the header
+			// cards: only accounts holding a competitive supply contract, because
+			// including Full Service accounts made the summary line contradict the cards
+			// directly above it.
 			const withDefault = portfolio.filter(r => r.contract_savings != null && r.has_supply && !r.demand_suspect);
 			const totalUtilityDefault = withDefault.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 			const totalActualWithDefault = withDefault.reduce((t, r) => t + (r.actual_annual || 0), 0);
-			// Summed from the per-account figures for the same reason as the cards.
 			const totalContractSavings = withDefault.reduce((t, r) => t + (r.contract_savings || 0), 0);
 			const pmeta = {
 				customerId,
-				locationsFound: byLoc.size,
+				customerName: (typeof RC_CustomerSelect !== "undefined" && RC_CustomerSelect.selectedOptionLabel) || "",
+				scope: scopeLabel,
+				term: RateClassData.analysisTerm(),
+				runAt: moment().format("YYYY-MM-DD HH:mm"),
+				// A counter, not just the timestamp: two runs inside the same minute
+				// would share a timestamp, and the results view uses this to tell a new
+				// run from a re-render.
+				runId: moment().format("YYYYMMDDHHmm") + "#" + (Number(appsmith.store.rc_run_seq || 0) + 1),
+				locationsFound: onlyKey ? 1 : byAcct.size,
 				locationsModeled: portfolio.filter(r => r.status === "OK" || r.savings != null).length,
 				locationsRun: portfolio.length,
 				withSaving: portfolio.filter(r => r.savings > 0).length,
 				demandSuspect: portfolio.filter(r => r.status === "Demand data unreliable").length,
 				notModeled: portfolio.filter(r => r.status === "Not modeled").length,
-				capped,
 				skipped,
 				totalActual: Number(totalActual.toFixed(2)),
 				totalSavings: Number(totalSavings.toFixed(2)),
@@ -1497,14 +1523,35 @@ export default {
 				totalContractSavingsPct: totalUtilityDefault > 0 ? Number(((totalContractSavings / totalUtilityDefault) * 100).toFixed(1)) : null
 			};
 
-			await storeValue("rc_portfolio", portfolio);
-			await storeValue("rc_portfolio_meta", pmeta);
-			await storeValue("rc_portfolio_lineitems", liByLoc);
-			await storeValue("rc_single_account", onlyKey ? String(onlyKey) : "");
+			// Non-persistent: a portfolio run holds every priced rate and its charge
+			// lines for every account, which is well past what localStorage will take,
+			// and a persisted copy would serve a stale result after a code change.
+			await storeValue("rc_run_seq", Number(appsmith.store.rc_run_seq || 0) + 1, false);
+			await storeValue("rc_portfolio", portfolio, false);
+			await storeValue("rc_portfolio_meta", pmeta, false);
+			await storeValue("rc_portfolio_lineitems", liByLoc, false);
+			await storeValue("rc_rates_by_acct", ratesByAcct, false);
+			await storeValue("rc_accounts", acctIndex, false);
+			await storeValue("rc_single_account", onlyKey ? String(onlyKey) : "", false);
+
+			// On a single-account run the rate list is the point of the screen, so it
+			// also goes where the Rates tab reads from.
+			if (onlyKey && analysed.length && analysed[0]) {
+				const a0 = analysed[0];
+				await storeValue("rc_results", a0.out.ranked || [], false);
+				await storeValue("rc_all_tariffs", a0.out.allTariffs || [], false);
+				await storeValue("rc_usage", a0.spec.months.map(m => ({
+					month: m.month, kwh: m.kwh, kw: m.kw, actual_charges: m.actual,
+					supply_charges: m.supply, delivery_charges: m.delivery
+				})), false);
+				await storeValue("rc_meta", Object.assign({}, a0.out.meta || {}, { accountName: a0.spec.name }), false);
+				await storeValue("rc_lineitems", liByLoc[String(a0.spec.id)] || null, false);
+			}
+
 			await storeValue("rc_status", "");
 			await storeValue("rc_screen", 3);
 		} catch (e) {
-			const msg = "Portfolio analysis failed: " + ((e && e.message) || e);
+			const msg = "Analysis failed: " + ((e && e.message) || e);
 			showAlert(msg, "error");
 			await storeValue("rc_status", msg);
 		} finally {
@@ -1516,77 +1563,11 @@ export default {
 	// =====================================================================
 	// Billed line items vs. modeled charges
 	// =====================================================================
-	// Charge classification. A utility bill and a Genability tariff almost never
-	// use the same wording for the same charge ("Distribution Charge" vs "Delivery
-	// Energy Charge"), so pairing by name would leave most lines unmatched and
-	// overstate the difference. Instead both sides are classified into the same
-	// small set of buckets and compared bucket by bucket; the raw lines are still
-	// listed underneath so the wording is visible.
-	//
-	// This is a heuristic, not a mapping supplied by the utility — the grand total
-	// and the bucket totals are the numbers to trust, individual bucket splits are
-	// indicative. Order matters: the first pattern that matches wins.
-	_LINE_BUCKET_RULES: [
-		["Transmission",            "transmis"],
-		["Supply / Generation",     "supply|generation|\\bgen\\b|commodity|procurement|power cost|purchased power|\\bfuel\\b"],
-		["Delivery / Distribution", "deliver|distribut|\\bdist\\b|\\bwires\\b"],
-		["Energy / Consumption",    "energy|consumption|\\bkwh\\b|kilowatt.?hour|usage"],
-		["Taxes & Fees",            "\\btax|franchise|gross receipt|surcharge|assessment|regulat|rider|cost recovery|adjustment|\\badj\\b"],
-		["Customer / Fixed",        "customer charge|service charge|basic|meter|facilit|\\bacct\\b|account|admin|monthly|minimum|\\bfee\\b"]
-	],
-
-	// Unit is the stronger signal than wording: anything billed per kW is a demand
-	// charge whatever the utility calls it, and that is the bucket that usually
-	// drives the difference between two rate classes.
-	// UBM stamps every line item with a category (Customer Charges, Usage Charges,
-	// Taxes, Other Charges). Where it is present it beats inferring intent from the
-	// description, so it is consulted first and the wording rules below only handle
-	// what the category is too coarse to separate — chiefly splitting Usage Charges
-	// into demand versus consumption.
-	_lineBucket(name, unit, category) {
-		const cat = String(category || "").toLowerCase().trim();
-		const n0 = String(name || "").toLowerCase();
-		if (cat === "taxes") return "Taxes & Fees";
-		if (cat === "customer charges") return "Customer / Fixed";
-		if (cat === "other charges" && !/generation|commodity|supply/.test(n0)) return "Taxes & Fees";
-		const u = String(unit || "").toLowerCase().trim();
-		if (u === "kw" || u === "kva" || u === "kw/mo" || u === "kw-mo") return "Demand";
-		const n = String(name || "").toLowerCase();
-		if (/\bdemand\b|\bkw\b|\bkva\b|capacity|ratchet/.test(n)) return "Demand";
-		for (const rule of RateClassData._LINE_BUCKET_RULES) {
-			if (new RegExp(rule[1], "i").test(n)) return rule[0];
-		}
-		return "Other";
-	},
-
-	_BUCKET_ORDER: ["Supply / Generation", "Energy / Consumption", "Demand", "Delivery / Distribution", "Transmission", "Customer / Fixed", "Taxes & Fees", "Other"],
-
-	// Buckets are too fine to compare directly. A real bill unbundles the per-kWh
-	// cost into supply + distribution (+ transmission) lines, while a Genability
-	// tariff models the utility's single bundled energy charge — so comparing
-	// "Distribution" against "Energy Charge" reports a huge shortfall in one and a
-	// huge excess in the other when the two actually agree. Rolling every per-kWh
-	// line into ONE group is what makes the two sides comparable. Demand, fixed
-	// and tax lines are already like-for-like and stay separate.
-	_BUCKET_GROUP: {
-		"Supply / Generation": "Energy (per kWh)",
-		"Energy / Consumption": "Energy (per kWh)",
-		"Delivery / Distribution": "Energy (per kWh)",
-		"Transmission": "Energy (per kWh)",
-		"Demand": "Demand (per kW)",
-		"Customer / Fixed": "Fixed / Customer",
-		"Taxes & Fees": "Taxes & Fees",
-		"Other": "Other"
-	},
-
-	_GROUP_ORDER: ["Energy (per kWh)", "Demand (per kW)", "Fixed / Customer", "Taxes & Fees", "Other"],
-
 	// Build the actual-vs-modeled comparison for every location in `locs`.
 	//   locs -> [{ locationId, locationName, months, ranked }]
-	// Returns { "<locationId>": compareObject }. Runs RC_ActualLineItems ONCE for
-	// the whole customer and slices it per location and per window.
-	// Build the actual-versus-modeled charge comparison for every account in `locs`.
-	//   locs -> [{ locationId, locationName, chgTotals, actualAnnual, ranked }]
+	// Build the actual-versus-modeled charge comparison for every account in `locs`,
+	// each against the rate that account's headline figure is measured on.
+	//   locs -> [{ locationId, locationName, months, chgTotals, actualAnnual, ranked }]
 	// Returns { "<accountKey>": compareObject }.
 	//
 	// The actual side comes from UBM's charge categories on the monthly feed, NOT
@@ -1600,110 +1581,122 @@ export default {
 	async _buildLineItemCompare(customerId, locs) {
 		const out = {};
 		if (!locs || !locs.length) return out;
-
 		for (const l of locs) {
-			const id = String(l.locationId);
-			const c = l.chgTotals || {};
-			const num = (v) => Number(v) || 0;
-
-			// The rate the comparison is against: the recommendation if there is one,
-			// otherwise the best comparable rate, so there is always something to show.
 			const ranked = l.ranked || [];
+			// The rate the comparison is against: the utility figure the headline uses
+			// if there is one, otherwise the recommendation, otherwise the best
+			// comparable rate — so there is always something to show.
 			const rate = ranked.find(r => r.isUtilityDefaultPick && r.modeledAnnualCost != null)
 				|| ranked.find(r => r.isBest)
 				|| ranked.find(r => r.annualSavings != null && !r.nonService && !r.deliveryOnly && !r.demandIncomplete)
 				|| null;
-
-			// Modeled side. Genability splits a bill into energy, demand and other;
-			// "other" is the fixed and rider portion and carries named lines, so
-			// tax-named lines are pulled out of it to face the actual taxes figure.
-			const lines = (rate && Array.isArray(rate.lines)) ? rate.lines : [];
-			const mTax = lines
-				.filter(x => /\btax/i.test(String(x.name || "")))
-				.reduce((t, x) => t + num(x.cost), 0);
-			const m = {
-				energy: rate ? num(rate.modeledEnergy) : 0,
-				demand: rate ? num(rate.modeledDemand) : 0,
-				taxes: mTax,
-				fixed: rate ? num(rate.modeledOther) - mTax : 0
-			};
-
-			// A real bill unbundles the per-kWh cost across consumption, generation
-			// and commodity lines while a tariff models one bundled energy charge, so
-			// those three are compared as one group. Splitting them would report a
-			// large shortfall in one and an equal excess in another that mean nothing.
-			const aEnergy = num(c.consumption) + num(c.generation) + num(c.commodity);
-			const demandItemised = num(c.demand) > 0;
-
-			const groups = [];
-			if (demandItemised) {
-				groups.push({ group: "Energy (per kWh)", actual: aEnergy, modeled: m.energy,
-					basis: "actual = consumption + generation + commodity" });
-				groups.push({ group: "Demand (per kW)", actual: num(c.demand), modeled: m.demand,
-					basis: "actual = demand charges on the bill" });
-			} else {
-				// Some utilities book no separate demand charge and carry the whole
-				// amount as consumption. Splitting energy from demand on the actual side
-				// would then be invented, and shows as a large offsetting difference in
-				// both rows that nets to nothing.
-				groups.push({ group: "Energy + demand (combined)", actual: aEnergy + num(c.demand),
-					modeled: m.energy + m.demand,
-					basis: "this bill books no separate demand charge, so the two cannot be split on the actual side without inventing the division" });
-			}
-			groups.push({ group: "Fixed charges & riders", actual: num(c.customer) + num(c.other), modeled: m.fixed,
-				basis: "actual = customer charge + other" });
-			groups.push({ group: "Taxes", actual: num(c.taxes), modeled: m.taxes,
-				basis: "actual = taxes; modeled = tax-named lines in the rate" });
-			if (Math.abs(num(c.unclassified)) > 0.5) {
-				groups.push({ group: "Unclassified", actual: num(c.unclassified), modeled: 0,
-					basis: "billed cost UBM assigns to no category; shown rather than spread across the groups so the total stays exact" });
-			}
-
-			for (const g of groups) {
-				g.actual = Number(g.actual.toFixed(2));
-				g.modeled = Number(g.modeled.toFixed(2));
-				g.delta = Number((g.modeled - g.actual).toFixed(2));
-				g.oneSided = (g.actual > 1 && g.modeled < 1) || (g.modeled > 1 && g.actual < 1);
-				g.modeledLines = lines
-					.filter(x => RateClassData._groupOfModeledLine(x, demandItemised) === g.group)
-					.map(x => ({ name: x.name, unit: x.qty_unit, qty: Number(num(x.qty).toFixed(2)), cost: Number(num(x.cost).toFixed(2)) }));
-			}
-
-			const actualTotal = groups.reduce((t, g) => t + g.actual, 0);
-			const modeledTotal = m.energy + m.demand + m.fixed + m.taxes;
-
-			// Charges really paid that the modeled rate produces no counterpart for —
-			// most often taxes, which Genability does not carry. That money is still
-			// owed on the utility rate, so it inflates the headline difference by
-			// roughly this much.
-			const gapGroups = groups.filter(g => g.oneSided && g.actual > g.modeled);
-			const structuralGap = gapGroups.reduce((t, g) => t + (g.actual - g.modeled), 0);
-
-			out[id] = {
-				locationId: l.locationId,
-				locationName: l.locationName,
-				monthCount: l.months.length,
-				windowFrom: l.months.length ? l.months[l.months.length - 1].month : null,
-				windowTo: l.months.length ? l.months[0].month : null,
-				rate: rate ? {
-					tariffName: rate.tariffName, code: rate.tariffCode, utility: rate.lseName,
-					isBest: !!rate.isBest, tou: !!rate.isTOU, da: !!rate.isDA, rtp: !!rate.isRTP,
-					isUtilityDefault: !!rate.isUtilityDefaultPick
-				} : null,
-				actualTotal: Number(actualTotal.toFixed(2)),
-				modeledTotal: Number(modeledTotal.toFixed(2)),
-				baselineTotal: Number(num(l.actualAnnual).toFixed(2)),
-				// The categories are sourced from the same figure as the Accounts tab,
-				// so these agree by construction; the check is kept as a guard.
-				variance: Number((actualTotal - num(l.actualAnnual)).toFixed(2)),
-				variancePct: num(l.actualAnnual) ? Number(((actualTotal - num(l.actualAnnual)) / num(l.actualAnnual) * 100).toFixed(1)) : null,
-				varianceHigh: num(l.actualAnnual) ? Math.abs(actualTotal - num(l.actualAnnual)) / num(l.actualAnnual) > 0.005 : false,
-				structuralGap: Number(structuralGap.toFixed(2)),
-				gapGroups: gapGroups.map(g => g.group),
-				groups
-			};
+			out[String(l.locationId)] = RateClassData._compareForRate(
+				{ locationId: l.locationId, locationName: l.locationName, months: l.months,
+				  chgTotals: l.chgTotals, actualAnnual: l.actualAnnual },
+				rate);
 		}
 		return out;
+	},
+
+	// The actual-versus-modeled comparison for ONE account against ONE rate.
+	// Pulled out of _buildLineItemCompare so the workbook can run it for every
+	// priced rate, not only the one the screen happens to be showing — the
+	// validated EnerNova workbook compares charge groups for every rate, and
+	// rebuilding that with a second copy of this logic would let the two drift.
+	_compareForRate(acct, rate) {
+		const c = (acct && acct.chgTotals) || {};
+		const months = (acct && acct.months) || [];
+		const num = (v) => Number(v) || 0;
+
+		// Modeled side. Genability splits a bill into energy, demand and other;
+		// "other" is the fixed and rider portion and carries named lines, so
+		// tax-named lines are pulled out of it to face the actual taxes figure.
+		const lines = (rate && Array.isArray(rate.lines)) ? rate.lines : [];
+		const mTax = lines
+			.filter(x => /\btax/i.test(String(x.name || "")))
+			.reduce((t, x) => t + num(x.cost), 0);
+		const m = {
+			energy: rate ? num(rate.modeledEnergy) : 0,
+			demand: rate ? num(rate.modeledDemand) : 0,
+			taxes: mTax,
+			fixed: rate ? num(rate.modeledOther) - mTax : 0
+		};
+
+		// A real bill unbundles the per-kWh cost across consumption, generation and
+		// commodity lines while a tariff models one bundled energy charge, so those
+		// three are compared as one group. Splitting them would report a large
+		// shortfall in one and an equal excess in another that mean nothing.
+		const aEnergy = num(c.consumption) + num(c.generation) + num(c.commodity);
+		const demandItemised = num(c.demand) > 0;
+
+		const groups = [];
+		if (demandItemised) {
+			groups.push({ group: "Energy (per kWh)", actual: aEnergy, modeled: m.energy,
+				basis: "actual = consumption + generation + commodity" });
+			groups.push({ group: "Demand (per kW)", actual: num(c.demand), modeled: m.demand,
+				basis: "actual = demand charges on the bill" });
+		} else {
+			// Some utilities book no separate demand charge and carry the whole amount
+			// as consumption. Splitting energy from demand on the actual side would then
+			// be invented, and shows as a large offsetting difference in both rows that
+			// nets to nothing.
+			groups.push({ group: "Energy + demand (combined)", actual: aEnergy + num(c.demand),
+				modeled: m.energy + m.demand,
+				basis: "this bill books no separate demand charge, so the two cannot be split on the actual side without inventing the division" });
+		}
+		groups.push({ group: "Fixed charges & riders", actual: num(c.customer) + num(c.other), modeled: m.fixed,
+			basis: "actual = customer charge + other" });
+		groups.push({ group: "Taxes", actual: num(c.taxes), modeled: m.taxes,
+			basis: "actual = taxes; modeled = tax-named lines in the rate" });
+		if (Math.abs(num(c.unclassified)) > 0.5) {
+			groups.push({ group: "Unclassified", actual: num(c.unclassified), modeled: 0,
+				basis: "billed cost UBM assigns to no category; shown rather than spread across the groups so the total stays exact" });
+		}
+
+		for (const g of groups) {
+			g.actual = Number(g.actual.toFixed(2));
+			g.modeled = Number(g.modeled.toFixed(2));
+			g.delta = Number((g.modeled - g.actual).toFixed(2));
+			g.oneSided = (g.actual > 1 && g.modeled < 1) || (g.modeled > 1 && g.actual < 1);
+			g.modeledLines = lines
+				.filter(x => RateClassData._groupOfModeledLine(x, demandItemised) === g.group)
+				.map(x => ({ name: x.name, unit: x.qty_unit, qty: Number(num(x.qty).toFixed(2)),
+					rate: Number(num(x.rate).toFixed(5)), cost: Number(num(x.cost).toFixed(2)) }));
+		}
+
+		const actualTotal = groups.reduce((t, g) => t + g.actual, 0);
+		const modeledTotal = m.energy + m.demand + m.fixed + m.taxes;
+
+		// Charges really paid that the modeled rate produces no counterpart for —
+		// most often taxes, which Genability does not carry. That money is still owed
+		// on the utility rate, so it inflates the headline difference by roughly this
+		// much.
+		const gapGroups = groups.filter(g => g.oneSided && g.actual > g.modeled);
+		const structuralGap = gapGroups.reduce((t, g) => t + (g.actual - g.modeled), 0);
+
+		return {
+			locationId: acct.locationId,
+			locationName: acct.locationName,
+			monthCount: months.length,
+			windowFrom: months.length ? months[months.length - 1].month : null,
+			windowTo: months.length ? months[0].month : null,
+			rate: rate ? {
+				tariffName: rate.tariffName, code: rate.tariffCode, utility: rate.lseName,
+				isBest: !!rate.isBest, tou: !!rate.isTOU, da: !!rate.isDA, rtp: !!rate.isRTP,
+				isUtilityDefault: !!rate.isUtilityDefaultPick
+			} : null,
+			actualTotal: Number(actualTotal.toFixed(2)),
+			modeledTotal: Number(modeledTotal.toFixed(2)),
+			baselineTotal: Number(num(acct.actualAnnual).toFixed(2)),
+			// The categories are sourced from the same figure as the Accounts tab, so
+			// these agree by construction; the check is kept as a guard.
+			variance: Number((actualTotal - num(acct.actualAnnual)).toFixed(2)),
+			variancePct: num(acct.actualAnnual) ? Number(((actualTotal - num(acct.actualAnnual)) / num(acct.actualAnnual) * 100).toFixed(1)) : null,
+			varianceHigh: num(acct.actualAnnual) ? Math.abs(actualTotal - num(acct.actualAnnual)) / num(acct.actualAnnual) > 0.005 : false,
+			structuralGap: Number(structuralGap.toFixed(2)),
+			gapGroups: gapGroups.map(g => g.group),
+			groups
+		};
 	},
 
 	// Which comparison group a modeled charge line belongs to. Genability already
@@ -1763,11 +1756,10 @@ export default {
 		}
 		if (m.demandSuspect) parts.push(`⚠ ${m.demandSuspect} account(s) have unreliable kW data — no recommendation made for those`);
 		if (m.notModeled) parts.push(`${m.notModeled} account(s) could not be modeled`);
-		// Capped accounts are also pushed onto the skipped list, so report the two
-		// groups separately rather than counting the same accounts twice.
-		if (m.capped) parts.push(`⚠ ${m.capped} lower-spend account(s) not run — capped at ${RateClassData._MAX_LOCATIONS}`);
-		const otherSkipped = (m.skipped || []).length - (m.capped || 0);
-		if (otherSkipped > 0) parts.push(`${otherSkipped} account(s) skipped for other reasons (see the Not modeled tab)`);
+		// Nothing is dropped for volume any more, so every account missing from the
+		// results is missing for a stated reason on the Not modeled tab.
+		const skippedCount = (m.skipped || []).length;
+		if (skippedCount > 0) parts.push(`${skippedCount} account(s) not modeled — see the Not modeled tab for why`);
 		return parts.join("  •  ");
 	},
 
@@ -1907,198 +1899,467 @@ export default {
 	},
 
 	// =====================================================================
-	// CSV export
+	// Excel export
 	// =====================================================================
-	// One flat file rather than three: the recipients open this in Excel and
-	// filter it, and a single "Section" column keeps the accounts summary, the
-	// full per-rate ranking and the line-item comparison in one place without
-	// juggling files. CSV, not XLSX — the XLSX library's nested helpers are not
-	// reliably reachable from the Appsmith JS sandbox.
-	_csvCell(v) {
-		if (v == null) return "";
-		const s = String(v);
-		return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+	// The deliverable is the workbook, not the screen. It carries more than the
+	// page shows on purpose: the recipients read it away from the app, and a
+	// figure without the months and the rate list behind it can't be checked.
+	//
+	// Laid out sheet for sheet like the validated EnerNova workbook, so a result
+	// produced here can be put side by side with that one.
+	//
+	// Two output paths. The XLSX library gives a real .xlsx where it is reachable;
+	// where it isn't — its nested helpers are not reliably exposed inside the
+	// Appsmith JS sandbox — the same sheets are written as SpreadsheetML 2003 XML,
+	// which Excel, Numbers and LibreOffice all open with the tabs intact. The
+	// fallback is never silent: the alert says which one was produced.
+	_xlsxAvailable() {
+		try {
+			return typeof XLSX !== "undefined" && XLSX && XLSX.utils
+				&& typeof XLSX.utils.aoa_to_sheet === "function"
+				&& typeof XLSX.utils.book_new === "function"
+				&& typeof XLSX.utils.book_append_sheet === "function"
+				&& typeof XLSX.write === "function";
+		} catch (e) { return false; }
 	},
 
-	_csvRows(rows) {
-		return rows.map(r => r.map(RateClassData._csvCell).join(",")).join("\n");
+	_xmlEsc(v) {
+		return String(v == null ? "" : v)
+			.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			// Control characters are not legal in XML 1.0 at all, and one stray
+			// character off a bill description would make the file unopenable.
+			.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
 	},
 
-	// Builds the export from whatever is currently in the store — the portfolio run
-	// if there is one, otherwise the single-location analysis.
-	buildExportCsv() {
-		const port = RateClassData.filteredPortfolio();
-		const pmeta = RateClassData.portfolioMeta();
-		const isPortfolio = port.length > 0;
-		const liMap = isPortfolio ? RateClassData.lineItemsByLoc() : null;
-		const single = RateClassData.lineItemCompare();
-		const meta = appsmith.store.rc_meta || {};
-		const out = [];
-
-		out.push(["Section", "Account", "Zip", "Months", "Annual kWh", "Peak kW",
-			"Actual paid $/yr", "Supply $/yr", "Delivery $/yr", "Supplier", "Utility",
-			"Utility standard offer", "Standard offer code", "Utility cost $/yr",
-			"Contract vs utility $/yr", "Contract vs utility %",
-			"Best alternative rate", "Best alt code", "Best alt $/yr", "Best alt saving $/yr",
-			"Rates modeled", "Rates returned", "Status", "Note"]);
-
-		if (isPortfolio) {
-			for (const r of port) {
-				out.push(["Accounts", r.location, r.zip, r.months, r.annual_kwh, r.peak_kw,
-					r.actual_annual, r.supply_annual, r.delivery_annual, r.supplier, r.utility,
-					r.utility_default, r.utility_default_code, r.utility_default_annual,
-					r.contract_savings, r.contract_savings_pct,
-					r.tariff, r.code, r.modeled_annual, r.savings,
-					r.rates_modeled, r.rates_returned, r.status, r.note]);
+	// SpreadsheetML 2003. One <Worksheet> per sheet, numbers typed as Number so
+	// Excel sums the columns instead of treating them as text.
+	_toSpreadsheetXml(sheets) {
+		const esc = RateClassData._xmlEsc;
+		const parts = ['<?xml version="1.0"?>',
+			'<?mso-application progid="Excel.Sheet"?>',
+			'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"',
+			' xmlns:o="urn:schemas-microsoft-com:office:office"',
+			' xmlns:x="urn:schemas-microsoft-com:office:excel"',
+			' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">'];
+		for (const sh of sheets) {
+			// Excel refuses a sheet name over 31 characters or carrying [ ] : * ? / \
+			const name = esc(String(sh.name).replace(/[\[\]:\*\?\/\\]/g, " ").slice(0, 31));
+			parts.push('<Worksheet ss:Name="' + name + '"><Table>');
+			for (const row of sh.rows) {
+				const r = Array.isArray(row) ? row : [];
+				parts.push("<Row>");
+				for (const cell of r) {
+					if (cell == null || cell === "") { parts.push("<Cell/>"); continue; }
+					const isNum = (typeof cell === "number") && isFinite(cell);
+					parts.push('<Cell><Data ss:Type="' + (isNum ? "Number" : "String") + '">'
+						+ esc(isNum ? cell : String(cell)) + "</Data></Cell>");
+				}
+				parts.push("</Row>");
 			}
-			// Locations we could not model belong in the same file — a summary that
-			// silently omits them reads as full coverage when it is not.
-			for (const s of RateClassData.skippedRows()) {
-				out.push(["Accounts (not modeled)", s.location, s.zip, "", "", "",
-					s.actual_annual, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Skipped", s.reason]);
+			parts.push("</Table></Worksheet>");
+		}
+		parts.push("</Workbook>");
+		return parts.join("");
+	},
+
+	// Numbers stay numbers throughout the sheet builders so the workbook arrives
+	// sortable and summable rather than as text that merely looks like money.
+	_money(v) { return v == null ? "" : Number(Number(v).toFixed(2)); },
+	_cents(cost, kwh) { return (kwh > 0 && cost != null) ? Number(((cost / kwh) * 100).toFixed(2)) : ""; },
+
+	// Every rate priced for one account, in the order the screen ranks them:
+	// comparable ones cheapest first, then flagged, then errored. Nothing hidden.
+	_ratesFor(acctId) {
+		const map = appsmith.store.rc_rates_by_acct || {};
+		const list = map[String(acctId)];
+		return Array.isArray(list) ? list : [];
+	},
+
+	buildWorkbook() {
+		const pm = RateClassData.portfolioMeta();
+		const rows = RateClassData.filteredPortfolio();
+		const accounts = appsmith.store.rc_accounts || {};
+		const customer = pm.customerName
+			|| ((typeof RC_CustomerSelect !== "undefined" && RC_CustomerSelect.selectedOptionLabel) || "Customer");
+		const term = pm.term || RateClassData.analysisTerm();
+		const money = RateClassData._money, cents = RateClassData._cents;
+		const froms = rows.map(r => r.period_from).filter(Boolean).sort();
+		const tos = rows.map(r => r.period_to).filter(Boolean).sort();
+		const windowLabel = froms.length ? (froms[0] + " to " + tos[tos.length - 1]) : "";
+		const sheets = [];
+
+		// ---- Executive Summary ------------------------------------------------
+		// A row per account PER RATE, not one row per account: the question the
+		// workbook answers is what each utility rate would have cost, and the
+		// account's own figures repeat down its block so any single row can be read
+		// on its own, filtered or pivoted without losing its context.
+		const exec = [[customer + " — " + term + "-month tariff comparison  ·  " + windowLabel],
+			["Actual = what was billed (competitive supply + utility delivery, or a single full-service invoice). Modeled = the same months priced on each utility rate through Arcadia. Difference positive = the utility rate would have cost MORE, i.e. the current arrangement is the cheaper one."],
+			["Customer", "Site", "Account", "Virtual accounts", "ZIP", "Utility", "Current supplier",
+			 "Account status", "Period start", "Period end", "Months", term + "-mo kWh", "Peak kW",
+			 "Supply $", "Delivery $", "Full service $", "ACTUAL TOTAL $", "Actual c/kWh",
+			 "Utility rate", "Code", "Rate class", "MODELED $", "Modeled c/kWh",
+			 "DIFFERENCE $", "DIFFERENCE %", "Notes"]];
+		for (const r of rows) {
+			const kwh = r.annual_kwh || 0;
+			// The exact peak, not the rounded figure the table shows: this is the
+			// input the pricing used, and a reader checking a demand charge against
+			// it needs the number that went to the API.
+			const acct0 = accounts[String(r.location_id)];
+			const peak = acct0 ? Number(acct0.peakKw.toFixed(2)) : r.peak_kw;
+			const head = [customer, r.site, r.account_code, r.virtual_accounts, r.zip, r.vendor,
+				r.supplier || "not distinguished in UBM", r.account_status,
+				r.period_from, r.period_to, r.months, kwh, peak,
+				money(r.supply_annual), money(r.delivery_annual), money(r.full_service_annual),
+				money(r.actual_annual), cents(r.actual_annual, kwh)];
+			const rates = RateClassData._ratesFor(r.location_id).filter(x => x.modeledAnnualCost != null);
+			if (!rates.length) {
+				// An account that ran but priced nothing still gets a row. Dropping it
+				// would make the sheet disagree with the account count on screen.
+				exec.push(head.concat(["—", "", "", "", "", "", "",
+					r.note || "No rate could be priced for this account"]));
+				continue;
 			}
-			const pm = pmeta || {};
-			if (pm.accountsWithDefault) {
-				out.push(["TOTAL", `${pm.accountsWithDefault} account(s) with a utility standard offer`, "", "", "", "",
-					pm.totalActualWithDefault, "", "", "", "", "", "", pm.totalUtilityDefault,
-					pm.totalContractSavings, pm.totalContractSavingsPct, "", "", "", "", "", "", "", ""]);
+			for (const t of rates) {
+				const diff = (r.actual_annual == null) ? null : (t.modeledAnnualCost - r.actual_annual);
+				const notes = [];
+				if (t.isTOU) notes.push("TOU — default load shape, estimate");
+				if (t.isRTP) notes.push("Hourly / real-time — default load shape, estimate");
+				if (t.isDA) notes.push("Direct Access — needs a competitive supplier, not just a rate change");
+				if (t.isUtilityDefaultPick) notes.push("comparison basis for this account");
+				if (t.nonService) notes.push("not full-requirements service — not comparable");
+				if (t.deliveryOnly) notes.push("delivery-only utility — not comparable to a bundled bill");
+				if (t.demandIncomplete) notes.push("bills no demand charge on a demand-metered load");
+				if (t.error) notes.push("errored: " + String(t.error).slice(0, 120));
+				if (r.warning) notes.push(r.warning);
+				exec.push(head.concat([t.tariffName, t.tariffCode, "GENERAL (commercial)",
+					money(t.modeledAnnualCost), cents(t.modeledAnnualCost, kwh),
+					money(diff),
+					(diff == null || !r.actual_annual) ? "" : Number(((diff / r.actual_annual) * 100).toFixed(1)),
+					notes.join("; ")]));
 			}
 		}
+		sheets.push({ name: "Executive Summary", rows: exec });
 
-		// Every rate Arcadia returned and priced for the location on screen, not just
-		// the winner — this is the "all the rates the API returns" part of the ask.
-		const rates = RateClassData.resultsRows();
-		if (rates.length) {
-			for (const r of rates) {
-				out.push(["All rates — " + (meta.locationName || ""), meta.locationName || "", meta.zip || "",
-					meta.monthCount || "", "", meta.peakKw || "",
-					r.actual_annual, "", "", "", r.utility,
-					"", "", "", "", "",
-					r.tariff + (r.tou ? " [TOU estimate]" : "") + (r.da ? " [Direct Access]" : "") + (r.rtp ? " [RTP estimate]" : ""),
-					r.code, r.modeled_annual, r.annual_savings,
-					"", "", r.status, ""]);
+		// ---- Location Summary -------------------------------------------------
+		const bySite = new Map();
+		for (const r of rows) {
+			const k = r.site || "(no site)";
+			if (!bySite.has(k)) bySite.set(k, []);
+			bySite.get(k).push(r);
+		}
+		const loc = [["Location summary"],
+			["Each account measured against the utility rate used as its comparison basis. An account that returned no priced rate leaves the utility column blank rather than contributing a zero."],
+			["Site", "Accounts", term + "-mo kWh", "Actual $", "Utility $", "Difference $", "Difference %"]];
+		for (const entry of bySite.entries()) {
+			const site = entry[0], list = entry[1];
+			const priced = list.filter(r => r.utility_default_annual != null);
+			const a = list.reduce((t, r) => t + (r.actual_annual || 0), 0);
+			const k = list.reduce((t, r) => t + (r.annual_kwh || 0), 0);
+			const u = priced.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
+			const aP = priced.reduce((t, r) => t + (r.actual_annual || 0), 0);
+			loc.push([site, list.length, k, money(a),
+				priced.length ? money(u) : "",
+				priced.length ? money(u - aP) : "",
+				(priced.length && aP) ? Number((((u - aP) / aP) * 100).toFixed(1)) : ""]);
+		}
+		const priced = rows.filter(r => r.utility_default_annual != null);
+		const totActual = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
+		const totKwh = rows.reduce((t, r) => t + (r.annual_kwh || 0), 0);
+		const totUtil = priced.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
+		const totActualPriced = priced.reduce((t, r) => t + (r.actual_annual || 0), 0);
+		loc.push(["TOTAL", rows.length, totKwh, money(totActual),
+			priced.length ? money(totUtil) : "",
+			priced.length ? money(totUtil - totActualPriced) : "",
+			(priced.length && totActualPriced) ? Number((((totUtil - totActualPriced) / totActualPriced) * 100).toFixed(1)) : ""]);
+		loc.push([]);
+		// Said explicitly because the two columns cover different sets whenever an
+		// account failed to price, and a reader subtracting them would be wrong.
+		loc.push(["The utility and difference columns cover the " + priced.length
+			+ " account(s) that returned a priced rate; the actual column covers all "
+			+ rows.length + "."]);
+		sheets.push({ name: "Location Summary", rows: loc });
+
+		// ---- Account Detail ---------------------------------------------------
+		const det = [["Account detail — monthly billed history"],
+			["Supply and delivery are separate invoices against the same meter. Consumption is the metered volume, counted once — never the sum of the two, which would double the kWh."],
+			["Site", "Account", "Virtual accounts", "Month", "kWh", "Peak kW",
+			 "Supply $", "Delivery $", "Full service $", "Total $", "c/kWh"]];
+		for (const r of rows) {
+			const a = accounts[String(r.location_id)];
+			if (!a) continue;
+			const ms = (a.months || []).slice().sort((x, y) => (x.month < y.month ? -1 : 1));
+			for (const m of ms) {
+				det.push([r.site, r.account_code, r.virtual_accounts, String(m.month).slice(0, 7),
+					Number((m.kwh || 0).toFixed(2)), Number((m.kw || 0).toFixed(2)),
+					money(m.supply), money(m.delivery), money(m.fullService), money(m.actual),
+					cents(m.actual, m.kwh)]);
+			}
+			det.push(["", "", "", "account total", Math.round(a.annualKwh), Math.round(a.peakKw),
+				money(a.supplyAnnual), money(a.deliveryAnnual), money(a.fullServiceAnnual),
+				money(a.actualAnnual), cents(a.actualAnnual, a.annualKwh)]);
+		}
+		sheets.push({ name: "Account Detail", rows: det });
+
+		// ---- Tariff Results ---------------------------------------------------
+		const tar = [["Tariff results — every utility rate priced"],
+			["Restricted to currently effective, non-closed, commercial (GENERAL) rate classes published by the serving utility. Riders, surcharges, residential, unmetered, EV and special-use schedules are excluded before pricing; the Status column says why a rate that WAS priced is still not comparable."],
+			["Site", "Account", "Utility", "ZIP", "Rate", "Code", "TOU", "Comparison basis",
+			 "kWh in", "Peak kW in", "Modeled $", "Energy $", "Demand $", "Other $", "c/kWh", "Status"]];
+		// Same reason as the Executive Summary: report the demand figure that was
+		// actually sent to the tariff API, not the rounded one on screen.
+		const tarPeak = (r) => {
+			const a = accounts[String(r.location_id)];
+			return a ? Number(a.peakKw.toFixed(2)) : r.peak_kw;
+		};
+		for (const r of rows) {
+			for (const t of RateClassData._ratesFor(r.location_id)) {
+				const status = t.error ? ("Errored — " + String(t.error).slice(0, 140))
+					: (t.deliveryOnly ? "Delivery-only utility — not comparable to a bundled bill"
+					: (t.nonService ? "Not full-requirements service — not comparable"
+					: (t.demandIncomplete ? "Bills no demand charge on a demand-metered load" : "Comparable")));
+				tar.push([r.site, r.account_code, t.lseName, r.zip, t.tariffName, t.tariffCode,
+					t.isTOU ? "Yes" : "No", t.isUtilityDefaultPick ? "Yes" : "No",
+					r.annual_kwh, tarPeak(r),
+					money(t.modeledAnnualCost), money(t.modeledEnergy), money(t.modeledDemand),
+					money(t.modeledOther), cents(t.modeledAnnualCost, r.annual_kwh), status]);
 			}
 		}
+		sheets.push({ name: "Tariff Results", rows: tar });
 
-		// Line items: actual billed vs. the modeled rate, group subtotal rows first
-		// then the raw lines from each side.
-		const liHeader = ["Section", "Account", "Comparison group", "Detail bucket", "Side",
-			"Charge", "Qty", "Unit", "$ over window", "", "", "", "", "", "", ""];
-		const emitLi = (li) => {
-			if (!li || li.error) return;
-			out.push([]);
-			out.push(liHeader);
-			const acct = li.locationName || "";
-			const rateLbl = li.rate ? `${li.rate.tariffName}${li.rate.code ? " (" + li.rate.code + ")" : ""}` : "—";
-			out.push(["Line items — window", acct, `${li.windowFrom} to ${li.windowTo}`, `${li.monthCount} months`,
-				"Compared against", rateLbl, "", "", ""]);
-			out.push(["Line items — totals", acct, "Billed (line items)", "", "Actual", "", "", "", li.actualTotal]);
-			out.push(["Line items — totals", acct, "Billed (monthly baseline)", "", "Actual", "", "", "", li.baselineTotal]);
-			out.push(["Line items — totals", acct, "Modeled on " + rateLbl, "", "Modeled", "", "", "", li.modeledTotal]);
-			for (const g of li.groups || []) {
-				out.push(["Line items — group", acct, g.group, "", "Actual", "", "", "", g.actual]);
-				out.push(["Line items — group", acct, g.group, "", "Modeled", "", "", "", g.modeled]);
-				out.push(["Line items — group", acct, g.group, "", "Difference", g.oneSided ? "No counterpart on the other side" : "", "", "", g.delta]);
-				for (const b of g.buckets || []) {
-					for (const x of b.actualLines) out.push(["Line items — detail", acct, g.group, b.bucket, "Actual", x.name, x.qty, x.unit, x.cost]);
-					for (const x of b.modeledLines) out.push(["Line items — detail", acct, g.group, b.bucket, "Modeled", x.name, x.qty, x.unit, x.cost]);
+		// ---- Actual vs Modeled ------------------------------------------------
+		// Compared by charge GROUP rather than line by line. A utility reuses one
+		// label for structurally different charges (three rows all called
+		// "Distribution Charges", one of them the demand charge) and the bills word
+		// the same charge differently again, so a line-for-line match is not
+		// available. Group differences sum exactly to the total, which is the part
+		// worth trusting.
+		const avm = [["Actual vs modeled — charge by charge, for every rate"],
+			["What was actually billed against what each utility rate would have charged for the same months. The actual side comes from UBM's charge categories on the monthly feed, which reconcile to the billed total; the billing line-item table is deliberately not used — see the Data & Methodology sheet."],
+			["Site", "Account", "Utility rate", "Code", "Charge group", "Actual $", "Modeled $",
+			 "Difference $", "Basis / caveat"]];
+		for (const r of rows) {
+			const a = accounts[String(r.location_id)];
+			if (!a) continue;
+			const acct = { locationId: a.id, locationName: a.name, months: a.months,
+				chgTotals: a.chgTotals, actualAnnual: a.actualAnnual };
+			for (const t of RateClassData._ratesFor(r.location_id)) {
+				if (t.modeledAnnualCost == null) continue;
+				const cmp = RateClassData._compareForRate(acct, t);
+				for (const g of cmp.groups) {
+					avm.push([r.site, r.account_code, t.tariffName, t.tariffCode, g.group,
+						g.actual, g.modeled, g.delta,
+						g.basis + (g.oneSided ? "  |  one side only — the other side has no counterpart charge" : "")]);
+				}
+				avm.push([r.site, r.account_code, t.tariffName, t.tariffCode, "TOTAL",
+					cmp.actualTotal, cmp.modeledTotal,
+					Number((cmp.modeledTotal - cmp.actualTotal).toFixed(2)),
+					cmp.varianceHigh
+						? ("charge categories total " + cmp.actualTotal + " against a billed total of "
+							+ cmp.baselineTotal + " (" + cmp.variancePct + "%) — investigate before relying on the split")
+						: "categories reconcile to the billed total"]);
+			}
+		}
+		sheets.push({ name: "Actual vs Modeled", rows: avm });
+
+		// ---- Actual Charge Detail ---------------------------------------------
+		const acd = [["Actual billed charges by category"],
+			["Straight from UBM, split by invoice. This is the actual side of the comparison, shown once per account rather than repeated against every rate. Unclassified is billed cost UBM assigns to no category; it is carried explicitly rather than spread across the others so the total stays exact."],
+			["Site", "Account", "Stream", "Consumption", "Generation", "Commodity", "Demand",
+			 "Customer", "Taxes", "Other", "Unclassified", "TOTAL"]];
+		const CHG = ["consumption", "generation", "commodity", "demand", "customer", "taxes", "other", "unclassified"];
+		for (const r of rows) {
+			const a = accounts[String(r.location_id)];
+			if (!a) continue;
+			const c = a.chgTotals || {}, sup = a.chgSupply || {};
+			const del = {};
+			for (const k of CHG) del[k] = (Number(c[k]) || 0) - (Number(sup[k]) || 0);
+			if (a.supplyAnnual) {
+				acd.push([r.site, r.account_code, "SUPPLY"].concat(
+					CHG.map(k => money(sup[k])), [money(a.supplyAnnual)]));
+			}
+			acd.push([r.site, r.account_code, a.supplyAnnual ? "DELIVERY / OTHER" : "ALL INVOICES"].concat(
+				CHG.map(k => money(del[k])), [money(a.actualAnnual - a.supplyAnnual)]));
+			acd.push([r.site, r.account_code, "ACCOUNT TOTAL"].concat(
+				CHG.map(k => money(c[k])), [money(a.actualAnnual)]));
+		}
+		sheets.push({ name: "Actual Charge Detail", rows: acd });
+
+		// ---- Line Item Comparison ---------------------------------------------
+		const li = [["Line item comparison"],
+			["The modeled charge components behind each rate's total. The actual side is billed as invoices (supply / delivery) rather than as tariff components, so the totals compare but the components do not map one to one."],
+			["Site", "Account", "Rate", "Code", "Charge component", "Quantity", "Unit", "Unit rate", "Modeled $"]];
+		for (const r of rows) {
+			for (const t of RateClassData._ratesFor(r.location_id)) {
+				for (const x of (t.lines || [])) {
+					li.push([r.site, r.account_code, t.tariffName, t.tariffCode, x.name,
+						Number((Number(x.qty) || 0).toFixed(2)), x.qty_unit || "",
+						Number((Number(x.rate) || 0).toFixed(5)), money(x.cost)]);
 				}
 			}
-			if (li.structuralGap > 0) {
-				out.push(["Line items — caveat", acct, (li.gapGroups || []).join(", "),
-					"", "", "Charges with no modeled counterpart — still payable on the new rate, so the saving above is overstated by about this much",
-					"", "", li.structuralGap]);
-			}
-			if (li.varianceHigh) {
-				out.push(["Line items — caveat", acct, "", "", "",
-					`Billed line items and the monthly-usage baseline differ by ${li.variancePct}% over this window (different tables, different date basis) — read the per-charge split as directional`,
-					"", "", li.variance]);
-			}
-		};
-
-		if (isPortfolio) {
-			for (const r of port) {
-				const li = liMap[String(r.location_id)];
-				if (li) emitLi(li);
-			}
-		} else {
-			emitLi(single);
 		}
+		sheets.push({ name: "Line Item Comparison", rows: li });
 
-		out.push([]);
-		out.push(["Notes"]);
-		out.push(["", "\"Contract vs utility\" is the deliverable figure: the utility's standard-offer schedule priced on the same 12 months, minus what the account actually paid. Positive means the supply contract came in cheaper than staying with the utility."]);
-		out.push(["", "\"Best alternative\" is a different question — the cheapest rate class the account could switch onto. It is included for reference and is not the contract-vs-utility comparison."]);
-		out.push(["", "Modeled costs come from the Arcadia/Genability tariff API priced against each account's own last 12 months of billed kWh and kW."]);
-		out.push(["", "TOU and real-time rates are modeled on a default load profile because interval data is not available — treat those rows as estimates."]);
-		out.push(["", "Direct Access rates require contracting a competitive supplier, not just a rate change."]);
-		out.push(["", "Line-item groups are a classification of bill wording, not a mapping supplied by the utility. Group and grand totals are reliable; the split within a group is indicative."]);
-		if (isPortfolio && pmeta.capped) out.push(["", `${pmeta.capped} lower-spend account(s) were not modeled — the run is capped at ${RateClassData._MAX_LOCATIONS} accounts, highest spend first.`]);
-		return RateClassData._csvRows(out);
+		// ---- Not Modeled ------------------------------------------------------
+		// The sheet that makes the account count reconcile. Without it a reader
+		// comparing the app's account list against the results has no way to tell
+		// whether an account is missing on purpose.
+		const skipped = RateClassData.skippedRows();
+		const nm = [["Accounts not modeled"],
+			["Excluded from every figure in this workbook, and listed here with the reason so the account count in the results can always be reconciled against the account count in the app."],
+			["Account / location", "ZIP", "Actual $ over the window", "Why it was not modeled"]];
+		for (const x of skipped) nm.push([x.location, x.zip, money(x.actual_annual), x.reason]);
+		if (!skipped.length) nm.push(["—", "", "", "Every eligible account was modeled."]);
+		sheets.push({ name: "Not Modeled", rows: nm });
+
+		sheets.push({ name: "Data & Methodology",
+			rows: RateClassData._methodologyRows(customer, pm, rows, term, windowLabel) });
+		return sheets;
 	},
 
-	// Wired to Btn_RC_export.
-	exportCsv() {
-		const rows = RateClassData.portfolioRows();
-		const meta = appsmith.store.rc_meta || {};
-		if (!rows.length && !RateClassData.resultsRows().length) {
+	// The workbook is read away from the app, so what was done and what it cannot
+	// answer are written into it rather than left to be inferred from the numbers.
+	_methodologyRows(customer, pm, rows, term, windowLabel) {
+		const R = [];
+		const p = (t) => R.push([t]);
+		p(customer + " — tariff comparison: data & methodology");
+		p("");
+		p("Scope");
+		p("UBM customer " + (pm.customerId || "") + ". "
+			+ (pm.scope === "all accounts" ? "All eligible electric accounts." : "One account: " + pm.scope + ".")
+			+ " " + rows.length + " account(s) modeled out of " + (pm.locationsFound || rows.length)
+			+ " found; " + ((pm.skipped || []).length) + " not modeled, each named with a reason on the Not Modeled sheet.");
+		p("The grain is the physical account, not the site. Two accounts at one site can differ by orders of magnitude in consumption and qualify for different rate classes, so rolling them together would model a load profile that does not exist.");
+		p("");
+		p("Analysis period");
+		p("Each account is anchored on its OWN most recent " + term + " months (" + windowLabel
+			+ " across the portfolio). A shared window would price a closed account against months it has no bills for, which reads as a large fake saving. Months more than one month older than an account's own window are dropped, so a data gap cannot build a multi-year request the tariff API rejects.");
+		p("");
+		p("Actual cost");
+		p("In a deregulated market the same meter is billed twice: a Supply Only invoice from the competitive supplier and a Distribution Only invoice from the utility. Actual cost is the two together. A supplier change opens a new virtual account under a supplier-assigned number; those are chained back together by virtual account group, and the supply and delivery chains are joined by the utility's account number, which both begin under. Nothing is double-counted: consumption is taken from the delivery bill, which is the metered volume, and falls back to the supply bill's generation figure only for a month where the supplier alone billed.");
+		p("A third bill type, Full Service, is the utility supplying and delivering on one invoice. Those accounts hold no competitive contract, so no contract-versus-utility figure is reported for them; the alternative-rate comparison still applies and is what to read.");
+		p("");
+		p("Utility comparison");
+		p("Every currently effective, non-closed, commercial (GENERAL customer class) rate class published by the serving utility was priced on the account's own monthly consumption and demand readings through the Arcadia/Genability tariff API, as one annual calculation per rate. These are bundled utility rates — delivery plus default generation — which is what the account would have paid had it never gone to a competitive supplier, so they are comparable to supply and delivery combined.");
+		p("The serving utility is taken from the vendor on the bill. A ZIP is rarely served by one utility: the lookup also returns co-ops and munis whose territory merely overlaps it, and a site cannot join a co-op, so pricing their schedules would produce a cheapest rate the customer could never buy. Where the bill's vendor cannot be matched to any utility in the ZIP, every utility there is priced and the account is flagged rather than silently narrowed to none.");
+		p("Excluded before pricing: riders and surcharges (a rider alone is one line, sometimes a credit, and models as a meaningless bill), closed and grandfathered schedules, residential and special-use classes, unmetered schedules and EV-charging schedules. Economically identical net-metering and fuel-mix variants of the same rate are collapsed to one so they do not crowd out distinct rates.");
+		p("Difference = modeled utility cost minus actual cost. Positive means the utility rate would have cost more, i.e. the current arrangement is the cheaper one.");
+		p("");
+		p("Data quality protections");
+		p("An account is not modeled at all when it has no bills in the window, no ZIP, a non-U.S. location (the tariff database covers U.S. utilities only, and a non-U.S. postcode collides with a five-digit U.S. ZIP and resolves to the wrong utility), no consumption, or no billed cost. Every such account is named on the Not Modeled sheet with the reason.");
+		p("Where demand readings are missing (real usage against 0 kW), impossibly high (implied load factor under 2%) or impossibly low (implied load factor over 100%), the modeled demand charge is wrong — and on a demand-metered account that is the largest component of the bill. Those accounts are priced and shown, but no recommendation is made for them and their figures are kept out of the portfolio totals.");
+		p("Rates that model below roughly 2 cents/kWh are not full-requirements service (parallel generation, standby, incremental-load pricing) and are excluded from the ranking. Texas delivery-only wires utilities are excluded on the same grounds: their published tariffs carry no energy component, so their modeled bill is not comparable to a bundled actual bill.");
+		p("");
+		p("Limitations");
+		p("1. Time-of-use and hourly-priced rates are modeled on a default load shape because interval data is not available. They are flagged in the Notes column and should be read as directional.");
+		p("2. Rate eligibility comes from each tariff's published applicability limits, not from service voltage or contract terms. Some rates listed would not genuinely be offered to the account. Read the comparison basis and the cheapest applicable rate, not the full range.");
+		p("3. Where the utility publishes no schedule typed as its standard offer — usual on commercial accounts, where every rate comes back as an alternative — the cheapest applicable rate is used as the comparison basis instead, and the basis used is stated per account. Before a figure goes to a client the applicable rate should be confirmed against the utility's published Price to Compare.");
+		p("4. UBM often records vendor_name as the utility on the supply invoice too, so the competitive supplier's trading name is not always recoverable. Where it is not, the supplier is identified by its supply account number instead.");
+		p("5. Where UBM books no separate demand charge and carries the whole amount as consumption, energy and demand are shown combined on the actual side. Splitting them would produce a large negative on one and an equal positive on the other that cancel out and mean nothing.");
+		p("6. The Actual vs Modeled sheet compares at charge-group level, not line by line, for the reasons given on that sheet. Group differences sum exactly to the total.");
+		p("7. UBM's billing line-item table was tested as the source for the actual side and rejected: on the accounts checked it held only 25-60% of what was actually billed, which would have understated actual cost by roughly a third to a half and made every contract look better than it was. The actual side therefore comes from the monthly usage table's charge-category columns, the same source as the totals; whatever those categories do not account for is carried as an explicit Unclassified line so the totals stay exact.");
+		p("8. Charges the modeled rate produces no counterpart for — most often taxes, which the tariff API does not carry — would still be payable on the utility rate. Where that happens the account's difference is overstated by roughly that amount, and the app flags it on screen.");
+		p("9. Tariffs are priced against today's published schedules. Genability versions tariffs internally and resolves the correct version per billing period, but a rate that changed mid-window is worth spot-checking before a figure is quoted externally.");
+		p("");
+		p("Reproducibility");
+		p("Run " + (pm.runAt || "") + " from the Rate Class Analysis page. Modeled costs come from the Arcadia/Genability tariff API; actual costs from UBM's monthly usage reporting. A failed tariff call is retried three times with backoff and, if it still fails, counted and reported rather than dropped — an errored rate could have been the cheapest one.");
+		return R;
+	},
+
+	// Wired to the export button.
+	async exportWorkbook() {
+		const rows = RateClassData.filteredPortfolio();
+		if (!rows.length) {
 			showAlert("Run an analysis first", "warning");
 			return;
 		}
-		const who = rows.length
-			? ((typeof RC_CustomerSelect !== "undefined" && RC_CustomerSelect.selectedOptionLabel) || "customer")
-			: (meta.locationName || "location");
-		const name = `rate-class-analysis-${String(who).replace(/[^A-Za-z0-9]+/g, "-").toLowerCase()}-${moment().format("YYYYMMDD")}.csv`;
-		return download(RateClassData.buildExportCsv(), name, "text/csv");
+		await storeValue("rc_loading", true);
+		await storeValue("rc_progress", "Generating the report…");
+		try {
+			const sheets = RateClassData.buildWorkbook();
+			const pm = RateClassData.portfolioMeta();
+			const who = pm.customerName
+				|| ((typeof RC_CustomerSelect !== "undefined" && RC_CustomerSelect.selectedOptionLabel) || "customer");
+			const stem = "rate-class-analysis-"
+				+ String(who).replace(/[^A-Za-z0-9]+/g, "-").toLowerCase()
+				+ "-" + moment().format("YYYYMMDD");
+
+			if (RateClassData._xlsxAvailable()) {
+				const wb = XLSX.utils.book_new();
+				for (const sh of sheets) {
+					XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sh.rows),
+						String(sh.name).slice(0, 31));
+				}
+				const b64 = XLSX.write(wb, { bookType: "xlsx", type: "base64" });
+				await download("data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + b64,
+					stem + ".xlsx");
+				showAlert("Workbook downloaded — " + sheets.length + " sheets, " + rows.length + " account(s)", "success");
+				return;
+			}
+			// Fallback: SpreadsheetML 2003. Excel opens it with the tabs intact and
+			// warns once that the format differs from the extension. Say so, rather
+			// than leaving someone to wonder whether the file is broken.
+			await download(RateClassData._toSpreadsheetXml(sheets), stem + ".xls", "application/vnd.ms-excel");
+			showAlert("Workbook downloaded as Excel XML — " + sheets.length
+				+ " sheets. Excel may warn once that the format differs from the .xls extension; open it anyway.", "success");
+		} catch (e) {
+			showAlert("Could not build the workbook: " + ((e && e.message) || e), "error");
+		} finally {
+			await storeValue("rc_loading", false);
+			await storeValue("rc_progress", "");
+		}
 	},
+
+	// Kept so any existing binding to exportCsv() still works; the deliverable is
+	// the workbook now, so this produces the same file.
+	exportCsv() { return RateClassData.exportWorkbook(); },
 
 	// =====================================================================
 	// Screen navigation / lifecycle
 	// =====================================================================
+	// Discards the run and leaves the account list showing. Deliberately not a
+	// plain "back": the results tabs sit above the account list inside the same
+	// widget, so there is nowhere to navigate back TO — the only thing this can
+	// usefully do is clear the results.
 	goBack() {
-		const cur = Number(appsmith.store.rc_screen || 1);
-		return storeValue("rc_screen", Math.max(1, cur - 1));
+		return RateClassData.resetAll();
 	},
 
 	// Run on page load (queries/RateClassData-initPage/metadata.json is AUTOMATIC).
-	// Loads the customer list here and captures the .run() RETURN value into the
-	// store (never reads RC_fetchCustomers.data) so customerOptions() can stay a
-	// pure store reader and avoid the reactive-dependency-misuse error.
+	// Loads the customer list here and captures each run's RETURN value into the
+	// store, never reading a query's result property back, so the option getters
+	// stay pure store readers and avoid the reactive-dependency-misuse error.
 	async initPage() {
+		await RateClassData._clearRun();
+		await storeValue("rc_inventory", [], false);
 		await storeValue("rc_screen", 1);
-		await storeValue("rc_results", []);
-		await storeValue("rc_usage", []);
-		await storeValue("rc_all_tariffs", []);
-		await storeValue("rc_lineitems", null);
-		await storeValue("rc_portfolio", []);
-		await storeValue("rc_portfolio_meta", {});
-		await storeValue("rc_portfolio_lineitems", {});
-		await storeValue("rc_status", "");
 		await storeValue("rc_loading", false);
-		// Drop any cached analyses from a previous session/build so a code change
-		// can't keep serving a stale result. Re-selecting within this session
-		// still caches normally.
-		await storeValue("rc_cache", {});
+		await storeValue("rc_inv_loading", false);
+		await storeValue("rc_f_site", "");
+		await storeValue("rc_f_vendor", "");
+		await storeValue("rc_f_location", "");
+		// An earlier build cached completed analyses in the store, and because the
+		// store persists across reloads a code change would keep serving the old
+		// result shape. Results are session-only now; this clears anything a previous
+		// build left behind in localStorage.
+		await storeValue("rc_cache", null);
 		const res = await RC_fetchCustomers.run();
 		const arr = Array.isArray(res) ? res : ((res && (res.data || res.body)) || []);
 		await storeValue("rc_customer_opts", Array.isArray(arr) ? arr : []);
-		// RC_CustomerSelect defaults to 76013, so load that customer's locations
-		// up front (RC_fetchLocations binds RC_CustomerSelect.selectedOptionValue
-		// with a 76013 fallback) — otherwise the Location dropdown is empty until
-		// the user re-picks the customer.
+		// RC_CustomerSelect carries a default customer, so load that customer's
+		// locations and accounts up front — otherwise the page opens on an empty
+		// table and reads as broken until someone re-picks the customer they can
+		// already see selected.
 		const locRes = await RC_fetchLocations.run();
 		const locArr = Array.isArray(locRes) ? locRes : ((locRes && (locRes.data || locRes.body)) || []);
 		await storeValue("rc_location_opts", Array.isArray(locArr) ? locArr : []);
+		await storeValue("rc_screen", 4);
+		await RateClassData.loadInventory();
 	},
 
 	async resetAll() {
-		await storeValue("rc_results", []);
-		await storeValue("rc_usage", []);
-		await storeValue("rc_meta", {});
-		await storeValue("rc_lineitems", null);
-		await storeValue("rc_portfolio", []);
-		await storeValue("rc_portfolio_meta", {});
-		await storeValue("rc_portfolio_lineitems", {});
-		await storeValue("rc_screen", 1);
+		await RateClassData._clearRun();
+		await storeValue("rc_screen", (appsmith.store.rc_inventory || []).length ? 4 : 1);
 	}
 }

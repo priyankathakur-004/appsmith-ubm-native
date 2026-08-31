@@ -32,8 +32,12 @@
         "value": "6"
       },
       {
-        "name": "_MAX_LOCATIONS",
-        "value": "40"
+        "name": "_BATCH_SIZE",
+        "value": "6"
+      },
+      {
+        "name": "_BATCH_PAUSE_MS",
+        "value": "250"
       },
       {
         "name": "_RETRIES",
@@ -46,22 +50,6 @@
       {
         "name": "_UTILITY_ALIASES",
         "value": "{\n\t\t\"penelec\": \"pennsylvania electric\",\n\t\t\"met ed\": \"metropolitan edison\",\n\t\t\"metconstellation\": \"metropolitan edison\",\n\t\t\"ppl\": \"ppl electric\",\n\t\t\"west penn power\": \"west penn power\",\n\t\t\"ohio edison\": \"ohio edison\",\n\t\t\"aep ohio\": \"ohio power\",\n\t\t\"comed\": \"commonwealth edison\",\n\t\t\"com ed\": \"commonwealth edison\",\n\t\t\"jcpl\": \"jersey central power\",\n\t\t\"pseg\": \"public service electric\"\n\t}"
-      },
-      {
-        "name": "_LINE_BUCKET_RULES",
-        "value": "[\n\t\t[\"Transmission\",            \"transmis\"],\n\t\t[\"Supply / Generation\",     \"supply|generation|\\\\bgen\\\\b|commodity|procurement|power cost|purchased power|\\\\bfuel\\\\b\"],\n\t\t[\"Delivery / Distribution\", \"deliver|distribut|\\\\bdist\\\\b|\\\\bwires\\\\b\"],\n\t\t[\"Energy / Consumption\",    \"energy|consumption|\\\\bkwh\\\\b|kilowatt.?hour|usage\"],\n\t\t[\"Taxes & Fees\",            \"\\\\btax|franchise|gross receipt|surcharge|assessment|regulat|rider|cost recovery|adjustment|\\\\badj\\\\b\"],\n\t\t[\"Customer / Fixed\",        \"customer charge|service charge|basic|meter|facilit|\\\\bacct\\\\b|account|admin|monthly|minimum|\\\\bfee\\\\b\"]\n\t]"
-      },
-      {
-        "name": "_BUCKET_ORDER",
-        "value": "[\"Supply / Generation\", \"Energy / Consumption\", \"Demand\", \"Delivery / Distribution\", \"Transmission\", \"Customer / Fixed\", \"Taxes & Fees\", \"Other\"]"
-      },
-      {
-        "name": "_BUCKET_GROUP",
-        "value": "{\n\t\t\"Supply / Generation\": \"Energy (per kWh)\",\n\t\t\"Energy / Consumption\": \"Energy (per kWh)\",\n\t\t\"Delivery / Distribution\": \"Energy (per kWh)\",\n\t\t\"Transmission\": \"Energy (per kWh)\",\n\t\t\"Demand\": \"Demand (per kW)\",\n\t\t\"Customer / Fixed\": \"Fixed / Customer\",\n\t\t\"Taxes & Fees\": \"Taxes & Fees\",\n\t\t\"Other\": \"Other\"\n\t}"
-      },
-      {
-        "name": "_GROUP_ORDER",
-        "value": "[\"Energy (per kWh)\", \"Demand (per kW)\", \"Fixed / Customer\", \"Taxes & Fees\", \"Other\"]"
       }
     ]
   }

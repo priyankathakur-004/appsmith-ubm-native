@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_b2092b2d-61c2-444d-9ad9-1c8085c039b8",
-  "id": "Rate Class Analysis_RateClassData._inventoryIssue",
+  "gitSyncId": "6a42383420f165a7650f6c4d_b05c9a15-fee3-4870-a106-6a33af5aea56",
+  "id": "Rate Class Analysis_RateClassData._xmlEsc",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData._inventoryIssue",
-    "name": "_inventoryIssue",
+    "fullyQualifiedName": "RateClassData._xmlEsc",
+    "name": "_xmlEsc",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

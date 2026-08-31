@@ -34,7 +34,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 21,
   "shouldTruncate": false,
-  "text": "Select Customer & Location",
+  "text": "Pick a customer to list its electric accounts, then run one account or all of them",
   "textAlign": "LEFT",
   "textColor": "#f4f4f5",
   "topRow": 9,

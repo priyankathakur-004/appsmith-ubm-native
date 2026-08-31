@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_88f30bb2-d12c-4ee0-b8da-c1db7559b6cc",
-  "id": "Rate Class Analysis_RateClassData._csvRows",
+  "gitSyncId": "6a42383420f165a7650f6c4d_d9496088-ae9b-4c24-8ebc-b223e9d977c7",
+  "id": "Rate Class Analysis_RateClassData.exportWorkbook",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData._csvRows",
-    "name": "_csvRows",
+    "fullyQualifiedName": "RateClassData.exportWorkbook",
+    "name": "exportWorkbook",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

@@ -14,9 +14,6 @@
   },
   {
    "key": "accentColor"
-  },
-  {
-   "key": "isVisible"
   }
  ],
  "dynamicHeight": "FIXED",
@@ -30,7 +27,7 @@
  "isFilterable": true,
  "isLoading": false,
  "isRequired": false,
- "isVisible": "{{ appsmith.store.rc_screen === 3 }}",
+ "isVisible": true,
  "key": "rctermsel01",
  "labelAlignment": "left",
  "labelPosition": "Top",
@@ -47,7 +44,7 @@
  "mobileRightColumn": 21,
  "mobileTopRow": 40,
  "needsErrorInfo": false,
- "onOptionChange": "{{ storeValue(\"rc_term\", this.selectedOptionValue) }}",
+ "onOptionChange": "{{ RateClassData.onTermChange() }}",
  "optionLabel": "label",
  "optionValue": "value",
  "parentColumnSpace": 13.83349609375,

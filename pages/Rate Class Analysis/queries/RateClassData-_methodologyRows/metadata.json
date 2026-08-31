@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_aacebd71-d274-4d10-ac7c-3da709e72cdb",
-  "id": "Rate Class Analysis_RateClassData._csvCell",
+  "gitSyncId": "6a42383420f165a7650f6c4d_8320f1e9-c583-4fef-8f29-1fee4cd65b8c",
+  "id": "Rate Class Analysis_RateClassData._methodologyRows",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData._csvCell",
-    "name": "_csvCell",
+    "fullyQualifiedName": "RateClassData._methodologyRows",
+    "name": "_methodologyRows",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

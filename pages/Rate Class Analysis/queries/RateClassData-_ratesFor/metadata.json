@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_8e0a7ed9-c613-40c5-9e2e-a86713b116de",
-  "id": "Rate Class Analysis_RateClassData._lineBucket",
+  "gitSyncId": "6a42383420f165a7650f6c4d_4f56e027-b3f8-4d60-9872-8cf06dd4ebb2",
+  "id": "Rate Class Analysis_RateClassData._ratesFor",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData._lineBucket",
-    "name": "_lineBucket",
+    "fullyQualifiedName": "RateClassData._ratesFor",
+    "name": "_ratesFor",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

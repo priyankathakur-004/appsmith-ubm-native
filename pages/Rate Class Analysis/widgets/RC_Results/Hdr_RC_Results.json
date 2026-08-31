@@ -37,7 +37,7 @@
  "responsiveBehavior": "fill",
  "rightColumn": 30,
  "shouldTruncate": false,
- "text": "{{ appsmith.store.rc_screen === 3 ? (appsmith.store.rc_single_account ? \"Rate Class Analysis \u2014 Account\" : \"Rate Class Analysis \u2014 All Accounts\") : (appsmith.store.rc_screen === 2 ? \"Rate Class Analysis \u2014 Savings by Tariff\" : \"Rate Class Analysis \u2014 Accounts\") }}",
+ "text": "{{ (appsmith.store.rc_portfolio || []).length ? (appsmith.store.rc_single_account ? \"Rate Class Analysis — Account result\" : \"Rate Class Analysis — All accounts\") : \"Rate Class Analysis — Accounts\" }}",
  "textAlign": "LEFT",
  "textColor": "#ffffff",
  "topRow": 2,

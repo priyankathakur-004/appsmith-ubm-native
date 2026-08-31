@@ -30,7 +30,7 @@
  "isFilterable": true,
  "isLoading": false,
  "isRequired": false,
- "isVisible": "{{ appsmith.store.rc_screen === 3 }}",
+ "isVisible": "{{ (appsmith.store.rc_portfolio || []).length > 0 }}",
  "key": "rcsitefil01",
  "labelAlignment": "left",
  "labelPosition": "Top",

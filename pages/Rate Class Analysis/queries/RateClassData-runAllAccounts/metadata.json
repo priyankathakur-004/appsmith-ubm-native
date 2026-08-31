@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c4d_9f8861fa-32cb-480e-a8dc-67f40d96d36d",
-  "id": "Rate Class Analysis_RateClassData.buildExportCsv",
+  "gitSyncId": "6a42383420f165a7650f6c4d_a7de9079-7ebb-40f2-ba16-840a81011bb7",
+  "id": "Rate Class Analysis_RateClassData.runAllAccounts",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "RateClassData.buildExportCsv",
-    "name": "buildExportCsv",
+    "fullyQualifiedName": "RateClassData.runAllAccounts",
+    "name": "runAllAccounts",
     "pageId": "Rate Class Analysis",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

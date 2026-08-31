@@ -70,6 +70,24 @@ SELECT
     -- differs from the key the chain started under.
     MAX(b.account_code)     FILTER (WHERE b.bill_type = 'Supply Only'
                                       AND b.acct_norm <> g.account_key) AS supply_account_code,
+    -- Virtual account identifiers, kept per stream so the workbook can show which
+    -- virtual accounts were stitched into this physical account. Read through
+    -- to_jsonb rather than named directly: the column is present on the reporting
+    -- view but is not guaranteed across environments, and a missing key returns
+    -- NULL here instead of failing the whole query (which would empty the page).
+    -- Where it is absent the virtual account GROUP id stands in, which is the
+    -- identifier the stitching itself is built on.
+    STRING_AGG(DISTINCT COALESCE(to_jsonb(b) ->> 'virtual_account_id',
+                                 b.virtual_account_group_id::text), ', ')
+        FILTER (WHERE b.bill_type =  'Supply Only')           AS supply_va_ids,
+    STRING_AGG(DISTINCT COALESCE(to_jsonb(b) ->> 'virtual_account_id',
+                                 b.virtual_account_group_id::text), ', ')
+        FILTER (WHERE b.bill_type <> 'Supply Only')           AS delivery_va_ids,
+    -- Arcadia covers U.S. utilities only, and a non-U.S. postcode collides with a
+    -- five-digit U.S. ZIP (a Mexican CP 20355 resolves to Pepco in Washington DC),
+    -- so the run has to be able to refuse rather than model the wrong utility.
+    -- Same to_jsonb guard as above.
+    MAX(to_jsonb(b) ->> 'location_country')                   AS country,
     MAX(b.location_id)                                        AS location_id,
     MAX(COALESCE(b.location_description, b.location_address)) AS location_name,
     MAX(b.location_zip)                                       AS postcode,
@@ -105,7 +123,20 @@ SELECT
     ROUND(SUM(COALESCE(b.total_charges_commodity, 0))::numeric, 2)   AS chg_commodity,
     ROUND(SUM(COALESCE(b.total_charges_generation, 0))::numeric, 2)  AS chg_generation,
     ROUND(SUM(COALESCE(b.total_charges_taxes, 0))::numeric, 2)       AS chg_taxes,
-    ROUND(SUM(COALESCE(b.total_charges_other, 0))::numeric, 2)       AS chg_other
+    ROUND(SUM(COALESCE(b.total_charges_other, 0))::numeric, 2)       AS chg_other,
+
+    -- The same categories split by invoice. The two streams charge for different
+    -- things -- the supplier bills generation, the utility bills delivery, customer
+    -- and tax -- so a reader checking the actual side needs to see which invoice a
+    -- figure came off. The unsuffixed columns above stay the account total, which
+    -- is what the comparison is built on; these are for the report only.
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_consumption, 0)) FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_consumption_sup,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_demand, 0))      FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_demand_sup,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_customer, 0))    FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_customer_sup,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_commodity, 0))   FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_commodity_sup,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_generation, 0))  FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_generation_sup,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_taxes, 0))       FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_taxes_sup,
+    ROUND(COALESCE(SUM(COALESCE(b.total_charges_other, 0))       FILTER (WHERE b.bill_type = 'Supply Only'), 0)::numeric, 2) AS chg_other_sup
 FROM base b
 INNER JOIN grp_key g ON g.virtual_account_group_id = b.virtual_account_group_id
 GROUP BY g.account_key, b.time_period

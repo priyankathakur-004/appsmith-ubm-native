@@ -37,7 +37,7 @@
  "responsiveBehavior": "fill",
  "rightColumn": 30,
  "shouldTruncate": false,
- "text": "{{ appsmith.store.rc_screen === 3 ? RateClassData.portfolioSummary() : (appsmith.store.rc_screen === 2 ? RateClassData.analysisSummary() : (appsmith.store.rc_inv_loading ? \"Loading accounts\u2026\" : \"\")) }}",
+ "text": "{{ appsmith.store.rc_inv_loading ? \"Loading accounts…\" : ((appsmith.store.rc_portfolio || []).length ? (appsmith.store.rc_single_account ? RateClassData.analysisSummary() : RateClassData.portfolioSummary()) : \"Nothing has been sent to the tariff API yet — press Run on an account, or Run all.\") }}",
  "textAlign": "LEFT",
  "textColor": "#d4d4d8",
  "topRow": 8,
