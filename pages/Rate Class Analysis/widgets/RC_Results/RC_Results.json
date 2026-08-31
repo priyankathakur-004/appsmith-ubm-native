@@ -68,7 +68,7 @@
  "flexVerticalAlignment": "stretch",
  "isCanvas": true,
  "isLoading": false,
- "isVisible": "{{ appsmith.store.rc_screen === 2 || appsmith.store.rc_screen === 3 }}",
+ "isVisible": "{{ appsmith.store.rc_screen === 2 || appsmith.store.rc_screen === 3 || (appsmith.store.rc_inventory || []).length > 0 }}",
  "key": "rcresultsout",
  "leftColumn": 0,
  "maxDynamicHeight": 9000,

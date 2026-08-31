@@ -79,6 +79,9 @@ export default {
 		const res = await RC_fetchLocations.run();
 		const arr = Array.isArray(res) ? res : ((res && (res.data || res.body)) || []);
 		await storeValue("rc_location_opts", Array.isArray(arr) ? arr : []);
+		await storeValue("rc_inventory", []);
+		await storeValue("rc_screen", 4);
+		await RateClassData.loadInventory();
 	},
 
 	// Picking a location kicks off the whole analysis.
@@ -1033,6 +1036,105 @@ export default {
 		return v;
 	},
 
+
+	// =====================================================================
+	// Account inventory
+	// =====================================================================
+	// What the customer actually has, listed before any analysis runs. This is a
+	// single UBM query and returns in about a second, where pricing every account
+	// against every qualifying tariff takes minutes. Showing the inventory first
+	// lets someone see the accounts, spot missing or odd data, and choose what to
+	// run rather than committing to the whole portfolio blind.
+	async loadInventory() {
+		const customerId = (typeof RC_CustomerSelect !== "undefined") ? RC_CustomerSelect.selectedOptionValue : null;
+		if (!customerId) return;
+		await storeValue("rc_inv_loading", true);
+		await storeValue("rc_inventory", []);
+		try {
+			const raw = await RC_CustomerUsage.run();
+			const rows = Array.isArray(raw) ? raw : [];
+			const byAcct = new Map();
+			for (const r of rows) {
+				const key = String(r.account_key != null ? r.account_key
+					: (r.virtual_account_id != null ? r.virtual_account_id : r.location_id));
+				if (!byAcct.has(key)) byAcct.set(key, []);
+				byAcct.get(key).push(r);
+			}
+			const term = RateClassData.analysisTerm();
+			const inv = [];
+			for (const [key, list] of byAcct.entries()) {
+				// Same window rule the analysis uses, so the usage shown here is the
+				// usage that would be priced.
+				const desc = list.slice().sort((a, b) => (a.month < b.month ? 1 : -1)).slice(0, term);
+				if (!desc.length) continue;
+				const newest = moment(desc[0].month);
+				const kept = desc.filter(r => newest.diff(moment(r.month), "months") <= term + 1);
+				const firstOf = (k) => { for (const r of list) { const v = RateClassData._pickStr(r, [k]); if (v) return v; } return ""; };
+				const sum = (k) => kept.reduce((s, r) => s + (Number(r[k]) || 0), 0);
+				const site = firstOf("location_name") || `Account ${key}`;
+				const acct = firstOf("account_code") || firstOf("client_account") || String(key);
+				const supply = sum("supply_charges"), delivery = sum("delivery_charges"), full = sum("full_service_charges");
+				inv.push({
+					account_key: key,
+					site: site,
+					account_code: acct,
+					zip: firstOf("postcode"),
+					utility: firstOf("vendor_name"),
+					bill_types: firstOf("bill_types"),
+					months: kept.length,
+					period_from: kept.length ? kept[kept.length - 1].month.slice(0, 7) : "",
+					period_to: kept.length ? kept[0].month.slice(0, 7) : "",
+					annual_kwh: Math.round(sum("kwh")),
+					peak_kw: kept.reduce((mx, r) => Math.max(mx, Number(r.kw) || 0), 0),
+					actual_annual: Number(sum("actual_charges").toFixed(2)),
+					supply_annual: Number(supply.toFixed(2)),
+					delivery_annual: Number(delivery.toFixed(2)),
+					full_service_annual: Number(full.toFixed(2)),
+					has_supply: supply !== 0,
+					// Surfaced here so a gap is visible before anyone spends minutes
+					// pricing an account whose inputs cannot support a comparison.
+					issue: RateClassData._inventoryIssue(kept, firstOf("postcode"), firstOf("country"))
+				});
+			}
+			inv.sort((a, b) => b.actual_annual - a.actual_annual);
+			await storeValue("rc_inventory", inv);
+		} catch (e) {
+			await storeValue("rc_status", "Could not load the account list: " + ((e && e.message) || e));
+		} finally {
+			await storeValue("rc_inv_loading", false);
+		}
+	},
+
+	// Problems worth seeing before running, phrased as what it means for the
+	// analysis rather than as a data-quality verdict.
+	_inventoryIssue(months, zip, country) {
+		if (country && !RateClassData._isUSCountry(country)) return "Outside the US — Arcadia covers US utilities only";
+		if (!zip || String(zip).trim().length < 3) return "No postcode — cannot look up tariffs";
+		const kwh = months.reduce((s, m) => s + (Number(m.kwh) || 0), 0);
+		if (kwh <= 0) return "No consumption recorded — nothing for a rate to price";
+		if (months.length < 12) return `Only ${months.length} month(s) of data`;
+		const zeroKw = months.filter(m => (Number(m.kwh) || 0) >= 5000 && (Number(m.kw) || 0) <= 0).length;
+		if (zeroKw) return `${zeroKw} month(s) with usage but no demand reading`;
+		const spike = months.filter(m => (Number(m.kw) || 0) > 50 && (Number(m.kwh) || 0) > 0
+			&& ((Number(m.kwh) || 0) / ((Number(m.kw) || 1) * 730)) < 0.02).length;
+		if (spike) return `${spike} month(s) with an implausibly high demand reading`;
+		return "";
+	},
+
+	inventoryRows() {
+		const a = appsmith.store.rc_inventory;
+		return Array.isArray(a) ? a : [];
+	},
+
+	// Run one account. Shares the whole pipeline with the all-accounts run so the
+	// two can never produce different numbers for the same account.
+	async runOneAccount() {
+		const key = (typeof Lst_RC_results !== "undefined" && Lst_RC_results.model)
+			? Lst_RC_results.model.runKey : null;
+		if (!key) { showAlert("Pick an account to run", "warning"); return; }
+		return RateClassData.runCustomerAnalysis(String(key));
+	},
+
 	// =====================================================================
 	// Portfolio mode — model EVERY account of the customer in one run
 	// =====================================================================
@@ -1041,7 +1143,7 @@ export default {
 	// per-location pipeline over them, and rolls the result up to a customer-level
 	// savings figure. Locations that cannot be modeled are reported with a reason
 	// rather than dropped, so the rollup is never quietly incomplete.
-	async runCustomerAnalysis() {
+	async runCustomerAnalysis(onlyKey) {
 		const customerId = (typeof RC_CustomerSelect !== "undefined") ? RC_CustomerSelect.selectedOptionValue : null;
 		if (!customerId) {
 			showAlert("Pick a customer first", "warning");
@@ -1196,6 +1298,24 @@ export default {
 					supplyAcct: firstOf("supply_account_code"),
 					billTypes: firstOf("bill_types"),
 					monthCount: months.length });
+			}
+
+			// Running a single account takes the same path as the whole portfolio, so
+			// the two cannot disagree about the same account. Filter in place only
+			// when a key was given; assigning the unfiltered array to a second name
+			// and then clearing it would empty both, since they are one array.
+			if (onlyKey) {
+				const only = specs.filter(s => String(s.id) === String(onlyKey));
+				if (!only.length) {
+					const why = (skipped.find(s => String(s.id) === String(onlyKey)) || {}).reason
+						|| "not present in the usage data";
+					showAlert("That account cannot be analysed — " + why, "warning");
+					await storeValue("rc_status", "Account " + onlyKey + ": " + why);
+					await storeValue("rc_loading", false);
+					return;
+				}
+				specs.length = 0;
+				for (const s of only) specs.push(s);
 			}
 
 			// Highest actual spend first: that is where the savings are, and it is the
@@ -1380,6 +1500,7 @@ export default {
 			await storeValue("rc_portfolio", portfolio);
 			await storeValue("rc_portfolio_meta", pmeta);
 			await storeValue("rc_portfolio_lineitems", liByLoc);
+			await storeValue("rc_single_account", onlyKey ? String(onlyKey) : "");
 			await storeValue("rc_status", "");
 			await storeValue("rc_screen", 3);
 		} catch (e) {

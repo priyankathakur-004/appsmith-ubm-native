@@ -37,7 +37,7 @@
  "responsiveBehavior": "fill",
  "rightColumn": 30,
  "shouldTruncate": false,
- "text": "{{ appsmith.store.rc_screen === 3 ? RateClassData.portfolioSummary() : RateClassData.analysisSummary() }}",
+ "text": "{{ appsmith.store.rc_screen === 3 ? RateClassData.portfolioSummary() : (appsmith.store.rc_screen === 2 ? RateClassData.analysisSummary() : (appsmith.store.rc_inv_loading ? \"Loading accounts\u2026\" : \"\")) }}",
  "textAlign": "LEFT",
  "textColor": "#d4d4d8",
  "topRow": 8,
