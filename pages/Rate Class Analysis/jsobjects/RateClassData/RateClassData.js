@@ -1784,6 +1784,36 @@ export default {
 		return parts.join("  •  ");
 	},
 
+	// =====================================================================
+	// Screen heading
+	// =====================================================================
+	// The heading and the line under it used to be two text widgets stacked on the
+	// fixed grid above the results widget. Each held its rows open whether or not it
+	// had anything to say, and the grid heights are recomputed on load, so the empty
+	// band between the controls and the heading kept coming back however the rows
+	// were set. They are drawn inside the results widget now; these two getters are
+	// what it draws.
+	screenTitle() {
+		const ran = (appsmith.store.rc_portfolio || []).length > 0;
+		if (!ran) return "Rate Class Analysis — Accounts";
+		return appsmith.store.rc_single_account
+			? "Rate Class Analysis — Account result"
+			: "Rate Class Analysis — All accounts";
+	},
+
+	screenSummary() {
+		if (appsmith.store.rc_inv_loading) return "Loading this customer's accounts…";
+		if ((appsmith.store.rc_portfolio || []).length) {
+			return appsmith.store.rc_single_account
+				? RateClassData.analysisSummary()
+				: RateClassData.portfolioSummary();
+		}
+		if ((appsmith.store.rc_inventory || []).length) {
+			return "Nothing analysed yet. Press Run on any account to compare it against every rate its utility offers, or Run all to do the whole portfolio — allow a minute or two per account.";
+		}
+		return "Pick a customer above to see its electric accounts.";
+	},
+
 	skippedRows() {
 		const m = appsmith.store.rc_portfolio_meta || {};
 		const s = Array.isArray(m.skipped) ? m.skipped : [];
