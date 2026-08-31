@@ -397,10 +397,15 @@ export default {
 		const best = RateClassData.bestRecommendation();
 		const parts = [];
 		parts.push(`${m.locationName || ""} (zip ${m.zip})`);
-		parts.push(`Actual ${m.monthCount}-mo cost: $${(m.actualAnnual || 0).toFixed(2)}`);
-		parts.push(`${m.modeledCount}/${m.tariffCount} rate classes modeled`);
+		const money = (v) => "$" + Number(v || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+		parts.push(`Actual ${m.monthCount}-mo cost: ${money(m.actualAnnual)}`);
+		// "0/4 modeled" reads as a failure to price anything. All four priced; none
+		// was comparable, which is a different statement and the one that matters.
+		parts.push(m.modeledCount
+			? `${m.tariffCount} rate class(es) priced, ${m.modeledCount} comparable`
+			: `${m.tariffCount} rate class(es) priced, none comparable to a bundled bill`);
 		if (best) {
-			parts.push(`Best: ${best.tariffName} — save $${best.annualSavings.toFixed(2)} (${best.savingsPct.toFixed(1)}%)`);
+			parts.push(`Best: ${best.tariffName} — save ${money(best.annualSavings)} (${best.savingsPct.toFixed(1)}%)`);
 		} else if (m.demandSuspect) {
 			parts.push("Recommendation withheld — demand (kW) data unreliable");
 		} else {
@@ -413,6 +418,7 @@ export default {
 		if (m.demandSpikeMonths) parts.push(`⚠ ${m.demandSpikeMonths} month(s) show an impossibly high kW vs. usage (bad demand reading) — demand charges over-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.demandUnderMonths) parts.push(`⚠ ${m.demandUnderMonths} month(s) show a kW far too low for the usage (load factor > 100%, bad reading) — demand charges under-modeled, so modeled costs & savings are unreliable (informational only)`);
 		if (m.erroredCount) parts.push(`⚠ ${m.erroredCount} rate(s) could not be priced after retries and are excluded — the cheapest rate shown may not be the cheapest available`);
+		if (m.utilityUnmatched) parts.push(`⚠ the bill names ${m.servingUtility} as the utility, which serves no tariffs in zip ${m.zip} — the rates priced belong to ${(m.lseNames || []).join(", ")} instead. In a deregulated market that is expected (the bill comes from a retail supplier, the tariffs from the wires company), but check the two describe the same service before quoting a figure`);
 		if (m.tariffListIncomplete) parts.push("⚠ the tariff list came back incomplete — some rate classes may be missing");
 		if (m.truncated) parts.push(`(capped at ${RateClassData._MAX_TARIFFS} tariffs)`);
 		if (m.stale && m.dataThrough) parts.push(`⚠ usage data ends ${m.dataThrough} — stale, modeled on current rates`);
@@ -888,7 +894,16 @@ export default {
 			// True when we could not match the bill's vendor to any LSE in the ZIP and
 			// therefore priced every utility there, co-ops included. The ranking is then
 			// only as good as the reader's knowledge of who actually serves the site.
-			utilityUnmatched: !!(ctx.servingUtility && lses.length > 1)
+			// True when the bill's vendor could not be matched to any utility serving
+			// the ZIP, so whatever was priced is not the company named on the bill.
+			// In ERCOT that is normal — the bill comes from a retail supplier while
+			// the tariffs belong to the wires company — but the reader has to be told,
+			// otherwise the utility column and the rate list simply disagree.
+			utilityUnmatched: !!(ctx.servingUtility && !lses.some(l => {
+				const have = RateClassData._normUtility(l.name);
+				const want = RateClassData._normUtility(ctx.servingUtility);
+				return have === want || have.indexOf(want) >= 0 || want.indexOf(have) >= 0;
+			}))
 		};
 		return { ranked, meta, allTariffs: allTariffsTagged };
 	},

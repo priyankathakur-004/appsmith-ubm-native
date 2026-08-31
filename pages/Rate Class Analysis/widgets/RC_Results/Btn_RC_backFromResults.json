@@ -43,7 +43,7 @@
   "resetFormOnClick": false,
   "responsiveBehavior": "hug",
   "rightColumn": 2,
-  "text": "Clear",
+  "text": "",
   "topRow": 2,
   "type": "BUTTON_WIDGET",
   "version": 1,

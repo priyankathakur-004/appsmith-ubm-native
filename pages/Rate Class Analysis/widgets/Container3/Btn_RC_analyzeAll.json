@@ -12,6 +12,9 @@
   },
   {
    "key": "isDisabled"
+  },
+  {
+   "key": "text"
   }
  ],
  "dynamicTriggerPathList": [
@@ -41,7 +44,7 @@
  "resetFormOnClick": false,
  "responsiveBehavior": "hug",
  "rightColumn": 55,
- "text": "Run all",
+ "text": "{{ (appsmith.store.rc_inventory || []).length ? \"Run all (\" + (appsmith.store.rc_inventory || []).filter(a => a.runnable).length + \")\" : \"Run all\" }}",
  "tooltip": "Price every eligible electric account for this customer against its own recent months. Takes a minute or two per account.",
  "topRow": 17,
  "type": "BUTTON_WIDGET",
