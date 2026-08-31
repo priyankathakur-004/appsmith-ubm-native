@@ -1895,22 +1895,6 @@ export default {
 			(!vendor || String(r.vendor) === vendor));
 	},
 
-	siteOptions() {
-		const seen = {}, out = [{ label: "All sites", value: "" }];
-		for (const r of RateClassData.portfolioRows()) {
-			if (r.site && !seen[r.site]) { seen[r.site] = 1; out.push({ label: r.site, value: r.site }); }
-		}
-		return out;
-	},
-
-	vendorOptions() {
-		const seen = {}, out = [{ label: "All utilities", value: "" }];
-		for (const r of RateClassData.portfolioRows()) {
-			if (r.vendor && !seen[r.vendor]) { seen[r.vendor] = 1; out.push({ label: r.vendor, value: r.vendor }); }
-		}
-		return out;
-	},
-
 	// Analysis term. Each account is still anchored on its own most recent data —
 	// this caps how far back the window may reach, so a user can ask for 12, 24 or
 	// 36 months without the query changing.
@@ -1927,10 +1911,20 @@ export default {
 		return (t === 24 || t === 36) ? t : 12;
 	},
 
+	// The site and utility filters live inside the results widget now, next to the
+	// table they narrow. They reach the store the same way the Run button reaches
+	// the run: the widget writes the chosen values into its own model and fires
+	// this, because triggerEvent carries no payload of its own.
+	//
+	// They stay in the store rather than staying inside the widget so the Excel
+	// export sees the same rows the screen does — a workbook that quietly covered
+	// accounts the user had filtered out would be worse than no filter at all.
+	// Nothing re-runs: the expensive part is the pricing, and an account's answer
+	// does not change because a sibling was filtered away.
 	async onFilterChange() {
-		// Filters are display-only, so nothing re-runs; this exists so the widgets
-		// have a handler and the store write is explicit.
-		return true;
+		const m = (typeof Lst_RC_results !== "undefined" && Lst_RC_results.model) || {};
+		await storeValue("rc_f_site", m.filterSite == null ? "" : String(m.filterSite), false);
+		await storeValue("rc_f_vendor", m.filterVendor == null ? "" : String(m.filterVendor), false);
 	},
 
 	// =====================================================================
