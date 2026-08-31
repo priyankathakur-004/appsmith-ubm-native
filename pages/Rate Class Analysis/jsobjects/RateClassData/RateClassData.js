@@ -86,11 +86,21 @@ export default {
 	// every electric account with the usage that would be priced before deciding
 	// what is worth spending minutes of tariff API time on. No pricing runs here.
 	async onCustomerChange() {
+		// The loading flag goes up FIRST, before anything is cleared. Clearing the
+		// previous customer's accounts empties the table, and the locations query
+		// that follows takes a second or two — the flag is what keeps the results
+		// section on screen through that, so it can show it is working. Without it
+		// the section unmounts and the page goes blank between the click and the
+		// first row, which reads as though the click never registered.
+		await storeValue("rc_inv_loading", true);
 		await RateClassData._clearRun();
-		await storeValue("rc_inventory", []);
-		await storeValue("rc_f_site", "");
-		await storeValue("rc_f_vendor", "");
+		await storeValue("rc_inventory", [], false);
+		await storeValue("rc_f_site", "", false);
+		await storeValue("rc_f_vendor", "", false);
+		await storeValue("rc_f_location", "", false);
 		await storeValue("rc_screen", 4);
+		// Set after _clearRun, which resets the progress line.
+		await storeValue("rc_progress", "Loading this customer's accounts…");
 		const res = await RC_fetchLocations.run();
 		const arr = Array.isArray(res) ? res : ((res && (res.data || res.body)) || []);
 		await storeValue("rc_location_opts", Array.isArray(arr) ? arr : []);
@@ -977,7 +987,14 @@ export default {
 	// the table says 165,550 kWh over 12 months, that is what goes to Arcadia.
 	async loadInventory() {
 		const customerId = (typeof RC_CustomerSelect !== "undefined") ? RC_CustomerSelect.selectedOptionValue : null;
-		if (!customerId) return;
+		if (!customerId) {
+			// The caller may already have raised the flag; this is the one path that
+			// does not reach the finally block below, so it clears it here or the
+			// page spins for good.
+			await storeValue("rc_inv_loading", false);
+			await storeValue("rc_progress", "");
+			return;
+		}
 		await storeValue("rc_inv_loading", true);
 		await storeValue("rc_progress", "Loading accounts…");
 		await storeValue("rc_inventory", [], false);
@@ -2390,6 +2407,7 @@ export default {
 	// store, never reading a query's result property back, so the option getters
 	// stay pure store readers and avoid the reactive-dependency-misuse error.
 	async initPage() {
+		await storeValue("rc_inv_loading", true);
 		await RateClassData._clearRun();
 		await storeValue("rc_inventory", [], false);
 		await storeValue("rc_screen", 1);
@@ -2403,6 +2421,7 @@ export default {
 		// result shape. Results are session-only now; this clears anything a previous
 		// build left behind in localStorage.
 		await storeValue("rc_cache", null);
+		await storeValue("rc_progress", "Loading customers…");
 		const res = await RC_fetchCustomers.run();
 		const arr = Array.isArray(res) ? res : ((res && (res.data || res.body)) || []);
 		await storeValue("rc_customer_opts", Array.isArray(arr) ? arr : []);
@@ -2410,6 +2429,7 @@ export default {
 		// locations and accounts up front — otherwise the page opens on an empty
 		// table and reads as broken until someone re-picks the customer they can
 		// already see selected.
+		await storeValue("rc_progress", "Loading this customer's accounts…");
 		const locRes = await RC_fetchLocations.run();
 		const locArr = Array.isArray(locRes) ? locRes : ((locRes && (locRes.data || locRes.body)) || []);
 		await storeValue("rc_location_opts", Array.isArray(locArr) ? locArr : []);

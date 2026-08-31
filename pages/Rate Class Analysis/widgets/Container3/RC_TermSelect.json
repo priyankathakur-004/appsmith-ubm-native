@@ -14,6 +14,9 @@
     },
     {
       "key": "accentColor"
+    },
+    {
+      "key": "isDisabled"
     }
   ],
   "dynamicHeight": "FIXED",
@@ -23,7 +26,7 @@
       "key": "onOptionChange"
     }
   ],
-  "isDisabled": false,
+  "isDisabled": "{{ !!appsmith.store.rc_inv_loading || !!appsmith.store.rc_loading }}",
   "isFilterable": true,
   "isLoading": false,
   "isRequired": false,
