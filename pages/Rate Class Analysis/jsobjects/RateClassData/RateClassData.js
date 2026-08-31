@@ -1820,8 +1820,14 @@ export default {
 		// pricing. An account failing the last test can be off by an order of
 		// magnitude, so it is reported on its own row and kept out of the totals.
 		const modeled = rows.filter(r => r.utility_default_annual != null && r.has_supply && !r.demand_suspect);
-		const noContract = rows.filter(r => !r.has_supply).length;
-		const suspect = rows.filter(r => r.has_supply && r.demand_suspect).length;
+		// An excluded account usually fails more than one of these tests at once, so
+		// each is counted against its most fundamental cause only. Naming the shallow
+		// one is worse than naming none: reporting a Texas account as "unsound kW"
+		// invites someone to go and fix the meter data, when the rates priced for it
+		// are delivery-only and it would still have nothing to compare against.
+		const noRate = rows.filter(r => r.utility_default_annual == null).length;
+		const noContract = rows.filter(r => r.utility_default_annual != null && !r.has_supply).length;
+		const suspect = rows.filter(r => r.utility_default_annual != null && r.has_supply && r.demand_suspect).length;
 		const cheapest = modeled.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
 		const actualAll = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const actualModeled = modeled.reduce((t, r) => t + (r.actual_annual || 0), 0);
@@ -1849,9 +1855,10 @@ export default {
 					+ (fullSvc > 0 ? ` · full service ${money(fullSvc)}` : "")),
 			card("Utility cost", modeled.length ? money(cheapest) : "—",
 				`${modeled.length} account(s) compared`
+					+ (noRate ? ` · ${noRate} with no comparable rate` : "")
 					+ (noContract ? ` · ${noContract} on utility supply` : "")
 					+ (suspect ? ` · ${suspect} with unsound kW` : "")
-					+ ((noContract || suspect) ? ", excluded" : "")),
+					+ ((noRate || noContract || suspect) ? ", excluded" : "")),
 			card("Contract vs utility", modeled.length ? (diff >= 0 ? "+" : "-") + money(Math.abs(diff)) : "—",
 				// Only the accounts carrying a utility figure are in this comparison,
 				// so say so rather than implying it covers the whole portfolio.
