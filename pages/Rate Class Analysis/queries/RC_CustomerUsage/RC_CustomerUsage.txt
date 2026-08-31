@@ -70,18 +70,22 @@ SELECT
     -- differs from the key the chain started under.
     MAX(b.account_code)     FILTER (WHERE b.bill_type = 'Supply Only'
                                       AND b.acct_norm <> g.account_key) AS supply_account_code,
-    -- Virtual account identifiers, kept per stream so the workbook can show which
+    -- Virtual account identifiers, kept per stream so the report can show which
     -- virtual accounts were stitched into this physical account. Read through
     -- to_jsonb rather than named directly: the column is present on the reporting
     -- view but is not guaranteed across environments, and a missing key returns
     -- NULL here instead of failing the whole query (which would empty the page).
-    -- Where it is absent the virtual account GROUP id stands in, which is the
-    -- identifier the stitching itself is built on.
+    --
+    -- Where a row carries no virtual account id the GROUP id stands in, since that
+    -- is the identifier the stitching itself is built on. It is prefixed 'grp' so
+    -- the substitution is visible: the two id spaces look alike, and a group id
+    -- printed as though it were a virtual account id would send someone looking up
+    -- the wrong record with no hint that anything had been swapped.
     STRING_AGG(DISTINCT COALESCE(to_jsonb(b) ->> 'virtual_account_id',
-                                 b.virtual_account_group_id::text), ', ')
+                                 'grp ' || b.virtual_account_group_id::text), ', ')
         FILTER (WHERE b.bill_type =  'Supply Only')           AS supply_va_ids,
     STRING_AGG(DISTINCT COALESCE(to_jsonb(b) ->> 'virtual_account_id',
-                                 b.virtual_account_group_id::text), ', ')
+                                 'grp ' || b.virtual_account_group_id::text), ', ')
         FILTER (WHERE b.bill_type <> 'Supply Only')           AS delivery_va_ids,
     -- Arcadia covers U.S. utilities only, and a non-U.S. postcode collides with a
     -- five-digit U.S. ZIP (a Mexican CP 20355 resolves to Pepco in Washington DC),

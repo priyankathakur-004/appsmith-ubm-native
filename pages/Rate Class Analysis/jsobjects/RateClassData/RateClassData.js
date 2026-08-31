@@ -564,6 +564,12 @@ export default {
 		// --- 2. Look up serving utilities (LSEs) for the zip ---
 		await report("Finding utilities for zip " + zip + "…");
 		let lses = await RateClassData._cachedLses(zip, cache);
+		// /lses returns more than utilities: state incentive programmes are carried
+		// as pseudo-LSEs in the same list ("State of Texas Incentives" came back
+		// alongside CenterPoint for 77049). They publish no retail service, so
+		// pricing them is meaningless, and naming them in the unmatched-utility
+		// warning made it read as though two companies served the site.
+		lses = lses.filter(l => !/\bincentive/i.test(String(l && l.name || "")));
 		// A ZIP is almost never served by one utility: Genability also returns the
 		// rural co-ops and munis whose territory overlaps it, plus state incentive
 		// "LSEs". A site cannot switch to a co-op — co-ops serve a defined membership
@@ -1849,14 +1855,21 @@ export default {
 			card("Contract vs utility", modeled.length ? (diff >= 0 ? "+" : "-") + money(Math.abs(diff)) : "—",
 				// Only the accounts carrying a utility figure are in this comparison,
 				// so say so rather than implying it covers the whole portfolio.
-				(diff >= 0 ? "contract cost less" : "utility would have cost less")
-					+ (modeled.length < rows.length ? ` · ${modeled.length} of ${rows.length}` : ""),
-				diff >= 0 ? "pos" : "neg"),
+				modeled.length
+					? (diff >= 0 ? "contract cost less" : "utility would have cost less")
+						+ (modeled.length < rows.length ? ` · ${modeled.length} of ${rows.length}` : "")
+					: "no account had a comparable utility rate",
+				modeled.length ? (diff >= 0 ? "pos" : "neg") : ""),
 			card("Difference %", (modeled.length && cheapest) ? ((diff / cheapest) * 100).toFixed(1) + "%" : "—",
-				"of the utility cost", diff >= 0 ? "pos" : "neg"),
+				modeled.length && cheapest ? "of the utility cost" : "nothing to compare against",
+				(modeled.length && cheapest) ? (diff >= 0 ? "pos" : "neg") : ""),
 			card("Total consumption", Math.round(kwh).toLocaleString() + " kWh", `${rows.length} account(s)`),
 			card("Peak demand", Math.round(peak).toLocaleString() + " kW",
-				suspectPeaks ? `highest of ${sane.length} accounts with sound kW data` : "highest across accounts")
+				!sane.length
+					? "⚠ no account has a sound kW reading — this is the highest of the unreliable ones"
+					: (suspectPeaks ? `highest of ${sane.length} account(s) with sound kW data`
+					                : "highest across accounts"),
+				sane.length ? "" : "neg")
 		];
 	},
 
