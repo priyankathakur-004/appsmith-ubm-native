@@ -648,6 +648,15 @@ export default {
 			// seen taking the top slot on 5,980 kWh and 71,700 kWh accounts alike.
 			// A site with a meter reading cannot take one.
 			if (/\bunmeter(ed)?\b/.test(nm)) return false;
+			// Supplemental service: standby, buyback, parallel generation and
+			// incremental-load schedules price only the part of the load the customer
+			// does NOT self-supply, so running a whole facility's usage through one
+			// returns a fraction of a real bill. The effective-rate floor below was
+			// meant to catch these but is a blunt instrument and let two through on a
+			// live run — "Large General - Standby" priced 678,173 kWh at $14,741 and
+			// produced a -623% contract-versus-utility figure. Excluding them by name
+			// is exact where the floor is approximate.
+			if (/\bstandby\b|\bback-?up\b|\bbuy-?back\b|parallel generation|supplemental|incremental load/.test(nm)) return false;
 			const isEvCharging = nm.indexOf("electric vehicle") >= 0
 				|| nm.indexOf("vehicle charging") >= 0
 				|| (/\bev\b/.test(nm) && (/charg/.test(nm) || /\bdc fast\b/.test(nm) || /fast charger/.test(nm)));
@@ -809,7 +818,14 @@ export default {
 		const demandMissing = demandMissingMonths > 0;
 		// Any of these failure modes means demand can't be trusted — withhold the pick.
 		const demandSuspect = demandMissing || demandSpikeMonths > 0 || demandUnderMonths > 0;
-		const MIN_EFFECTIVE_RATE = 0.02; // $/kWh
+		// A bundled utility rate has to bill a credible all-in price. Real commercial
+		// service runs 8-15 c/kWh — the validated EnerNova workbook priced energy at
+		// 8.6-10.5 c/kWh — so anything under 4 c/kWh is not full-requirements service,
+		// it is a supplemental schedule pricing a slice of the load. The floor was
+		// 2 c/kWh, which sounded safe and was not: two rates came in at 2.17 and 2.39
+		// c/kWh on a live run, were accepted as the comparison basis, and produced
+		// -623% and -588% figures that then fed the portfolio headline.
+		const MIN_EFFECTIVE_RATE = 0.04; // $/kWh
 		// Below this modeled demand $/kW-year a rate effectively doesn't bill
 		// demand (~$0.50/kW-mo; real demand charges are $2–25/kW-mo).
 		const MIN_DEMAND_PER_KW_YR = 6;
@@ -1536,6 +1552,18 @@ export default {
 			// --- 5. Actual charges vs. the picked rate's modeled charges ---
 			await storeValue("rc_progress", "Comparing billed charges…");
 			const liByLoc = await RateClassData._buildLineItemCompare(customerId, forLineItems);
+			// Charges that were really billed but have no counterpart in the modeled
+			// rate — most often taxes, and on some accounts a large "unclassified"
+			// remainder. They would still be payable on the utility, so a saving is
+			// overstated by roughly this much. One account in a live run showed a
+			// $387,016 alternative-rate saving of which $262,919 was this gap. The
+			// drill-down already said so; the table and the rollup did not, which is
+			// where the number actually gets read.
+			for (const r of portfolio) {
+				const li = liByLoc[String(r.location_id)];
+				r.structural_gap = li ? Number(li.structuralGap) || 0 : 0;
+				r.saving_overstated = !!(r.savings > 0 && r.structural_gap > r.savings * 0.25);
+			}
 
 			const totalActual = portfolio.reduce((t, r) => t + (r.actual_annual || 0), 0);
 			const totalSavings = portfolio.reduce((t, r) => t + (r.savings > 0 ? r.savings : 0), 0);
@@ -1568,6 +1596,11 @@ export default {
 				skipped,
 				totalActual: Number(totalActual.toFixed(2)),
 				totalSavings: Number(totalSavings.toFixed(2)),
+				// Summed only over the accounts that actually show a saving, since
+				// that is the figure it qualifies.
+				totalStructuralGap: Number(portfolio.reduce((t, r) =>
+					t + (r.savings > 0 ? (r.structural_gap || 0) : 0), 0).toFixed(2)),
+				savingsOverstatedCount: portfolio.filter(r => r.saving_overstated).length,
 				totalSavingsPct: totalActual > 0 ? Number(((totalSavings / totalActual) * 100).toFixed(1)) : null,
 				accountsWithDefault: withDefault.length,
 				totalUtilityDefault: Number(totalUtilityDefault.toFixed(2)),
@@ -1804,15 +1837,24 @@ export default {
 		}
 		if (m.totalSavings > 0) {
 			parts.push(`Modeled saving across ${m.withSaving} account(s): $${m.totalSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}${m.totalSavingsPct != null ? ` (${m.totalSavingsPct}% of spend)` : ""}`);
+			// Stated next to the saving, not buried in a drill-down: on some accounts
+			// most of the "saving" is charges the modeled rate simply does not carry.
+			if (m.totalStructuralGap > 0) {
+				const net = m.totalSavings - m.totalStructuralGap;
+				parts.push(`⚠ $${m.totalStructuralGap.toLocaleString(undefined, { maximumFractionDigits: 0 })} of that is billed charges the modeled rates carry no counterpart for (taxes and uncategorised cost, still payable on the utility) — the defensible figure is nearer $${Math.max(0, net).toLocaleString(undefined, { maximumFractionDigits: 0 })}${m.savingsOverstatedCount ? `, and ${m.savingsOverstatedCount} account(s) are overstated by more than a quarter` : ""}`);
+			}
 		} else {
 			parts.push("No account modeled cheaper than its current cost");
 		}
 		if (m.demandSuspect) parts.push(`⚠ ${m.demandSuspect} account(s) have unreliable kW data — no recommendation made for those`);
-		if (m.notModeled) parts.push(`${m.notModeled} account(s) could not be modeled`);
-		// Nothing is dropped for volume any more, so every account missing from the
-		// results is missing for a stated reason on the Not modeled tab.
+		// Two different things were both called "not modeled": accounts that were
+		// priced and got nothing back, and accounts that never reached the API. The
+		// summary said "3 could not be modeled" beside a tab reading "Not modeled (1)",
+		// so the two counts looked like a contradiction. They are separate outcomes
+		// and are now named separately.
+		if (m.notModeled) parts.push(`${m.notModeled} account(s) were priced but no rate came back`);
 		const skippedCount = (m.skipped || []).length;
-		if (skippedCount > 0) parts.push(`${skippedCount} account(s) not modeled — see the Not modeled tab for why`);
+		if (skippedCount > 0) parts.push(`${skippedCount} account(s) excluded before pricing — see the Excluded tab for why`);
 		return parts.join("  •  ");
 	},
 
@@ -1911,7 +1953,7 @@ export default {
 		const card = (label, value, sub, tone) => ({ label, value, sub: sub || "", tone: tone || "" });
 		const money = v => "$" + Math.round(v).toLocaleString();
 		return [
-			card("Accounts", String(rows.length), m.notModeled ? `${m.notModeled} not modeled` : "all modeled"),
+			card("Accounts", String(rows.length), m.notModeled ? `${m.notModeled} returned no rate` : "all priced"),
 			card("Total actual cost", money(actualAll),
 				`supply ${money(supply)} · delivery ${money(delivery)}`
 					+ (fullSvc > 0 ? ` · full service ${money(fullSvc)}` : "")),
