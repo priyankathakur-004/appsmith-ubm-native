@@ -2089,9 +2089,9 @@ export default {
 			["Actual = what was billed (competitive supply + utility delivery, or a single full-service invoice). Modeled = the same months priced on each utility rate through Arcadia. Difference positive = the utility rate would have cost MORE, i.e. the current arrangement is the cheaper one."],
 			["Customer", "Site", "Account", "Virtual accounts", "ZIP", "Utility", "Current supplier",
 			 "Account status", "Period start", "Period end", "Months", term + "-mo kWh", "Peak kW",
-			 "Supply $", "Delivery $", "Full service $", "ACTUAL TOTAL $", "Actual c/kWh",
-			 "Utility rate", "Code", "Rate class", "MODELED $", "Modeled c/kWh",
-			 "DIFFERENCE $", "DIFFERENCE %", "Notes"]];
+			 "Supply $", "Delivery $", "Full service $", "ACTUAL TOTAL $", "Actual ¢/kWh",
+			 "Utility rate", "Code", "Rate class", "MODELED $", "Modeled ¢/kWh",
+			 "SAVINGS / DIFFERENCE $", "SAVINGS / DIFFERENCE %", "Notes"]];
 		for (const r of rows) {
 			const kwh = r.annual_kwh || 0;
 			// The exact peak, not the rounded figure the table shows: this is the
@@ -2142,7 +2142,7 @@ export default {
 		}
 		const loc = [["Location summary"],
 			["Each account measured against the utility rate used as its comparison basis. An account that returned no priced rate leaves the utility column blank rather than contributing a zero."],
-			["Site", "Accounts", term + "-mo kWh", "Actual $", "Utility $", "Difference $", "Difference %"]];
+			["Site", "Accounts", term + "-mo kWh", "Actual $", "Utility $", "Savings / difference $", "Savings / difference %"]];
 		for (const entry of bySite.entries()) {
 			const site = entry[0], list = entry[1];
 			const priced = list.filter(r => r.utility_default_annual != null);
@@ -2176,7 +2176,7 @@ export default {
 		const det = [["Account detail — monthly billed history"],
 			["Supply and delivery are separate invoices against the same meter. Consumption is the metered volume, counted once — never the sum of the two, which would double the kWh."],
 			["Site", "Account", "Virtual accounts", "Month", "kWh", "Peak kW",
-			 "Supply $", "Delivery $", "Full service $", "Total $", "c/kWh"]];
+			 "Supply $", "Delivery $", "Full service $", "Total $", "¢/kWh"]];
 		for (const r of rows) {
 			const a = accounts[String(r.location_id)];
 			if (!a) continue;
@@ -2196,8 +2196,8 @@ export default {
 		// ---- Tariff Results ---------------------------------------------------
 		const tar = [["Tariff results — every utility rate priced"],
 			["Restricted to currently effective, non-closed, commercial (GENERAL) rate classes published by the serving utility. Riders, surcharges, residential, unmetered, EV and special-use schedules are excluded before pricing; the Status column says why a rate that WAS priced is still not comparable."],
-			["Site", "Account", "Utility", "ZIP", "Rate", "Code", "TOU", "Comparison basis",
-			 "kWh in", "Peak kW in", "Modeled $", "Energy $", "Demand $", "Other $", "c/kWh", "Status"]];
+			["Site", "Account", "Utility", "ZIP", "Rate", "Code", "TOU", "Std offer (comparison basis)",
+			 "kWh in", "Peak kW in", "Modeled $", "Energy $", "Demand $", "Other $", "¢/kWh", "Status"]];
 		// Same reason as the Executive Summary: report the demand figure that was
 		// actually sent to the tariff API, not the rounded one on screen.
 		const tarPeak = (r) => {
