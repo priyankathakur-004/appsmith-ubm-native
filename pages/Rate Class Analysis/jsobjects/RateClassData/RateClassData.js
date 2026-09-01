@@ -2372,8 +2372,15 @@ export default {
 			const pm = RateClassData.portfolioMeta();
 			const who = pm.customerName
 				|| ((typeof RC_CustomerSelect !== "undefined" && RC_CustomerSelect.selectedOptionLabel) || "customer");
-			const stem = "rate-class-analysis-"
-				+ String(who).replace(/[^A-Za-z0-9]+/g, "-").toLowerCase()
+			const slug = (v) => String(v).replace(/[^A-Za-z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase();
+			// A single-account run named only after the customer produces a file that
+			// reads as the whole portfolio and holds one account of fifty-eight. The
+			// account goes in the name so the two cannot be confused on disk, where
+			// the sheet that explains the scope is not visible.
+			const single = rows.length === 1 && appsmith.store.rc_single_account
+				? "-" + slug(rows[0].account_code || rows[0].site || "account")
+				: "";
+			const stem = "rate-class-analysis-" + slug(who) + single
 				+ "-" + moment().format("YYYYMMDD");
 
 			if (RateClassData._xlsxAvailable()) {
