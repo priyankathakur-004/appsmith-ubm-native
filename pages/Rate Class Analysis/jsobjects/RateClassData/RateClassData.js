@@ -1181,7 +1181,7 @@ export default {
 			actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply,
 			chgTotals, chgSupply,
 			blocker: RateClassData._blockingIssue(months, zip, country, state, vendor),
-			warning: RateClassData._dataWarning(months, vendor)
+			warning: RateClassData._dataWarning(months, vendor, firstOf("account_status"))
 		};
 	},
 
@@ -1218,9 +1218,17 @@ export default {
 	// the short history hid the bigger of the two behind the smaller. This column
 	// is what someone reads to decide whether an account is worth spending minutes
 	// on, so it has to show the whole picture.
-	_dataWarning(months, vendor) {
+	_dataWarning(months, vendor, accountStatus) {
 		const term = RateClassData.analysisTerm();
 		const out = [];
+		// A closed account is still worth pricing — what it paid against what the
+		// utility would have charged is a real historical figure, and dropping it
+		// would quietly shrink the portfolio total. But nobody can move a closed
+		// account onto a better rate, so the recommendation is reporting only, and
+		// that has to be said before someone carries it into a renewal conversation.
+		if (/closed/i.test(String(accountStatus || ""))) {
+			out.push("Account is closed — the comparison is historical, there is no rate to move it to");
+		}
 		if (!vendor) out.push("No utility on the bills — every utility serving the ZIP will be priced");
 		if (months.length < term) out.push(`Only ${months.length} of ${term} months of data`);
 		const zeroKw = months.filter(m => (Number(m.kwh) || 0) >= 5000 && (Number(m.kw) || 0) <= 0).length;
