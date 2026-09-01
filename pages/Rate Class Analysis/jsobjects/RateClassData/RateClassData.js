@@ -1212,19 +1212,26 @@ export default {
 	// Problems that don't stop the run but change how much the answer is worth.
 	// Phrased as what it means for the analysis rather than as a data-quality
 	// verdict, because that is the decision the reader is making.
+	// Every problem this account has, not just the first one found. These are
+	// independent faults and an account can carry several: one in the list has six
+	// months of history AND no demand reading in any of them, and reporting only
+	// the short history hid the bigger of the two behind the smaller. This column
+	// is what someone reads to decide whether an account is worth spending minutes
+	// on, so it has to show the whole picture.
 	_dataWarning(months, vendor) {
 		const term = RateClassData.analysisTerm();
-		if (!vendor) return "No utility on the bills — every utility serving the ZIP will be priced";
-		if (months.length < term) return `Only ${months.length} of ${term} months of data`;
+		const out = [];
+		if (!vendor) out.push("No utility on the bills — every utility serving the ZIP will be priced");
+		if (months.length < term) out.push(`Only ${months.length} of ${term} months of data`);
 		const zeroKw = months.filter(m => (Number(m.kwh) || 0) >= 5000 && (Number(m.kw) || 0) <= 0).length;
-		if (zeroKw) return `${zeroKw} month(s) with usage but no demand reading — demand charges under-modeled`;
+		if (zeroKw) out.push(`${zeroKw} month(s) with usage but no demand reading — demand charges under-modeled`);
 		const spike = months.filter(m => (Number(m.kw) || 0) > 50 && (Number(m.kwh) || 0) > 0
 			&& ((Number(m.kwh) || 0) / ((Number(m.kw) || 1) * 730)) < 0.02).length;
-		if (spike) return `${spike} month(s) with an implausibly high demand reading — demand charges over-modeled`;
+		if (spike) out.push(`${spike} month(s) with an implausibly high demand reading — demand charges over-modeled`);
 		const under = months.filter(m => (Number(m.kw) || 0) > 0
 			&& ((Number(m.kwh) || 0) / ((Number(m.kw) || 1) * 730)) > 1.0).length;
-		if (under) return `${under} month(s) with a demand reading too low for the usage — demand charges under-modeled`;
-		return "";
+		if (under) out.push(`${under} month(s) with a demand reading too low for the usage — demand charges under-modeled`);
+		return out.join(" · ");
 	},
 
 	// The account table, narrowed by the location dropdown if one is set.
