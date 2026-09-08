@@ -1856,7 +1856,16 @@ export default {
 			g.actual = Number(g.actual.toFixed(2));
 			g.modeled = Number(g.modeled.toFixed(2));
 			g.delta = Number((g.modeled - g.actual).toFixed(2));
-			g.oneSided = (g.actual > 1 && g.modeled < 1) || (g.modeled > 1 && g.actual < 1);
+			// "One side only" means the other side is absent, not that it is smaller.
+			// Testing modeled < 1 caught negative modeled totals too, and a utility
+			// schedule can easily net a credit: Ohio Edison's fixed charges model at
+			// -$19,367 against $3,809 billed. The rate plainly DOES carry fixed
+			// charges — they net below zero — so calling that "no counterpart" and
+			// then counting actual minus modeled as unmatched billed cost added
+			// $23,175 of credits to a gap that is supposed to measure charges the
+			// rate cannot price. Absence is a value near zero, either way.
+			g.oneSided = (g.actual > 1 && Math.abs(g.modeled) < 1)
+				|| (g.modeled > 1 && Math.abs(g.actual) < 1);
 			g.modeledLines = lines
 				.filter(x => RateClassData._groupOfModeledLine(x, demandItemised) === g.group)
 				.map(x => ({ name: x.name, unit: x.qty_unit, qty: Number(num(x.qty).toFixed(2)),
@@ -1870,8 +1879,11 @@ export default {
 		// most often taxes, which Genability does not carry. That money is still owed
 		// on the utility rate, so it inflates the headline difference by roughly this
 		// much.
+		// Only what was billed and has nothing to answer it. Never more than the
+		// billed amount itself — subtracting a negative modeled side would inflate
+		// the gap past the money that was actually charged.
 		const gapGroups = groups.filter(g => g.oneSided && g.actual > g.modeled);
-		const structuralGap = gapGroups.reduce((t, g) => t + (g.actual - g.modeled), 0);
+		const structuralGap = gapGroups.reduce((t, g) => t + Math.max(0, g.actual - Math.max(0, g.modeled)), 0);
 
 		return {
 			locationId: acct.locationId,
