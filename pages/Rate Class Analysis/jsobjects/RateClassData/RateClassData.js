@@ -825,7 +825,14 @@ export default {
 		// 2 c/kWh, which sounded safe and was not: two rates came in at 2.17 and 2.39
 		// c/kWh on a live run, were accepted as the comparison basis, and produced
 		// -623% and -588% figures that then fed the portfolio headline.
-		const MIN_EFFECTIVE_RATE = 0.04; // $/kWh
+		//
+		// It only applies where the ACTUAL is a bundled bill. On a Distribution Only
+		// account the actual covers delivery alone, so a delivery tariff is the
+		// like-for-like comparison and prices exactly where this floor sits — 3.6
+		// c/kWh on one Illinois account. Applying a bundled test there rejects the
+		// only rate that was ever comparable and leaves the account with no answer.
+		const bundled = ctx.bundledActual !== false;
+		const MIN_EFFECTIVE_RATE = bundled ? 0.04 : 0; // $/kWh
 		// Below this modeled demand $/kW-year a rate effectively doesn't bill
 		// demand (~$0.50/kW-mo; real demand charges are $2–25/kW-mo).
 		const MIN_DEMAND_PER_KW_YR = 6;
@@ -923,6 +930,9 @@ export default {
 			stale: months[0] ? (moment().diff(moment(months[0].month), "months") > 3) : false,
 			lseNames: lses.map(l => l.name).filter(Boolean),
 			servingUtility: ctx.servingUtility || null,
+			// The comparison is delivery-side, not whole-bill. Carried so the row and
+			// the workbook can say so rather than implying otherwise.
+			deliverySideOnly: !bundled,
 			// True when we could not match the bill's vendor to any LSE in the ZIP and
 			// therefore priced every utility there, co-ops included. The ranking is then
 			// only as good as the reader's knowledge of who actually serves the site.
@@ -1196,6 +1206,12 @@ export default {
 			periodTo: months.length ? months[0].month.slice(0, 7) : "",
 			annualKwh, peakKw,
 			actualAnnual, supplyAnnual, deliveryAnnual, fullServiceAnnual, hasSupply,
+			// Does the actual cost cover supply as well as delivery? A Distribution
+			// Only account is billed for delivery alone — nobody sold it energy under
+			// this account — so its actual IS a delivery figure and only a delivery
+			// tariff is comparable to it. Everything downstream that assumes a bundled
+			// bill has to know the difference.
+			bundledActual: (supplyAnnual !== 0) || (fullServiceAnnual !== 0),
 			chgTotals, chgSupply,
 			blocker: RateClassData._blockingIssue(months, zip, country, state, vendor),
 			warning: RateClassData._dataWarning(months, vendor, firstOf("account_status"))
@@ -1466,7 +1482,8 @@ export default {
 					const out = await RateClassData._analyzeLocation(
 						spec.months,
 						{ zip: spec.zip, locationName: spec.name, servingUtility: spec.vendor,
-						  actualAnnual: spec.actualAnnual, monthCount: spec.monthCount },
+						  actualAnnual: spec.actualAnnual, monthCount: spec.monthCount,
+						  bundledActual: spec.bundledActual },
 						cache,
 						{ concurrency: RateClassData._PORTFOLIO_CALC_CONCURRENCY }
 					);
