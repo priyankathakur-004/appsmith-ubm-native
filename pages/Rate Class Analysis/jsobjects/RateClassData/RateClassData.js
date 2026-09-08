@@ -2231,7 +2231,15 @@ export default {
 			.replace(/"/g, "&quot;")
 			// Control characters are not legal in XML 1.0 at all, and one stray
 			// character off a bill description would make the file unopenable.
-			.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "");
+			.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, "")
+			// Everything above plain ASCII becomes a numeric character reference, so
+			// the document is 7-bit throughout and no encoding step can damage it.
+			// It could: the browser wrote this file a byte per character, so an em
+			// dash (U+2014) left the app as 0x14 and a middle dot (U+00B7) as 0xB7 —
+			// 1,314 illegal control bytes in one export, and Excel would not open it.
+			// A reference survives that untouched, being ASCII to begin with, and
+			// Excel renders it back to the right character.
+			.replace(/[^\x09\x0A\x0D\x20-\x7E]/g, (c) => "&#" + c.charCodeAt(0) + ";");
 	},
 
 	// SpreadsheetML 2003. One <Worksheet> per sheet, numbers typed as Number so
