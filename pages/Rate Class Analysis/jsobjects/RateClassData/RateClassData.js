@@ -1102,10 +1102,35 @@ export default {
 			return "";
 		};
 		const term = RateClassData.analysisTerm();
+		let sorted = list.slice().sort((a, b) => (a.month < b.month ? 1 : -1));
+
+		// The two invoices for one month do not arrive together. On an account billed
+		// separately for supply and delivery, the supplier's bill and the utility's
+		// land days or weeks apart, so the newest month routinely has one and not the
+		// other. Pricing it compares a full month of usage against half a month of
+		// cost — Marion's August 2026 came in with $36,367 of supply, no delivery at
+		// all and 0 kW, understating the year by about $20,900 and adding a third
+		// "no demand reading" month that was only a bill in transit.
+		//
+		// Trailing months only. A one-sided month in the middle of the window is a
+		// real gap in the billing history and belongs in the picture; a one-sided
+		// month at the end is almost always just the other bill not being here yet.
+		const twoStream = sorted.some(r => (Number(r.supply_charges) || 0) !== 0
+			&& (Number(r.delivery_charges) || 0) !== 0);
+		let incompleteDropped = 0;
+		if (twoStream) {
+			while (sorted.length > 1) {
+				const m0 = sorted[0];
+				if ((Number(m0.supply_charges) || 0) !== 0 && (Number(m0.delivery_charges) || 0) !== 0) break;
+				sorted = sorted.slice(1);
+				incompleteDropped += 1;
+			}
+		}
+
 		// Newest `term` months, then drop anything more than a month older than that
 		// window: a data gap would otherwise build a multi-year /calculate window
 		// Genability rejects, and every rate would come back errored.
-		const desc = list.slice().sort((a, b) => (a.month < b.month ? 1 : -1)).slice(0, term);
+		const desc = sorted.slice(0, term);
 		const newest = moment(desc[0].month);
 		const kept = desc.filter(r => newest.diff(moment(r.month), "months") <= term + 1);
 		const months = kept.map(r => ({
@@ -1213,8 +1238,9 @@ export default {
 			// bill has to know the difference.
 			bundledActual: (supplyAnnual !== 0) || (fullServiceAnnual !== 0),
 			chgTotals, chgSupply,
+			incompleteDropped,
 			blocker: RateClassData._blockingIssue(months, zip, country, state, vendor),
-			warning: RateClassData._dataWarning(months, vendor, firstOf("account_status"))
+			warning: RateClassData._dataWarning(months, vendor, firstOf("account_status"), incompleteDropped)
 		};
 	},
 
@@ -1313,9 +1339,15 @@ export default {
 	// the short history hid the bigger of the two behind the smaller. This column
 	// is what someone reads to decide whether an account is worth spending minutes
 	// on, so it has to show the whole picture.
-	_dataWarning(months, vendor, accountStatus) {
+	_dataWarning(months, vendor, accountStatus, incompleteDropped) {
 		const term = RateClassData.analysisTerm();
 		const out = [];
+		// Said out loud because it moves the window: the reader is looking at an
+		// older twelve months than the calendar suggests, and that is not something
+		// to discover by noticing the end date.
+		if (incompleteDropped) {
+			out.push(incompleteDropped + " recent month(s) left out — only one of the two invoices had arrived");
+		}
 		// A closed account is still worth pricing — what it paid against what the
 		// utility would have charged is a real historical figure, and dropping it
 		// would quietly shrink the portfolio total. But nobody can move a closed
