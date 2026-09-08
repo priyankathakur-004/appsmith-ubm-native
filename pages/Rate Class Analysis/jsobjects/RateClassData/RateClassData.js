@@ -1107,6 +1107,7 @@ export default {
 			actual: Number(r.actual_charges) || 0,
 			supply: Number(r.supply_charges) || 0,
 			delivery: Number(r.delivery_charges) || 0,
+			supplyAcct: RateClassData._pickStr(r, ["supply_account_code"]),
 			fullService: Number(r.full_service_charges) || 0,
 			// UBM's own classification of the bill. This is the actual side of the
 			// charge comparison — see _buildLineItemCompare for why the line-item table
@@ -1198,6 +1199,68 @@ export default {
 			chgTotals, chgSupply,
 			blocker: RateClassData._blockingIssue(months, zip, country, state, vendor),
 			warning: RateClassData._dataWarning(months, vendor, firstOf("account_status"))
+		};
+	},
+
+	// =====================================================================
+	// Supply contract renewal
+	// =====================================================================
+	// A change of supplier opens a new virtual account under a supplier-assigned
+	// number partway through the window. On the validated EnerNova workbook this
+	// was the single largest driver of the twelve-month result — four of five
+	// accounts moved in Nov/Dec 2025, adding about $209,700 between them — so a
+	// comparison that does not surface it attributes to the utility a difference
+	// that actually came from a renewal.
+	//
+	// Everything needed is already per month in RC_CustomerUsage: supply_account_code
+	// is null until the change and carries the new number afterwards.
+	//
+	// Accounts that did NOT change are reported too, with their single rate. Their
+	// absence would read as "not checked" rather than "nothing happened", which is
+	// the more useful thing to know. Returns null only where there is no supply
+	// stream at all — a full-service account has no supply rate to compare.
+	_supplierChange(spec) {
+		const months = (spec.months || []).slice().sort((a, b) => (a.month < b.month ? -1 : 1));
+		if (!months.length || !spec.hasSupply) return null;
+
+		const cents = (list) => {
+			const kwh = list.reduce((t, m) => t + m.kwh, 0);
+			const sup = list.reduce((t, m) => t + m.supply, 0);
+			return kwh > 0 ? (sup / kwh) * 100 : null;
+		};
+		const totalKwh = months.reduce((t, m) => t + m.kwh, 0);
+		const supplyAnnual = months.reduce((t, m) => t + m.supply, 0);
+		const idx = months.findIndex(m => m.supplyAcct);
+		const changed = idx > 0 && idx < months.length;
+
+		// The month the change lands in carries bills from both suppliers, so it
+		// belongs to neither rate — including it drags the new rate back towards the
+		// old one and understates the increase. It stays in the totals, which are
+		// what was actually paid; it is only left out of the two rates.
+		const oldC = changed ? cents(months.slice(0, idx)) : cents(months);
+		const after = months.slice(idx + 1);
+		const newC = changed ? (after.length ? cents(after) : cents(months.slice(idx))) : oldC;
+		if (oldC == null || newC == null) return null;
+
+		// The whole account re-priced with the old supply rate held for all twelve
+		// months: delivery is untouched, only the supply component moves. Comparing
+		// supply alone would understate what the renewal cost the site as a whole.
+		const atOldRate = (spec.actualAnnual - supplyAnnual) + totalKwh * (oldC / 100);
+		return {
+			account: spec.acctCode,
+			site: spec.site,
+			changed: changed,
+			label: changed ? (spec.acctCode + " → " + months[idx].supplyAcct
+				+ " (" + moment(months[idx].month).format("MMM YYYY") + ")") : "unchanged",
+			changedAt: changed ? String(months[idx].month).slice(0, 7) : "",
+			oldCents: Number(oldC.toFixed(2)),
+			newCents: Number(newC.toFixed(2)),
+			changePct: (changed && oldC) ? Number((((newC - oldC) / oldC) * 100).toFixed(1)) : 0,
+			monthsBefore: changed ? idx : months.length,
+			monthsAfter: changed ? Math.max(1, months.length - idx - 1) : 0,
+			actualAnnual: Number(spec.actualAnnual.toFixed(2)),
+			atOldRate: Number(atOldRate.toFixed(2)),
+			extraCost: Number((spec.actualAnnual - atOldRate).toFixed(2))
 		};
 	},
 
@@ -1459,6 +1522,7 @@ export default {
 					supplierLabel: sp.supplierLabel, accountStatus: sp.accountStatus,
 					periodFrom: sp.periodFrom, periodTo: sp.periodTo,
 					months: sp.months, monthCount: sp.monthCount,
+					supplierChange: RateClassData._supplierChange(sp),
 					annualKwh: sp.annualKwh, peakKw: sp.peakKw,
 					actualAnnual: sp.actualAnnual, supplyAnnual: sp.supplyAnnual,
 					deliveryAnnual: sp.deliveryAnnual, fullServiceAnnual: sp.fullServiceAnnual,
@@ -2213,6 +2277,41 @@ export default {
 			+ " account(s) that returned a priced rate; the actual column covers all "
 			+ rows.length + "."]);
 		sheets.push({ name: "Location Summary", rows: loc });
+
+		// ---- Supplier Change --------------------------------------------------
+		// Only accounts that actually changed supplier inside the window. On a
+		// portfolio where none did, the sheet says so rather than being omitted —
+		// its absence would otherwise read as "we did not check".
+		const changes = rows.map(r => (accounts[String(r.location_id)] || {}).supplierChange)
+			.filter(Boolean);
+		const moved = changes.filter(c => c.changed);
+		const sc = [["Supply contract renewal"],
+			["What each account paid per kWh for supply, and where it moved to a new supply account inside the window, either side of the move. The at-old-rate column re-prices the whole account with the earlier supply rate held for the full window — delivery untouched — so the extra cost is what the renewal added, isolated from anything the utility comparison says. Full-service accounts are absent: they buy no supply separately, so there is no rate to compare."],
+			["Site", "Account", "Supply account change", "Months before / after",
+			 "Old ¢/kWh", "New ¢/kWh", "Change %", "Actual $ over window",
+			 "At old supply rate $", "Extra cost $"]];
+		for (const c of changes) {
+			sc.push([c.site, c.account, c.label,
+				c.monthsBefore + " / " + c.monthsAfter,
+				c.oldCents, c.newCents, c.changePct,
+				c.actualAnnual, c.atOldRate, c.extraCost]);
+		}
+		if (moved.length) {
+			const totActual = moved.reduce((t, c) => t + c.actualAnnual, 0);
+			const totOld = moved.reduce((t, c) => t + c.atOldRate, 0);
+			sc.push(["TOTAL", moved.length + " account(s) changed supplier", "", "", "", "", "",
+				Number(totActual.toFixed(2)), Number(totOld.toFixed(2)),
+				Number((totActual - totOld).toFixed(2))]);
+			sc.push([]);
+			sc.push(["Had the previous supply rate held for the whole window, those "
+				+ moved.length + " account(s) would have cost about $"
+				+ Math.abs(Math.round(totActual - totOld)).toLocaleString()
+				+ (totActual >= totOld ? " less" : " more") + " in total."]);
+		} else {
+			sc.push([]);
+			sc.push(["No account moved to a new supply account inside this window."]);
+		}
+		sheets.push({ name: "Supplier Change", rows: sc });
 
 		// ---- Account Detail ---------------------------------------------------
 		const det = [["Account detail — monthly billed history"],
