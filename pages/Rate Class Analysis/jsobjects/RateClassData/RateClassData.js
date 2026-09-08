@@ -2334,6 +2334,14 @@ export default {
 				if (t.deliveryOnly) notes.push("delivery-only utility — not comparable to a bundled bill");
 				if (t.demandIncomplete) notes.push("bills no demand charge on a demand-metered load");
 				if (t.error) notes.push("errored: " + String(t.error).slice(0, 120));
+				// The not-like-for-like flag lives on the row, and the row's note only
+				// reached this sheet for accounts that priced nothing — so on exactly
+				// the accounts carrying the flag it was invisible in the workbook,
+				// which is the artefact that leaves the app. It belongs on the row
+				// that IS the basis, since that is the comparison being questioned.
+				if (r.basis_mismatch && t.isUtilityDefaultPick) {
+					notes.push(`⚠ prices at ${cents(t.modeledAnnualCost, kwh)}¢/kWh against ${cents(r.actual_annual, kwh)}¢/kWh actually paid — check this rate covers the same service as the bill (billed ${r.has_supply ? "supply + delivery" : (r.full_service_annual > 0 ? "full service" : "delivery only")})`);
+				}
 				if (r.warning) notes.push(r.warning);
 				exec.push(head.concat([t.tariffName, t.tariffCode, "GENERAL (commercial)",
 					money(t.modeledAnnualCost), cents(t.modeledAnnualCost, kwh),
@@ -2455,7 +2463,10 @@ export default {
 				const status = t.error ? ("Errored — " + String(t.error).slice(0, 140))
 					: (t.deliveryOnly ? "Delivery-only utility — not comparable to a bundled bill"
 					: (t.nonService ? "Not full-requirements service — not comparable"
-					: (t.demandIncomplete ? "Bills no demand charge on a demand-metered load" : "Comparable")));
+					: (t.demandIncomplete ? "Bills no demand charge on a demand-metered load"
+					: ((r.basis_mismatch && t.isUtilityDefaultPick)
+						? "Comparable, but priced far from the bill — check it covers the same service"
+						: "Comparable"))));
 				tar.push([r.site, r.account_code, t.lseName, r.zip, t.tariffName, t.tariffCode,
 					t.isTOU ? "Yes" : "No", t.isUtilityDefaultPick ? "Yes" : "No",
 					r.annual_kwh, tarPeak(r),
