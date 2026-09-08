@@ -1115,11 +1115,19 @@ export default {
 		// Trailing months only. A one-sided month in the middle of the window is a
 		// real gap in the billing history and belongs in the picture; a one-sided
 		// month at the end is almost always just the other bill not being here yet.
+		//
+		// At most two. A bill runs a few weeks late, not the better part of a year:
+		// beyond two consecutive one-sided months this is how the account is billed,
+		// not a delay, and that belongs in the picture. Without the cap the loop ran
+		// until it found a month with both invoices and took everything newer with
+		// it — one Pennsylvania account with ten months of history was cut to one and
+		// dropped out of the run entirely.
 		const twoStream = sorted.some(r => (Number(r.supply_charges) || 0) !== 0
 			&& (Number(r.delivery_charges) || 0) !== 0);
+		const MAX_IN_TRANSIT = 2;
 		let incompleteDropped = 0;
 		if (twoStream) {
-			while (sorted.length > 1) {
+			while (sorted.length > 1 && incompleteDropped < MAX_IN_TRANSIT) {
 				const m0 = sorted[0];
 				if ((Number(m0.supply_charges) || 0) !== 0 && (Number(m0.delivery_charges) || 0) !== 0) break;
 				sorted = sorted.slice(1);
