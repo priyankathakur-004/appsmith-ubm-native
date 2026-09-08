@@ -2331,8 +2331,19 @@ export default {
 					r.note || "No rate could be priced for this account"]));
 				continue;
 			}
+			// The screen withholds a difference where the kW feed cannot be trusted,
+			// because the modeled demand charge is the largest component on a
+			// demand-metered account and a bad reading moves it by orders of
+			// magnitude. This sheet did not, and it is the one that gets sent on.
+			// M and M Fort Worth 531337 reports a 354,048 kW peak against 2.35m kWh;
+			// its cheapest qualifying rate priced at $5,334,168 against $272,137
+			// actually paid, and that single row put +$5,062,030 into a portfolio
+			// whose other 46 comparisons come to -$1,423,355. The workbook has to be
+			// at least as careful as the screen, not less.
+			const demandUnsound = !!r.demand_suspect;
 			for (const t of rates) {
-				const diff = (r.actual_annual == null) ? null : (t.modeledAnnualCost - r.actual_annual);
+				const diff = (r.actual_annual == null || demandUnsound)
+					? null : (t.modeledAnnualCost - r.actual_annual);
 				const notes = [];
 				if (t.isTOU) notes.push("TOU — default load shape, estimate");
 				if (t.isRTP) notes.push("Hourly / real-time — default load shape, estimate");
@@ -2350,11 +2361,12 @@ export default {
 				if (r.basis_mismatch && t.isUtilityDefaultPick) {
 					notes.push(`⚠ prices at ${cents(t.modeledAnnualCost, kwh)}¢/kWh against ${cents(r.actual_annual, kwh)}¢/kWh actually paid — check this rate covers the same service as the bill (billed ${r.has_supply ? "supply + delivery" : (r.full_service_annual > 0 ? "full service" : "delivery only")})`);
 				}
+				if (demandUnsound) notes.push("difference withheld — the kW readings for this account are unusable, so the modeled demand charge and every figure built on it are unreliable");
 				if (r.warning) notes.push(r.warning);
 				exec.push(head.concat([t.tariffName, t.tariffCode, "GENERAL (commercial)",
 					money(t.modeledAnnualCost), cents(t.modeledAnnualCost, kwh),
 					money(diff),
-					(diff == null || !r.actual_annual) ? "" : Number(((diff / r.actual_annual) * 100).toFixed(1)),
+						(diff == null || !r.actual_annual) ? "" : Number(((diff / r.actual_annual) * 100).toFixed(1)),
 					notes.join("; ")]));
 			}
 		}
@@ -2372,7 +2384,10 @@ export default {
 			["Site", "Accounts", term + "-mo kWh", "Actual $", "Utility $", "Savings / difference $", "Savings / difference %"]];
 		for (const entry of bySite.entries()) {
 			const site = entry[0], list = entry[1];
-			const priced = list.filter(r => r.utility_default_annual != null);
+			// Same exclusion as the header cards and the Executive Summary: an account
+			// whose demand cannot be trusted must not carry a utility figure into a
+			// site total either.
+			const priced = list.filter(r => r.utility_default_annual != null && !r.demand_suspect);
 			const a = list.reduce((t, r) => t + (r.actual_annual || 0), 0);
 			const k = list.reduce((t, r) => t + (r.annual_kwh || 0), 0);
 			const u = priced.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
@@ -2382,7 +2397,7 @@ export default {
 				priced.length ? money(u - aP) : "",
 				(priced.length && aP) ? Number((((u - aP) / aP) * 100).toFixed(1)) : ""]);
 		}
-		const priced = rows.filter(r => r.utility_default_annual != null);
+		const priced = rows.filter(r => r.utility_default_annual != null && !r.demand_suspect);
 		const totActual = rows.reduce((t, r) => t + (r.actual_annual || 0), 0);
 		const totKwh = rows.reduce((t, r) => t + (r.annual_kwh || 0), 0);
 		const totUtil = priced.reduce((t, r) => t + (r.utility_default_annual || 0), 0);
@@ -2394,9 +2409,11 @@ export default {
 		loc.push([]);
 		// Said explicitly because the two columns cover different sets whenever an
 		// account failed to price, and a reader subtracting them would be wrong.
+		const unsound = rows.filter(r => r.demand_suspect).length;
 		loc.push(["The utility and difference columns cover the " + priced.length
-			+ " account(s) that returned a priced rate; the actual column covers all "
-			+ rows.length + "."]);
+			+ " account(s) that returned a priced rate on demand data sound enough to trust"
+			+ (unsound ? " (" + unsound + " excluded for unusable kW readings)" : "")
+			+ "; the actual column covers all " + rows.length + "."]);
 		sheets.push({ name: "Location Summary", rows: loc });
 
 		// ---- Supplier Change --------------------------------------------------
