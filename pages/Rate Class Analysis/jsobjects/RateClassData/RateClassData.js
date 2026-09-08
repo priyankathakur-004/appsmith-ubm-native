@@ -1678,6 +1678,27 @@ export default {
 					status,
 					note
 				}));
+				// A comparison is only like-for-like when the rate covers the same
+				// service the bill covers, and Arcadia does not say which of its rates
+				// are delivery-only. Where the modeled price per kWh is wildly out of
+				// line with what was actually paid, that is usually what has happened:
+				// a bundled rate priced against a delivery-only bill, or the reverse.
+				// Three delivery-only accounts in this portfolio are compared against
+				// rates costing two to eight times what they pay, and one full-service
+				// account against a rate a third of what it pays.
+				//
+				// This only marks the row. It changes no figure — the alternative is
+				// guessing which rates are delivery-only, and a wrong guess would move
+				// numbers rather than merely question them.
+				const bRow = portfolio[portfolio.length - 1];
+				if (bRow && bRow.utility_default_annual != null && bRow.actual_annual > 0 && bRow.annual_kwh > 0) {
+					const ratio = bRow.utility_default_annual / bRow.actual_annual;
+					if (ratio < 0.4 || ratio > 2.5) {
+						bRow.basis_mismatch = true;
+						bRow.note = (bRow.note ? bRow.note + " " : "")
+							+ `⚠ the comparison rate prices at ${(bRow.utility_default_annual / bRow.annual_kwh * 100).toFixed(2)}¢/kWh against ${(bRow.actual_annual / bRow.annual_kwh * 100).toFixed(2)}¢/kWh actually paid — check the rate covers the same service as the bill (this account is billed ${bRow.has_supply ? "supply + delivery" : (bRow.full_service_annual > 0 ? "full service" : "delivery only")}).`;
+					}
+				}
 				if (top) forLineItems.push({ locationId: sp.id, locationName: sp.name, months: sp.months,
 					chgTotals: sp.chgTotals, actualAnnual: sp.actualAnnual, ranked });
 			}
@@ -1735,6 +1756,7 @@ export default {
 				totalStructuralGap: Number(portfolio.reduce((t, r) =>
 					t + (r.savings > 0 ? (r.structural_gap || 0) : 0), 0).toFixed(2)),
 				savingsOverstatedCount: portfolio.filter(r => r.saving_overstated).length,
+				basisMismatchCount: portfolio.filter(r => r.basis_mismatch).length,
 				totalSavingsPct: totalActual > 0 ? Number(((totalSavings / totalActual) * 100).toFixed(1)) : null,
 				accountsWithDefault: withDefault.length,
 				totalUtilityDefault: Number(totalUtilityDefault.toFixed(2)),
@@ -1992,6 +2014,7 @@ export default {
 		} else {
 			parts.push("No account modeled cheaper than its current cost");
 		}
+		if (m.basisMismatchCount) parts.push(`⚠ ${m.basisMismatchCount} account(s) are compared against a rate priced far from what they actually pay — usually a rate covering different service from the bill; check those before quoting them`);
 		if (m.demandSuspect) parts.push(`⚠ ${m.demandSuspect} account(s) have unreliable kW data — no recommendation made for those`);
 		// Two different things were both called "not modeled": accounts that were
 		// priced and got nothing back, and accounts that never reached the API. The
