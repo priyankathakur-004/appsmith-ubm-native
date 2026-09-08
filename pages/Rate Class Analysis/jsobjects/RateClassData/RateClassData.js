@@ -657,6 +657,19 @@ export default {
 			// produced a -623% contract-versus-utility figure. Excluding them by name
 			// is exact where the floor is approximate.
 			if (/\bstandby\b|\bback-?up\b|\bbuy-?back\b|parallel generation|supplemental|incremental load/.test(nm)) return false;
+			// Dedicated-load schedules. An electric-heat, space-heat or water-heat rate
+			// prices a heating circuit, a separately-metered rate prices a sub-meter,
+			// and a signal rate prices a traffic signal — none of them price a whole
+			// facility, so running a full year of plant usage through one returns a
+			// figure that is cheap for a reason that has nothing to do with the
+			// customer's rate. "General - Electric Heat, Separately Metered, North
+			// System" came back as the comparison basis for a full-service account at
+			// 4.66 c/kWh against 8.27 c/kWh actually paid. Eleven such schedules were
+			// priced across this portfolio.
+			//
+			// Deliberately narrow: "Commercial and General - Heat Pump" is a real
+			// whole-premises rate and stays, as does anything merely "Primary Metered".
+			if (/\bseparately metered\b|\belectric heat\b|\bspace heat|\bwater heat|\bsignal\b/.test(nm)) return false;
 			const isEvCharging = nm.indexOf("electric vehicle") >= 0
 				|| nm.indexOf("vehicle charging") >= 0
 				|| (/\bev\b/.test(nm) && (/charg/.test(nm) || /\bdc fast\b/.test(nm) || /fast charger/.test(nm)));
