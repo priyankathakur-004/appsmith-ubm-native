@@ -44,15 +44,15 @@ WHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
     `AND m.time_period IN (${ EADateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
 : "" }}
 
-{{ EAUtilityTypeSelect.selectedOptionValue ?
+{{ EAUtilityTypeSelect.selectedOptionValue && EAUtilityTypeSelect.selectedOptionValue !== 'All' ?
 `AND m.utility_type = '${EAUtilityTypeSelect.selectedOptionValue}'`
 : "" }}
 
-{{ EABillTypeSelect.selectedOptionValue ?
+{{ EABillTypeSelect.selectedOptionValue && EABillTypeSelect.selectedOptionValue !== 'All' ?
 `AND m.bill_type = '${EABillTypeSelect.selectedOptionValue}'`
 : "" }}
 
-{{ EALocationSelect.selectedOptionValue ?
+{{ EALocationSelect.selectedOptionValue && EALocationSelect.selectedOptionValue !== 'All' ?
 `AND m.location_id = ${EALocationSelect.selectedOptionValue}`
 : "" }}
 

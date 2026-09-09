@@ -22,17 +22,17 @@ AND bm.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 : "" }}
 
 -- Utility Type
-{{ EAUtilityTypeSelect.selectedOptionValue ?
+{{ EAUtilityTypeSelect.selectedOptionValue && EAUtilityTypeSelect.selectedOptionValue !== 'All' ?
 	`AND bi.commodity = '${EAUtilityTypeSelect.selectedOptionValue}'`
 : "" }}
 
 -- Bill Type
-{{ EABillTypeSelect.selectedOptionValue ?
+{{ EABillTypeSelect.selectedOptionValue && EABillTypeSelect.selectedOptionValue !== 'All' ?
 	`AND bi.bill_type = '${EABillTypeSelect.selectedOptionValue}'`
 : "" }}
 
 -- Location
-{{ EALocationSelect.selectedOptionValue ?
+{{ EALocationSelect.selectedOptionValue && EALocationSelect.selectedOptionValue !== 'All' ?
 	`AND biva.location_id = ${EALocationSelect.selectedOptionValue}`
 : "" }}
 
