@@ -82,6 +82,10 @@
       "isDefault": false
     },
     {
+      "id": "Energy Analytics",
+      "isDefault": false
+    },
+    {
       "id": "Reports",
       "isDefault": false
     },

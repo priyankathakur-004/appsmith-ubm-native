@@ -1,0 +1,54 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "Utility",
+  "labelPosition": "Top",
+  "key": "eaFUtil00001",
+  "widgetId": "eaFUtil00001",
+  "widgetName": "EAUtilityTypeSelect",
+  "leftColumn": 30,
+  "rightColumn": 41,
+  "topRow": 0,
+  "bottomRow": 8,
+  "mobileLeftColumn": 30,
+  "mobileRightColumn": 41,
+  "mobileTopRow": 0,
+  "mobileBottomRow": 8,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "sourceData": "{{ (fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type})) }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "All",
+  "onOptionChange": "{{ EA_Init.applyFilters() }}"
+}

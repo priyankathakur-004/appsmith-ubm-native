@@ -1,0 +1,79 @@
+{
+  "animateLoading": true,
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "#ffffff",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "boxShadow": "none",
+  "children": [
+    {
+      "bottomRow": 1180,
+      "canExtend": true,
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [],
+      "dynamicTriggerPathList": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "eaEnerCanv01",
+      "leftColumn": 0,
+      "minHeight": 1180,
+      "mobileBottomRow": 1180,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 960,
+      "mobileTopRow": 0,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "eaEnerCont01",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "rightColumn": 960,
+      "topRow": 0,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "eaEnerCanv01",
+      "widgetName": "EAEnergyContainerCanvas"
+    }
+  ],
+  "isCanvas": true,
+  "isLoading": false,
+  "dynamicHeight": "AUTO_HEIGHT",
+  "flexVerticalAlignment": "start",
+  "key": "eaEnerCont01",
+  "widgetId": "eaEnerCont01",
+  "widgetName": "EAEnergyContainer",
+  "leftColumn": 0,
+  "rightColumn": 64,
+  "topRow": 23,
+  "bottomRow": 143,
+  "originalTopRow": 23,
+  "originalBottomRow": 143,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 10,
+  "minWidth": 450,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 23,
+  "mobileBottomRow": 143,
+  "needsErrorInfo": false,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "0",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "shouldScrollContents": true,
+  "type": "CONTAINER_WIDGET",
+  "version": 1,
+  "dynamicBindingPathList": [
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isVisible": "{{ EAViewSelect.selectedOptionValue === \"Energy Performance\" }}"
+}

@@ -1,0 +1,54 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "Customer",
+  "labelPosition": "Top",
+  "key": "eaCustSel001",
+  "widgetId": "eaCustSel001",
+  "widgetName": "CustomerSelect",
+  "leftColumn": 34,
+  "rightColumn": 48,
+  "topRow": 0,
+  "bottomRow": 8,
+  "mobileLeftColumn": 34,
+  "mobileRightColumn": 48,
+  "mobileTopRow": 0,
+  "mobileBottomRow": 8,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "0",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "sourceData": "{{ (fetch_customers.data || []).map(d => ({label: d.name, value: d.id})) }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "76013",
+  "onOptionChange": "{{ EA_Init.initPage() }}"
+}

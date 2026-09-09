@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_6d9a0d19-65e4-5848-ba64-b3e461392f04",
+  "id": "Energy Analytics_EA_Init",
+  "unpublishedCollection": {
+    "name": "EA_Init",
+    "pageId": "Energy Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

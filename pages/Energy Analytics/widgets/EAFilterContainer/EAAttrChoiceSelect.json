@@ -1,0 +1,54 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "Attribute value",
+  "labelPosition": "Top",
+  "key": "eaFAttrVal01",
+  "widgetId": "eaFAttrVal01",
+  "widgetName": "EAAttrChoiceSelect",
+  "leftColumn": 54,
+  "rightColumn": 64,
+  "topRow": 9,
+  "bottomRow": 17,
+  "mobileLeftColumn": 54,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 9,
+  "mobileBottomRow": 17,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "sourceData": "{{ (fetch_attribute_values.data || []).map(d => ({label: d.attribute_value, value: d.attribute_value})) }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "All",
+  "onOptionChange": "{{ EA_Init.applyFilters() }}"
+}

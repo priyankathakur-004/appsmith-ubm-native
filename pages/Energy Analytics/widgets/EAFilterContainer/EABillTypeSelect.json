@@ -1,0 +1,54 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "Bill type",
+  "labelPosition": "Top",
+  "key": "eaFBillT0001",
+  "widgetId": "eaFBillT0001",
+  "widgetName": "EABillTypeSelect",
+  "leftColumn": 41,
+  "rightColumn": 52,
+  "topRow": 0,
+  "bottomRow": 8,
+  "mobileLeftColumn": 41,
+  "mobileRightColumn": 52,
+  "mobileTopRow": 0,
+  "mobileBottomRow": 8,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "sourceData": "{{ (fetch_bill_types.data || []).map(d => ({label: d.bill_type, value: d.bill_type})) }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "All",
+  "onOptionChange": "{{ EA_Init.applyFilters() }}"
+}

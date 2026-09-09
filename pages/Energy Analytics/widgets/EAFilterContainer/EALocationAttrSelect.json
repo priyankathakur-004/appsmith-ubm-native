@@ -1,0 +1,54 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "Location attribute",
+  "labelPosition": "Top",
+  "key": "eaFLocAttr01",
+  "widgetId": "eaFLocAttr01",
+  "widgetName": "EALocationAttrSelect",
+  "leftColumn": 44,
+  "rightColumn": 54,
+  "topRow": 9,
+  "bottomRow": 17,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 54,
+  "mobileTopRow": 9,
+  "mobileBottomRow": 17,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "sourceData": "{{ (fetch_location_attributes.data || []).map(d => ({label: d.attribute_name, value: d.attribute_name})) }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "All",
+  "onOptionChange": "{{ fetch_attribute_values.run().then(() => EA_Init.applyFilters()) }}"
+}

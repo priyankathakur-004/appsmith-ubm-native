@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_2e2f443a-6c4c-5b0c-b54f-b09c5367317e",
+  "id": "Energy Analytics_EA_Cost",
+  "unpublishedCollection": {
+    "name": "EA_Cost",
+    "pageId": "Energy Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

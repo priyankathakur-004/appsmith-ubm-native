@@ -1,0 +1,52 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": "{{ EAViewSelect.selectedOptionValue === \"Exceptions\" }}",
+  "labelText": "Severity",
+  "labelPosition": "Top",
+  "key": "eaFSev000001",
+  "widgetId": "eaFSev000001",
+  "widgetName": "EASeveritySelect",
+  "leftColumn": 33,
+  "rightColumn": 44,
+  "topRow": 9,
+  "bottomRow": 17,
+  "mobileLeftColumn": 33,
+  "mobileRightColumn": 44,
+  "mobileTopRow": 9,
+  "mobileBottomRow": 17,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "MULTI_SELECT_WIDGET_V2",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "options"
+    },
+    {
+      "key": "isVisible"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "options": "[{\"label\": \"Low\", \"value\": \"Low\"}, {\"label\": \"Medium\", \"value\": \"Medium\"}, {\"label\": \"High\", \"value\": \"High\"}]",
+  "defaultOptionValue": "[\"Medium\"]",
+  "onOptionChange": "{{ EA_Init.applyFilters() }}"
+}

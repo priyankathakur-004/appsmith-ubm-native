@@ -1,0 +1,49 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "Mode",
+  "labelPosition": "Top",
+  "key": "eaFDMode0001",
+  "widgetId": "eaFDMode0001",
+  "widgetName": "EADateModeSelect",
+  "leftColumn": 11,
+  "rightColumn": 17,
+  "topRow": 0,
+  "bottomRow": 8,
+  "mobileLeftColumn": 11,
+  "mobileRightColumn": 17,
+  "mobileTopRow": 0,
+  "mobileBottomRow": 8,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "options"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "options": "[{\"label\": \"Last\", \"value\": \"Last\"}, {\"label\": \"This\", \"value\": \"This\"}, {\"label\": \"Next\", \"value\": \"Next\"}]",
+  "defaultOptionValue": "Last",
+  "onOptionChange": "{{ EA_Init.applyFilters() }}"
+}

@@ -1,0 +1,11 @@
+{
+  "gitSyncId": "68f08f3128a92f6fcd2cb504_2a46040d-eb0d-5bf9-840f-5e51fc349253",
+  "id": "Energy Analytics_EA_BillHealth",
+  "unpublishedCollection": {
+    "name": "EA_BillHealth",
+    "pageId": "Energy Analytics",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": []
+  }
+}

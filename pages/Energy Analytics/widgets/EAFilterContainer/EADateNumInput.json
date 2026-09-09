@@ -1,0 +1,47 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "autoFocus": false,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "defaultText": "13",
+  "inputType": "NUMBER",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "labelText": "N",
+  "labelPosition": "Top",
+  "key": "eaFDNum00001",
+  "widgetId": "eaFDNum00001",
+  "widgetName": "EADateNumInput",
+  "leftColumn": 17,
+  "rightColumn": 22,
+  "topRow": 0,
+  "bottomRow": 8,
+  "mobileLeftColumn": 17,
+  "mobileRightColumn": 22,
+  "mobileTopRow": 0,
+  "mobileBottomRow": 8,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "eaFiltCanv01",
+  "renderMode": "CANVAS",
+  "type": "INPUT_WIDGET_V2",
+  "version": 2,
+  "onSubmit": "{{ EA_Init.applyFilters() }}",
+  "resetOnSubmit": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onSubmit"
+    }
+  ]
+}
