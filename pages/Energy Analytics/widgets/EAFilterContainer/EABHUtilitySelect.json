@@ -52,7 +52,7 @@
       "key": "onOptionChange"
     }
   ],
-  "sourceData": "{{ (fetch_analytics_data.data || []).map(r => r.utility_type).filter(Boolean).filter((v,i,a) => a.indexOf(v) === i).sort().map(v => ({label: v, value: v})) }}",
+  "sourceData": "{{ (fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type})) }}",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"

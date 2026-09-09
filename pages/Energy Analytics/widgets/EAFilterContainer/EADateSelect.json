@@ -49,7 +49,7 @@
       "key": "onOptionChange"
     }
   ],
-  "sourceData": "{{ (fetch_analytics_data.data || []).map(r => String(r.time_period).slice(0,10)).filter((v,i,a) => a.indexOf(v) === i).sort().reverse().map(v => ({label: v.slice(0,7), value: v})) }}",
+  "sourceData": "{{ EA_Options.getDates() }}",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"

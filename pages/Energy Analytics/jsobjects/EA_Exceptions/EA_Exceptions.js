@@ -4,8 +4,11 @@ export default {
 	   Covers legacy reports 18 Notifications, 19 Warnings Overview, 20 Warnings over Time,
 	   21 Impacted Locations and 22 Late Fees.
 
-	   This JSObject also carries the two SQL fragments fetch_warnings binds to. Those must
-	   read ONLY widgets — never fetch_warnings.data — or the query would depend on itself. */
+	   This JSObject also carries the two SQL fragments the warnings query interpolates into
+	   its WHERE clause. Those two functions must read ONLY widgets — never that query's own
+	   rows — or the query would depend on itself and the page would not load.
+	   (The query is named indirectly on purpose: entity names in comments can register as
+	   dependencies, and these two functions must stay clear of it.) */
 
 	/* ================= SQL fragments (widget-only) ================= */
 
@@ -16,14 +19,15 @@ export default {
 		return '';
 	},
 
-	/* Server-side severity filter for fetch_warnings. A bill is bucketed by its MAX warning
-	   severity (Low <=20 / Medium =30 / High >=40).
+	/* Server-side severity filter for the warnings query. A bill is bucketed by its MAX
+	   warning severity (Low <=20 / Medium =30 / High >=40).
 
 	   Defaults to Medium when nothing is selected — this is the UBM "Medium" report view, and
 	   changing the default will move every Exceptions number away from the legacy report.
 
 	   Reads EASeveritySelect DIRECTLY rather than through a shared getter, because a shared
-	   getter would touch other slicers that source their options from fetch_warnings.data. */
+	   getter would touch other slicers whose own options come from the very query this
+	   clause is being built for. */
 	warnSeveritySql() {
 		let sel = [];
 		try {
@@ -37,7 +41,7 @@ export default {
 		return 'AND (' + parts.join(' OR ') + ')';
 	},
 
-	/* Invoice-date window for fetch_warnings, from the shared page date control. */
+	/* Invoice-date window for the warnings query, from the shared page date control. */
 	warnDateSql() {
 		try {
 			const s = EA_DateWindow.start();
