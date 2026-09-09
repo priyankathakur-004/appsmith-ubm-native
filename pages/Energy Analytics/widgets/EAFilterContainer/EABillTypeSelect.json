@@ -46,7 +46,7 @@
       "key": "onOptionChange"
     }
   ],
-  "sourceData": "{{ (fetch_bill_types.data || []).map(d => ({label: d.bill_type, value: d.bill_type})) }}",
+  "sourceData": "{{ [{label: 'All', value: 'All'}].concat((fetch_bill_types.data || []).map(d => ({label: d.bill_type, value: d.bill_type}))) }}",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"

@@ -46,7 +46,7 @@
       "key": "onOptionChange"
     }
   ],
-  "sourceData": "{{ (fetch_location_attributes.data || []).map(d => ({label: d.attribute_name, value: d.attribute_name})) }}",
+  "sourceData": "{{ [{label: 'All', value: 'All'}].concat((fetch_location_attributes.data || []).map(d => ({label: d.attribute_name, value: d.attribute_name}))) }}",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"

@@ -39,6 +39,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "defaultOptionValue"
     }
   ],
   "dynamicTriggerPathList": [
@@ -52,6 +55,6 @@
       "key": "sourceData"
     }
   ],
-  "defaultOptionValue": "76013",
-  "onOptionChange": "{{ EA_Init.initPage() }}"
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
+  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); EA_Init.initPage(); }}"
 }

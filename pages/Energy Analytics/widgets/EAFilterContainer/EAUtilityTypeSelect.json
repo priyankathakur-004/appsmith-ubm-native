@@ -46,7 +46,7 @@
       "key": "onOptionChange"
     }
   ],
-  "sourceData": "{{ (fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type})) }}",
+  "sourceData": "{{ [{label: 'All', value: 'All'}].concat((fetch_utility_types.data || []).map(d => ({label: d.utility_type, value: d.utility_type}))) }}",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
