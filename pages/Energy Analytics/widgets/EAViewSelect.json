@@ -8,6 +8,9 @@
   "isVisible": true,
   "labelText": "View",
   "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelStyle": "",
   "key": "eaViewSel001",
   "widgetId": "eaViewSel001",
   "widgetName": "EAViewSelect",
@@ -35,7 +38,7 @@
       "key": "accentColor"
     },
     {
-      "key": "options"
+      "key": "sourceData"
     }
   ],
   "dynamicTriggerPathList": [
@@ -43,7 +46,12 @@
       "key": "onOptionChange"
     }
   ],
-  "options": "[{\"label\": \"Portfolio\", \"value\": \"Portfolio\"}, {\"label\": \"Energy Performance\", \"value\": \"Energy Performance\"}, {\"label\": \"Cost & Forecast\", \"value\": \"Cost & Forecast\"}, {\"label\": \"Bill Health\", \"value\": \"Bill Health\"}, {\"label\": \"Exceptions\", \"value\": \"Exceptions\"}]",
+  "sourceData": "{{ [{\"label\": \"Portfolio\", \"value\": \"Portfolio\"}, {\"label\": \"Energy Performance\", \"value\": \"Energy Performance\"}, {\"label\": \"Cost & Forecast\", \"value\": \"Cost & Forecast\"}, {\"label\": \"Bill Health\", \"value\": \"Bill Health\"}, {\"label\": \"Exceptions\", \"value\": \"Exceptions\"}] }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
   "defaultOptionValue": "Portfolio",
   "onOptionChange": "{{ EA_Init.loadView() }}"
 }

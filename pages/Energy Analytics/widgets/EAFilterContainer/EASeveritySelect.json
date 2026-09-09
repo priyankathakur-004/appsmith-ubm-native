@@ -8,6 +8,9 @@
   "isVisible": "{{ EAViewSelect.selectedOptionValue === \"Exceptions\" }}",
   "labelText": "Severity",
   "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelStyle": "",
   "key": "eaFSev000001",
   "widgetId": "eaFSev000001",
   "widgetName": "EASeveritySelect",
@@ -35,7 +38,10 @@
       "key": "accentColor"
     },
     {
-      "key": "options"
+      "key": "sourceData"
+    },
+    {
+      "key": "defaultOptionValue"
     },
     {
       "key": "isVisible"
@@ -46,7 +52,12 @@
       "key": "onOptionChange"
     }
   ],
-  "options": "[{\"label\": \"Low\", \"value\": \"Low\"}, {\"label\": \"Medium\", \"value\": \"Medium\"}, {\"label\": \"High\", \"value\": \"High\"}]",
-  "defaultOptionValue": "[\"Medium\"]",
+  "sourceData": "{{ [{\"label\": \"Low\", \"value\": \"Low\"}, {\"label\": \"Medium\", \"value\": \"Medium\"}, {\"label\": \"High\", \"value\": \"High\"}] }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "{{ [\"Medium\"] }}",
   "onOptionChange": "{{ EA_Init.applyFilters() }}"
 }

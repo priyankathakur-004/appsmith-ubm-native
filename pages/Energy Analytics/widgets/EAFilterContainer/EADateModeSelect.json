@@ -8,6 +8,9 @@
   "isVisible": true,
   "labelText": "Mode",
   "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelStyle": "",
   "key": "eaFDMode0001",
   "widgetId": "eaFDMode0001",
   "widgetName": "EADateModeSelect",
@@ -35,7 +38,7 @@
       "key": "accentColor"
     },
     {
-      "key": "options"
+      "key": "sourceData"
     }
   ],
   "dynamicTriggerPathList": [
@@ -43,7 +46,12 @@
       "key": "onOptionChange"
     }
   ],
-  "options": "[{\"label\": \"Last\", \"value\": \"Last\"}, {\"label\": \"This\", \"value\": \"This\"}, {\"label\": \"Next\", \"value\": \"Next\"}]",
+  "sourceData": "{{ [{\"label\": \"Last\", \"value\": \"Last\"}, {\"label\": \"This\", \"value\": \"This\"}, {\"label\": \"Next\", \"value\": \"Next\"}] }}",
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
   "defaultOptionValue": "Last",
   "onOptionChange": "{{ EA_Init.applyFilters() }}"
 }

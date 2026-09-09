@@ -8,6 +8,9 @@
   "isVisible": true,
   "labelText": "Months",
   "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelStyle": "",
   "key": "eaFDate00001",
   "widgetId": "eaFDate00001",
   "widgetName": "EADateSelect",
@@ -36,6 +39,9 @@
     },
     {
       "key": "sourceData"
+    },
+    {
+      "key": "defaultOptionValue"
     }
   ],
   "dynamicTriggerPathList": [
@@ -49,6 +55,6 @@
       "key": "sourceData"
     }
   ],
-  "defaultOptionValue": "[]",
+  "defaultOptionValue": "{{ [] }}",
   "onOptionChange": "{{ EA_Init.applyFilters() }}"
 }
