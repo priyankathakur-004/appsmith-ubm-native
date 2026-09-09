@@ -18,7 +18,9 @@ export default {
 			byUtility: this.byUtility(),
 			intensity: this.intensity(),
 			scatter: this.weatherScatter(),
-			drivers: this.weatherNormalised()
+			drivers: this.weatherNormalised(),
+			demand: this.demandSeries(),
+			totalSqft: this.totalSqft()
 		};
 	},
 
@@ -154,6 +156,17 @@ export default {
 		return Object.values(by)
 			.map(v => ({ location: v.location, sqft: v.sqft, kbtuPerSqft: (v.mmbtu * 1000) / v.sqft }))
 			.sort((a, b) => b.kbtuPerSqft - a.kbtuPerSqft);
+	},
+
+	/* Square footage across the locations that have it, counted once per location
+	   rather than once per bill row. Used for the per-square-foot trend line. */
+	totalSqft() {
+		const by = {};
+		EA_Measures.rows().forEach(r => {
+			const sq = Number(r.square_feet) || 0;
+			if (sq) by[r.location_id] = sq;
+		});
+		return Object.values(by).reduce((a, b) => a + b, 0);
 	},
 
 	intensitySummary() {

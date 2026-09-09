@@ -128,7 +128,7 @@ export default {
 			  value: M.fmtNum(expected), delta: null, note: rows.length + ' services' },
 			{ key: 'received', icon: '✓', tone: 'teal', label: 'Bills Received',
 			  value: M.fmtNum(received), delta: null, note: matrix.months.length + ' months in window' },
-			{ key: 'missing', icon: '!', tone: 'warn', label: 'Missing',
+			{ key: 'missing', icon: '!', tone: 'warn', label: 'Missing or Late',
 			  value: M.fmtNum(missing), delta: null,
 			  note: expected ? M.fmtPct(missing / expected * 100) + ' of expected' : '' }
 		];
@@ -172,7 +172,18 @@ export default {
 			available: true,
 			grain: 'virtual account',
 			count: late.length,
-			accounts: new Set(raw.map(r => r.billing_account)).size
+			accounts: new Set(raw.map(r => r.billing_account)).size,
+			/* Shaped like the inventory rows so the Late filter can list them beside
+			   received bills. There is no meter on a virtual-account row. */
+			rows: late.map(r => ({
+				location: r.location || '',
+				vendor: r.vendor || '',
+				account: r.billing_account || '',
+				period: String(r.date_of_last_bill || '').slice(0, 7),
+				utility: r.utility_type || '',
+				rateCode: '',
+				status: 'Late'
+			}))
 		};
 	},
 

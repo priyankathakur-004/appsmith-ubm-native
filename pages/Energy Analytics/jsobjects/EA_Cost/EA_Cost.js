@@ -16,7 +16,8 @@ export default {
 			forecast: this.forecast(),
 			composition: this.composition(),
 			unitCostByLocation: this.unitCostByLocation(),
-			drivers: this.costDrivers()
+			drivers: this.costDrivers(),
+			totalSqft: this.totalSqft()
 		};
 	},
 
@@ -43,6 +44,16 @@ export default {
 			  value: fc.variance == null ? '—' : M.fmtMoney(Math.abs(fc.variance)),
 			  delta: fc.variancePct, note: fc.variance == null ? 'Needs 24 months of history' : 'actual vs forecast' }
 		];
+	},
+
+	/* Square footage counted once per location, for the per-square-foot mode. */
+	totalSqft() {
+		const by = {};
+		EA_Measures.rows().forEach(r => {
+			const sq = Number(r.square_feet) || 0;
+			if (sq) by[r.location_id] = sq;
+		});
+		return Object.values(by).reduce((a, b) => a + b, 0);
 	},
 
 	/* ---------------- charges vs consumption ---------------- */
