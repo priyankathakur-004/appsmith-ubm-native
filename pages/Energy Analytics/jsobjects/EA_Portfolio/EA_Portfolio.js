@@ -76,7 +76,11 @@ export default {
 			const lat = Number(r.latitude), lng = Number(r.longitude);
 			if (!lat || !lng) return;
 			const k = r.location_id;
-			if (!by[k]) by[k] = { id: k, title: r.location_description || 'Unknown', lat: lat, long: lng, charges: 0, consumption: 0 };
+			if (!by[k]) by[k] = {
+				id: k, title: r.location_description || 'Unknown',
+				city: r.city || '', state: r.state || '',
+				lat: lat, long: lng, charges: 0, consumption: 0
+			};
 			by[k].charges     += M.chargesOf(r);
 			by[k].consumption += M.consumptionOf(r);
 		});
