@@ -2,9 +2,34 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 8,
   "boxShadow": "none",
-  "defaultOptionValue": "Portfolio",
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "labelText": "View",
+  "labelPosition": "Top",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "labelStyle": "",
+  "key": "eaViewSel001",
+  "widgetId": "eaViewSel001",
+  "widgetName": "EAViewSelect",
+  "leftColumn": 47,
+  "rightColumn": 61,
+  "topRow": 0,
+  "bottomRow": 8,
+  "mobileLeftColumn": 47,
+  "mobileRightColumn": 61,
+  "mobileTopRow": 0,
+  "mobileBottomRow": 8,
+  "parentColumnSpace": 15,
+  "parentRowSpace": 10,
+  "parentId": "0",
+  "renderMode": "CANVAS",
+  "version": 1,
+  "type": "SELECT_WIDGET",
+  "optionLabel": "label",
+  "optionValue": "value",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
@@ -16,42 +41,17 @@
       "key": "sourceData"
     }
   ],
-  "dynamicPropertyPathList": [
-    {
-      "key": "sourceData"
-    }
-  ],
   "dynamicTriggerPathList": [
     {
       "key": "onOptionChange"
     }
   ],
-  "isFilterable": true,
-  "isLoading": false,
-  "isVisible": true,
-  "key": "eaViewSel001",
-  "labelPosition": "Top",
-  "labelStyle": "",
-  "labelText": "View",
-  "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem",
-  "leftColumn": 53,
-  "mobileBottomRow": 8,
-  "mobileLeftColumn": 47,
-  "mobileRightColumn": 61,
-  "mobileTopRow": 0,
-  "onOptionChange": "{{ EA_Init.loadView() }}",
-  "optionLabel": "label",
-  "optionValue": "value",
-  "parentColumnSpace": 15,
-  "parentId": "0",
-  "parentRowSpace": 10,
-  "renderMode": "CANVAS",
-  "rightColumn": 64,
   "sourceData": "{{ [{\"label\": \"Portfolio\", \"value\": \"Portfolio\"}, {\"label\": \"Energy Performance\", \"value\": \"Energy Performance\"}, {\"label\": \"Cost & Forecast\", \"value\": \"Cost & Forecast\"}, {\"label\": \"Bill Health\", \"value\": \"Bill Health\"}, {\"label\": \"Exceptions\", \"value\": \"Exceptions\"}] }}",
-  "topRow": 0,
-  "type": "SELECT_WIDGET",
-  "version": 1,
-  "widgetId": "eaViewSel001",
-  "widgetName": "EAViewSelect"
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "defaultOptionValue": "Portfolio",
+  "onOptionChange": "{{ EA_Init.loadView() }}"
 }
