@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
   "boxShadow": "none",
-  "defaultModel": "{{ EA_Cost.model() }}",
+  "defaultModel": "{{ EAViewSelect.selectedOptionValue === \"Cost & Forecast\" ? EA_Cost.model() : {} }}",
   "dynamicHeight": "FIXED",
   "events": [],
   "isCanvas": false,

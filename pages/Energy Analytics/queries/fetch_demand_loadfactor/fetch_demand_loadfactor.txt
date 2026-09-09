@@ -17,9 +17,7 @@ LEFT JOIN bill_management_v2.calculations c ON c.bill_item_id = bi.id
 WHERE bm.deleted_at IS NULL AND bm.customer_ready IS NOT NULL
 AND bm.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
-{{ EADateSelect.selectedOptionValues?.filter(d => d.includes('-')).length > 0 ?
-	`AND date_trunc('month', br.statement_date)::date IN (${EADateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
-: "" }}
+{{ EA_Filters.demandMonthSql() }}
 
 -- Utility Type
 {{ EAUtilityTypeSelect.selectedOptionValue && EAUtilityTypeSelect.selectedOptionValue !== 'All' ?
@@ -38,3 +36,4 @@ AND bm.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
 GROUP BY bm.customer_id, date_trunc('month', br.statement_date)::date, biva.location_id, l.name, bi.commodity, bi.bill_type
 ORDER BY l.name, date_trunc('month', br.statement_date)::date DESC
+LIMIT 50000

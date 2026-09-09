@@ -29,7 +29,7 @@
     ],
     "name": "fetch_attribute_values",
     "pageId": "Energy Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }

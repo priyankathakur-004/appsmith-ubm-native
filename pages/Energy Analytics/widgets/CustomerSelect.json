@@ -56,5 +56,5 @@
     }
   ],
   "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
-  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); EA_Init.initPage(); }}"
+  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); EA_Init.onCustomerChange(); }}"
 }

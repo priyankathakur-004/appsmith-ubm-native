@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
   "boxShadow": "none",
-  "defaultModel": "{{ EA_Energy.model() }}",
+  "defaultModel": "{{ EAViewSelect.selectedOptionValue === \"Energy Performance\" ? EA_Energy.model() : {} }}",
   "dynamicHeight": "FIXED",
   "events": [],
   "isCanvas": false,

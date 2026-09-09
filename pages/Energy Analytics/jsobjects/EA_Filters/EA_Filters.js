@@ -66,6 +66,37 @@ export default {
 		return c.join('\n');
 	},
 
+	/* Month bound for the two queries that carry their own SQL rather than going through
+	   analyticsWhere(): the utility tree and the demand/load-factor pull.
+
+	   Both were copied from the Analytics page, where the only date filter is an explicit
+	   month list — so with no months picked they fetched the customer's ENTIRE history.
+	   The demand query joins bill items and calculations, which is the heaviest path on
+	   the page, and it blew past Appsmith's 5 MB response cap. These emit the same rolling
+	   window analyticsWhere() falls back to, so every screen covers the same period.
+
+	   Two zero-argument variants rather than one taking a column name, because the two
+	   queries date off different expressions. */
+	_monthsPicked() {
+		try {
+			return (typeof EADateSelect !== 'undefined' && Array.isArray(EADateSelect.selectedOptionValues))
+				? EADateSelect.selectedOptionValues.filter(d => d.includes('-')) : [];
+		} catch (e) { return []; }
+	},
+
+	_boundOn(col) {
+		const q = s => `'${String(s).replace(/'/g, "''")}'`;
+		const picked = this._monthsPicked();
+		if (picked.length) return `AND ${col} IN (${picked.map(q).join(',')})`;
+		return `AND ${col} >= '${this._rollingCutoff()}'`;
+	},
+
+	/* m.time_period, on the utility tree. */
+	treeMonthSql() { return this._boundOn('m.time_period'); },
+
+	/* The statement month, on the demand and load-factor pull. */
+	demandMonthSql() { return this._boundOn("date_trunc('month', br.statement_date)::date"); },
+
 	/* First day of the month that starts the rolling window described by the Date widgets.
 	   Defaults to 13 months, the window the Bill Health coverage matrix renders. */
 	_rollingCutoff() {

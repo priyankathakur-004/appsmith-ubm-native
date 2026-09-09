@@ -40,9 +40,7 @@ LEFT JOIN bill_management_v2.customers_vendors_pretty_name cvpn
 
 WHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 
-{{ EADateSelect.selectedOptionValues.filter(d => d.includes('-')).length > 0 ?
-    `AND m.time_period IN (${ EADateSelect.selectedOptionValues.filter(d => d.includes('-')).map(d => `'${d}'`).join(",")})`
-: "" }}
+{{ EA_Filters.treeMonthSql() }}
 
 {{ EAUtilityTypeSelect.selectedOptionValue && EAUtilityTypeSelect.selectedOptionValue !== 'All' ?
 `AND m.utility_type = '${EAUtilityTypeSelect.selectedOptionValue}'`
@@ -67,4 +65,5 @@ WHERE m.customer_id = {{CustomerSelect.selectedOptionValue || 76013 }}
 )`
 : "" }}
 
-ORDER BY m.location_description, m.time_period DESC;
+ORDER BY m.location_description, m.time_period DESC
+LIMIT 50000
