@@ -2,34 +2,9 @@
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "boxShadow": "none",
-  "isFilterable": true,
-  "isLoading": false,
-  "isVisible": true,
-  "labelText": "Customer",
-  "labelPosition": "Top",
-  "labelTextColor": "#94a3b8",
-  "labelTextSize": "0.875rem",
-  "labelStyle": "",
-  "key": "eaCustSel001",
-  "widgetId": "eaCustSel001",
-  "widgetName": "CustomerSelect",
-  "leftColumn": 32,
-  "rightColumn": 47,
-  "topRow": 0,
   "bottomRow": 8,
-  "mobileLeftColumn": 32,
-  "mobileRightColumn": 47,
-  "mobileTopRow": 0,
-  "mobileBottomRow": 8,
-  "parentColumnSpace": 15,
-  "parentRowSpace": 10,
-  "parentId": "0",
-  "renderMode": "CANVAS",
-  "version": 1,
-  "type": "SELECT_WIDGET",
-  "optionLabel": "label",
-  "optionValue": "value",
+  "boxShadow": "none",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
@@ -44,17 +19,42 @@
       "key": "defaultOptionValue"
     }
   ],
-  "dynamicTriggerPathList": [
-    {
-      "key": "onOptionChange"
-    }
-  ],
-  "sourceData": "{{ (fetch_customers.data || []).map(d => ({label: d.name, value: d.id})) }}",
   "dynamicPropertyPathList": [
     {
       "key": "sourceData"
     }
   ],
-  "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
-  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); EA_Init.initPage(); }}"
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
+  "isFilterable": true,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "eaCustSel001",
+  "labelPosition": "Top",
+  "labelStyle": "",
+  "labelText": "Customer",
+  "labelTextColor": "#94a3b8",
+  "labelTextSize": "0.875rem",
+  "leftColumn": 42,
+  "mobileBottomRow": 8,
+  "mobileLeftColumn": 32,
+  "mobileRightColumn": 47,
+  "mobileTopRow": 0,
+  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); EA_Init.initPage(); }}",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "parentColumnSpace": 15,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 53,
+  "sourceData": "{{ (fetch_customers.data || []).map(d => ({label: d.name, value: d.id})) }}",
+  "topRow": 0,
+  "type": "SELECT_WIDGET",
+  "version": 1,
+  "widgetId": "eaCustSel001",
+  "widgetName": "CustomerSelect"
 }
