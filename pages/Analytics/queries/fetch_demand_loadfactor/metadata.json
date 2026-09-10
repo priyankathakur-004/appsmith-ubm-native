@@ -29,7 +29,7 @@
     ],
     "name": "fetch_demand_loadfactor",
     "pageId": "Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
