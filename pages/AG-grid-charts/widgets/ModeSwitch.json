@@ -1,0 +1,49 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "alignWidget": "LEFT",
+  "animateLoading": true,
+  "bottomRow": 14,
+  "boxShadow": "none",
+  "defaultSwitchState": "{{ (appsmith.store.agStudioMode || 'edit') === 'edit' }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "defaultSwitchState"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onChange"
+    }
+  ],
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "agc_mode_k",
+  "label": "Edit mode",
+  "labelPosition": "Left",
+  "labelTextColor": "#E2E8F0",
+  "leftColumn": 38,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 14,
+  "mobileLeftColumn": 38,
+  "mobileRightColumn": 52,
+  "mobileTopRow": 10,
+  "needsErrorInfo": false,
+  "onChange": "{{ storeValue('agStudioMode', ModeSwitch.isSwitchedOn ? 'edit' : 'view') }}",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 52,
+  "topRow": 10,
+  "type": "SWITCH_WIDGET",
+  "version": 1,
+  "widgetId": "agc_mode_w",
+  "widgetName": "ModeSwitch"
+}
