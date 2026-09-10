@@ -116,6 +116,10 @@
     {
       "id": "Dromo Upload",
       "isDefault": false
+    },
+    {
+      "id": "AG-grid-charts",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {

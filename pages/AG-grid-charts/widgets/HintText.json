@@ -1,0 +1,39 @@
+{
+  "bottomRow": 21,
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    },
+    {
+      "key": "text"
+    }
+  ],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "0.875rem",
+  "fontStyle": "",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "agc_hint_k",
+  "leftColumn": 0,
+  "mobileBottomRow": 21,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 15,
+  "overflow": "NONE",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldTruncate": false,
+  "text": "{{ (fetch_studio_data.data || []).length + ' rows from fetch_studio_data (last 36 months, capped at 25k). Drag fields from the left panel to build charts and tables; \"Save view\" persists the layout to this browser only.' }}",
+  "textAlign": "LEFT",
+  "textColor": "#94A3B8",
+  "topRow": 15,
+  "truncateButtonColor": "#FFC13D",
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "agc_hint_w",
+  "widgetName": "HintText"
+}

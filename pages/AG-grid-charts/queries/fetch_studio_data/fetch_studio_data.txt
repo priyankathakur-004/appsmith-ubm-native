@@ -1,0 +1,57 @@
+-- Feed for the AG Studio POC.
+-- Same grain and the same canonical consumption measure as fetch_analytics_data
+-- on the Analytics page, bounded because AG Studio holds the rows client-side.
+SELECT
+    m.time_period,
+    m.utility_type,
+    m.bill_type,
+    m.account_status,
+    m.client_account AS service_account,
+    m.meter_serial   AS meter,
+    m.vendor_name,
+    m.location_id::text AS location_id,   -- text, so Studio treats it as a category not a measure
+    l.name           AS location_description,
+    l.city,
+    l.state,
+    l.building_type,
+    l.square_feet,
+
+    CASE
+        WHEN m.bill_type = 'Supply Only'
+        THEN m.total_gen_consumption
+        ELSE m.total_consumption
+    END AS consumption,
+    m.total_consumption_uom AS consumption_uom,
+    m.total_charges,
+
+    COALESCE(amf.total_charges_commodity, 0)   AS charges_commodity,
+    COALESCE(amf.total_charges_demand, 0)      AS charges_demand,
+    COALESCE(amf.total_charges_generation, 0)  AS charges_generation,
+    COALESCE(amf.total_charges_taxes, 0)       AS charges_taxes,
+    COALESCE(amf.total_charges_other, 0)       AS charges_other,
+
+    m.total_cdd,
+    m.total_hdd
+
+FROM bill_management_v2.reports_customer_monthly_usage m
+INNER JOIN bill_management_v2.locations l
+    ON l.id = m.location_id
+LEFT JOIN LATERAL (
+    SELECT
+        SUM(COALESCE(a.total_charges_commodity, 0))  AS total_charges_commodity,
+        SUM(COALESCE(a.total_charges_demand, 0))     AS total_charges_demand,
+        SUM(COALESCE(a.total_charges_generation, 0)) AS total_charges_generation,
+        SUM(COALESCE(a.total_charges_taxes, 0))      AS total_charges_taxes,
+        SUM(COALESCE(a.total_charges_other, 0))      AS total_charges_other
+    FROM bill_management_v2.analytics_monthly_feed a
+    WHERE a.customer_id = m.customer_id
+      AND a.location_id = m.location_id
+      AND DATE_TRUNC('month', a.time_period) = DATE_TRUNC('month', m.time_period)
+      AND a.utility_type = m.utility_type
+) amf ON TRUE
+
+WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+  AND m.time_period >= (CURRENT_DATE - INTERVAL '36 months')
+
+ORDER BY m.time_period DESC
+LIMIT 25000;

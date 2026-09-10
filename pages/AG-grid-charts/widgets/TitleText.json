@@ -1,0 +1,36 @@
+{
+  "bottomRow": 5,
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1.25rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "agc_title_k",
+  "leftColumn": 0,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 40,
+  "mobileTopRow": 1,
+  "overflow": "NONE",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 40,
+  "shouldTruncate": false,
+  "text": "AG Studio POC — configurable analytics over UBM monthly usage",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 1,
+  "truncateButtonColor": "#FFC13D",
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "agc_title_w",
+  "widgetName": "TitleText"
+}

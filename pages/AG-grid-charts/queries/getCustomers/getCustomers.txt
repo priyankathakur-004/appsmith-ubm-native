@@ -1,0 +1,4 @@
+SELECT id, name
+FROM bill_management_v2.customers_search
+WHERE active IS NOT FALSE
+ORDER BY name;

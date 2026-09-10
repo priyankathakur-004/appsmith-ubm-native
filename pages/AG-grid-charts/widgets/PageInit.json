@@ -1,0 +1,63 @@
+{
+  "backgroundColor": "transparent",
+  "borderColor": "transparent",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 5,
+  "boxShadow": "none",
+  "defaultModel": "{{ ({}) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onReadyEvent"
+    }
+  ],
+  "events": [
+    "onReadyEvent"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "agc_pageinit_k",
+  "leftColumn": 60,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 5,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "onReadyEvent": "{{ getCustomers.run(); fetch_studio_data.run(); }}",
+  "parentColumnSpace": 16.453125,
+  "parentId": "0",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": false,
+  "srcDoc": {
+    "css": "body{margin:0;background:transparent;}",
+    "html": "<div id=\"root\"></div>",
+    "js": "var fired = false;\nfunction go() {\n  if (fired || typeof appsmith.triggerEvent !== 'function') return;\n  fired = true;\n  appsmith.triggerEvent('onReadyEvent');\n}\nappsmith.onReady(function () { setTimeout(go, 60); });\nsetTimeout(go, 900);\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 1,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body{margin:0;background:transparent;}",
+    "html": "<div id=\"root\"></div>",
+    "js": "var fired = false;\nfunction go() {\n  if (fired || typeof appsmith.triggerEvent !== 'function') return;\n  fired = true;\n  appsmith.triggerEvent('onReadyEvent');\n}\nappsmith.onReady(function () { setTimeout(go, 60); });\nsetTimeout(go, 900);\n"
+  },
+  "version": 1,
+  "widgetId": "agc_pageinit_w",
+  "widgetName": "PageInit"
+}
