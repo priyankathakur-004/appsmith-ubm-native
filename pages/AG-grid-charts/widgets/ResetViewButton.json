@@ -1,10 +1,10 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 10,
+  "bottomRow": 14,
   "boxShadow": "none",
-  "buttonColor": "#3b82f6",
-  "buttonVariant": "PRIMARY",
+  "buttonColor": "#94a3b8",
+  "buttonVariant": "SECONDARY",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
@@ -19,16 +19,16 @@
   "isDisabled": false,
   "isLoading": false,
   "isVisible": true,
-  "key": "agc_save_k",
+  "key": "agc_reset_k",
   "leftColumn": 55,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
-  "mobileBottomRow": 10,
+  "mobileBottomRow": 14,
   "mobileLeftColumn": 46,
   "mobileRightColumn": 64,
-  "mobileTopRow": 6,
+  "mobileTopRow": 10,
   "needsErrorInfo": false,
-  "onClick": "{{ storeValue('agStudioSaveRequest', Date.now()) }}",
+  "onClick": "{{ storeValue('agStudioReport', null); storeValue('agStudioStateKey', Date.now()); showAlert('View reset', 'success'); }}",
   "parentColumnSpace": 16.453125,
   "parentId": "0",
   "parentRowSpace": 10,
@@ -37,10 +37,10 @@
   "renderMode": "CANVAS",
   "responsiveBehavior": "hug",
   "rightColumn": 64,
-  "text": "Save view",
-  "topRow": 6,
+  "text": "Reset view",
+  "topRow": 10,
   "type": "BUTTON_WIDGET",
   "version": 1,
-  "widgetId": "agc_save_w",
-  "widgetName": "SaveViewButton"
+  "widgetId": "agc_reset_w",
+  "widgetName": "ResetViewButton"
 }
