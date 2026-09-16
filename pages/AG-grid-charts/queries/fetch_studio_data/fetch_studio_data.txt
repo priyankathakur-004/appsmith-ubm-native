@@ -28,7 +28,10 @@ SELECT
     -- page applies (MA_MonthlyEnergyHelper.getBTUConversionFactor): BTU per unit
     -- divided by a million. Water, sewer and the non-energy utilities convert to
     -- zero there too — they carry no energy content.
-    ROUND(
+    -- Deliberately not rounded: Studio sums these, and rounding each row first
+    -- accumulates error across thousands of rows. Analytics keeps full precision
+    -- and rounds only at display.
+    (
         (
             CASE
                 WHEN m.bill_type = 'Supply Only'
@@ -42,7 +45,7 @@ SELECT
                 WHEN 'STEAM'      THEN 1000
                 ELSE 0
               END
-        )::numeric / 1000000, 2
+        )::numeric / 1000000
     ) AS consumption_mmbtu,
 
     m.total_charges,
