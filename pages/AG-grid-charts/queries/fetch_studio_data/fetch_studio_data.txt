@@ -22,6 +22,29 @@ SELECT
         ELSE m.total_consumption
     END AS consumption,
     m.total_consumption_uom AS consumption_uom,
+
+    -- Raw consumption is in each utility's own unit, so it cannot be summed
+    -- across utility types. This is the same mmBTU normalisation the Analytics
+    -- page applies (MA_MonthlyEnergyHelper.getBTUConversionFactor): BTU per unit
+    -- divided by a million. Water, sewer and the non-energy utilities convert to
+    -- zero there too — they carry no energy content.
+    ROUND(
+        (
+            CASE
+                WHEN m.bill_type = 'Supply Only'
+                THEN m.total_gen_consumption
+                ELSE m.total_consumption
+            END
+            * CASE m.utility_type
+                WHEN 'ELECTRIC'   THEN 3412
+                WHEN 'NATURALGAS' THEN 102800
+                WHEN 'OIL2'       THEN 138500
+                WHEN 'STEAM'      THEN 1000
+                ELSE 0
+              END
+        )::numeric / 1000000, 2
+    ) AS consumption_mmbtu,
+
     m.total_charges,
 
     COALESCE(amf.total_charges_commodity, 0)   AS charges_commodity,
