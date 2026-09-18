@@ -18,7 +18,10 @@ WITH scoped AS (
            be.created_at          AS created_at
     FROM bill_management_v2.bill_errors be
     JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
-    WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 76013 }}
+    -- No customer picked means every customer, so the predicate drops out
+    -- entirely rather than falling back to a hardcoded id.
+    WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+           OR br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
       AND be.created_at >= COALESCE(
               NULLIF('{{ ValDateFrom.formattedDate || "" }}', '')::timestamp,
               (CURRENT_DATE - INTERVAL '1 year')::timestamp)

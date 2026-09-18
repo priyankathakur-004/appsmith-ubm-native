@@ -5,6 +5,7 @@
 -- same hop the per-bill error panel already uses.
 SELECT
     abi.bill_id                              AS "Bill Id",
+    cs.name                                  AS "Customer",
     br.client_account                        AS "Billing ID",
     br.vendor_code                           AS "Vendor",
     TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS "Invoice Date",
@@ -21,9 +22,12 @@ SELECT
     TO_CHAR(be.created_at, 'MM/DD/YYYY')     AS "Raised"
 FROM bill_management_v2.bill_errors be
 JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+LEFT JOIN bill_management_v2.customers_search cs ON cs.id = br.customer_id
 LEFT JOIN bill_management_v2.analytics_bills_items abi
        ON abi.bill_record_id = br.id AND abi.bill_id IS NOT NULL
-WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 76013 }}
+-- No customer picked means every customer (see the catalogue query).
+WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+       OR br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
   AND be.validation_check_id = {{ appsmith.store.valCode || 0 }}
   AND be.category = '{{ appsmith.store.valCategory || "" }}'
   AND be.created_at >= COALESCE(

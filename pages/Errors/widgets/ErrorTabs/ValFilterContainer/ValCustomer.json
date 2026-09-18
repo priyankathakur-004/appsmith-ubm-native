@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": 76013,
+  "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
@@ -51,7 +51,7 @@
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,
-  "placeholderText": "Select",
+  "placeholderText": "All customers",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 10,
