@@ -61,6 +61,10 @@ export default {
 		resetWidget("ValCustomer", true);
 		resetWidget("ValDateFrom", true);
 		resetWidget("ValDateTo", true);
+		resetWidget("ValStage", true);
+		resetWidget("ValSeverity", true);
+		resetWidget("ValCategory", true);
+		resetWidget("ValSearch", true);
 		fetch_validation_codes.run();
 		fetch_validation_stats.run();
 	},
