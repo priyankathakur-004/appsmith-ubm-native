@@ -9,11 +9,8 @@ SELECT
     br.vendor_code                           AS "Vendor",
     TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS "Invoice Date",
     be.severity                              AS severity_code,
-    CASE be.severity
-        WHEN 10 THEN 'Info'   WHEN 20 THEN 'Low'    WHEN 30 THEN 'Medium'
-        WHEN 40 THEN 'High'   WHEN 50 THEN 'Severe' WHEN 60 THEN 'Critical'
-        WHEN 80 THEN 'Blocker' ELSE be.severity::text
-    END                                      AS "Severity",
+    -- Reported exactly as stored; the schema has no label lookup for the ladder.
+    be.severity::text                        AS "Severity",
     be.message                               AS "Message",
     -- data carries {commodity, account_code, meter_serial}; read it instead of
     -- regexing the message the way the warnings helper has to.
