@@ -1,7 +1,8 @@
--- Bill Validation Log — bills behind one clicked (code, category) pair.
--- Server-side paginated: bill_errors is a large fact table, so never post-filter
--- or slice this in a JSObject. bill_errors has no bill_id; it is reached through
--- analytics_bills_items, the same hop the per-bill error panel already uses.
+-- Bill Validation Log — the bill errors behind one clicked (code, category) pair.
+-- Capped at the most recent 1000 instances; the modal paginates that slice and
+-- says so, rather than pulling an unbounded number of rows for a read-only view.
+-- bill_errors has no bill_id; it is reached through analytics_bills_items, the
+-- same hop the per-bill error panel already uses.
 SELECT
     abi.bill_id                              AS "Bill Id",
     br.client_account                        AS "Billing ID",
@@ -29,14 +30,10 @@ WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 76013 }}
   AND be.validation_check_id = {{ appsmith.store.valCode || 0 }}
   AND be.category = '{{ appsmith.store.valCategory || "" }}'
   AND be.created_at >= COALESCE(
-          NULLIF('{{ appsmith.store.valDateFrom || "" }}', '')::timestamp,
+          NULLIF('{{ ValDateFrom.formattedDate || "" }}', '')::timestamp,
           (CURRENT_DATE - INTERVAL '1 year')::timestamp)
-  AND (NULLIF('{{ appsmith.store.valDateTo || "" }}', '') IS NULL
-       OR be.created_at < NULLIF('{{ appsmith.store.valDateTo || "" }}', '')::timestamp
+  AND (NULLIF('{{ ValDateTo.formattedDate || "" }}', '') IS NULL
+       OR be.created_at < NULLIF('{{ ValDateTo.formattedDate || "" }}', '')::timestamp
                           + INTERVAL '1 day')
-  AND ('{{ appsmith.store.valResolved || "all" }}' = 'all'
-       OR ('{{ appsmith.store.valResolved }}' = 'open'     AND be.resolved IS FALSE)
-       OR ('{{ appsmith.store.valResolved }}' = 'resolved' AND be.resolved))
 ORDER BY be.created_at DESC, be.id DESC
-LIMIT {{ appsmith.store.valPageSize || 50 }}
-OFFSET {{ ((appsmith.store.valPageNo || 1) - 1) * (appsmith.store.valPageSize || 50) }};
+LIMIT 1000;

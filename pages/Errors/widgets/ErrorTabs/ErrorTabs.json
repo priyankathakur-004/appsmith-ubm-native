@@ -102,9 +102,9 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 150,
+      "bottomRow": 1160,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
-      "canExtend": false,
+      "canExtend": true,
       "containerStyle": "none",
       "detachFromLayout": true,
       "dynamicBindingPathList": [
@@ -124,9 +124,9 @@
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
-      "minHeight": 1120,
+      "minHeight": 1160,
       "minWidth": 450,
-      "mobileBottomRow": 1121,
+      "mobileBottomRow": 1160,
       "mobileLeftColumn": 0,
       "mobileRightColumn": 1053,
       "mobileTopRow": 1,
@@ -138,15 +138,16 @@
       "responsiveBehavior": "fill",
       "rightColumn": 1053,
       "tabId": "tabnmsidlhb1j",
-      "tabName": "Bill Errors",
+      "tabName": "Bill Error Log",
       "topRow": 1,
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "pe7dguvnx6",
-      "widgetName": "Canvas1"
+      "widgetName": "Canvas1",
+      "shouldScrollContents": false
     }
   ],
-  "defaultTab": "Bill Errors",
+  "defaultTab": "Bill Error Log",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
@@ -205,7 +206,7 @@
       "index": 0,
       "isDuplicateLabel": false,
       "isVisible": true,
-      "label": "Bill Errors",
+      "label": "Bill Error Log",
       "widgetId": "pe7dguvnx6"
     }
   },

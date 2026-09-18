@@ -1,0 +1,61 @@
+{
+  "backgroundColor": "#0f172a",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "1",
+  "bottomRow": 27,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{ ({ data: fetch_validation_stats.data, isLoading: fetch_validation_stats.isLoading }) }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "defaultModel"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [],
+  "events": [],
+  "isCanvas": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "val_stats_k",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 27,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 15,
+  "needsErrorInfo": false,
+  "originalBottomRow": 27,
+  "originalTopRow": 15,
+  "parentColumnSpace": 13.83,
+  "parentId": "pe7dguvnx6",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 64,
+  "shouldScrollContents": true,
+  "srcDoc": {
+    "css": "body{margin:0;font-family:\"Open Sans\",\"Inter\",\"Segoe UI\",Arial,sans-serif;color:#e2e8f0;background:#0f172a;}\n.wrap{display:flex;flex-direction:column;height:100%;background:#0f172a;}\n.meta{padding:10px 24px 0;color:#94a3b8;font-size:13px;text-align:right;}\n.scroll{overflow:auto;flex:1;}\n.tbl{width:100%;border-collapse:collapse;font-size:14px;}\n.tbl th{text-align:left;padding:14px 18px;color:#cbd5e1;font-weight:700;font-size:14px;background:#0f172a;border-bottom:1px solid #334155;cursor:pointer;user-select:none;white-space:nowrap;position:sticky;top:0;z-index:1;}\n.tbl th.noSort{cursor:default;}\n.tbl th .sort{display:inline-flex;flex-direction:column;margin-left:6px;line-height:0.7;vertical-align:middle;}\n.tbl th .sort span{font-size:10px;color:#64748b;}\n.tbl th .sort span.active{color:#ffffff;}\n.tbl td{padding:13px 18px;border:0;color:#e2e8f0;vertical-align:top;white-space:nowrap;}\n.tbl td>div{white-space:normal;word-break:break-word;}\n.tbl tbody tr:nth-child(odd) td{background:#1e293b;}\n.tbl tbody tr:nth-child(even) td{background:#0f172a;}\n.tbl tbody tr:hover td{background:#26344b;}\n.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;}\n.b-error{background:#4c1d1d;color:#f87171;}\n.b-warning{background:#422f0b;color:#fbbf24;}\n.b-info{background:#173049;color:#60a5fa;}\n.b-default{background:#334155;color:#cbd5e1;}\n.maplink{color:#60a5fa;text-decoration:none;cursor:pointer;font-weight:500;}\n.maplink:hover{text-decoration:underline;}\n.empty{padding:30px;text-align:center;color:#64748b;font-style:italic;}\n.pager{display:flex;align-items:center;gap:8px;padding:14px 24px;border-top:1px solid #334155;background:#0f172a;}\n.pbtn{background:transparent;border:none;color:#cbd5e1;cursor:pointer;padding:6px 8px;border-radius:4px;font-size:16px;}\n.pbtn:disabled{color:#475569;cursor:not-allowed;}\n.pbtn:hover:not(:disabled){background:#1e293b;}\n.pnum{min-width:30px;text-align:center;background:#1E293B;color:#ffffff;border-radius:4px;padding:4px 10px;font-weight:600;border:1px solid #334155;}\n.gotolbl{color:#cbd5e1;font-size:14px;}\n.goto{width:60px;padding:6px 8px;border:1px solid #334155;border-radius:4px;font-size:14px;outline:none;background:#1e293b;color:#ffffff;}\n.goto:focus{border-color:#64748b;}\n.psize{margin-left:auto;background:#1e293b;color:#ffffff;border:1px solid #334155;border-radius:4px;padding:6px 10px;font-size:14px;outline:none;cursor:pointer;}\n.psize:focus{border-color:#64748b;}\n.skel{padding:18px 24px;color:#94a3b8;}\n\n.tiles{display:flex;gap:14px;padding:14px 20px;flex-wrap:wrap;}\n.tile{flex:1 1 150px;min-width:150px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 14px;}\n.tile .lbl{color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}\n.tile .big{color:#f1f5f9;font-size:26px;font-weight:700;margin-top:6px;line-height:1.1;}\n.tile .sub{color:#64748b;font-size:12px;margin-top:4px;}\n.tile .blocked{color:#f87171;font-size:12px;margin-top:6px;font-weight:600;}\n.tile .ok{color:#4ade80;font-size:12px;margin-top:6px;font-weight:600;}\n",
+    "html": "<div id=\"root\"></div>",
+    "js": "import React, { useState, useEffect } from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nconst n = (v) => (Number(v) || 0).toLocaleString();\n\nfunction App() {\n  const [model, setModel] = useState(appsmith.model || {});\n  useEffect(() => {\n    const update = () => setModel({ ...(appsmith.model || {}) });\n    update();\n    if (typeof appsmith.onModelChange === \"function\") appsmith.onModelChange(update);\n    const id = setInterval(update, 400);\n    return () => clearInterval(id);\n  }, []);\n\n  if (model.isLoading) return React.createElement(\"div\", { className: \"skel\" }, \"Loading stage totals...\");\n  const rows = (model && model.data) || [];\n  if (!rows.length) return React.createElement(\"div\", { className: \"skel\" }, \"No validation errors in this window.\");\n\n  // An all-stage tile first, so the page leads with the size of the problem.\n  const sum = (k) => rows.reduce((a, r) => a + (Number(r[k]) || 0), 0);\n  const allOpen = sum(\"Open\"), allTotal = sum(\"Total\"), allBlocked = sum(\"Open, Not Resolvable\");\n\n  const tile = (label, open, total, blocked, pct) =>\n    React.createElement(\"div\", { className: \"tile\", key: label },\n      React.createElement(\"div\", { className: \"lbl\" }, label),\n      React.createElement(\"div\", { className: \"big\" }, n(open)),\n      React.createElement(\"div\", { className: \"sub\" }, \"open of \" + n(total) +\n        (pct == null ? \"\" : \"  \u00b7  \" + pct + \"% resolved\")),\n      blocked > 0\n        ? React.createElement(\"div\", { className: \"blocked\" }, n(blocked) + \" not resolvable\")\n        : React.createElement(\"div\", { className: \"ok\" }, \"all resolvable\"));\n\n  return React.createElement(\"div\", { className: \"wrap\" },\n    React.createElement(\"div\", { className: \"tiles\" },\n      [tile(\"All Stages\", allOpen, allTotal, allBlocked,\n            allTotal ? Math.round(1000 * (allTotal - allOpen) / allTotal) / 10 : null)]\n        .concat(rows.map((r) =>\n          tile(r[\"Stage\"], r[\"Open\"], r[\"Total\"], r[\"Open, Not Resolvable\"], r[\"Resolved %\"])))));\n}\n\nReactDOM.render(React.createElement(App, null), document.getElementById(\"root\"));\n"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 15,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body{margin:0;font-family:\"Open Sans\",\"Inter\",\"Segoe UI\",Arial,sans-serif;color:#e2e8f0;background:#0f172a;}\n.wrap{display:flex;flex-direction:column;height:100%;background:#0f172a;}\n.meta{padding:10px 24px 0;color:#94a3b8;font-size:13px;text-align:right;}\n.scroll{overflow:auto;flex:1;}\n.tbl{width:100%;border-collapse:collapse;font-size:14px;}\n.tbl th{text-align:left;padding:14px 18px;color:#cbd5e1;font-weight:700;font-size:14px;background:#0f172a;border-bottom:1px solid #334155;cursor:pointer;user-select:none;white-space:nowrap;position:sticky;top:0;z-index:1;}\n.tbl th.noSort{cursor:default;}\n.tbl th .sort{display:inline-flex;flex-direction:column;margin-left:6px;line-height:0.7;vertical-align:middle;}\n.tbl th .sort span{font-size:10px;color:#64748b;}\n.tbl th .sort span.active{color:#ffffff;}\n.tbl td{padding:13px 18px;border:0;color:#e2e8f0;vertical-align:top;white-space:nowrap;}\n.tbl td>div{white-space:normal;word-break:break-word;}\n.tbl tbody tr:nth-child(odd) td{background:#1e293b;}\n.tbl tbody tr:nth-child(even) td{background:#0f172a;}\n.tbl tbody tr:hover td{background:#26344b;}\n.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;}\n.b-error{background:#4c1d1d;color:#f87171;}\n.b-warning{background:#422f0b;color:#fbbf24;}\n.b-info{background:#173049;color:#60a5fa;}\n.b-default{background:#334155;color:#cbd5e1;}\n.maplink{color:#60a5fa;text-decoration:none;cursor:pointer;font-weight:500;}\n.maplink:hover{text-decoration:underline;}\n.empty{padding:30px;text-align:center;color:#64748b;font-style:italic;}\n.pager{display:flex;align-items:center;gap:8px;padding:14px 24px;border-top:1px solid #334155;background:#0f172a;}\n.pbtn{background:transparent;border:none;color:#cbd5e1;cursor:pointer;padding:6px 8px;border-radius:4px;font-size:16px;}\n.pbtn:disabled{color:#475569;cursor:not-allowed;}\n.pbtn:hover:not(:disabled){background:#1e293b;}\n.pnum{min-width:30px;text-align:center;background:#1E293B;color:#ffffff;border-radius:4px;padding:4px 10px;font-weight:600;border:1px solid #334155;}\n.gotolbl{color:#cbd5e1;font-size:14px;}\n.goto{width:60px;padding:6px 8px;border:1px solid #334155;border-radius:4px;font-size:14px;outline:none;background:#1e293b;color:#ffffff;}\n.goto:focus{border-color:#64748b;}\n.psize{margin-left:auto;background:#1e293b;color:#ffffff;border:1px solid #334155;border-radius:4px;padding:6px 10px;font-size:14px;outline:none;cursor:pointer;}\n.psize:focus{border-color:#64748b;}\n.skel{padding:18px 24px;color:#94a3b8;}\n\n.tiles{display:flex;gap:14px;padding:14px 20px;flex-wrap:wrap;}\n.tile{flex:1 1 150px;min-width:150px;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:12px 14px;}\n.tile .lbl{color:#94a3b8;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}\n.tile .big{color:#f1f5f9;font-size:26px;font-weight:700;margin-top:6px;line-height:1.1;}\n.tile .sub{color:#64748b;font-size:12px;margin-top:4px;}\n.tile .blocked{color:#f87171;font-size:12px;margin-top:6px;font-weight:600;}\n.tile .ok{color:#4ade80;font-size:12px;margin-top:6px;font-weight:600;}\n",
+    "html": "<div id=\"root\"></div>",
+    "js": "import React, { useState, useEffect } from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\n\nconst n = (v) => (Number(v) || 0).toLocaleString();\n\nfunction App() {\n  const [model, setModel] = useState(appsmith.model || {});\n  useEffect(() => {\n    const update = () => setModel({ ...(appsmith.model || {}) });\n    update();\n    if (typeof appsmith.onModelChange === \"function\") appsmith.onModelChange(update);\n    const id = setInterval(update, 400);\n    return () => clearInterval(id);\n  }, []);\n\n  if (model.isLoading) return React.createElement(\"div\", { className: \"skel\" }, \"Loading stage totals...\");\n  const rows = (model && model.data) || [];\n  if (!rows.length) return React.createElement(\"div\", { className: \"skel\" }, \"No validation errors in this window.\");\n\n  // An all-stage tile first, so the page leads with the size of the problem.\n  const sum = (k) => rows.reduce((a, r) => a + (Number(r[k]) || 0), 0);\n  const allOpen = sum(\"Open\"), allTotal = sum(\"Total\"), allBlocked = sum(\"Open, Not Resolvable\");\n\n  const tile = (label, open, total, blocked, pct) =>\n    React.createElement(\"div\", { className: \"tile\", key: label },\n      React.createElement(\"div\", { className: \"lbl\" }, label),\n      React.createElement(\"div\", { className: \"big\" }, n(open)),\n      React.createElement(\"div\", { className: \"sub\" }, \"open of \" + n(total) +\n        (pct == null ? \"\" : \"  \u00b7  \" + pct + \"% resolved\")),\n      blocked > 0\n        ? React.createElement(\"div\", { className: \"blocked\" }, n(blocked) + \" not resolvable\")\n        : React.createElement(\"div\", { className: \"ok\" }, \"all resolvable\"));\n\n  return React.createElement(\"div\", { className: \"wrap\" },\n    React.createElement(\"div\", { className: \"tiles\" },\n      [tile(\"All Stages\", allOpen, allTotal, allBlocked,\n            allTotal ? Math.round(1000 * (allTotal - allOpen) / allTotal) / 10 : null)]\n        .concat(rows.map((r) =>\n          tile(r[\"Stage\"], r[\"Open\"], r[\"Total\"], r[\"Open, Not Resolvable\"], r[\"Resolved %\"])))));\n}\n\nReactDOM.render(React.createElement(App, null), document.getElementById(\"root\"));\n"
+  },
+  "version": 1,
+  "widgetId": "val_stats_w",
+  "widgetName": "ValStats"
+}

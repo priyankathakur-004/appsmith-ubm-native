@@ -9,10 +9,10 @@ WITH scoped AS (
     JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
     WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 76013 }}
       AND be.created_at >= COALESCE(
-              NULLIF('{{ appsmith.store.valDateFrom || "" }}', '')::timestamp,
+              NULLIF('{{ ValDateFrom.formattedDate || "" }}', '')::timestamp,
               (CURRENT_DATE - INTERVAL '1 year')::timestamp)
-      AND (NULLIF('{{ appsmith.store.valDateTo || "" }}', '') IS NULL
-           OR be.created_at < NULLIF('{{ appsmith.store.valDateTo || "" }}', '')::timestamp
+      AND (NULLIF('{{ ValDateTo.formattedDate || "" }}', '') IS NULL
+           OR be.created_at < NULLIF('{{ ValDateTo.formattedDate || "" }}', '')::timestamp
                               + INTERVAL '1 day')
 ),
 tagged AS (

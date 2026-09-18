@@ -1,0 +1,60 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "bottomRow": 9,
+  "dynamicHeight": "FIXED",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "val_dfrom_k",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelTextColor": "#E2E8F0",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 15,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 9,
+  "mobileLeftColumn": 15,
+  "mobileRightColumn": 28,
+  "mobileTopRow": 1,
+  "needsErrorInfo": false,
+  "parentColumnSpace": 13.83,
+  "parentId": "val_filter_cv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 28,
+  "topRow": 1,
+  "version": 2,
+  "widgetId": "val_dfrom_w",
+  "widgetName": "ValDateFrom",
+  "type": "DATE_PICKER_WIDGET2",
+  "label": "Raised From",
+  "dateFormat": "MM/DD/YYYY",
+  "datePickerType": "DATE_PICKER",
+  "closeOnSelection": true,
+  "firstDayOfWeek": 0,
+  "shortcuts": false,
+  "timePrecision": "minute",
+  "placeholderText": "mm/dd/yyyy",
+  "onDateSelected": "{{ fetch_validation_codes.run(); fetch_validation_stats.run(); }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDateSelected"
+    }
+  ]
+}

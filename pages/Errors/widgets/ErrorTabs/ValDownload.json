@@ -1,0 +1,44 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 32,
+  "boxShadow": "none",
+  "buttonColor": "#60A5FA",
+  "buttonVariant": "TERTIARY",
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "iconName": "import",
+  "iconSize": 24,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "val_download_k",
+  "leftColumn": 60,
+  "minWidth": 50,
+  "mobileBottomRow": 32,
+  "mobileLeftColumn": 60,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 28,
+  "needsErrorInfo": false,
+  "onClick": "{{ ErrorsActions.downloadValCsv() }}",
+  "originalBottomRow": 32,
+  "originalTopRow": 28,
+  "parentColumnSpace": 13.83,
+  "parentId": "pe7dguvnx6",
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "hug",
+  "rightColumn": 64,
+  "topRow": 28,
+  "type": "ICON_BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "val_download_w",
+  "widgetName": "ValDownload"
+}

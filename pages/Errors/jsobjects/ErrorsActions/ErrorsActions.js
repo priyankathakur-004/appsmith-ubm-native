@@ -54,6 +54,39 @@ export default {
 		], "communication_error_log.csv");
 	},
 
+	// --- Bill Errors (validation codes) ---
+	// Customer and the raised-date range are read straight off the widgets by the
+	// two aggregate queries, so clearing them is enough to restore the defaults.
+	clearValFilters() {
+		resetWidget("ValCustomer", true);
+		resetWidget("ValDateFrom", true);
+		resetWidget("ValDateTo", true);
+		fetch_validation_codes.run();
+		fetch_validation_stats.run();
+	},
+
+	// Row link on the catalogue: stash which check was clicked, load its bills,
+	// then open the modal. The code alone is not a key - the same number means
+	// different checks under different categories - so both are stored.
+	async valShowBills(row) {
+		if (!row || row["Code"] == null) return;
+		await storeValue("valCode", row["Code"]);
+		await storeValue("valCategory", row["Category"] || "");
+		await storeValue("valName", row["Check"] || "");
+		await fetch_validation_bills.run();
+		showModal("ValDetailModal");
+	},
+
+	downloadValCsv() {
+		this._csv(fetch_validation_codes.data || [], [
+			["Code", "Code"], ["Category", "Category"], ["Check", "Check"],
+			["Stage", "Stage"], ["Severity", "Severity"],
+			["Occurrences", "Occurrences"], ["Bills Affected", "Bills Affected"],
+			["Open", "Open"], ["Resolved", "Resolved"], ["Resolved %", "Resolved %"],
+			["Resolvable", "Resolvable"], ["Last Seen", "Last Seen"]
+		], "bill_validation_codes.csv");
+	},
+
 	// "More Details" row link: load the full row, then open the detail modal.
 	// The custom table already did updateModel({selectedRow}) before firing this,
 	// so fetch_comm_detail's WHERE reads CommTable.model.selectedRow.id.
