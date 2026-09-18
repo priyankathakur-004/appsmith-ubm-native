@@ -9,7 +9,7 @@
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 900,
+      "bottomRow": 1390,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -30,7 +30,7 @@
       "leftColumn": 0,
       "maxDynamicHeight": 9000,
       "minDynamicHeight": 4,
-      "minHeight": 900,
+      "minHeight": 1394,
       "minWidth": 450,
       "mobileBottomRow": 619,
       "mobileLeftColumn": 0,
@@ -60,7 +60,7 @@
   "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
-  "height": 900,
+  "height": 1394,
   "isCanvas": true,
   "isLoading": false,
   "key": "val_detail_modal_k",
@@ -84,5 +84,5 @@
   "version": 2,
   "widgetId": "val_detail_modal",
   "widgetName": "ValDetailModal",
-  "width": 1530
+  "width": 1827.8
 }

@@ -5,12 +5,12 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 25,
+  "bottomRow": 155,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1060,
+      "bottomRow": 1450,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -56,7 +56,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1060,
+      "bottomRow": 1450,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -102,7 +102,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1240,
+      "bottomRow": 1450,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "containerStyle": "none",
@@ -137,14 +137,14 @@
       "renderMode": "CANVAS",
       "responsiveBehavior": "fill",
       "rightColumn": 1053,
+      "shouldScrollContents": false,
       "tabId": "tabnmsidlhb1j",
       "tabName": "Bill Error Log",
       "topRow": 1,
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "pe7dguvnx6",
-      "widgetName": "Canvas1",
-      "shouldScrollContents": false
+      "widgetName": "Canvas1"
     }
   ],
   "defaultTab": "Bill Error Log",
@@ -172,7 +172,7 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 6,
   "needsErrorInfo": false,
-  "originalBottomRow": 118,
+  "originalBottomRow": 155,
   "originalTopRow": 6,
   "parentColumnSpace": 16.453125,
   "parentId": "0",
