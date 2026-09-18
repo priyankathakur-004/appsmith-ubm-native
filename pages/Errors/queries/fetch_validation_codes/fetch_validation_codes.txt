@@ -1,4 +1,4 @@
--- Bill Validation Log — code catalogue for the selected customer.
+-- Bill Validation Log — code catalogue, optionally scoped to one customer.
 --
 -- Aggregated FROM bill_errors, not FROM bill_validation_definitions: ~43 of the 116
 -- live codes have no definition row, so definitions are joined in only to enrich.
@@ -17,11 +17,15 @@ WITH scoped AS (
            be.message             AS message,
            be.created_at          AS created_at
     FROM bill_management_v2.bill_errors be
-    JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
-    -- No customer picked means every customer, so the predicate drops out
-    -- entirely rather than falling back to a hardcoded id.
+    -- Customer is a semi-join, not a join. With nothing picked the literal folds
+    -- to TRUE at plan time and bill_records is never touched at all; with a
+    -- customer picked it becomes a plain IN against an indexed column. The old
+    -- inner join paid for itself on every row even when nothing was filtered.
     WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
-           OR br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
+           OR be.bill_record_id IN (
+                  SELECT br.id
+                  FROM bill_management_v2.bill_records br
+                  WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}))
       AND be.created_at >= COALESCE(
               NULLIF('{{ ValDateFrom.formattedDate || "" }}', '')::timestamp,
               (CURRENT_DATE - INTERVAL '1 year')::timestamp)
@@ -35,7 +39,10 @@ agg AS (
            MIN(severity)                    AS severity_min,
            MAX(severity)                    AS severity_max,
            COUNT(*)                         AS occurrences,
-           COUNT(DISTINCT bill_record_id)   AS bills_affected,
+           -- COUNT(DISTINCT ...) keeps a hash set per group, which is affordable
+           -- for one customer and not for all of them. Skip it when unscoped;
+           -- the column then reads as not-applicable instead of costing minutes.
+           {{ ValCustomer.selectedOptionValue ? "COUNT(DISTINCT bill_record_id)" : "NULL::bigint" }} AS bills_affected,
            COUNT(*) FILTER (WHERE resolved) AS resolved_count,
            MAX(created_at)                  AS last_seen,
            MIN(message)                     AS sample_message
