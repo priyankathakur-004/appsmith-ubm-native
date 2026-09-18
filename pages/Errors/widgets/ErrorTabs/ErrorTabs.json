@@ -5,12 +5,12 @@
   "borderColor": "#334155",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
-  "bottomRow": 118,
+  "bottomRow": 25,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "children": [
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1080,
+      "bottomRow": 1060,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -56,7 +56,7 @@
     },
     {
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1080,
+      "bottomRow": 1060,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -99,9 +99,54 @@
       "version": 1,
       "widgetId": "er_comm_cv",
       "widgetName": "CommunicationCanvas"
+    },
+    {
+      "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+      "bottomRow": 150,
+      "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+      "canExtend": false,
+      "containerStyle": "none",
+      "detachFromLayout": true,
+      "dynamicBindingPathList": [
+        {
+          "key": "borderRadius"
+        },
+        {
+          "key": "boxShadow"
+        }
+      ],
+      "dynamicHeight": "AUTO_HEIGHT",
+      "dynamicTriggerPathList": [],
+      "flexLayers": [],
+      "isLoading": false,
+      "isVisible": true,
+      "key": "7hhc4egy3u",
+      "leftColumn": 0,
+      "maxDynamicHeight": 9000,
+      "minDynamicHeight": 4,
+      "minHeight": 1120,
+      "minWidth": 450,
+      "mobileBottomRow": 1121,
+      "mobileLeftColumn": 0,
+      "mobileRightColumn": 1053,
+      "mobileTopRow": 1,
+      "needsErrorInfo": false,
+      "parentColumnSpace": 1,
+      "parentId": "er_tabs_w",
+      "parentRowSpace": 1,
+      "renderMode": "CANVAS",
+      "responsiveBehavior": "fill",
+      "rightColumn": 1053,
+      "tabId": "tabnmsidlhb1j",
+      "tabName": "Bill Errors",
+      "topRow": 1,
+      "type": "CANVAS_WIDGET",
+      "version": 1,
+      "widgetId": "pe7dguvnx6",
+      "widgetName": "Canvas1"
     }
   ],
-  "defaultTab": "Payments Error Log",
+  "defaultTab": "Bill Errors",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
@@ -139,7 +184,7 @@
   "tabsObj": {
     "tab_comm": {
       "id": "tab_comm",
-      "index": 1,
+      "index": 2,
       "isDuplicateLabel": false,
       "isVisible": true,
       "label": "Communication Error Log",
@@ -148,12 +193,20 @@
     },
     "tab_payments": {
       "id": "tab_payments",
-      "index": 0,
+      "index": 1,
       "isDuplicateLabel": false,
       "isVisible": true,
       "label": "Payments Error Log",
       "positioning": "vertical",
       "widgetId": "er_pay_cv"
+    },
+    "tabnmsidlhb1j": {
+      "id": "tabnmsidlhb1j",
+      "index": 0,
+      "isDuplicateLabel": false,
+      "isVisible": true,
+      "label": "Bill Errors",
+      "widgetId": "pe7dguvnx6"
     }
   },
   "topRow": 6,

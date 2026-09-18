@@ -29,7 +29,7 @@
     ],
     "name": "fetch_bill_accounts",
     "pageId": "Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }

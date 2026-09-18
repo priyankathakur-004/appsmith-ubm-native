@@ -29,7 +29,7 @@
     ],
     "name": "fetch_warnings",
     "pageId": "Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
