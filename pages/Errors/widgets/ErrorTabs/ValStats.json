@@ -3,15 +3,12 @@
   "borderColor": "#1E293B",
   "borderRadius": "0.375rem",
   "borderWidth": "0",
-  "bottomRow": 37,
-  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "bottomRow": 28,
+  "boxShadow": "",
   "defaultModel": "{{ ({ data: fetch_validation_stats.data, isLoading: fetch_validation_stats.isLoading }) }}",
   "dynamicBindingPathList": [
     {
       "key": "defaultModel"
-    },
-    {
-      "key": "boxShadow"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -30,7 +27,7 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 23,
   "needsErrorInfo": false,
-  "originalBottomRow": 37,
+  "originalBottomRow": 28,
   "originalTopRow": 22,
   "parentColumnSpace": 13.83,
   "parentId": "pe7dguvnx6",
