@@ -10,6 +10,8 @@ export default {
 		fetch_comm_emails.run();
 		fetch_payment_errors.run();
 		fetch_comm_errors.run();
+		fetch_validation_codes.run();
+		fetch_validation_stats.run();
 	},
 
 	// --- Payments Error Log ---

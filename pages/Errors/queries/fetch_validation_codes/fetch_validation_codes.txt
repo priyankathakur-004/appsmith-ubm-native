@@ -1,0 +1,81 @@
+-- Bill Validation Log — code catalogue for the selected customer.
+--
+-- Aggregated FROM bill_errors, not FROM bill_validation_definitions: ~43 of the 116
+-- live codes have no definition row, so definitions are joined in only to enrich.
+-- Row grain is (validation_check_id, category) — the same number means different
+-- checks under different categories (3005 exists under both Bill Analyser and Bill
+-- Validator). Severity varies per instance, so it is reported as a range.
+--
+-- Prepared statements are OFF: every {{ }} is a literal fragment. Strings are quoted
+-- and every cast sits on a quoted literal, never on a bare substituted value.
+WITH scoped AS (
+    SELECT be.validation_check_id AS code,
+           be.category            AS category,
+           be.severity            AS severity,
+           be.resolved            AS resolved,
+           be.bill_record_id      AS bill_record_id,
+           be.message             AS message,
+           be.created_at          AS created_at
+    FROM bill_management_v2.bill_errors be
+    JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+    WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 76013 }}
+      AND be.created_at >= COALESCE(
+              NULLIF('{{ appsmith.store.valDateFrom || "" }}', '')::timestamp,
+              (CURRENT_DATE - INTERVAL '1 year')::timestamp)
+      AND (NULLIF('{{ appsmith.store.valDateTo || "" }}', '') IS NULL
+           OR be.created_at < NULLIF('{{ appsmith.store.valDateTo || "" }}', '')::timestamp
+                              + INTERVAL '1 day')
+),
+agg AS (
+    SELECT code,
+           category,
+           MIN(severity)                    AS severity_min,
+           MAX(severity)                    AS severity_max,
+           COUNT(*)                         AS occurrences,
+           COUNT(DISTINCT bill_record_id)   AS bills_affected,
+           COUNT(*) FILTER (WHERE resolved) AS resolved_count,
+           MAX(created_at)                  AS last_seen,
+           MIN(message)                     AS sample_message
+    FROM scoped
+    GROUP BY code, category
+)
+SELECT
+    a.code                                AS "Code",
+    a.category                            AS "Category",
+    -- Orphan codes have no definition, so fall back to a representative message.
+    COALESCE(d.name, a.sample_message)    AS "Check",
+    (d.id IS NULL)                        AS is_undefined,
+    COALESCE(
+        CASE d.workflow_state
+            WHEN 'integrity_check'     THEN 'Integrity Check'
+            WHEN 'data_verification_1' THEN 'Data Verification I'
+            WHEN 'data_verification_2' THEN 'Data Verification II'
+            WHEN 'data_audit_1'        THEN 'Data Audit I'
+            WHEN 'data_audit_2'        THEN 'Data Audit II'
+            ELSE INITCAP(REPLACE(d.workflow_state, '_', ' '))
+        END, 'Unmapped')                  AS "Stage",
+    a.severity_max                        AS severity_code,
+    CASE
+        WHEN a.severity_min = a.severity_max THEN
+            CASE a.severity_max
+                WHEN 10 THEN 'Info'   WHEN 20 THEN 'Low'      WHEN 30 THEN 'Medium'
+                WHEN 40 THEN 'High'   WHEN 50 THEN 'Severe'   WHEN 60 THEN 'Critical'
+                WHEN 80 THEN 'Blocker' ELSE a.severity_max::text
+            END
+        ELSE a.severity_min::text || '–' || a.severity_max::text
+    END                                   AS "Severity",
+    a.occurrences                         AS "Occurrences",
+    a.bills_affected                      AS "Bills Affected",
+    a.resolved_count                      AS "Resolved",
+    a.occurrences - a.resolved_count      AS "Open",
+    ROUND(100.0 * a.resolved_count / NULLIF(a.occurrences, 0), 1) AS "Resolved %",
+    COALESCE(d.resolvable,      FALSE)    AS "Resolvable",
+    COALESCE(d.auto_resolvable, FALSE)    AS "Auto",
+    COALESCE(d.bulk_resolvable, FALSE)    AS "Bulk",
+    TO_CHAR(a.last_seen, 'MM/DD/YYYY')    AS "Last Seen",
+    a.sample_message                      AS sample_message
+FROM agg a
+LEFT JOIN bill_management_v2.bill_validation_definitions d
+       ON d.id = a.code AND d.deleted_at IS NULL
+-- Lowest resolution rate first: that is the operational signal, not raw volume.
+ORDER BY "Resolved %" ASC NULLS FIRST, a.occurrences DESC;

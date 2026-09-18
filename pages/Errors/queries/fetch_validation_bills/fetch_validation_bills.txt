@@ -1,0 +1,42 @@
+-- Bill Validation Log — bills behind one clicked (code, category) pair.
+-- Server-side paginated: bill_errors is a large fact table, so never post-filter
+-- or slice this in a JSObject. bill_errors has no bill_id; it is reached through
+-- analytics_bills_items, the same hop the per-bill error panel already uses.
+SELECT
+    abi.bill_id                              AS "Bill Id",
+    br.client_account                        AS "Billing ID",
+    br.vendor_code                           AS "Vendor",
+    TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS "Invoice Date",
+    be.severity                              AS severity_code,
+    CASE be.severity
+        WHEN 10 THEN 'Info'   WHEN 20 THEN 'Low'    WHEN 30 THEN 'Medium'
+        WHEN 40 THEN 'High'   WHEN 50 THEN 'Severe' WHEN 60 THEN 'Critical'
+        WHEN 80 THEN 'Blocker' ELSE be.severity::text
+    END                                      AS "Severity",
+    be.message                               AS "Message",
+    -- data carries {commodity, account_code, meter_serial}; read it instead of
+    -- regexing the message the way the warnings helper has to.
+    be.data ->> 'commodity'                  AS "Utility",
+    be.data ->> 'account_code'               AS "Account",
+    be.data ->> 'meter_serial'               AS "Meter",
+    be.resolved                              AS "Resolved",
+    TO_CHAR(be.created_at, 'MM/DD/YYYY')     AS "Raised"
+FROM bill_management_v2.bill_errors be
+JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+LEFT JOIN bill_management_v2.analytics_bills_items abi
+       ON abi.bill_record_id = br.id AND abi.bill_id IS NOT NULL
+WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 76013 }}
+  AND be.validation_check_id = {{ appsmith.store.valCode || 0 }}
+  AND be.category = '{{ appsmith.store.valCategory || "" }}'
+  AND be.created_at >= COALESCE(
+          NULLIF('{{ appsmith.store.valDateFrom || "" }}', '')::timestamp,
+          (CURRENT_DATE - INTERVAL '1 year')::timestamp)
+  AND (NULLIF('{{ appsmith.store.valDateTo || "" }}', '') IS NULL
+       OR be.created_at < NULLIF('{{ appsmith.store.valDateTo || "" }}', '')::timestamp
+                          + INTERVAL '1 day')
+  AND ('{{ appsmith.store.valResolved || "all" }}' = 'all'
+       OR ('{{ appsmith.store.valResolved }}' = 'open'     AND be.resolved IS FALSE)
+       OR ('{{ appsmith.store.valResolved }}' = 'resolved' AND be.resolved))
+ORDER BY be.created_at DESC, be.id DESC
+LIMIT {{ appsmith.store.valPageSize || 50 }}
+OFFSET {{ ((appsmith.store.valPageNo || 1) - 1) * (appsmith.store.valPageSize || 50) }};
