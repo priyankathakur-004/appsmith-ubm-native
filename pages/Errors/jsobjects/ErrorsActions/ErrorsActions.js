@@ -11,7 +11,6 @@ export default {
 		fetch_payment_errors.run();
 		fetch_comm_errors.run();
 		fetch_validation_codes.run();
-		fetch_validation_stats.run();
 	},
 
 	// --- Payments Error Log ---
@@ -66,7 +65,6 @@ export default {
 		resetWidget("ValCategory", true);
 		resetWidget("ValSearch", true);
 		fetch_validation_codes.run();
-		fetch_validation_stats.run();
 	},
 
 	// Row link on the catalogue: stash which check was clicked, load its bills,

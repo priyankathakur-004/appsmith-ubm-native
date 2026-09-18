@@ -42,7 +42,7 @@
   "mobileRightColumn": 42,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onDateSelected": "{{ fetch_validation_codes.run(); fetch_validation_stats.run(); }}",
+  "onDateSelected": "{{ fetch_validation_codes.run(); }}",
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,
