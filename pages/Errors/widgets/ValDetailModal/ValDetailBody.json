@@ -36,7 +36,7 @@
   "mobileTopRow": 0,
   "needsErrorInfo": false,
   "onClose": "{{ closeModal('ValDetailModal') }}",
-  "originalBottomRow": 90,
+  "originalBottomRow": 112,
   "originalTopRow": 0,
   "parentColumnSpace": 1,
   "parentId": "val_detail_canvas",
