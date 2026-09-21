@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "-- Location options for the Bill Error Log filter, scoped to the selected customer.\n-- Locations belong to a customer, so with none picked this is every location in\n-- the system; capped so the dropdown stays usable.\nSELECT l.id                                                              AS value,\n       COALESCE(NULLIF(btrim(ld.location_description), ''),\n                'Location ' || l.id::text)                               AS label\nFROM bill_management_v2.locations l\nLEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = l.id\nWHERE ('{{ ValCustomer.selectedOptionValue || \"\" }}' = ''\n       OR l.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})\nORDER BY label\nLIMIT 5000;\n",
+      "body": "-- Location options for the Bill Error Log filter.\n-- Locations belong to a customer, and the client's ask was \"a single location of\n-- that customer\", so this returns nothing until one is picked rather than sorting\n-- every location in the system on page load.\nSELECT l.id                                                              AS value,\n       COALESCE(NULLIF(btrim(ld.location_description), ''),\n                'Location ' || l.id::text)                               AS label\nFROM bill_management_v2.locations l\nLEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = l.id\nWHERE '{{ ValCustomer.selectedOptionValue || \"\" }}' <> ''\n  AND l.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}\nORDER BY label\nLIMIT 5000;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

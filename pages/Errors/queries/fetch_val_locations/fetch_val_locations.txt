@@ -1,12 +1,13 @@
--- Location options for the Bill Error Log filter, scoped to the selected customer.
--- Locations belong to a customer, so with none picked this is every location in
--- the system; capped so the dropdown stays usable.
+-- Location options for the Bill Error Log filter.
+-- Locations belong to a customer, and the client's ask was "a single location of
+-- that customer", so this returns nothing until one is picked rather than sorting
+-- every location in the system on page load.
 SELECT l.id                                                              AS value,
        COALESCE(NULLIF(btrim(ld.location_description), ''),
                 'Location ' || l.id::text)                               AS label
 FROM bill_management_v2.locations l
 LEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = l.id
-WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
-       OR l.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
+WHERE '{{ ValCustomer.selectedOptionValue || "" }}' <> ''
+  AND l.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}
 ORDER BY label
 LIMIT 5000;

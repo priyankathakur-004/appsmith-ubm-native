@@ -51,7 +51,7 @@
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,
-  "placeholderText": "All",
+  "placeholderText": "Pick a customer first",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
   "rightColumn": 38,
