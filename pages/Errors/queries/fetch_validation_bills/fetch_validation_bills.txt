@@ -1,11 +1,8 @@
 -- Bill Validation Log — the bill errors behind one clicked (code, category) pair.
--- Server-side paginated: one page of rows per request instead of a thousand-row
--- fetch. Status and search are applied here too - with paging, filtering in the
--- browser would only ever filter the page you happen to be looking at.
---
--- Deep paging with OFFSET makes Postgres walk and discard the skipped rows, so
--- this gets slower the further in you go. That is tolerable for an investigation
--- view people use a page or two of; it would not be for a report read end to end.
+-- Capped at the most recent 1000 instances; the modal paginates that slice and
+-- says so, rather than pulling an unbounded number of rows for a read-only view.
+-- bill_errors has no bill_id; it is reached through analytics_bills_items, the
+-- same hop the per-bill error panel already uses.
 SELECT
     abi.bill_id                              AS "Bill Id",
     cs.name                                  AS "Customer",
@@ -49,16 +46,5 @@ WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
   AND (NULLIF('{{ ValDateTo.formattedDate || "" }}', '') IS NULL
        OR be.created_at < NULLIF('{{ ValDateTo.formattedDate || "" }}', '')::timestamp
                           + INTERVAL '1 day')
-  AND ('{{ appsmith.store.valBillStatus || "all" }}' = 'all'
-       OR ('{{ appsmith.store.valBillStatus || "all" }}' = 'open'     AND be.resolved IS FALSE)
-       OR ('{{ appsmith.store.valBillStatus || "all" }}' = 'resolved' AND be.resolved))
-  AND ('{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}' = ''
-       OR be.message               ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
-       OR br.client_account        ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
-       OR COALESCE(cs.name, '')    ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
-       OR abi.bill_id::text        ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
-       OR COALESCE(be.data ->> 'account_code', '')  ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
-       OR COALESCE(be.data ->> 'meter_serial', '')  ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%')
 ORDER BY be.created_at DESC, be.id DESC
-LIMIT {{ appsmith.store.valBillPageSize || 50 }}
-OFFSET {{ ((appsmith.store.valBillPageNo || 1) - 1) * (appsmith.store.valBillPageSize || 50) }};
+LIMIT 1000;
