@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 18,
+  "bottomRow": 17,
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
@@ -14,12 +14,12 @@
     }
   ],
   "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
-  "fontSize": "0.875rem",
+  "fontSize": "1rem",
   "fontStyle": "BOLD",
   "isLoading": false,
   "isVisible": true,
   "key": "val_clear_k",
-  "leftColumn": 55,
+  "leftColumn": 56,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
   "mobileBottomRow": 8,
@@ -35,7 +35,7 @@
   "text": "Clear",
   "textAlign": "RIGHT",
   "textColor": "#60A5FA",
-  "topRow": 11,
+  "topRow": 13,
   "type": "TEXT_WIDGET",
   "version": 1,
   "widgetId": "val_clear_w",

@@ -54,7 +54,7 @@
   "placeholderText": "All customers",
   "renderMode": "CANVAS",
   "responsiveBehavior": "fill",
-  "rightColumn": 10,
+  "rightColumn": 12,
   "serverSideFiltering": false,
   "sourceData": "{{ getCustomers.data.map(c => ({ label: c.name, value: c.id })) }}",
   "topRow": 1,
