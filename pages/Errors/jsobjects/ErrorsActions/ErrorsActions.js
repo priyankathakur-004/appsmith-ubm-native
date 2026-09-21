@@ -95,8 +95,33 @@ export default {
 		await storeValue("valCode", row["Code"]);
 		await storeValue("valCategory", row["Category"] || "");
 		await storeValue("valName", row["Check"] || "");
+		// A fresh code starts at page one with no leftover status or search.
+		await storeValue("valBillPageNo", 1);
+		await storeValue("valBillStatus", "all");
+		await storeValue("valBillSearch", "");
 		await fetch_validation_bills.run();
 		showModal("ValDetailModal");
+	},
+
+	// Paging is server-side, so each step is one page of rows rather than a
+	// thousand-row fetch the browser then slices.
+	async valBillsPage(delta) {
+		const cur = Number(appsmith.store.valBillPageNo) || 1;
+		const next = Math.max(1, cur + (Number(delta) || 0));
+		if (next === cur) return;
+		await storeValue("valBillPageNo", next);
+		fetch_validation_bills.run();
+	},
+
+	// Status and search live in SQL now: filtering in the browser would only ever
+	// filter the page on screen. The widget stages its values on its own model
+	// first, because triggerEvent cannot carry arguments.
+	async valBillsFilter() {
+		const m = (typeof ValDetailBody !== 'undefined' && ValDetailBody.model) || {};
+		await storeValue("valBillStatus", m.pendingStatus || "all");
+		await storeValue("valBillSearch", m.pendingSearch || "");
+		await storeValue("valBillPageNo", 1);
+		fetch_validation_bills.run();
 	},
 
 	downloadValCsv() {
