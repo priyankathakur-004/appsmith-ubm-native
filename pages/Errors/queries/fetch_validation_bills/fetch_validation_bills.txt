@@ -25,9 +25,19 @@ JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
 LEFT JOIN bill_management_v2.customers_search cs ON cs.id = br.customer_id
 LEFT JOIN bill_management_v2.analytics_bills_items abi
        ON abi.bill_record_id = br.id AND abi.bill_id IS NOT NULL
--- No customer picked means every customer (see the catalogue query).
+-- Same optional filters as the catalogue; bill_records is already joined here
+-- for its columns, so they apply directly rather than through a semi-join.
 WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
        OR br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
+  AND ('{{ ValVendor.selectedOptionValue || "" }}' = ''
+       OR br.vendor_code = '{{ ValVendor.selectedOptionValue || "" }}')
+  AND ('{{ (ValAccount.text || "").trim() }}' = ''
+       OR br.client_account ILIKE '%{{ (ValAccount.text || "").split("'").join("''") }}%')
+  AND ('{{ ValLocation.selectedOptionValue || "" }}' = ''
+       OR br.client_account IN (
+              SELECT rcmu.client_account
+              FROM bill_management_v2.reports_customer_monthly_usage rcmu
+              WHERE rcmu.location_id = {{ ValLocation.selectedOptionValue || 0 }}))
   AND be.validation_check_id = {{ appsmith.store.valCode || 0 }}
   AND be.category = '{{ appsmith.store.valCategory || "" }}'
   AND be.created_at >= COALESCE(

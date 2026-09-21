@@ -1,0 +1,14 @@
+-- Vendor options for the Bill Error Log filter.
+-- With a customer picked, only the vendors that customer actually has bills from
+-- (an indexed lookup on customer_id). With none picked, the full vendor list --
+-- vendors is a small table, so this never scans bill_records unnecessarily.
+SELECT v.code                                                  AS value,
+       COALESCE(NULLIF(btrim(v.pretty_name), ''), v.code)       AS label
+FROM bill_management_v2.vendors v
+WHERE v.code IS NOT NULL
+  AND ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+       OR v.code IN (
+              SELECT DISTINCT br.vendor_code
+              FROM bill_management_v2.bill_records br
+              WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}))
+ORDER BY label;

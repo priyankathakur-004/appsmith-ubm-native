@@ -17,15 +17,29 @@ WITH scoped AS (
            be.message             AS message,
            be.created_at          AS created_at
     FROM bill_management_v2.bill_errors be
-    -- Customer is a semi-join, not a join. With nothing picked the literal folds
-    -- to TRUE at plan time and bill_records is never touched at all; with a
-    -- customer picked it becomes a plain IN against an indexed column. The old
-    -- inner join paid for itself on every row even when nothing was filtered.
-    WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+    -- One semi-join carries every bill-record-level filter: customer, vendor,
+    -- account and location. With none of them set the guard folds to TRUE at plan
+    -- time and bill_records is never touched at all, which is what keeps the
+    -- all-customer view affordable.
+    WHERE ('{{ (ValCustomer.selectedOptionValue || ValVendor.selectedOptionValue || ValLocation.selectedOptionValue || (ValAccount.text || "").trim()) ? "filtered" : "all" }}' = 'all'
            OR be.bill_record_id IN (
                   SELECT br.id
                   FROM bill_management_v2.bill_records br
-                  WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}))
+                  WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+                         OR br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
+                    AND ('{{ ValVendor.selectedOptionValue || "" }}' = ''
+                         OR br.vendor_code = '{{ ValVendor.selectedOptionValue || "" }}')
+                    AND ('{{ (ValAccount.text || "").trim() }}' = ''
+                         OR br.client_account ILIKE '%{{ (ValAccount.text || "").split("'").join("''") }}%')
+                    -- A bill reaches a location through the monthly usage feed --
+                    -- the same hop the bill-health warnings use. Bills whose block
+                    -- is unmapped (error 3018) have no location and drop out here.
+                    AND ('{{ ValLocation.selectedOptionValue || "" }}' = ''
+                         OR br.client_account IN (
+                                SELECT rcmu.client_account
+                                FROM bill_management_v2.reports_customer_monthly_usage rcmu
+                                WHERE rcmu.location_id = {{ ValLocation.selectedOptionValue || 0 }}))
+              ))
       AND be.created_at >= COALESCE(
               NULLIF('{{ ValDateFrom.formattedDate || "" }}', '')::timestamp,
               (CURRENT_DATE - INTERVAL '1 year')::timestamp)

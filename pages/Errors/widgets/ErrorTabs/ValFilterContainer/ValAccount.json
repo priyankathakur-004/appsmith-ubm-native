@@ -1,0 +1,67 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "bottomRow": 18,
+  "dynamicHeight": "FIXED",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "val_acct_k",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelTextColor": "#E2E8F0",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 44,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 18,
+  "mobileLeftColumn": 44,
+  "mobileRightColumn": 54,
+  "mobileTopRow": 10,
+  "needsErrorInfo": false,
+  "parentColumnSpace": 13.83,
+  "parentId": "val_filter_cv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 54,
+  "topRow": 10,
+  "version": 2,
+  "widgetId": "val_acct_w",
+  "widgetName": "ValAccount",
+  "type": "INPUT_WIDGET_V2",
+  "label": "Account / Billing ID",
+  "inputType": "TEXT",
+  "defaultText": "",
+  "autoFocus": false,
+  "iconAlign": "left",
+  "iconName": "search",
+  "labelStyle": "",
+  "placeholderText": "Account, then Enter",
+  "resetOnSubmit": false,
+  "showStepArrows": false,
+  "onSubmit": "{{ fetch_validation_codes.run(); }}",
+  "onBlur": "{{ fetch_validation_codes.run(); }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onSubmit"
+    },
+    {
+      "key": "onBlur"
+    }
+  ]
+}

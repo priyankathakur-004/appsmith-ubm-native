@@ -11,6 +11,8 @@ export default {
 		fetch_payment_errors.run();
 		fetch_comm_errors.run();
 		fetch_validation_codes.run();
+		fetch_val_vendors.run();
+		fetch_val_locations.run();
 	},
 
 	// --- Payments Error Log ---
@@ -64,6 +66,20 @@ export default {
 		resetWidget("ValSeverity", true);
 		resetWidget("ValCategory", true);
 		resetWidget("ValSearch", true);
+		resetWidget("ValVendor", true);
+		resetWidget("ValLocation", true);
+		resetWidget("ValAccount", true);
+		fetch_validation_codes.run();
+	},
+
+	// Vendor and location belong to a customer, so changing the customer makes
+	// any existing choice meaningless. Clear them, reload their option lists, then
+	// reload the catalogue.
+	async valCustomerChanged() {
+		resetWidget("ValVendor", true);
+		resetWidget("ValLocation", true);
+		await fetch_val_vendors.run();
+		await fetch_val_locations.run();
 		fetch_validation_codes.run();
 	},
 

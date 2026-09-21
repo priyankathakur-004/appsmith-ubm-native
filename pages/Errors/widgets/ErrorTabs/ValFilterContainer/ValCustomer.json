@@ -45,7 +45,7 @@
   "mobileRightColumn": 14,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ fetch_validation_codes.run(); }}",
+  "onOptionChange": "{{ ErrorsActions.valCustomerChanged() }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 13.83,

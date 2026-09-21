@@ -1,0 +1,65 @@
+{
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "boxShadow": "none",
+  "bottomRow": 18,
+  "dynamicHeight": "FIXED",
+  "isDisabled": false,
+  "isLoading": false,
+  "isRequired": false,
+  "isVisible": true,
+  "key": "val_vendor_k",
+  "labelAlignment": "left",
+  "labelPosition": "Top",
+  "labelTextColor": "#E2E8F0",
+  "labelTextSize": "0.875rem",
+  "labelWidth": 5,
+  "leftColumn": 22,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "minWidth": 450,
+  "mobileBottomRow": 18,
+  "mobileLeftColumn": 22,
+  "mobileRightColumn": 32,
+  "mobileTopRow": 10,
+  "needsErrorInfo": false,
+  "parentColumnSpace": 13.83,
+  "parentId": "val_filter_cv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "responsiveBehavior": "fill",
+  "rightColumn": 32,
+  "topRow": 10,
+  "version": 1,
+  "widgetId": "val_vendor_w",
+  "widgetName": "ValVendor",
+  "type": "SELECT_WIDGET",
+  "labelText": "Vendor",
+  "defaultOptionValue": "",
+  "optionLabel": "label",
+  "optionValue": "value",
+  "placeholderText": "All",
+  "isFilterable": true,
+  "serverSideFiltering": false,
+  "sourceData": "{{ (fetch_val_vendors.data || []).map(r => ({ label: r.label, value: r.value })) }}",
+  "onOptionChange": "{{ fetch_validation_codes.run(); }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "sourceData"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicPropertyPathList": [
+    {
+      "key": "sourceData"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ]
+}
