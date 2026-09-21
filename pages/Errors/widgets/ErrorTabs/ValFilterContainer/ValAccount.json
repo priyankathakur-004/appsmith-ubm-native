@@ -19,6 +19,9 @@
   "dynamicTriggerPathList": [
     {
       "key": "onSubmit"
+    },
+    {
+      "key": "onBlur"
     }
   ],
   "iconAlign": "left",
@@ -45,7 +48,7 @@
   "mobileRightColumn": 54,
   "mobileTopRow": 10,
   "needsErrorInfo": false,
-  "onSubmit": "{{ ErrorsActions.applyValFilters() }}",
+  "onSubmit": "{{ fetch_validation_codes.run(); }}",
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,
@@ -59,5 +62,6 @@
   "type": "INPUT_WIDGET_V2",
   "version": 2,
   "widgetId": "val_acct_w",
-  "widgetName": "ValAccount"
+  "widgetName": "ValAccount",
+  "onBlur": "{{ fetch_validation_codes.run(); }}"
 }

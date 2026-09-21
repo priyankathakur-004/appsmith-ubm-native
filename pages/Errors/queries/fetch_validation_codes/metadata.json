@@ -29,7 +29,7 @@
     ],
     "name": "fetch_validation_codes",
     "pageId": "Errors",
-    "runBehaviour": "MANUAL",
-    "userSetOnLoad": false
+    "runBehaviour": "AUTOMATIC",
+    "userSetOnLoad": true
   }
 }

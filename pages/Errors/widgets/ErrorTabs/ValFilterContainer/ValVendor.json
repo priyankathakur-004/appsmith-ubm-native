@@ -19,7 +19,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
@@ -56,5 +60,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "val_vendor_w",
-  "widgetName": "ValVendor"
+  "widgetName": "ValVendor",
+  "onOptionChange": "{{ fetch_validation_codes.run(); }}"
 }

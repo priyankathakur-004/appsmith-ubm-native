@@ -10,6 +10,7 @@ export default {
 		fetch_comm_emails.run();
 		fetch_payment_errors.run();
 		fetch_comm_errors.run();
+		fetch_validation_codes.run();
 		fetch_val_vendors.run();
 	},
 
@@ -54,7 +55,6 @@ export default {
 	},
 
 	// --- Bill Errors (validation codes) ---
-	// Clear is an explicit action, so unlike the individual filters it does reload.
 	// Awaited, not fired and forgotten: the queries below read these widgets, so
 	// re-running before the resets land would just reload the filters being cleared.
 	async clearValFilters() {
@@ -77,21 +77,13 @@ export default {
 	},
 
 	// Vendor and location belong to a customer, so changing the customer makes
-	// any existing choice meaningless. Clear them and restock their option lists.
-	// Loading the catalogue is deliberately not done here - that is Apply's job.
+	// any existing choice meaningless. Clear them, restock their option lists, then
+	// reload the catalogue.
 	async valCustomerChanged() {
 		resetWidget("ValVendor", true);
 		resetWidget("ValLocation", true);
 		await fetch_val_vendors.run();
 		await fetch_val_locations.run();
-	},
-
-	// The one place the catalogue is loaded. Customer, dates, vendor, location and
-	// account all feed a single aggregate over bill_errors, so letting each of them
-	// fire it meant setting four filters cost four full scans of the same table.
-	// They stage a choice now; this runs it once. Stage, severity, category and
-	// search are client-side over loaded rows and stay live.
-	applyValFilters() {
 		fetch_validation_codes.run();
 	},
 

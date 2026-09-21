@@ -16,7 +16,11 @@
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDateSelected"
+    }
+  ],
   "firstDayOfWeek": 0,
   "isDisabled": false,
   "isLoading": false,
@@ -51,5 +55,6 @@
   "type": "DATE_PICKER_WIDGET2",
   "version": 2,
   "widgetId": "val_dto_w",
-  "widgetName": "ValDateTo"
+  "widgetName": "ValDateTo",
+  "onDateSelected": "{{ fetch_validation_codes.run(); }}"
 }

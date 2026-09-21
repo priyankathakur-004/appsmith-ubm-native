@@ -19,7 +19,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
@@ -56,5 +60,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "val_loc_w",
-  "widgetName": "ValLocation"
+  "widgetName": "ValLocation",
+  "onOptionChange": "{{ fetch_validation_codes.run(); }}"
 }
