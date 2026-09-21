@@ -16,11 +16,7 @@
     }
   ],
   "dynamicHeight": "FIXED",
-  "dynamicTriggerPathList": [
-    {
-      "key": "onDateSelected"
-    }
-  ],
+  "dynamicTriggerPathList": [],
   "firstDayOfWeek": 0,
   "isDisabled": false,
   "isLoading": false,
@@ -42,7 +38,6 @@
   "mobileRightColumn": 42,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onDateSelected": "{{ fetch_validation_codes.run(); }}",
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,

@@ -19,9 +19,6 @@
   "dynamicTriggerPathList": [
     {
       "key": "onSubmit"
-    },
-    {
-      "key": "onBlur"
     }
   ],
   "iconAlign": "left",
@@ -48,8 +45,7 @@
   "mobileRightColumn": 54,
   "mobileTopRow": 10,
   "needsErrorInfo": false,
-  "onBlur": "{{ fetch_validation_codes.run(); }}",
-  "onSubmit": "{{ fetch_validation_codes.run(); }}",
+  "onSubmit": "{{ ErrorsActions.applyValFilters() }}",
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,

@@ -1,0 +1,47 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 23,
+  "boxShadow": "none",
+  "buttonColor": "#3b82f6",
+  "buttonVariant": "PRIMARY",
+  "disabledWhenInvalid": false,
+  "dynamicBindingPathList": [
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onClick"
+    }
+  ],
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
+  "isLoading": false,
+  "isVisible": true,
+  "key": "val_apply_k",
+  "leftColumn": 56,
+  "minWidth": 60,
+  "mobileBottomRow": 23,
+  "mobileLeftColumn": 56,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 19,
+  "needsErrorInfo": false,
+  "onClick": "{{ ErrorsActions.applyValFilters() }}",
+  "parentColumnSpace": 13.83,
+  "parentId": "val_filter_cv",
+  "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
+  "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
+  "rightColumn": 63,
+  "text": "Apply filters",
+  "topRow": 19,
+  "type": "BUTTON_WIDGET",
+  "version": 1,
+  "widgetId": "val_apply_w",
+  "widgetName": "ValApply"
+}
