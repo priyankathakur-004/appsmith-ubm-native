@@ -3,9 +3,12 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 17,
   "boxShadow": "none",
+  "buttonColor": "#3b82f6",
+  "buttonVariant": "SECONDARY",
+  "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
     {
-      "key": "fontFamily"
+      "key": "borderRadius"
     }
   ],
   "dynamicTriggerPathList": [
@@ -13,30 +16,31 @@
       "key": "onClick"
     }
   ],
-  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
-  "fontSize": "1rem",
-  "fontStyle": "BOLD",
+  "isDefaultClickDisabled": true,
+  "isDisabled": false,
   "isLoading": false,
   "isVisible": true,
   "key": "val_clear_k",
   "leftColumn": 56,
-  "maxDynamicHeight": 9000,
-  "minDynamicHeight": 4,
-  "mobileBottomRow": 8,
+  "minWidth": 60,
+  "mobileBottomRow": 17,
   "mobileLeftColumn": 56,
   "mobileRightColumn": 63,
-  "mobileTopRow": 4,
+  "mobileTopRow": 13,
+  "needsErrorInfo": false,
   "onClick": "{{ ErrorsActions.clearValFilters() }}",
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,
+  "placement": "CENTER",
+  "recaptchaType": "V3",
   "renderMode": "CANVAS",
+  "resetFormOnClick": false,
+  "responsiveBehavior": "hug",
   "rightColumn": 63,
-  "text": "Clear",
-  "textAlign": "RIGHT",
-  "textColor": "#60A5FA",
+  "text": "Clear filters",
   "topRow": 13,
-  "type": "TEXT_WIDGET",
+  "type": "BUTTON_WIDGET",
   "version": 1,
   "widgetId": "val_clear_w",
   "widgetName": "ValClear"

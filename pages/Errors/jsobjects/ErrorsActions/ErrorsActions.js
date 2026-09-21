@@ -58,17 +58,24 @@ export default {
 	// --- Bill Errors (validation codes) ---
 	// Customer and the raised-date range are read straight off the widgets by the
 	// two aggregate queries, so clearing them is enough to restore the defaults.
-	clearValFilters() {
-		resetWidget("ValCustomer", true);
-		resetWidget("ValDateFrom", true);
-		resetWidget("ValDateTo", true);
-		resetWidget("ValStage", true);
-		resetWidget("ValSeverity", true);
-		resetWidget("ValCategory", true);
-		resetWidget("ValSearch", true);
-		resetWidget("ValVendor", true);
-		resetWidget("ValLocation", true);
-		resetWidget("ValAccount", true);
+	// Awaited, not fired and forgotten: the queries below read these widgets, so
+	// re-running before the resets land would just reload the filters being cleared.
+	async clearValFilters() {
+		await Promise.all([
+			resetWidget("ValCustomer", true),
+			resetWidget("ValDateFrom", true),
+			resetWidget("ValDateTo", true),
+			resetWidget("ValStage", true),
+			resetWidget("ValSeverity", true),
+			resetWidget("ValCategory", true),
+			resetWidget("ValSearch", true),
+			resetWidget("ValVendor", true),
+			resetWidget("ValLocation", true),
+			resetWidget("ValAccount", true)
+		]);
+		// The customer is cleared too, so the lists scoped to it have to reload.
+		await fetch_val_vendors.run();
+		await fetch_val_locations.run();
 		fetch_validation_codes.run();
 	},
 
