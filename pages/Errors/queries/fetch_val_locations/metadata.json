@@ -29,7 +29,7 @@
     ],
     "name": "fetch_val_locations",
     "pageId": "Errors",
-    "runBehaviour": "AUTOMATIC",
-    "userSetOnLoad": true
+    "runBehaviour": "MANUAL",
+    "userSetOnLoad": false
   }
 }
