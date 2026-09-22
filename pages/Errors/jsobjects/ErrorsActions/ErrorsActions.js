@@ -112,8 +112,15 @@ export default {
 		await storeValue("valBillPageNo", 1);
 		await storeValue("valBillStatus", "all");
 		await storeValue("valBillSearch", "");
-		await fetch_validation_bills.run();
+		// Open the modal BEFORE running the query. Awaiting the query first meant any
+		// failure in it threw out of this function before showModal was ever reached,
+		// so a broken query and a broken link looked identical: nothing happened.
 		showModal("ValDetailModal");
+		try {
+			await fetch_validation_bills.run();
+		} catch (e) {
+			showAlert("Could not load bills for code " + c + ": " + e, "error");
+		}
 	},
 
 	// Paging is server-side, so each step is one page of rows rather than a
