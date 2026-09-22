@@ -1,3 +1,8 @@
+-- NOTE: the Location column was removed from this query. Looking it up per
+-- row through the monthly usage feed by client_account made the query time
+-- out. It can come back behind an index on
+-- reports_customer_monthly_usage(client_account).
+--
 -- Bill Validation Log — the bill errors behind one clicked (code, category) pair.
 -- Server-side paginated: one page of rows per request, with no ceiling on how
 -- far you can page. Status and search are applied here too - with paging,
@@ -14,7 +19,6 @@ SELECT
     abi.bill_id                              AS "Bill Id",
     cs.name                                  AS "Customer",
     br.client_account                        AS "Billing ID",
-    lld.location_description                 AS "Location",
     -- Same name resolution as the vendor filter, so the column and the
     -- dropdown agree instead of one showing a code and the other a name.
     COALESCE(NULLIF(btrim(cvn.pretty_name::text), ''),
@@ -40,18 +44,6 @@ LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
 -- month, so joining it directly would multiply every bill error by its months
 -- of history; DISTINCT ON collapses that first. Same shape the bill-health
 -- warnings use. Bills whose block is unmapped have no row here and show blank.
-LEFT JOIN LATERAL (
-    -- One location per bill. The feed has a row per account per month, so this
-    -- takes the first matching row for this bill's account rather than grouping
-    -- the whole table; the description itself comes from the locations
-    -- dimension. Runs for the fifty rows on the page, not for every account.
-    SELECT ld2.location_description
-    FROM bill_management_v2.reports_customer_monthly_usage rl
-    JOIN bill_management_v2.location_detail ld2 ON ld2.location_id = rl.location_id
-    WHERE rl.client_account = br.client_account
-      AND rl.location_id IS NOT NULL
-    LIMIT 1
-) lld ON TRUE
 LEFT JOIN bill_management_v2.analytics_bills_items abi
        ON abi.bill_record_id = br.id AND abi.bill_id IS NOT NULL
 -- Same optional filters as the catalogue; bill_records is already joined here
@@ -81,7 +73,6 @@ WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
   AND ('{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}' = ''
        OR be.message               ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
        OR br.client_account        ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
-       OR COALESCE(lld.location_description, '') ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
        OR COALESCE(cs.name, '')    ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
        OR abi.bill_id::text        ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'
        OR COALESCE(be.data ->> 'account_code', '')  ILIKE '%{{ (appsmith.store.valBillSearch || "").trim().split("'").join("''") }}%'

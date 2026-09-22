@@ -119,7 +119,10 @@ export default {
 		try {
 			await fetch_validation_bills.run();
 		} catch (e) {
-			showAlert("Could not load bills for code " + c + ": " + e, "error");
+			// An error object stringifies to [object Object], which says nothing.
+			const msg = (e && (e.message || (e.responseMeta && e.responseMeta.error
+			             && e.responseMeta.error.message))) || JSON.stringify(e);
+			showAlert("Could not load bills for code " + c + ": " + msg, "error");
 		}
 	},
 
