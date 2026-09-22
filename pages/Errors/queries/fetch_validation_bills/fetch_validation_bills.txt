@@ -14,7 +14,10 @@ SELECT
     abi.bill_id                              AS "Bill Id",
     cs.name                                  AS "Customer",
     br.client_account                        AS "Billing ID",
-    br.vendor_code                           AS "Vendor",
+    -- Same name resolution as the vendor filter, so the column and the
+    -- dropdown agree instead of one showing a code and the other a name.
+    COALESCE(NULLIF(btrim(cvn.pretty_name::text), ''),
+             br.vendor_code)                 AS "Vendor",
     TO_CHAR(br.statement_date, 'MM/DD/YYYY') AS "Invoice Date",
     be.severity                              AS severity_code,
     -- Reported exactly as stored; the schema has no label lookup for the ladder.
@@ -30,6 +33,8 @@ SELECT
 FROM bill_management_v2.bill_errors be
 JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
 LEFT JOIN bill_management_v2.customers_search cs ON cs.id = br.customer_id
+LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+       ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
 LEFT JOIN bill_management_v2.analytics_bills_items abi
        ON abi.bill_record_id = br.id AND abi.bill_id IS NOT NULL
 -- Same optional filters as the catalogue; bill_records is already joined here

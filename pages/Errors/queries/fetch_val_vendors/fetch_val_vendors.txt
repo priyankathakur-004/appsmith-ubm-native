@@ -1,14 +1,30 @@
--- Vendor options for the Bill Error Log filter.
--- With a customer picked, only the vendors that customer actually has bills from
--- (an indexed lookup on customer_id). With none picked, the full vendor list --
--- vendors is a small table, so this never scans bill_records unnecessarily.
-SELECT v.code                                                  AS value,
-       COALESCE(NULLIF(btrim(v.pretty_name), ''), v.code)       AS label
+-- Vendor options for the Bill Errors filter.
+--
+-- Names resolve the way the rest of the app resolves them: a customer's own name
+-- for the vendor first, then the provider's published name, then whatever the
+-- vendors row carries, and only then the raw code. Reading vendors.pretty_name
+-- alone - as this used to - left most entries showing a bare code, because that
+-- column is frequently empty.
+--
+-- With a customer picked, only vendors that customer actually has bills from
+-- (an indexed lookup). With none picked, the whole vendor list: vendors is small,
+-- so this never scans bill_records unnecessarily.
+SELECT v.code                                                        AS value,
+       MAX(COALESCE(NULLIF(btrim(cvn.pretty_name::text), ''),
+                    NULLIF(btrim(pvn.pretty_name::text), ''),
+                    NULLIF(btrim(v.pretty_name), ''),
+                    v.code::text))::varchar                          AS label
 FROM bill_management_v2.vendors v
+LEFT JOIN bill_management_v2.providers_pretty_name pvn
+       ON pvn.code::text = v.code::text
+LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+       ON cvn.code = v.code
+      AND cvn.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}
 WHERE v.code IS NOT NULL
   AND ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
        OR v.code IN (
               SELECT DISTINCT br.vendor_code
               FROM bill_management_v2.bill_records br
               WHERE br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}))
+GROUP BY v.code
 ORDER BY label;
