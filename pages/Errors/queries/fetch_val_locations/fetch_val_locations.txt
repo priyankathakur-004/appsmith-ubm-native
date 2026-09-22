@@ -1,19 +1,22 @@
 -- Location options for the Bill Errors filter.
 --
--- Sourced from the same table the filter itself matches on. Bills reach a
--- location through the monthly usage feed, so listing locations from anywhere
--- else can offer a location no bill can ever match - and did: the previous
--- version read bill_management_v2.locations and returned nothing usable.
+-- Sourced from the same table the filter matches on: bills reach a location
+-- through the monthly usage feed, so listing locations from anywhere else can
+-- offer one that no bill will ever match.
 --
--- Gated on a customer being picked, which is how the filter is meant to be used
--- and keeps this off the page-load path.
-SELECT DISTINCT
-       rcmu.location_id                                            AS value,
-       COALESCE(NULLIF(btrim(rcmu.location_description), ''),
-                'Location ' || rcmu.location_id::text)             AS label
+-- One row per location_id, guaranteed. A DISTINCT over (id, description) would
+-- emit the same id twice whenever the description varies between rows, and a
+-- dropdown with duplicate values misbehaves. Everything is cast to text before
+-- trimming, since the column type here is not guaranteed to be text.
+--
+-- Gated on a customer being picked, which keeps it off the page-load path.
+SELECT rcmu.location_id                                              AS value,
+       MAX(COALESCE(NULLIF(btrim(rcmu.location_description::text), ''),
+                    'Location ' || rcmu.location_id::text))          AS label
 FROM bill_management_v2.reports_customer_monthly_usage rcmu
 WHERE '{{ ValCustomer.selectedOptionValue || "" }}' <> ''
   AND rcmu.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}
   AND rcmu.location_id IS NOT NULL
+GROUP BY rcmu.location_id
 ORDER BY label
 LIMIT 5000;
