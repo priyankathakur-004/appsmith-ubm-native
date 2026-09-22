@@ -29,7 +29,7 @@
     ],
     "name": "fetch_validation_bills",
     "pageId": "Errors",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }
