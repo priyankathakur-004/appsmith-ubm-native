@@ -12,6 +12,7 @@ export default {
 		fetch_comm_errors.run();
 		fetch_validation_codes.run();
 		fetch_val_vendors.run();
+		fetch_val_locations.run();
 	},
 
 	// --- Payments Error Log ---

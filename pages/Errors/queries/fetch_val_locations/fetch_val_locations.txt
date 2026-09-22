@@ -4,19 +4,27 @@
 -- through the monthly usage feed, so listing locations from anywhere else can
 -- offer one that no bill will ever match.
 --
--- One row per location_id, guaranteed. A DISTINCT over (id, description) would
--- emit the same id twice whenever the description varies between rows, and a
--- dropdown with duplicate values misbehaves. Everything is cast to text before
--- trimming, since the column type here is not guaranteed to be text.
+-- Server-side search. The list is capped, so rather than shipping every location
+-- to the browser this re-queries on what the user types - matching the
+-- description or the id - and narrows the cap around that. Reading the widget's
+-- own filterText here is the documented pattern and is not circular: the query
+-- runs from onFilterUpdate, not from the options binding.
 --
--- Gated on a customer being picked, which keeps it off the page-load path.
+-- One row per location_id, guaranteed: a DISTINCT over (id, description) would
+-- emit the same id twice whenever the description varies between rows, and a
+-- dropdown cannot use duplicate values. Cast to text before trimming, since the
+-- column type is not guaranteed.
 SELECT rcmu.location_id                                              AS value,
        MAX(COALESCE(NULLIF(btrim(rcmu.location_description::text), ''),
                     'Location ' || rcmu.location_id::text))          AS label
 FROM bill_management_v2.reports_customer_monthly_usage rcmu
-WHERE '{{ ValCustomer.selectedOptionValue || "" }}' <> ''
-  AND rcmu.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}
-  AND rcmu.location_id IS NOT NULL
+WHERE rcmu.location_id IS NOT NULL
+  -- Customer is optional: with none picked this lists locations across all of them.
+  AND ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+       OR rcmu.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
+  AND ('{{ (ValLocation.filterText || "").trim() }}' = ''
+       OR rcmu.location_description::text ILIKE '%{{ (ValLocation.filterText || "").trim().split("'").join("''") }}%'
+       OR rcmu.location_id::text          ILIKE '%{{ (ValLocation.filterText || "").trim().split("'").join("''") }}%')
 GROUP BY rcmu.location_id
 ORDER BY label
-LIMIT 5000;
+LIMIT 200;
