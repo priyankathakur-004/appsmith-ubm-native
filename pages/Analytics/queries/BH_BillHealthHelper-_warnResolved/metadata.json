@@ -8,7 +8,7 @@
       "encodeParamsToggle": true,
       "jsArguments": [
         {
-          "name": "workflowState"
+          "name": "resolvable"
         }
       ],
       "paginationType": "NONE",
