@@ -90,11 +90,23 @@ export default {
 	// Row link on the catalogue: stash which check was clicked, load its bills,
 	// then open the modal. The code alone is not a key - the same number means
 	// different checks under different categories - so both are stored.
-	async valShowBills(row) {
-		if (!row || row["Code"] == null) return;
-		await storeValue("valCode", row["Code"]);
-		await storeValue("valCategory", row["Category"] || "");
-		await storeValue("valName", row["Check"] || "");
+	async valShowBills(code, category, name) {
+		// Fall back to the row object if the scalars did not come through, and say so
+		// rather than returning quietly - a dead link that reports nothing is worse
+		// than one that explains itself.
+		let c = code, cat = category, nm = name;
+		if (c == null || c === "") {
+			const row = (typeof ValCodesTable !== 'undefined' && ValCodesTable.model
+			             && ValCodesTable.model.selectedRow) || null;
+			if (row) { c = row["Code"]; cat = row["Category"]; nm = row["Check"]; }
+		}
+		if (c == null || c === "") {
+			showAlert("Could not read the selected code from the table.", "warning");
+			return;
+		}
+		await storeValue("valCode", c);
+		await storeValue("valCategory", cat || "");
+		await storeValue("valName", nm || "");
 		await fetch_validation_bills.run();
 		showModal("ValDetailModal");
 	},
