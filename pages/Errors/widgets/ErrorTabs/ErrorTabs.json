@@ -139,7 +139,7 @@
       "rightColumn": 1053,
       "shouldScrollContents": false,
       "tabId": "tabnmsidlhb1j",
-      "tabName": "Bill Error Log",
+      "tabName": "Bill Errors",
       "topRow": 1,
       "type": "CANVAS_WIDGET",
       "version": 1,
@@ -147,7 +147,7 @@
       "widgetName": "Canvas1"
     }
   ],
-  "defaultTab": "Bill Error Log",
+  "defaultTab": "Bill Errors",
   "dynamicBindingPathList": [
     {
       "key": "borderRadius"
@@ -206,7 +206,7 @@
       "index": 0,
       "isDuplicateLabel": false,
       "isVisible": true,
-      "label": "Bill Error Log",
+      "label": "Bill Errors",
       "widgetId": "pe7dguvnx6"
     }
   },
