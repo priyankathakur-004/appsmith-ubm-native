@@ -1,13 +1,19 @@
--- Location options for the Bill Error Log filter.
--- Locations belong to a customer, and the client's ask was "a single location of
--- that customer", so this returns nothing until one is picked rather than sorting
--- every location in the system on page load.
-SELECT l.id                                                              AS value,
-       COALESCE(NULLIF(btrim(ld.location_description), ''),
-                'Location ' || l.id::text)                               AS label
-FROM bill_management_v2.locations l
-LEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = l.id
+-- Location options for the Bill Errors filter.
+--
+-- Sourced from the same table the filter itself matches on. Bills reach a
+-- location through the monthly usage feed, so listing locations from anywhere
+-- else can offer a location no bill can ever match - and did: the previous
+-- version read bill_management_v2.locations and returned nothing usable.
+--
+-- Gated on a customer being picked, which is how the filter is meant to be used
+-- and keeps this off the page-load path.
+SELECT DISTINCT
+       rcmu.location_id                                            AS value,
+       COALESCE(NULLIF(btrim(rcmu.location_description), ''),
+                'Location ' || rcmu.location_id::text)             AS label
+FROM bill_management_v2.reports_customer_monthly_usage rcmu
 WHERE '{{ ValCustomer.selectedOptionValue || "" }}' <> ''
-  AND l.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}
+  AND rcmu.customer_id = {{ ValCustomer.selectedOptionValue || 0 }}
+  AND rcmu.location_id IS NOT NULL
 ORDER BY label
 LIMIT 5000;
