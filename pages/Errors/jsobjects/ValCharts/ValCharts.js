@@ -23,17 +23,25 @@ export default {
 	   customer list never repaints a stage. */
 	_theme() {
 		return {
+			/* Assigned in pipeline order, which is also the order they stack, so
+			   every adjacent pair is one the checks were run against. Softer steps
+			   than the first attempt: the neon set passed the numbers but read
+			   harshly against a dark card. */
 			colours: {
-				"Integrity Check":       "#3b82f6",
-				"Data Verification I":   "#d97706",
-				"Data Verification II":  "#8b5cf6",
-				"Data Audit I":          "#059669",
-				"Data Audit II":         "#ec4899",
-				"Unmapped":              "#0891b2"
+				"Integrity Check":       "#5d8ff0",
+				"Data Verification I":   "#2f9e75",
+				"Data Verification II":  "#a07ee0",
+				"Data Audit I":          "#b8762f",
+				"Data Audit II":         "#3f93c9",
+				"Unmapped":              "#cf6288"
 			},
+			/* A code that can be resolved against one that cannot - a state, not a
+			   series, so it keeps its own pair and never borrows a stage colour. */
+			can:    "#5d8ff0",
+			cannot: "#cf6288",
 			ink: "#e2e8f0",
 			muted: "#94a3b8",
-			grid: "#334155",
+			grid: "#2c3b52",
 			surface: "#1e293b",
 			panel: "#0f172a"
 		};
@@ -112,7 +120,7 @@ export default {
 			name: s,
 			type: "bar",
 			stack: "total",
-			barWidth: "58%",
+			barWidth: "46%",
 			itemStyle: {
 				color: t.colours[s] || t.muted,
 				/* 2px of surface between segments: the spacer that keeps adjacent
@@ -138,7 +146,7 @@ export default {
 			},
 			xAxis: {
 				type: "value", axisLabel: { color: t.muted },
-				splitLine: { lineStyle: { color: t.grid, opacity: 0.4 } }
+				splitLine: { lineStyle: { color: t.grid, opacity: 0.55, width: 1 } }
 			},
 			yAxis: {
 				type: "category", data: cats,
@@ -146,7 +154,7 @@ export default {
 					color: t.ink, fontSize: 11,
 					formatter: function (v) { return String(v).split("|").slice(1).join("|"); }
 				},
-				axisLine: { lineStyle: { color: t.grid } },
+				axisLine: { show: false },
 				axisTick: { show: false }
 			},
 			series: series
@@ -179,26 +187,31 @@ export default {
 			},
 			xAxis: {
 				type: "value", axisLabel: { color: t.muted },
-				splitLine: { lineStyle: { color: t.grid, opacity: 0.4 } }
+				splitLine: { lineStyle: { color: t.grid, opacity: 0.55, width: 1 } }
 			},
 			yAxis: {
 				type: "category",
 				/* The code leads so the label is clickable by code, but the name
 				   follows because a bare number means nothing to a reader. */
+				/* "<code>|<category>|<name>|<R or N>". The flag is its own field so the
+				   drill handler reads a clean check name out of the third part. */
 				data: rows.map(r => r["Code"] + "|" + r["Category"] + "|"
-				                    + String(r["Check"] || "").slice(0, 34)),
+				                    + String(r["Check"] || "").slice(0, 30) + "|"
+				                    + (r["Resolvable"] ? "R" : "N")),
 				axisLabel: {
 					color: t.ink, fontSize: 11,
 					formatter: function (v) {
 						const p = String(v).split("|");
-						return p[0] + "  " + (p[2] || "");
+						/* Say it in words as well as colour: a status a reader can only
+						   get from a hue is one some readers cannot get at all. */
+						return p[0] + "  " + (p[2] || "") + (p[3] === "N" ? "  · unresolvable" : "");
 					}
 				},
-				axisLine: { lineStyle: { color: t.grid } },
+				axisLine: { show: false },
 				axisTick: { show: false }
 			},
 			series: [{
-				type: "bar", barWidth: "58%",
+				type: "bar", barWidth: "46%",
 				/* Colour by whether the check can be resolved at all, not by rank.
 				   The biggest code on this page is one nobody can clear, and that
 				   is the thing worth seeing before chasing volume. */
@@ -211,7 +224,7 @@ export default {
 					value: this._num(r["Open"]),
 					pct: grand ? (100 * this._num(r["Open"]) / grand).toFixed(1) : "0.0",
 					itemStyle: {
-						color: r["Resolvable"] ? "#3b82f6" : "#ec4899",
+						color: r["Resolvable"] ? t.can : t.cannot,
 						borderRadius: [0, 4, 4, 0]
 					}
 				})),
