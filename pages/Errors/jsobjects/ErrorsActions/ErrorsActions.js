@@ -112,10 +112,12 @@ export default {
 		await storeValue("valCustomerPick", id);
 		await resetWidget("ValVendor", true);
 		await resetWidget("ValLocation", true);
+		// Deliberately no .run() on the catalogue or the by-customer query here.
+		// Resolving the clicked label reads by-customer data, and a function that
+		// both triggers and reads the same query is rejected as reactive misuse.
+		// Both are AUTOMATIC and read the customer select, so setting it reloads them.
 		await fetch_val_vendors.run();
 		await fetch_val_locations.run();
-		fetch_validation_codes.run();
-		fetch_validation_by_customer.run();
 	},
 
 	// Clicking a stage tile narrows to that step of the pipeline. Both charts and
