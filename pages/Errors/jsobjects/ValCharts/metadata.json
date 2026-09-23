@@ -6,31 +6,6 @@
     "pageId": "Errors",
     "pluginId": "js-plugin",
     "pluginType": "JS",
-    "variables": [
-      {
-        "name": "_STAGES",
-        "value": "[\"Integrity Check\", \"Data Verification I\", \"Data Verification II\",\n\t          \"Data Audit I\", \"Data Audit II\", \"Unmapped\"]"
-      },
-      {
-        "name": "_COLOURS",
-        "value": "{\n\t\t\"Integrity Check\":       \"#3b82f6\",\n\t\t\"Data Verification I\":   \"#d97706\",\n\t\t\"Data Verification II\":  \"#8b5cf6\",\n\t\t\"Data Audit I\":          \"#059669\",\n\t\t\"Data Audit II\":         \"#ec4899\",\n\t\t\"Unmapped\":              \"#0891b2\"\n\t}"
-      },
-      {
-        "name": "_INK",
-        "value": "\"#e2e8f0\""
-      },
-      {
-        "name": "_MUTED",
-        "value": "\"#94a3b8\""
-      },
-      {
-        "name": "_GRID",
-        "value": "\"#334155\""
-      },
-      {
-        "name": "_SURFACE",
-        "value": "\"#1e293b\""
-      }
-    ]
+    "variables": []
   }
 }

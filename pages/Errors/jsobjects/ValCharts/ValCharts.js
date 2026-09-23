@@ -1,32 +1,43 @@
 export default {
 
-	/* Read-only. This object builds chart configs and answers lookups; it never
-	   runs a query. The handlers that do live in ErrorsActions, so nothing here
-	   both reads a query's data and triggers it. */
+	/* Functions only, no object-level data properties: the sibling object on this
+	   page that works declares no variables, and a hand-written variables block is
+	   not worth the risk of the whole app failing to evaluate.
+
+	   Read-only by design. This object builds chart configs and answers lookups;
+	   it never triggers a query. A function that both triggers and reads the same
+	   query is rejected as reactive misuse, and the trace follows calls, so the
+	   split has to be real rather than cosmetic. */
 
 	/* Pipeline stages in the order bills move through them, so a stack reads as
 	   progress rather than as an arbitrary sort. */
-	_STAGES: ["Integrity Check", "Data Verification I", "Data Verification II",
-	          "Data Audit I", "Data Audit II", "Unmapped"],
+	_stages() {
+		return ["Integrity Check", "Data Verification I", "Data Verification II",
+		        "Data Audit I", "Data Audit II", "Unmapped"];
+	},
 
 	/* Checked against the dark surface for lightness, chroma, contrast and
 	   colour-blind separation rather than picked by eye, and ordered so the one
 	   marginal pair is never adjacent in a stack - the 2px segment gaps and the
 	   legend carry that pair. Keyed to stage, never to rank, so filtering the
 	   customer list never repaints a stage. */
-	_COLOURS: {
-		"Integrity Check":       "#3b82f6",
-		"Data Verification I":   "#d97706",
-		"Data Verification II":  "#8b5cf6",
-		"Data Audit I":          "#059669",
-		"Data Audit II":         "#ec4899",
-		"Unmapped":              "#0891b2"
+	_theme() {
+		return {
+			colours: {
+				"Integrity Check":       "#3b82f6",
+				"Data Verification I":   "#d97706",
+				"Data Verification II":  "#8b5cf6",
+				"Data Audit I":          "#059669",
+				"Data Audit II":         "#ec4899",
+				"Unmapped":              "#0891b2"
+			},
+			ink: "#e2e8f0",
+			muted: "#94a3b8",
+			grid: "#334155",
+			surface: "#1e293b",
+			panel: "#0f172a"
+		};
 	},
-
-	_INK: "#e2e8f0",
-	_MUTED: "#94a3b8",
-	_GRID: "#334155",
-	_SURFACE: "#1e293b",
 
 	_num(v) { return Number(v) || 0; },
 
@@ -52,12 +63,25 @@ export default {
 		return "";
 	},
 
+	_empty(msg) {
+		const t = this._theme();
+		return {
+			backgroundColor: "transparent",
+			title: {
+				text: msg, left: "center", top: "middle",
+				textStyle: { color: t.muted, fontSize: 13, fontWeight: "normal" }
+			},
+			xAxis: { show: false }, yAxis: { show: false }, series: []
+		};
+	},
+
 	/* ── 1. Error codes by customer ─────────────────────────────────────────
 	   Horizontal bars: customer names are text and read along the axis instead
 	   of rotated under columns. Stacked by stage, so one bar answers both "how
 	   many" and "where in the pipeline". Top ten - beyond that bars get too thin
 	   to compare, and the question is who the worst are. */
 	getCustomerStageConfig() {
+		const t = this._theme();
 		const stage = this._stageFilter();
 		const totals = {};
 		this._byCustomer().forEach(r => {
@@ -76,17 +100,17 @@ export default {
 
 		if (!names.length) return this._empty("No errors for these filters");
 
-		const shown = stage ? [stage] : this._STAGES;
+		const shown = stage ? [stage] : this._stages();
 		const series = shown.map(s => ({
 			name: s,
 			type: "bar",
 			stack: "total",
 			barWidth: "58%",
 			itemStyle: {
-				color: this._COLOURS[s] || this._MUTED,
+				color: t.colours[s] || t.muted,
 				/* 2px of surface between segments: the spacer that keeps adjacent
 				   fills legible, and the secondary encoding the palette needs. */
-				borderColor: this._SURFACE,
+				borderColor: t.surface,
 				borderWidth: 2
 			},
 			emphasis: { focus: "series" },
@@ -98,21 +122,21 @@ export default {
 			grid: { left: 8, right: 24, top: 40, bottom: 8, containLabel: true },
 			tooltip: {
 				trigger: "axis", axisPointer: { type: "shadow" },
-				backgroundColor: "#0f172a", borderColor: this._GRID,
-				textStyle: { color: this._INK }
+				backgroundColor: t.panel, borderColor: t.grid,
+				textStyle: { color: t.ink }
 			},
 			legend: {
 				top: 6, left: 0, icon: "roundRect", itemWidth: 10, itemHeight: 10,
-				textStyle: { color: this._MUTED, fontSize: 11 }
+				textStyle: { color: t.muted, fontSize: 11 }
 			},
 			xAxis: {
-				type: "value", axisLabel: { color: this._MUTED },
-				splitLine: { lineStyle: { color: this._GRID, opacity: 0.4 } }
+				type: "value", axisLabel: { color: t.muted },
+				splitLine: { lineStyle: { color: t.grid, opacity: 0.4 } }
 			},
 			yAxis: {
 				type: "category", data: names,
-				axisLabel: { color: this._INK, fontSize: 11 },
-				axisLine: { lineStyle: { color: this._GRID } },
+				axisLabel: { color: t.ink, fontSize: 11 },
+				axisLine: { lineStyle: { color: t.grid } },
 				axisTick: { show: false }
 			},
 			series: series
@@ -124,6 +148,7 @@ export default {
 	   Count and share of total, because a raw count says nothing about whether a
 	   code is the problem or a rounding error. */
 	getTopCodesConfig() {
+		const t = this._theme();
 		const stage = this._stageFilter();
 		const all = this._codes().filter(r => !stage || r["Stage"] === stage);
 		const grand = all.reduce((a, r) => a + this._num(r["Open"]), 0);
@@ -135,33 +160,24 @@ export default {
 
 		if (!rows.length) return this._empty("No codes for these filters");
 
-		const self = this;
 		return {
 			backgroundColor: "transparent",
 			grid: { left: 8, right: 96, top: 12, bottom: 8, containLabel: true },
 			tooltip: {
-				trigger: "item", backgroundColor: "#0f172a",
-				borderColor: this._GRID, textStyle: { color: this._INK },
-				formatter: function (p) {
-					const r = rows[p.dataIndex];
-					const pct = grand ? (100 * self._num(r["Open"]) / grand).toFixed(1) : "0.0";
-					return "<b>" + r["Code"] + "</b> &middot; " + r["Category"] + "<br/>"
-					     + String(r["Check"] || "") + "<br/>"
-					     + self._num(r["Open"]).toLocaleString() + " open &middot; " + pct + "% of total"
-					     + (r["Resolvable"] ? "" : "<br/><i>not resolvable</i>");
-				}
+				trigger: "item", backgroundColor: t.panel,
+				borderColor: t.grid, textStyle: { color: t.ink }
 			},
 			xAxis: {
-				type: "value", axisLabel: { color: this._MUTED },
-				splitLine: { lineStyle: { color: this._GRID, opacity: 0.4 } }
+				type: "value", axisLabel: { color: t.muted },
+				splitLine: { lineStyle: { color: t.grid, opacity: 0.4 } }
 			},
 			yAxis: {
 				type: "category",
 				/* The code leads so the label is clickable by code, but the name
 				   follows because a bare number means nothing to a reader. */
 				data: rows.map(r => r["Code"] + "  " + String(r["Check"] || "").slice(0, 34)),
-				axisLabel: { color: this._INK, fontSize: 11 },
-				axisLine: { lineStyle: { color: this._GRID } },
+				axisLabel: { color: t.ink, fontSize: 11 },
+				axisLine: { lineStyle: { color: t.grid } },
 				axisTick: { show: false }
 			},
 			series: [{
@@ -177,7 +193,7 @@ export default {
 					}
 				})),
 				label: {
-					show: true, position: "right", color: this._MUTED, fontSize: 11,
+					show: true, position: "right", color: t.muted, fontSize: 11,
 					formatter: function (p) {
 						const pct = grand ? (100 * p.value / grand).toFixed(1) : "0.0";
 						return p.value.toLocaleString() + "  (" + pct + "%)";
@@ -187,20 +203,9 @@ export default {
 		};
 	},
 
-	_empty(msg) {
-		return {
-			backgroundColor: "transparent",
-			title: {
-				text: msg, left: "center", top: "middle",
-				textStyle: { color: this._MUTED, fontSize: 13, fontWeight: "normal" }
-			},
-			xAxis: { show: false }, yAxis: { show: false }, series: []
-		};
-	},
-
 	/* ── lookups for the drill handlers ─────────────────────────────────────
 	   A chart click gives back a label, not an id. These turn one into the other
-	   so the handlers in ErrorsActions never have to read query data themselves. */
+	   so the handlers in ErrorsActions never read query data themselves. */
 	customerIdFor(label) {
 		const name = String(label == null ? "" : label);
 		const hit = this._byCustomer().find(r => String(r.customer) === name);

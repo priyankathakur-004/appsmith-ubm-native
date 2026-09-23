@@ -4,7 +4,7 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 9,
   "boxShadow": "none",
-  "defaultOptionValue": "{{ appsmith.store.valStagePick || \"\" }}",
+  "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.valStagePick || \"\" ))(ValStage.options, ValStage.serverSideFiltering) }}",
   "dynamicBindingPathList": [
     {
       "key": "sourceData"
