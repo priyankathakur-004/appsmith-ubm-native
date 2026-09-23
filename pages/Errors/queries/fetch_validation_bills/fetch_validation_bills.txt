@@ -44,8 +44,18 @@ LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
 -- month, so joining it directly would multiply every bill error by its months
 -- of history; DISTINCT ON collapses that first. Same shape the bill-health
 -- warnings use. Bills whose block is unmapped have no row here and show blank.
-LEFT JOIN bill_management_v2.analytics_bills_items abi
-       ON abi.bill_record_id = br.id AND abi.bill_id IS NOT NULL
+-- One bill id per error, not one row per analytics item. A plain join here
+-- fans out: a bill record with several analytics rows duplicated every error
+-- attached to it, inflating the list and breaking the page count. The dashboard
+-- guards the same join with DISTINCT ON for the same reason. This probes an
+-- indexed foreign key once per displayed row and stops at the first match.
+LEFT JOIN LATERAL (
+    SELECT abi.bill_id
+    FROM bill_management_v2.analytics_bills_items abi
+    WHERE abi.bill_record_id = br.id
+      AND abi.bill_id IS NOT NULL
+    LIMIT 1
+) abi ON TRUE
 -- Same optional filters as the catalogue; bill_records is already joined here
 -- for its columns, so they apply directly rather than through a semi-join.
 WHERE ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
