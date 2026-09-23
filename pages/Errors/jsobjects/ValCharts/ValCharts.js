@@ -87,7 +87,7 @@ export default {
 		this._byCustomer().forEach(r => {
 			if (stage && r.stage !== stage) return;
 			const c = r.customer || "Unknown";
-			if (!totals[c]) totals[c] = { total: 0, stages: {} };
+			if (!totals[c]) totals[c] = { total: 0, stages: {}, id: r.customer_id };
 			const n = this._num(r.open_count);
 			totals[c].total += n;
 			totals[c].stages[r.stage] = (totals[c].stages[r.stage] || 0) + n;
@@ -99,6 +99,13 @@ export default {
 			.reverse(); // ECharts draws the first category at the bottom
 
 		if (!names.length) return this._empty("No errors for these filters");
+
+		/* The category value carries the customer id ahead of the name, and the
+		   axis formatter hides it again. That is what lets the click handler read
+		   an id straight off the clicked label instead of looking it up in this
+		   query's data - a handler that both triggers and reads the same query is
+		   rejected outright, and the trace follows calls between objects. */
+		const cats = names.map(n => totals[n].id + "|" + n);
 
 		const shown = stage ? [stage] : this._stages();
 		const series = shown.map(s => ({
@@ -134,8 +141,11 @@ export default {
 				splitLine: { lineStyle: { color: t.grid, opacity: 0.4 } }
 			},
 			yAxis: {
-				type: "category", data: names,
-				axisLabel: { color: t.ink, fontSize: 11 },
+				type: "category", data: cats,
+				axisLabel: {
+					color: t.ink, fontSize: 11,
+					formatter: function (v) { return String(v).split("|").slice(1).join("|"); }
+				},
 				axisLine: { lineStyle: { color: t.grid } },
 				axisTick: { show: false }
 			},
@@ -175,8 +185,15 @@ export default {
 				type: "category",
 				/* The code leads so the label is clickable by code, but the name
 				   follows because a bare number means nothing to a reader. */
-				data: rows.map(r => r["Code"] + "  " + String(r["Check"] || "").slice(0, 34)),
-				axisLabel: { color: t.ink, fontSize: 11 },
+				data: rows.map(r => r["Code"] + "|" + r["Category"] + "|"
+				                    + String(r["Check"] || "").slice(0, 34)),
+				axisLabel: {
+					color: t.ink, fontSize: 11,
+					formatter: function (v) {
+						const p = String(v).split("|");
+						return p[0] + "  " + (p[2] || "");
+					}
+				},
 				axisLine: { lineStyle: { color: t.grid } },
 				axisTick: { show: false }
 			},
@@ -201,25 +218,5 @@ export default {
 				}
 			}]
 		};
-	},
-
-	/* ── lookups for the drill handlers ─────────────────────────────────────
-	   A chart click gives back a label, not an id. These turn one into the other
-	   so the handlers in ErrorsActions never read query data themselves. */
-	customerIdFor(label) {
-		const name = String(label == null ? "" : label);
-		const hit = this._byCustomer().find(r => String(r.customer) === name);
-		return hit ? hit.customer_id : null;
-	},
-
-	/* Labels are "<code>  <check name>", so the code is the leading token. The
-	   category comes back too: the same number means different checks under
-	   different categories, so a code alone is not enough to drill on. */
-	codeFor(label) {
-		const m = String(label == null ? "" : label).match(/^(\d+)/);
-		if (!m) return null;
-		const code = m[1];
-		const hit = this._codes().find(r => String(r["Code"]) === code);
-		return hit ? { code: hit["Code"], category: hit["Category"], name: hit["Check"] } : null;
 	}
 }

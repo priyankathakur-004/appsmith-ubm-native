@@ -96,28 +96,29 @@ export default {
 	},
 
 	// --- Drill: customer -> error type -> error code -> bills ---
-	// A chart click reports the clicked label. These resolve it to an id through
-	// ValCharts (which only reads) and then drive the existing filters, so the
-	// summary narrows the same table and modal that were already there.
+	// A chart click reports the clicked label, and the label carries the id it
+	// needs, so these parse rather than look anything up. They then drive the
+	// existing filters, so the summary narrows the same table and modal that were
+	// already there.
 
 	// Clicking a customer bar scopes the whole tab to that customer. The select
 	// reads its default from the store, which is how its value gets set from here.
 	async valPickCustomer() {
 		const p = (typeof ValCustomerChart !== 'undefined' && ValCustomerChart.selectedDataPoint) || {};
 		// A horizontal bar reports the category on whichever axis carries it, so
-		// take whichever of the two came back as text.
+		// take whichever of the two came back as text. The label is "<id>|<name>":
+		// the id travels in the label precisely so this function never has to read
+		// the by-customer query, which it would then be both reading and triggering.
 		const label = (typeof p.x === 'string' && p.x) || (typeof p.y === 'string' && p.y) || '';
-		const id = ValCharts.customerIdFor(label);
-		if (id == null) return;
+		const id = (String(label).split("|")[0] || "").trim();
+		if (!id) return;
 		await storeValue("valCustomerPick", id);
 		await resetWidget("ValVendor", true);
 		await resetWidget("ValLocation", true);
-		// Deliberately no .run() on the catalogue or the by-customer query here.
-		// Resolving the clicked label reads by-customer data, and a function that
-		// both triggers and reads the same query is rejected as reactive misuse.
-		// Both are AUTOMATIC and read the customer select, so setting it reloads them.
 		await fetch_val_vendors.run();
 		await fetch_val_locations.run();
+		fetch_validation_codes.run();
+		fetch_validation_by_customer.run();
 	},
 
 	// Clicking a stage tile narrows to that step of the pipeline. Both charts and
@@ -134,9 +135,10 @@ export default {
 	async valPickCode() {
 		const p = (typeof ValCodesChart !== 'undefined' && ValCodesChart.selectedDataPoint) || {};
 		const label = (typeof p.x === 'string' && p.x) || (typeof p.y === 'string' && p.y) || '';
-		const hit = ValCharts.codeFor(label);
-		if (!hit) return;
-		await this.valShowBills(hit.code, hit.category, hit.name);
+		// "<code>|<category>|<name>" - parsed, not looked up, for the same reason.
+		const parts = String(label).split("|");
+		if (!parts[0]) return;
+		await this.valShowBills(parts[0], parts[1] || "", parts[2] || "");
 	},
 
 	// Row link on the catalogue: stash which check was clicked, load its bills,
