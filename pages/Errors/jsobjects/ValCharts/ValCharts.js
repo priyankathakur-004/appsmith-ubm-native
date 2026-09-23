@@ -66,7 +66,7 @@ export default {
 	_empty(msg) {
 		const t = this._theme();
 		return {
-			backgroundColor: "transparent",
+			backgroundColor: "#1e293b",
 			title: {
 				text: msg, left: "center", top: "middle",
 				textStyle: { color: t.muted, fontSize: 13, fontWeight: "normal" }
@@ -125,7 +125,7 @@ export default {
 		}));
 
 		return {
-			backgroundColor: "transparent",
+			backgroundColor: "#1e293b",
 			grid: { left: 8, right: 24, top: 40, bottom: 8, containLabel: true },
 			tooltip: {
 				trigger: "axis", axisPointer: { type: "shadow" },
@@ -171,7 +171,7 @@ export default {
 		if (!rows.length) return this._empty("No codes for these filters");
 
 		return {
-			backgroundColor: "transparent",
+			backgroundColor: "#1e293b",
 			grid: { left: 8, right: 96, top: 12, bottom: 8, containLabel: true },
 			tooltip: {
 				trigger: "item", backgroundColor: t.panel,
@@ -202,8 +202,14 @@ export default {
 				/* Colour by whether the check can be resolved at all, not by rank.
 				   The biggest code on this page is one nobody can clear, and that
 				   is the thing worth seeing before chasing volume. */
+				/* The share is computed here and carried on each item. A formatter is
+				   serialised to a string and re-evaluated inside the chart, so it
+				   loses this scope - referencing a total computed out here fails at
+				   render with "not defined". Anything a formatter needs has to
+				   travel in the data. */
 				data: rows.map(r => ({
 					value: this._num(r["Open"]),
+					pct: grand ? (100 * this._num(r["Open"]) / grand).toFixed(1) : "0.0",
 					itemStyle: {
 						color: r["Resolvable"] ? "#3b82f6" : "#ec4899",
 						borderRadius: [0, 4, 4, 0]
@@ -212,7 +218,7 @@ export default {
 				label: {
 					show: true, position: "right", color: t.muted, fontSize: 11,
 					formatter: function (p) {
-						const pct = grand ? (100 * p.value / grand).toFixed(1) : "0.0";
+						const pct = (p.data && p.data.pct != null) ? p.data.pct : "0.0";
 						return p.value.toLocaleString() + "  (" + pct + "%)";
 					}
 				}

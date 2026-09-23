@@ -11,6 +11,9 @@
     },
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "fontFamily"
     }
   ],
   "dynamicTriggerPathList": [
@@ -36,5 +39,8 @@
   "version": 1,
   "widgetId": "vc_c2_w",
   "widgetName": "ValCodesChart",
-  "onDataPointClick": "{{ ErrorsActions.valPickCode() }}"
+  "onDataPointClick": "{{ ErrorsActions.valPickCode() }}",
+  "backgroundColor": "#1E293B",
+  "borderColor": "#1E293B",
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}"
 }
