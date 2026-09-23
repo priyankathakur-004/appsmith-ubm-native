@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 48,
+  "bottomRow": 96,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{ ValCharts.getCustomerStageConfig() }}",
@@ -13,23 +13,28 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
   "isLoading": false,
   "isVisible": true,
   "key": "vc_c1_k",
   "leftColumn": 0,
-  "mobileBottomRow": 48,
+  "mobileBottomRow": 96,
   "mobileLeftColumn": 0,
-  "mobileRightColumn": 64,
+  "mobileRightColumn": 32,
   "mobileTopRow": 6,
   "parentColumnSpace": 13.83,
   "parentId": "val_charts_cv",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
-  "rightColumn": 64,
+  "rightColumn": 32,
   "topRow": 6,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "vc_c1_w",
-  "widgetName": "ValCustomerChart"
+  "widgetName": "ValCustomerChart",
+  "onDataPointClick": "{{ ErrorsActions.valPickCustomer() }}"
 }

@@ -1,7 +1,7 @@
 {
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-  "bottomRow": 97,
+  "bottomRow": 96,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{ ValCharts.getTopCodesConfig() }}",
@@ -13,23 +13,28 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onDataPointClick"
+    }
+  ],
   "isLoading": false,
   "isVisible": true,
   "key": "vc_c2_k",
-  "leftColumn": 0,
-  "mobileBottomRow": 97,
-  "mobileLeftColumn": 0,
+  "leftColumn": 32,
+  "mobileBottomRow": 96,
+  "mobileLeftColumn": 32,
   "mobileRightColumn": 64,
-  "mobileTopRow": 55,
+  "mobileTopRow": 6,
   "parentColumnSpace": 13.83,
   "parentId": "val_charts_cv",
   "parentRowSpace": 10,
   "renderMode": "CANVAS",
   "rightColumn": 64,
-  "topRow": 55,
+  "topRow": 6,
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "vc_c2_w",
-  "widgetName": "ValCodesChart"
+  "widgetName": "ValCodesChart",
+  "onDataPointClick": "{{ ErrorsActions.valPickCode() }}"
 }

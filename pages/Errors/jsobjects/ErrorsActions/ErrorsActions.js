@@ -72,6 +72,10 @@ export default {
 			resetWidget("ValLocation", true),
 			resetWidget("ValAccount", true)
 		]);
+		// The customer and stage selects read their default from the store, so
+		// resetting the widgets alone would just restore the last chart click.
+		await storeValue("valCustomerPick", "");
+		await storeValue("valStagePick", "");
 		// The customer is cleared too, so the lists scoped to it have to reload.
 		await fetch_val_vendors.run();
 		await fetch_val_locations.run();
@@ -89,6 +93,48 @@ export default {
 		await fetch_val_locations.run();
 		fetch_validation_codes.run();
 		fetch_validation_by_customer.run();
+	},
+
+	// --- Drill: customer -> error type -> error code -> bills ---
+	// A chart click reports the clicked label. These resolve it to an id through
+	// ValCharts (which only reads) and then drive the existing filters, so the
+	// summary narrows the same table and modal that were already there.
+
+	// Clicking a customer bar scopes the whole tab to that customer. The select
+	// reads its default from the store, which is how its value gets set from here.
+	async valPickCustomer() {
+		const p = (typeof ValCustomerChart !== 'undefined' && ValCustomerChart.selectedDataPoint) || {};
+		// A horizontal bar reports the category on whichever axis carries it, so
+		// take whichever of the two came back as text.
+		const label = (typeof p.x === 'string' && p.x) || (typeof p.y === 'string' && p.y) || '';
+		const id = ValCharts.customerIdFor(label);
+		if (id == null) return;
+		await storeValue("valCustomerPick", id);
+		await resetWidget("ValVendor", true);
+		await resetWidget("ValLocation", true);
+		await fetch_val_vendors.run();
+		await fetch_val_locations.run();
+		fetch_validation_codes.run();
+		fetch_validation_by_customer.run();
+	},
+
+	// Clicking a stage tile narrows to that step of the pipeline. Both charts and
+	// the table read the stage filter, so nothing needs reloading - it is applied
+	// in the browser over rows already here.
+	async valPickStage(stage) {
+		const cur = appsmith.store.valStagePick || "";
+		// Clicking the selected tile again clears it, so the tiles toggle.
+		await storeValue("valStagePick", (stage && stage !== cur) ? stage : "");
+	},
+
+	// Clicking a code bar opens the bills behind it - the existing drill, reached
+	// from the summary instead of from the table.
+	async valPickCode() {
+		const p = (typeof ValCodesChart !== 'undefined' && ValCodesChart.selectedDataPoint) || {};
+		const label = (typeof p.x === 'string' && p.x) || (typeof p.y === 'string' && p.y) || '';
+		const hit = ValCharts.codeFor(label);
+		if (!hit) return;
+		await this.valShowBills(hit.code, hit.category, hit.name);
 	},
 
 	// Row link on the catalogue: stash which check was clicked, load its bills,

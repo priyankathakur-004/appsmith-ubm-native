@@ -26,6 +26,10 @@
       {
         "name": "_GRID",
         "value": "\"#334155\""
+      },
+      {
+        "name": "_SURFACE",
+        "value": "\"#1e293b\""
       }
     ]
   }
