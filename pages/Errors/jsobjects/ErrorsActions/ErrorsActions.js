@@ -11,6 +11,7 @@ export default {
 		fetch_payment_errors.run();
 		fetch_comm_errors.run();
 		fetch_validation_codes.run();
+		fetch_validation_by_customer.run();
 		fetch_val_vendors.run();
 		fetch_val_locations.run();
 	},
@@ -75,6 +76,7 @@ export default {
 		await fetch_val_vendors.run();
 		await fetch_val_locations.run();
 		fetch_validation_codes.run();
+		fetch_validation_by_customer.run();
 	},
 
 	// Vendor and location belong to a customer, so changing the customer makes
@@ -86,6 +88,7 @@ export default {
 		await fetch_val_vendors.run();
 		await fetch_val_locations.run();
 		fetch_validation_codes.run();
+		fetch_validation_by_customer.run();
 	},
 
 	// Row link on the catalogue: stash which check was clicked, load its bills,

@@ -56,5 +56,5 @@
   "version": 2,
   "widgetId": "val_dfrom_w",
   "widgetName": "ValDateFrom",
-  "onDateSelected": "{{ fetch_validation_codes.run(); }}"
+  "onDateSelected": "{{ fetch_validation_codes.run(); fetch_validation_by_customer.run(); }}"
 }

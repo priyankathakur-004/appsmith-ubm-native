@@ -1,0 +1,61 @@
+-- Bill Errors — counts per customer and code, for the charts.
+--
+-- The catalogue treats customer as a filter; this treats it as a dimension, which
+-- is what any "across customers" view needs. That costs a join to bill_records
+-- over the whole window, since customer_id lives there and nowhere on bill_errors.
+-- It is the most expensive query on the tab - watch it.
+--
+-- Customer and definition are joined onto the aggregate, not onto the rows, so
+-- both run against a few thousand rows rather than millions.
+WITH agg AS (
+    SELECT br.customer_id                        AS customer_id,
+           be.validation_check_id                AS code,
+           be.category                           AS category,
+           COUNT(*)                              AS occurrences,
+           COUNT(*) FILTER (WHERE be.resolved IS FALSE) AS open_count
+    FROM bill_management_v2.bill_errors be
+    JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+    WHERE be.created_at >= COALESCE(
+              NULLIF('{{ ValDateFrom.formattedDate || "" }}', '')::timestamp,
+              (CURRENT_DATE - INTERVAL '1 year')::timestamp)
+      AND (NULLIF('{{ ValDateTo.formattedDate || "" }}', '') IS NULL
+           OR be.created_at < NULLIF('{{ ValDateTo.formattedDate || "" }}', '')::timestamp
+                              + INTERVAL '1 day')
+      AND ('{{ ValCustomer.selectedOptionValue || "" }}' = ''
+           OR br.customer_id = {{ ValCustomer.selectedOptionValue || 0 }})
+      -- The same vendor, account and location filters the table uses, so the
+      -- charts never disagree with the rows underneath them. bill_records is
+      -- already joined here, so these cost nothing when unset.
+      AND ('{{ ValVendor.selectedOptionValue || "" }}' = ''
+           OR br.vendor_code = '{{ ValVendor.selectedOptionValue || "" }}')
+      AND ('{{ (ValAccount.text || "").trim() }}' = ''
+           OR br.client_account ILIKE '%{{ (ValAccount.text || "").split("'").join("''") }}%')
+      AND ('{{ ValLocation.selectedOptionValue || "" }}' = ''
+           OR br.client_account IN (
+                  SELECT rcmu.client_account
+                  FROM bill_management_v2.reports_customer_monthly_usage rcmu
+                  WHERE rcmu.location_id = {{ ValLocation.selectedOptionValue || 0 }}))
+    GROUP BY br.customer_id, be.validation_check_id, be.category
+)
+SELECT COALESCE(cs.name, 'Customer ' || a.customer_id::text) AS customer,
+       a.customer_id                                          AS customer_id,
+       a.code                                                 AS code,
+       a.category                                             AS category,
+       COALESCE(
+           CASE d.workflow_state
+               WHEN 'integrity_check'     THEN 'Integrity Check'
+               WHEN 'data_verification_1' THEN 'Data Verification I'
+               WHEN 'data_verification_2' THEN 'Data Verification II'
+               WHEN 'data_audit_1'        THEN 'Data Audit I'
+               WHEN 'data_audit_2'        THEN 'Data Audit II'
+               ELSE INITCAP(REPLACE(d.workflow_state, '_', ' '))
+           END, 'Unmapped')                                   AS stage,
+       COALESCE(d.name, 'Code ' || a.code::text)               AS check_name,
+       a.occurrences                                          AS occurrences,
+       a.open_count                                           AS open_count
+FROM agg a
+LEFT JOIN bill_management_v2.customers_search cs ON cs.id = a.customer_id
+LEFT JOIN bill_management_v2.bill_validation_definitions d
+       ON d.id = a.code AND d.deleted_at IS NULL
+ORDER BY a.open_count DESC, a.occurrences DESC
+LIMIT 5000;

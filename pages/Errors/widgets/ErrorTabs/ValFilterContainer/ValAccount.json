@@ -48,7 +48,7 @@
   "mobileRightColumn": 54,
   "mobileTopRow": 10,
   "needsErrorInfo": false,
-  "onSubmit": "{{ fetch_validation_codes.run(); }}",
+  "onSubmit": "{{ fetch_validation_codes.run(); fetch_validation_by_customer.run(); }}",
   "parentColumnSpace": 13.83,
   "parentId": "val_filter_cv",
   "parentRowSpace": 10,
@@ -63,5 +63,5 @@
   "version": 2,
   "widgetId": "val_acct_w",
   "widgetName": "ValAccount",
-  "onBlur": "{{ fetch_validation_codes.run(); }}"
+  "onBlur": "{{ fetch_validation_codes.run(); fetch_validation_by_customer.run(); }}"
 }

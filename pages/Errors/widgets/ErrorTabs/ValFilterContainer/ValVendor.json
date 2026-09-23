@@ -61,5 +61,5 @@
   "version": 1,
   "widgetId": "val_vendor_w",
   "widgetName": "ValVendor",
-  "onOptionChange": "{{ fetch_validation_codes.run(); }}"
+  "onOptionChange": "{{ fetch_validation_codes.run(); fetch_validation_by_customer.run(); }}"
 }

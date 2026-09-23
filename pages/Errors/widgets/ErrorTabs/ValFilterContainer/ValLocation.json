@@ -64,6 +64,6 @@
   "version": 1,
   "widgetId": "val_loc_w",
   "widgetName": "ValLocation",
-  "onOptionChange": "{{ fetch_validation_codes.run(); }}",
+  "onOptionChange": "{{ fetch_validation_codes.run(); fetch_validation_by_customer.run(); }}",
   "onFilterUpdate": "{{ fetch_val_locations.run(); }}"
 }

@@ -1,0 +1,35 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 48,
+  "boxShadow": "none",
+  "chartType": "CUSTOM_ECHART",
+  "customEChartConfig": "{{ ValCharts.getCustomerStageConfig() }}",
+  "dynamicBindingPathList": [
+    {
+      "key": "customEChartConfig"
+    },
+    {
+      "key": "borderRadius"
+    }
+  ],
+  "dynamicTriggerPathList": [],
+  "isLoading": false,
+  "isVisible": true,
+  "key": "vc_c1_k",
+  "leftColumn": 0,
+  "mobileBottomRow": 48,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 64,
+  "mobileTopRow": 6,
+  "parentColumnSpace": 13.83,
+  "parentId": "val_charts_cv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "topRow": 6,
+  "type": "CHART_WIDGET",
+  "version": 1,
+  "widgetId": "vc_c1_w",
+  "widgetName": "ValCustomerChart"
+}

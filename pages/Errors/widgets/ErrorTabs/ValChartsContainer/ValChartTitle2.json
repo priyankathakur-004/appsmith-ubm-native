@@ -1,0 +1,37 @@
+{
+  "animateLoading": true,
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "bottomRow": 55,
+  "boxShadow": "none",
+  "dynamicBindingPathList": [
+    {
+      "key": "fontFamily"
+    }
+  ],
+  "fontFamily": "{{appsmith.theme.fontFamily.appFont}}",
+  "fontSize": "1rem",
+  "fontStyle": "BOLD",
+  "isLoading": false,
+  "isVisible": true,
+  "key": "vc_t2_k",
+  "leftColumn": 1,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 55,
+  "mobileLeftColumn": 1,
+  "mobileRightColumn": 63,
+  "mobileTopRow": 50,
+  "parentColumnSpace": 13.83,
+  "parentId": "val_charts_cv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 63,
+  "text": "Open errors by code  \u2014  top 12; pink marks a check nothing can resolve",
+  "textAlign": "LEFT",
+  "textColor": "#E2E8F0",
+  "topRow": 50,
+  "type": "TEXT_WIDGET",
+  "version": 1,
+  "widgetId": "vc_t2_w",
+  "widgetName": "ValChartTitle2"
+}
