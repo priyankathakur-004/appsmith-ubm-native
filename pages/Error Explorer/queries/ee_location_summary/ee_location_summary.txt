@@ -1,0 +1,34 @@
+-- Open validation errors per location and code, for the red dots on the
+-- location list. An error reaches a location through its bill's items
+-- (bill_items_virtual_accounts.location_id), the same path the Locations
+-- Details chart uses. Errors whose bill blocks map to no location come back
+-- with a NULL location so the list can show them as "Unmapped bills".
+WITH errs AS (
+    SELECT be.id, be.validation_check_id AS code, be.severity, be.bill_record_id
+    FROM bill_management_v2.bill_errors be
+    JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+    WHERE br.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }}
+      AND be.resolved IS NOT TRUE
+      AND be.created_at >= CURRENT_DATE - ({{ Number(appsmith.store.eeMonths) || 12 }} * INTERVAL '1 month')
+), at_loc AS (
+    SELECT DISTINCT e.id, e.code, e.severity, biva.location_id
+    FROM errs e
+    JOIN bill_management_v2.bill_items bi ON bi.bill_record_id = e.bill_record_id
+    JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+    WHERE biva.location_id IS NOT NULL
+)
+SELECT {{ Number(appsmith.store.eeCustomer) || 0 }} AS cust,
+       location_id, code, COUNT(*) AS n, MAX(severity) AS max_sev
+FROM at_loc
+GROUP BY location_id, code
+UNION ALL
+SELECT {{ Number(appsmith.store.eeCustomer) || 0 }} AS cust,
+       NULL::bigint, e.code, COUNT(*), MAX(e.severity)
+FROM errs e
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM bill_management_v2.bill_items bi
+    JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+    WHERE bi.bill_record_id = e.bill_record_id
+      AND biva.location_id IS NOT NULL)
+GROUP BY e.code;

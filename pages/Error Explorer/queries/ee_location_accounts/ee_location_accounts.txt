@@ -1,0 +1,18 @@
+-- Virtual accounts (account + meter + commodity) paired to the picked
+-- location: the Account and Meter rows of the tree.
+SELECT DISTINCT ON (va.id)
+    {{ Number(appsmith.store.eeLocation) || 0 }}          AS loc,
+    va.id                                                 AS va_id,
+    va.account_code,
+    va.client_account,
+    va.meter_serial,
+    INITCAP(va.commodity)                                 AS commodity,
+    COALESCE(NULLIF(BTRIM(v.pretty_name::text), ''), va.vendor_code) AS vendor,
+    va.vendor_code,
+    (va.account_closed IS NOT NULL)                       AS closed
+FROM bill_management_v2.virtual_accounts_locations_pairing vap
+JOIN bill_management_v2.virtual_accounts va ON va.id = vap.virtual_account_id
+LEFT JOIN bill_management_v2.vendors v ON v.code = va.vendor_code
+WHERE vap.location_id = {{ Number(appsmith.store.eeLocation) || 0 }}
+  AND va.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }}
+ORDER BY va.id;

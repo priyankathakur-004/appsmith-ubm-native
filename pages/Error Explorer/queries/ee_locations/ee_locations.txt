@@ -1,0 +1,15 @@
+-- Every location of the picked customer. The customer id rides on each row so
+-- the widget can ignore a list left over from a previous customer.
+SELECT
+    {{ Number(appsmith.store.eeCustomer) || 0 }}              AS cust,
+    l.id                                                      AS location_id,
+    COALESCE(NULLIF(BTRIM(lt.location_description), ''),
+             'Site ' || l.id)                                 AS name,
+    NULLIF(BTRIM(lt.building_type), '')                       AS btype,
+    lt.location_address                                       AS addr,
+    lt.location_city                                          AS city,
+    lt.location_state                                         AS state
+FROM bill_management_v2.locations l
+LEFT JOIN bill_management_v2.location_detail lt ON lt.location_id = l.id
+WHERE l.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }}
+ORDER BY 3;

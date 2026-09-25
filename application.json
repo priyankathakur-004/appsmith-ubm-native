@@ -106,6 +106,10 @@
       "isDefault": false
     },
     {
+      "id": "Error Explorer",
+      "isDefault": false
+    },
+    {
       "id": "Login",
       "isDefault": false
     },

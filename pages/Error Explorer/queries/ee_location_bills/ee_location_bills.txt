@@ -1,0 +1,52 @@
+-- One row per bill item (bill x virtual account) at the picked location: the
+-- chart points and the service periods the timeline compares. Three extra
+-- months are fetched so the first bill in the window still has a prior bill.
+--
+-- Charges and usage come from the line items; bills still in validation may
+-- have none yet, so the bill's total charges ride along as a fallback. Only
+-- demand and load-factor calculations are pulled, to keep the payload small.
+SELECT
+    {{ Number(appsmith.store.eeLocation) || 0 }}                    AS loc,
+    bmr.bill_meta_id                                                AS bill_id,
+    bi.id                                                           AS item_id,
+    bi.bill_record_id                                               AS record_id,
+    biva.virtual_account_id                                         AS va_id,
+    bi.account_code,
+    bi.meter_serial,
+    UPPER(bi.commodity)                                             AS commodity,
+    TO_CHAR(bi.start_date, 'YYYY-MM-DD')                            AS start_d,
+    TO_CHAR(COALESCE(bi.adjusted_end_date, bi.end_date), 'YYYY-MM-DD') AS end_d,
+    TO_CHAR(br.statement_date, 'YYYY-MM-DD')                        AS invoice_d,
+    li.charges,
+    li.usage,
+    li.uom,
+    btac.total_charges                                              AS bill_total,
+    (SELECT COALESCE(json_agg(json_build_object('n', c.name, 'v', c.value, 'u', c.units)), '[]'::json)
+     FROM bill_management_v2.calculations c
+     WHERE c.bill_item_id = bi.id
+       AND (c.name ILIKE '%demand%' OR c.name ILIKE '%load%factor%'))::text AS calcs
+FROM bill_management_v2.bill_items bi
+JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+JOIN bill_management_v2.bill_records br ON br.id = bi.bill_record_id
+LEFT JOIN LATERAL (
+    SELECT bmbr.bill_meta_id
+    FROM bill_management_v2.bill_metas_bill_records bmbr
+    WHERE bmbr.bill_record_id = br.id AND bmbr.status = 'active'
+    LIMIT 1
+) bmr ON TRUE
+LEFT JOIN LATERAL (
+    SELECT SUM(l.charge) AS charges, SUM(l.usage) AS usage, MAX(l.uom) AS uom
+    FROM bill_management_v2.analytics_billing_line_items l
+    WHERE l.bill_item_id = bi.id
+) li ON TRUE
+LEFT JOIN LATERAL (
+    SELECT t.total_charges
+    FROM bill_management_v2.bills_total_amount_charges_prior t
+    WHERE t.record_id = br.id
+    LIMIT 1
+) btac ON TRUE
+WHERE biva.location_id = {{ Number(appsmith.store.eeLocation) || 0 }}
+  AND br.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }}
+  AND bi.start_date >= CURRENT_DATE - (({{ Number(appsmith.store.eeMonths) || 12 }} + 3) * INTERVAL '1 month')
+ORDER BY bi.start_date
+LIMIT 5000;

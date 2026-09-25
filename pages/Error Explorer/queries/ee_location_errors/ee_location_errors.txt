@@ -1,0 +1,51 @@
+-- Validation errors on bills at the picked location, one row per error (bill
+-- block). The widget groups them by bill + code. va_ids lists the virtual
+-- accounts the bill touches at this location, which is how an error is pinned
+-- to its Account / Meter row. Resolved errors are included so the widget can
+-- show them when asked; the widget hides them by default.
+SELECT
+    {{ Number(appsmith.store.eeLocation) || 0 }}       AS loc,
+    be.id                                              AS error_id,
+    be.validation_check_id                             AS code,
+    be.category,
+    be.severity,
+    be.message,
+    be.data::text                                      AS data,
+    be.resolved,
+    TO_CHAR(be.created_at, 'YYYY-MM-DD')               AS raised,
+    be.bill_record_id                                  AS record_id,
+    bmr.bill_meta_id                                   AS bill_id,
+    br.client_account,
+    COALESCE(NULLIF(BTRIM(cvn.pretty_name::text), ''), br.vendor_code) AS vendor,
+    TO_CHAR(br.statement_date, 'YYYY-MM-DD')           AS invoice_d,
+    d.name                                             AS def_name,
+    d.workflow_state                                   AS stage,
+    itm.va_ids
+FROM bill_management_v2.bill_errors be
+JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+JOIN LATERAL (
+    SELECT json_agg(DISTINCT biva.virtual_account_id)::text AS va_ids
+    FROM bill_management_v2.bill_items bi
+    JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+    WHERE bi.bill_record_id = be.bill_record_id
+      AND biva.location_id = {{ Number(appsmith.store.eeLocation) || 0 }}
+) itm ON itm.va_ids IS NOT NULL
+LEFT JOIN LATERAL (
+    SELECT bmbr.bill_meta_id
+    FROM bill_management_v2.bill_metas_bill_records bmbr
+    WHERE bmbr.bill_record_id = br.id AND bmbr.status = 'active'
+    LIMIT 1
+) bmr ON TRUE
+LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+       ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
+LEFT JOIN bill_management_v2.bill_validation_definitions d
+       ON d.id = be.validation_check_id AND d.deleted_at IS NULL
+WHERE br.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }}
+  AND be.created_at >= CURRENT_DATE - ({{ Number(appsmith.store.eeMonths) || 12 }} * INTERVAL '1 month')
+  AND be.bill_record_id IN (
+      SELECT bi.bill_record_id
+      FROM bill_management_v2.bill_items bi
+      JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+      WHERE biva.location_id = {{ Number(appsmith.store.eeLocation) || 0 }})
+ORDER BY be.created_at DESC, be.id DESC
+LIMIT 3000;
