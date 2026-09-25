@@ -17,10 +17,10 @@ export default {
 		ee_location_errors.run();
 	},
 
-	// The widget writes the picked value into its model and then fires the
-	// event, so each handler reads it straight away, before anything resets it.
-	async pickCustomer() {
-		const id = Number(ErrorExplorer.model.pickCustomer) || 0;
+	// Each handler gets the picked value from the event payload. The widget
+	// also writes it into its model, used only when the payload is missing.
+	async pickCustomer(picked) {
+		const id = Number(picked ?? ErrorExplorer.model.pickedCustomer) || 0;
 		await storeValue('eeCustomer', id);
 		await storeValue('eeLocation', 0);
 		if (!id) return;
@@ -28,21 +28,21 @@ export default {
 		ee_location_summary.run();
 	},
 
-	async pickLocation() {
-		const id = Number(ErrorExplorer.model.pickLocation) || 0;
+	async pickLocation(picked) {
+		const id = Number(picked ?? ErrorExplorer.model.pickedLocation) || 0;
 		await storeValue('eeLocation', id);
 		if (id) this.loadLocation();
 	},
 
-	async pickMonths() {
-		await storeValue('eeMonths', Number(ErrorExplorer.model.pickMonths) || 12);
+	async pickMonths(picked) {
+		await storeValue('eeMonths', Number(picked ?? ErrorExplorer.model.pickedMonths) || 12);
 		if (!appsmith.store.eeCustomer) return;
 		ee_location_summary.run();
 		if (appsmith.store.eeLocation) this.loadLocation();
 	},
 
-	openBill() {
-		const id = ErrorExplorer.model.openBillId;
+	openBill(picked) {
+		const id = picked ?? ErrorExplorer.model.pickedBill;
 		if (id) navigateTo('Full Bill', { bill_id: id }, 'NEW_WINDOW');
 	}
 }
