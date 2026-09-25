@@ -6,6 +6,11 @@
     "pageId": "Error Explorer",
     "pluginId": "js-plugin",
     "pluginType": "JS",
-    "variables": []
+    "variables": [
+      {
+        "name": "defaultCustomer",
+        "value": "76013"
+      }
+    ]
   }
 }

@@ -2,8 +2,14 @@ export default {
 	// The explorer widget is the only consumer of this page's queries, and
 	// Appsmith does not run on-load queries for a custom widget's model, so the
 	// small on-mount init widget calls this.
-	initPage() {
+	defaultCustomer: 76013,
+
+	async initPage() {
 		ee_customers.run();
+		if (!Number(appsmith.store.eeCustomer)) {
+			await storeValue('eeCustomer', this.defaultCustomer);
+			await storeValue('eeLocation', 0);
+		}
 		if (appsmith.store.eeCustomer) {
 			ee_locations.run();
 			ee_location_summary.run();
