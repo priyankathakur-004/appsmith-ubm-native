@@ -25,7 +25,9 @@ SELECT
     -- tells the level an error belongs to.
     d.metadata::text                                   AS def_meta,
     d.category                                         AS def_category,
-    itm.va_ids
+    itm.va_ids,
+    asg.assign_text,
+    asg.assign_d
 FROM bill_management_v2.bill_errors be
 JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
 JOIN LATERAL (
@@ -41,6 +43,17 @@ LEFT JOIN LATERAL (
     WHERE bmbr.bill_record_id = br.id AND bmbr.status = 'active'
     LIMIT 1
 ) bmr ON TRUE
+-- Who the bill is assigned to. UBM keeps no assignee column; each "Assign to
+-- user" writes a bill_assigned_to_user activity ("Bill assigned to <name>"),
+-- so the latest one is the current assignment.
+LEFT JOIN LATERAL (
+    SELECT ah.text AS assign_text, TO_CHAR(ah.created_at, 'YYYY-MM-DD') AS assign_d
+    FROM bill_management_v2.activity_history ah
+    WHERE ah.bill_meta_id = bmr.bill_meta_id
+      AND ah.type = 'bill_assigned_to_user'
+    ORDER BY ah.created_at DESC
+    LIMIT 1
+) asg ON TRUE
 LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
        ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
 LEFT JOIN bill_management_v2.bill_validation_definitions d
