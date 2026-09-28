@@ -9,6 +9,9 @@ export default {
 	apiReady: false,
 
 	async initPage() {
+		// Acknowledge / Flag live for one page visit only: start every load clean.
+		await storeValue('eeSession', { ack: {}, flag: {}, log: {}, to: {} }, false);
+		await storeValue('eePopup', null, false);
 		ee_customers.run();
 		ee_operators.run();
 		if (!Number(appsmith.store.eeCustomer)) {
@@ -56,15 +59,48 @@ export default {
 		if (appsmith.store.eeLocation) this.loadLocation();
 	},
 
-	// One entry point for Acknowledge, Re-flag and Flag. The widget already
-	// shows the change for this session; this is where the call to the backend
-	// goes. Contract the endpoint needs, per action:
-	//   acknowledge / reopen: errorIds, code, recordId, billId, customerId, locationId
-	//   escalate:             the same, plus assigneeId (null = customer default) and note
+	// Opens the error popup in the page modal with what the explorer sent.
+	async showError(payload) {
+		const p = payload ?? ErrorExplorer.model.errorPopup;
+		if (!p) return;
+		await storeValue('eePopup', p, false);
+		showModal('ErrorModal');
+	},
+
+	closeError() {
+		closeModal('ErrorModal');
+	},
+
+	// One entry point for Acknowledge, Re-flag and Flag from the modal.
+	// It records the action for this page visit (in memory, cleared on load) so
+	// both widgets show it, then is where the backend call goes. What the
+	// endpoint needs, per action:
+	//   acknowledge / reopen: errorIds (bill_errors.id, stable), code, recordId,
+	//                         billId, customerId, locationId
+	//   escalate: the same, plus assigneeId (null = current assignee / CSM) and
+	//             note; UBM's own "Assign to user" on the bill plus a comment
+	//             tagging the operator
 	// The acting user must come from the session, never from this payload.
-	errorAction(payload) {
-		const p = payload ?? ErrorExplorer.model.errorAction;
+	async errorAction(payload) {
+		const p = payload ?? ErrorDetail.model.errorAction;
 		if (!p || !p.action) return { saved: false };
+		const s = JSON.parse(JSON.stringify(appsmith.store.eeSession || {}));
+		['ack', 'flag', 'log', 'to'].forEach(k => { s[k] = s[k] || {}; });
+		const d = new Date();
+		const when = (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toTimeString().slice(0, 5);
+		const log = s.log[p.groupKey] = s.log[p.groupKey] || [];
+		if (p.action === 'acknowledge') {
+			p.errorIds.forEach(i => { s.ack[i] = true; });
+			log.push('Acknowledged (muted) ' + when + ' · not saved');
+		} else if (p.action === 'reopen') {
+			p.errorIds.forEach(i => { delete s.ack[i]; });
+			log.push('Re-flagged ' + when + ' · not saved');
+		} else if (p.action === 'escalate') {
+			p.errorIds.forEach(i => { s.flag[i] = true; delete s.ack[i]; });
+			s.to[p.groupKey] = p.assigneeName || 'operator';
+			log.push('Flagged to ' + (p.assigneeName || 'operator') + ' ' + when + (p.note ? ': "' + p.note + '"' : '') + ' · not saved');
+		}
+		await storeValue('eeSession', s, false);
 		if (!this.apiReady) return { saved: false, reason: 'no backend endpoint yet', request: p };
 		return { saved: false, reason: 'endpoint not wired', request: p };
 	},
