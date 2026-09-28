@@ -4,8 +4,13 @@ export default {
 	// small on-mount init widget calls this.
 	defaultCustomer: 76013,
 
+	// Flip to true once the backend exposes the acknowledge / reopen /
+	// escalate endpoints; until then nothing is sent and nothing is saved.
+	apiReady: false,
+
 	async initPage() {
 		ee_customers.run();
+		ee_operators.run();
 		if (!Number(appsmith.store.eeCustomer)) {
 			await storeValue('eeCustomer', this.defaultCustomer);
 			await storeValue('eeLocation', 0);
@@ -45,6 +50,19 @@ export default {
 		if (!appsmith.store.eeCustomer) return;
 		ee_location_summary.run();
 		if (appsmith.store.eeLocation) this.loadLocation();
+	},
+
+	// One entry point for Acknowledge, Re-flag and Flag. The widget already
+	// shows the change for this session; this is where the call to the backend
+	// goes. Contract the endpoint needs, per action:
+	//   acknowledge / reopen: errorIds, code, recordId, billId, customerId, locationId
+	//   escalate:             the same, plus assigneeId (null = customer default) and note
+	// The acting user must come from the session, never from this payload.
+	errorAction(payload) {
+		const p = payload ?? ErrorExplorer.model.errorAction;
+		if (!p || !p.action) return { saved: false };
+		if (!this.apiReady) return { saved: false, reason: 'no backend endpoint yet', request: p };
+		return { saved: false, reason: 'endpoint not wired', request: p };
 	},
 
 	openBill(picked) {

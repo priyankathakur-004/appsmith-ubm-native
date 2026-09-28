@@ -1,0 +1,15 @@
+-- People who can receive a flagged error: users tagged as operators in bill
+-- comments over the last year. Same source as the tagged-users list on the
+-- Bill Notifications page, narrowed to the operator tag.
+SELECT DISTINCT
+    u.id,
+    TRIM(CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name')) AS name,
+    u.email
+FROM bill_management_v2.activity_history ah
+CROSS JOIN LATERAL json_array_elements(COALESCE(ah.text::json->'chatTags', '[]'::json)) AS tag
+JOIN bill_management_v2.users u ON u.id = (tag->>'id')::int
+WHERE ah.type = 'manual_comment'
+  AND LEFT(ah.text, 1) = '{'
+  AND tag->>'type' = 'operatorUser'
+  AND ah.created_at >= CURRENT_DATE - INTERVAL '12 months'
+ORDER BY name;
