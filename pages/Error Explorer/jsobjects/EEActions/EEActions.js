@@ -9,9 +9,10 @@ export default {
 	apiReady: false,
 
 	async initPage() {
-		// Acknowledge / Flag live for one page visit only: start every load clean.
-		await storeValue('eeSession', { ack: {}, flag: {}, log: {}, to: {} }, false);
-		await storeValue('eePopup', null, false);
+		// Acknowledge / Flag live for one page visit only: start every load clean
+	// (the store would otherwise carry them over to the next visit).
+		await storeValue('eeSession', { ack: {}, flag: {}, log: {}, to: {} });
+		await storeValue('eePopup', null);
 		ee_customers.run();
 		ee_operators.run();
 		if (!Number(appsmith.store.eeCustomer)) {
@@ -63,8 +64,8 @@ export default {
 	async showError(payload) {
 		const p = payload ?? ErrorExplorer.model.errorPopup;
 		if (!p) return;
-		await storeValue('eePopup', p, false);
-		showModal('ErrorModal');
+		await storeValue('eePopup', p);
+		await showModal('ErrorModal');
 	},
 
 	closeError() {
@@ -72,7 +73,7 @@ export default {
 	},
 
 	// One entry point for Acknowledge, Re-flag and Flag from the modal.
-	// It records the action for this page visit (in memory, cleared on load) so
+	// It records the action for this page visit (in the store, cleared on load) so
 	// both widgets show it, then is where the backend call goes. What the
 	// endpoint needs, per action:
 	//   acknowledge / reopen: errorIds (bill_errors.id, stable), code, recordId,
@@ -100,7 +101,7 @@ export default {
 			s.to[p.groupKey] = p.assigneeName || 'operator';
 			log.push('Flagged to ' + (p.assigneeName || 'operator') + ' ' + when + (p.note ? ': "' + p.note + '"' : '') + ' · not saved');
 		}
-		await storeValue('eeSession', s, false);
+		await storeValue('eeSession', s);
 		if (!this.apiReady) return { saved: false, reason: 'no backend endpoint yet', request: p };
 		return { saved: false, reason: 'endpoint not wired', request: p };
 	},

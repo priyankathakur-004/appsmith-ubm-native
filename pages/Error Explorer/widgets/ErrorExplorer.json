@@ -77,6 +77,6 @@
   "onPickCustomer": "{{ EEActions.pickCustomer(typeof pickedCustomer !== 'undefined' ? pickedCustomer : undefined) }}",
   "onPickLocation": "{{ EEActions.pickLocation(typeof pickedLocation !== 'undefined' ? pickedLocation : undefined) }}",
   "onPickMonths": "{{ EEActions.pickMonths(typeof pickedMonths !== 'undefined' ? pickedMonths : undefined) }}",
-  "onShowError": "{{ EEActions.showError(typeof errorPopup !== 'undefined' ? errorPopup : undefined) }}",
+  "onShowError": "{{ storeValue('eePopup', typeof errorPopup !== 'undefined' ? errorPopup : ErrorExplorer.model.errorPopup); showModal('ErrorModal'); }}",
   "onOpenBill": "{{ EEActions.openBill(typeof pickedBill !== 'undefined' ? pickedBill : undefined) }}"
 }
