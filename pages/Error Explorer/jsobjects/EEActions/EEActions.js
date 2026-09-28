@@ -89,18 +89,22 @@ export default {
 		['ack', 'flag', 'log', 'to'].forEach(k => { s[k] = s[k] || {}; });
 		const d = new Date();
 		const when = (d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.toTimeString().slice(0, 5);
-		const log = s.log[p.groupKey] = s.log[p.groupKey] || [];
+		// One action can cover several bills of a recurring issue (groupKeys).
+		const keys = p.groupKeys && p.groupKeys.length ? p.groupKeys : [p.groupKey];
+		const bulk = keys.length > 1 ? ' (with ' + (keys.length - 1) + ' other bills)' : '';
+		let line = '';
 		if (p.action === 'acknowledge') {
 			p.errorIds.forEach(i => { s.ack[i] = true; });
-			log.push('Acknowledged (muted) ' + when + ' · not saved');
+			line = 'Acknowledged (muted) ' + when + bulk + ' · not saved';
 		} else if (p.action === 'reopen') {
 			p.errorIds.forEach(i => { delete s.ack[i]; });
-			log.push('Re-flagged ' + when + ' · not saved');
+			line = 'Re-flagged ' + when + ' · not saved';
 		} else if (p.action === 'escalate') {
 			p.errorIds.forEach(i => { s.flag[i] = true; delete s.ack[i]; });
-			s.to[p.groupKey] = p.assigneeName || 'operator';
-			log.push('Flagged to ' + (p.assigneeName || 'operator') + ' ' + when + (p.note ? ': "' + p.note + '"' : '') + ' · not saved');
+			keys.forEach(k => { s.to[k] = p.assigneeName || 'operator'; });
+			line = 'Flagged to ' + (p.assigneeName || 'operator') + ' ' + when + bulk + (p.note ? ': "' + p.note + '"' : '') + ' · not saved';
 		}
+		keys.forEach(k => { (s.log[k] = s.log[k] || []).push(line); });
 		await storeValue('eeSession', s);
 		if (!this.apiReady) return { saved: false, reason: 'no backend endpoint yet', request: p };
 		return { saved: false, reason: 'endpoint not wired', request: p };

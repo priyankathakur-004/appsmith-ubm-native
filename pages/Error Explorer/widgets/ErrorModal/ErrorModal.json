@@ -53,7 +53,7 @@
       "key": "borderRadius"
     }
   ],
-  "dynamicHeight": "FIXED",
+  "dynamicHeight": "AUTO_HEIGHT",
   "dynamicPropertyPathList": [],
   "dynamicTriggerPathList": [],
   "height": 780,
