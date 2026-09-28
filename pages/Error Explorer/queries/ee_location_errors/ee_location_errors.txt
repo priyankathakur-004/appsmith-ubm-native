@@ -20,6 +20,11 @@ SELECT
     TO_CHAR(br.statement_date, 'YYYY-MM-DD')           AS invoice_d,
     d.name                                             AS def_name,
     d.workflow_state                                   AS stage,
+    -- metadata lists the data keys a code carries (meter_serial, vendor_code,
+    -- client_account, virtual_account_id, other_bill_id...), which is what
+    -- tells the level an error belongs to.
+    d.metadata::text                                   AS def_meta,
+    d.category                                         AS def_category,
     itm.va_ids
 FROM bill_management_v2.bill_errors be
 JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id

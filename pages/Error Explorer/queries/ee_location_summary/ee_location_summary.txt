@@ -16,19 +16,23 @@ WITH errs AS (
     JOIN bill_management_v2.bill_items bi ON bi.bill_record_id = e.bill_record_id
     JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
     WHERE biva.location_id IS NOT NULL
+), counted AS (
+    SELECT location_id, code, COUNT(*) AS n, MAX(severity) AS max_sev
+    FROM at_loc
+    GROUP BY location_id, code
+    UNION ALL
+    SELECT NULL::bigint, e.code, COUNT(*), MAX(e.severity)
+    FROM errs e
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM bill_management_v2.bill_items bi
+        JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+        WHERE bi.bill_record_id = e.bill_record_id
+          AND biva.location_id IS NOT NULL)
+    GROUP BY e.code
 )
 SELECT {{ Number(appsmith.store.eeCustomer) || 0 }} AS cust,
-       location_id, code, COUNT(*) AS n, MAX(severity) AS max_sev
-FROM at_loc
-GROUP BY location_id, code
-UNION ALL
-SELECT {{ Number(appsmith.store.eeCustomer) || 0 }} AS cust,
-       NULL::bigint, e.code, COUNT(*), MAX(e.severity)
-FROM errs e
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM bill_management_v2.bill_items bi
-    JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
-    WHERE bi.bill_record_id = e.bill_record_id
-      AND biva.location_id IS NOT NULL)
-GROUP BY e.code;
+       c.location_id, c.code, c.n, c.max_sev, d.name AS def_name
+FROM counted c
+LEFT JOIN bill_management_v2.bill_validation_definitions d
+       ON d.id = c.code AND d.deleted_at IS NULL;
