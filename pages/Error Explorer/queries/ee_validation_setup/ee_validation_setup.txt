@@ -1,0 +1,13 @@
+-- The picked customer's own setup for each validation (the "Custom" setup in
+-- the Power BI validation template). config carries customer-specific
+-- settings such as a threshold; it is null when the customer uses defaults.
+SELECT
+    {{ Number(appsmith.store.eeCustomer) || 0 }} AS cust,
+    cbv.bill_validation_id                       AS code,
+    cbv.config::text                             AS config,
+    cbv.auto_fix,
+    cbv.resolvable,
+    cbv.auto_resolvable,
+    cbv.bulk_resolvable
+FROM bill_management_v2.customer_bill_validations cbv
+WHERE cbv.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }};
