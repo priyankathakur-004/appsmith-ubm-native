@@ -1,0 +1,17 @@
+-- Customer facts the popup needs: go-live date (checked by 2047), and the
+-- service level and CSM recorded in HubSpot (linked by pear_id).
+SELECT
+    {{ Number(appsmith.store.eeCustomer) || 0 }}  AS cust,
+    TO_CHAR(c.go_live_date, 'YYYY-MM-DD')         AS go_live,
+    hc.service_level,
+    hc.csm_assigned
+FROM bill_management_v2.customers c
+LEFT JOIN LATERAL (
+    SELECT h.service_level, h.csm_assigned
+    FROM bill_management_v2.hubspot_companies h
+    WHERE h.pear_id = c.id
+      AND h.archived IS NOT TRUE
+    ORDER BY h.updated_at DESC NULLS LAST
+    LIMIT 1
+) hc ON TRUE
+WHERE c.id = {{ Number(appsmith.store.eeCustomer) || 0 }};

@@ -17,6 +17,7 @@ export default {
 		}
 		if (appsmith.store.eeCustomer) {
 			ee_validation_setup.run();
+			ee_customer_profile.run();
 			ee_locations.run();
 			ee_location_summary.run();
 			if (appsmith.store.eeLocation) this.loadLocation();
@@ -37,6 +38,7 @@ export default {
 		await storeValue('eeLocation', 0);
 		if (!id) return;
 		ee_validation_setup.run();
+		ee_customer_profile.run();
 		ee_locations.run();
 		ee_location_summary.run();
 	},

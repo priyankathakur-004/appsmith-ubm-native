@@ -1,6 +1,8 @@
 -- The picked customer's own setup for each validation (the "Custom" setup in
--- the Power BI validation template). config carries customer-specific
--- settings such as a threshold; it is null when the customer uses defaults.
+-- the Power BI validation template). config carries customer settings; for
+-- the prior-bill checks it is {"threshold": <percent above the prior bill>},
+-- and it is null when the customer runs on the definition's default. The
+-- notification config (chat group ids) for the same check rides along.
 SELECT
     {{ Number(appsmith.store.eeCustomer) || 0 }} AS cust,
     cbv.bill_validation_id                       AS code,
@@ -8,6 +10,15 @@ SELECT
     cbv.auto_fix,
     cbv.resolvable,
     cbv.auto_resolvable,
-    cbv.bulk_resolvable
+    cbv.bulk_resolvable,
+    nt.notify_config
 FROM bill_management_v2.customer_bill_validations cbv
+LEFT JOIN LATERAL (
+    SELECT n.config::text AS notify_config
+    FROM bill_management_v2.bill_validation_notifications n
+    WHERE n.customer_id = cbv.customer_id
+      AND n.validation_check_id = cbv.bill_validation_id
+      AND n.deleted_at IS NULL
+    LIMIT 1
+) nt ON TRUE
 WHERE cbv.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }};
