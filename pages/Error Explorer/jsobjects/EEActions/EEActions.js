@@ -11,10 +11,11 @@ export default {
 	async initPage() {
 		// Acknowledge / Flag live for one page visit only: start every load clean
 	// (the store would otherwise carry them over to the next visit).
-		await storeValue('eeSession', { ack: {}, flag: {}, log: {}, to: {} });
+		await storeValue('eeSession', { ack: {}, flag: {}, log: {}, to: {}, flagged: [] });
 		await storeValue('eePopup', null);
 		ee_customers.run();
 		ee_operators.run();
+		if (appsmith.store.eeOperator) ee_operator_queue.run();
 		if (!Number(appsmith.store.eeCustomer)) {
 			await storeValue('eeCustomer', this.defaultCustomer);
 			await storeValue('eeLocation', 0);
@@ -102,12 +103,22 @@ export default {
 		} else if (p.action === 'escalate') {
 			p.errorIds.forEach(i => { s.flag[i] = true; delete s.ack[i]; });
 			keys.forEach(k => { s.to[k] = p.assigneeName || 'operator'; });
+			// listed in the operator queue for this visit (not saved)
+			s.flagged = (s.flagged || []).concat([{ when, code: p.code, name: p.name, bills: keys.length,
+				assigneeId: p.assigneeId, assigneeName: p.assigneeName, note: p.note,
+				customerId: p.customerId, locationId: p.locationId }]);
 			line = 'Flagged to ' + (p.assigneeName || 'operator') + ' ' + when + bulk + (p.note ? ': "' + p.note + '"' : '') + ' · not saved';
 		}
 		keys.forEach(k => { (s.log[k] = s.log[k] || []).push(line); });
 		await storeValue('eeSession', s);
 		if (!this.apiReady) return { saved: false, reason: 'no backend endpoint yet', request: p };
 		return { saved: false, reason: 'endpoint not wired', request: p };
+	},
+
+	async pickOperator(picked) {
+		const id = Number(picked ?? ErrorExplorer.model.pickedOperator) || 0;
+		await storeValue('eeOperator', id);
+		if (id) ee_operator_queue.run();
 	},
 
 	openBill(picked) {

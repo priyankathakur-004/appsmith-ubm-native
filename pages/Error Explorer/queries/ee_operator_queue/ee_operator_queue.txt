@@ -1,0 +1,68 @@
+-- The picked operator's queue: every bill currently assigned to them in UBM
+-- that still has open validation errors, across all customers. UBM keeps no
+-- assignee column; each "Assign to user" writes a bill_assigned_to_user
+-- activity ("Bill assigned to <name>"), so the latest one per bill is the
+-- current assignment. Read-only: this shows UBM's own assignments.
+WITH op AS (
+    SELECT TRIM(CONCAT(u.profile->>'first_name', ' ', u.profile->>'last_name')) AS name
+    FROM bill_management_v2.users u
+    WHERE u.id = {{ Number(appsmith.store.eeOperator) || 0 }}
+), latest AS (
+    SELECT DISTINCT ON (ah.bill_meta_id) ah.bill_meta_id, ah.text, ah.created_at
+    FROM bill_management_v2.activity_history ah
+    WHERE ah.type = 'bill_assigned_to_user'
+    ORDER BY ah.bill_meta_id, ah.created_at DESC
+), mine AS (
+    SELECT l.bill_meta_id, l.created_at
+    FROM latest l
+    CROSS JOIN op
+    WHERE op.name <> ''
+      AND l.text = 'Bill assigned to ' || op.name
+)
+SELECT
+    {{ Number(appsmith.store.eeOperator) || 0 }}           AS op,
+    m.bill_meta_id                                         AS bill_id,
+    TO_CHAR(m.created_at, 'YYYY-MM-DD')                    AS assigned_d,
+    br.customer_id,
+    cs.name                                                AS customer,
+    loc.location_id,
+    loc.location_name,
+    br.client_account,
+    COALESCE(NULLIF(BTRIM(cvn.pretty_name::text), ''), br.vendor_code) AS vendor,
+    TO_CHAR(br.statement_date, 'YYYY-MM-DD')               AS invoice_d,
+    errs.n,
+    errs.max_sev,
+    errs.codes
+FROM mine m
+JOIN bill_management_v2.bill_metas_bill_records bmbr
+      ON bmbr.bill_meta_id = m.bill_meta_id AND bmbr.status = 'active'
+JOIN bill_management_v2.bill_records br ON br.id = bmbr.bill_record_id
+-- open errors on the bill, one entry per code (severity kept so the page's
+-- severity filter can apply)
+JOIN LATERAL (
+    SELECT COUNT(*) AS n,
+           MAX(be.severity) AS max_sev,
+           json_agg(DISTINCT jsonb_build_object('code', be.validation_check_id,
+                                                'name', d.name,
+                                                'sev',  be.severity))::text AS codes
+    FROM bill_management_v2.bill_errors be
+    LEFT JOIN bill_management_v2.bill_validation_definitions d
+           ON d.id = be.validation_check_id AND d.deleted_at IS NULL
+    WHERE be.bill_record_id = br.id
+      AND be.resolved IS NOT TRUE
+) errs ON errs.n > 0
+LEFT JOIN bill_management_v2.customers_search cs ON cs.id = br.customer_id
+LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
+       ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
+LEFT JOIN LATERAL (
+    SELECT biva.location_id,
+           COALESCE(NULLIF(BTRIM(lt.location_description), ''), 'Site ' || biva.location_id) AS location_name
+    FROM bill_management_v2.bill_items bi
+    JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+    LEFT JOIN bill_management_v2.location_detail lt ON lt.location_id = biva.location_id
+    WHERE bi.bill_record_id = br.id
+      AND biva.location_id IS NOT NULL
+    LIMIT 1
+) loc ON TRUE
+ORDER BY errs.max_sev DESC, m.created_at DESC
+LIMIT 300;
