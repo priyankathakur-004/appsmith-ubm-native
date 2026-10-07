@@ -92,15 +92,15 @@ export default {
 		await storeValue('aiBusy', '', false);
 	},
 
-	// One AI call, retried when the service is busy (the free tier often answers
-	// 503 "high demand" or 429 for a moment). Returns the reply text.
+	// One AI call, retried when the service is busy (503/529 "overloaded" or a
+	// 429 rate limit for a moment). Returns the reply text.
 	async _ai(prompt) {
 		const waits = [3000, 8000, 15000];
 		for (let attempt = 0; ; attempt++) {
 			try {
 				return this._text(await AI_API.run({ prompt }));
 			} catch (e) {
-				const busy = /\b(503|429)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(this._msg(e));
+				const busy = /\b(503|529|429)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded|rate_limit/i.test(this._msg(e));
 				if (!busy || attempt >= waits.length) throw e;
 				await storeValue('aiBusy', 'The AI is busy, trying again…', false);
 				await new Promise(r => setTimeout(r, waits[attempt]));
@@ -111,11 +111,11 @@ export default {
 	// A plain message for the chat instead of the raw provider error.
 	_friendly(e) {
 		const m = this._msg(e);
-		if (/\b503\b|UNAVAILABLE|high demand|overloaded/i.test(m)) return 'The AI service is busy right now. Please try again in a minute.';
-		if (/\b429\b|RESOURCE_EXHAUSTED|quota/i.test(m)) return 'The free AI limit has been reached for now. Please try again later.';
+		if (/\b(503|529)\b|UNAVAILABLE|high demand|overloaded/i.test(m)) return 'The AI service is busy right now. Please try again in a minute.';
+		if (/\b429\b|RESOURCE_EXHAUSTED|quota|rate_limit/i.test(m)) return 'The AI usage limit has been reached for now. Please try again in a minute.';
 		if (/not allowed|may only read|SELECT query|one statement|Comments/i.test(m)) return 'The AI wrote a query this page does not allow. Try rephrasing the question.';
 		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
-		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the Google Gemini datasource.';
+		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the AI datasource.';
 		if (/not set up/i.test(m)) return m;
 		// Anything else: show the real error (shortened) so it can be fixed.
 		return 'Something went wrong: ' + m.slice(0, 300);
