@@ -41,6 +41,7 @@ export default {
 
 	// One question: the AI writes a SELECT on monthly_usage, we check it and run
 	// it (one retry with the error if it fails), then the AI explains the rows.
+	// If only the explaining step fails, the rows are still shown.
 	async ask(question) {
 		const q = String(question || '').trim();
 		if (!q || appsmith.store.aiBusy) return;
@@ -50,13 +51,13 @@ export default {
 		await storeValue('aiMessages', msgs, false);
 
 		const reply = { role: 'assistant', text: '', sql: '', columns: [], rows: [], rowCount: 0, error: '' };
+		let rows = null;
 		try {
 			if (typeof AI_API === 'undefined') {
 				throw new Error('The AI query (AI_API) is not set up on this page yet.');
 			}
 			await storeValue('aiBusy', 'Writing the query…', false);
-			let sql = this._cleanSql(this._text(await AI_API.run({ prompt: this._sqlPrompt(q, history) })));
-			let rows;
+			let sql = this._cleanSql(await this._ai(this._sqlPrompt(q, history)));
 			try {
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
@@ -64,7 +65,7 @@ export default {
 			} catch (first) {
 				reply.sql = sql;
 				await storeValue('aiBusy', 'Fixing the query…', false);
-				sql = this._cleanSql(this._text(await AI_API.run({ prompt: this._fixPrompt(q, sql, this._msg(first)) })));
+				sql = this._cleanSql(await this._ai(this._fixPrompt(q, sql, this._msg(first))));
 				reply.sql = sql;
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
@@ -77,14 +78,44 @@ export default {
 			reply.rows = rows.slice(0, this.maxShownRows);
 
 			await storeValue('aiBusy', 'Writing the answer…', false);
-			reply.text = this._text(await AI_API.run({ prompt: this._explainPrompt(q, sql, rows) })).trim()
-				|| 'The query ran, but the AI returned no explanation. See the table below.';
+			reply.text = (await this._ai(this._explainPrompt(q, sql, rows))).trim()
+				|| 'Here are the results.';
 		} catch (e) {
-			reply.error = this._msg(e);
-			reply.text = "Sorry, I couldn't answer that one.";
+			if (rows) {
+				reply.text = 'Here are the results. (The AI could not write a summary just now.)';
+			} else {
+				reply.text = "Sorry, I couldn't answer that one.";
+				reply.error = this._friendly(e);
+			}
 		}
 		await storeValue('aiMessages', msgs.concat([reply]), false);
 		await storeValue('aiBusy', '', false);
+	},
+
+	// One AI call, retried when the service is busy (the free tier often answers
+	// 503 "high demand" or 429 for a moment). Returns the reply text.
+	async _ai(prompt) {
+		const waits = [2000, 5000];
+		for (let attempt = 0; ; attempt++) {
+			try {
+				return this._text(await AI_API.run({ prompt }));
+			} catch (e) {
+				const busy = /\b(503|429)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|high demand|overloaded/i.test(this._msg(e));
+				if (!busy || attempt >= waits.length) throw e;
+				await storeValue('aiBusy', 'The AI is busy, trying again…', false);
+				await new Promise(r => setTimeout(r, waits[attempt]));
+			}
+		}
+	},
+
+	// A plain message for the chat instead of the raw provider error.
+	_friendly(e) {
+		const m = this._msg(e);
+		if (/\b503\b|UNAVAILABLE|high demand|overloaded/i.test(m)) return 'The AI service is busy right now. Please try again in a minute.';
+		if (/\b429\b|RESOURCE_EXHAUSTED|quota/i.test(m)) return 'The free AI limit has been reached for now. Please try again later.';
+		if (/not allowed|may only read|SELECT query|one statement|Comments/i.test(m)) return 'The AI wrote a query this page does not allow. Try rephrasing the question.';
+		if (/not set up/i.test(m)) return m;
+		return 'Something went wrong while answering. Try rephrasing the question.';
 	},
 
 	// The one table the AI may query. run_ai_sql builds it from
