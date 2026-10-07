@@ -1,0 +1,37 @@
+-- Runs one SELECT written by the AI on the Ask UBM page. The AI only ever
+-- sees monthly_usage, built here and already limited to the picked customer;
+-- the page checks the statement (single SELECT, this table only) before it
+-- gets here, the login is read-only, and the result is capped at 500 rows.
+-- Consumption is the canonical measure: generation for Supply Only bills,
+-- total consumption otherwise.
+WITH monthly_usage AS (
+    SELECT
+        m.time_period::date                                    AS month,
+        m.utility_type                                         AS utility,
+        m.bill_type,
+        m.location_id,
+        COALESCE(NULLIF(BTRIM(m.location_description), ''), l.name) AS location_name,
+        l.city,
+        l.state,
+        l.building_type,
+        l.square_feet,
+        m.client_account                                       AS account,
+        m.meter_serial                                         AS meter,
+        to_jsonb(m) ->> 'vendor_name'                          AS vendor,
+        CASE WHEN m.bill_type = 'Supply Only'
+             THEN m.total_gen_consumption
+             ELSE m.total_consumption
+        END                                                    AS consumption,
+        m.total_consumption_uom                                AS consumption_unit,
+        m.total_charges                                        AS cost,
+        m.total_cdd                                            AS cdd,
+        m.total_hdd                                            AS hdd
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    LEFT JOIN bill_management_v2.locations l
+        ON l.id = m.location_id
+    WHERE m.customer_id = {{ Number(appsmith.store.aiCustomer) || 0 }}
+)
+SELECT * FROM (
+{{ this.params.sql || "SELECT 'no question' AS answer" }}
+) AS ai_result
+LIMIT 500;

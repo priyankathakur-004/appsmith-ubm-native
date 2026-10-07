@@ -1,0 +1,20 @@
+{
+  "gitSyncId": "6a42383420f165a7650f6c99_899ea707-6526-5378-8989-6eee43de1a2a",
+  "id": "Ask UBM_AskActions",
+  "unpublishedCollection": {
+    "name": "AskActions",
+    "pageId": "Ask UBM",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "defaultCustomer",
+        "value": "76013"
+      },
+      {
+        "name": "maxShownRows",
+        "value": "200"
+      }
+    ]
+  }
+}

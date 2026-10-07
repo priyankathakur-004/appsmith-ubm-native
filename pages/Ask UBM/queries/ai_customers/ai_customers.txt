@@ -1,0 +1,6 @@
+-- Customers offered in the Ask UBM dropdown. Demo scope: UBM Demo only
+-- (internal use, free AI tier). Add ids here to widen it.
+SELECT id, name
+FROM bill_management_v2.customers_search
+WHERE id IN (76013)
+ORDER BY name;
