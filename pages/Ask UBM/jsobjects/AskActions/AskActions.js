@@ -114,8 +114,11 @@ export default {
 		if (/\b503\b|UNAVAILABLE|high demand|overloaded/i.test(m)) return 'The AI service is busy right now. Please try again in a minute.';
 		if (/\b429\b|RESOURCE_EXHAUSTED|quota/i.test(m)) return 'The free AI limit has been reached for now. Please try again later.';
 		if (/not allowed|may only read|SELECT query|one statement|Comments/i.test(m)) return 'The AI wrote a query this page does not allow. Try rephrasing the question.';
+		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
+		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the Google Gemini datasource.';
 		if (/not set up/i.test(m)) return m;
-		return 'Something went wrong while answering. Try rephrasing the question.';
+		// Anything else: show the real error (shortened) so it can be fixed.
+		return 'Something went wrong: ' + m.slice(0, 300);
 	},
 
 	// The one table the AI may query. run_ai_sql builds it from
