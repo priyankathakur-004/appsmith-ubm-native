@@ -95,7 +95,7 @@ export default {
 	// One AI call, retried when the service is busy (the free tier often answers
 	// 503 "high demand" or 429 for a moment). Returns the reply text.
 	async _ai(prompt) {
-		const waits = [2000, 5000];
+		const waits = [3000, 8000, 15000];
 		for (let attempt = 0; ; attempt++) {
 			try {
 				return this._text(await AI_API.run({ prompt }));
@@ -239,7 +239,13 @@ Result (${rows.length} rows${rows.length > 40 ? ', first 40 shown' : ''}): ${sam
 		}
 	},
 
+	// Everything the failed call says about itself: Appsmith may put the
+	// provider's error in the message, the response data or nested fields.
 	_msg(e) {
-		return String((e && (e.message || e.responseMeta?.error?.message)) || e || 'Unknown error');
+		if (e == null) return 'Unknown error';
+		if (typeof e !== 'object') return String(e);
+		const parts = [e.message, e.responseMeta && e.responseMeta.error && e.responseMeta.error.message];
+		try { parts.push(JSON.stringify(e)); } catch (x) { /* circular: skip */ }
+		return parts.filter(Boolean).join(' | ') || 'Unknown error';
 	}
 }
