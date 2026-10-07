@@ -115,6 +115,7 @@ export default {
 		if (/\b429\b|RESOURCE_EXHAUSTED|quota|rate_limit/i.test(m)) return 'The AI usage limit has been reached for now. Please try again in a minute.';
 		if (/not allowed|may only read|SELECT query|one statement|Comments/i.test(m)) return 'The AI wrote a query this page does not allow. Try rephrasing the question.';
 		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
+		if (/credit balance|billing/i.test(m)) return 'The AI account has run out of credit. Top it up or switch the AI_API query to another provider.';
 		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the AI datasource.';
 		if (/not set up/i.test(m)) return m;
 		// Anything else: show the real error (shortened) so it can be fixed.
