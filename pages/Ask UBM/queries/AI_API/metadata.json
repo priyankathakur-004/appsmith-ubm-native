@@ -11,7 +11,7 @@
           "data": "GENERATE_CONTENT"
         },
         "generateContentModel": {
-          "data": "gemini-2.5-flash"
+          "data": "gemini-3.8-flash"
         },
         "messages": {
           "data": [
