@@ -51,11 +51,11 @@ export default {
 
 		const reply = { role: 'assistant', text: '', sql: '', columns: [], rows: [], rowCount: 0, error: '' };
 		try {
-			if (typeof ai_generate === 'undefined') {
-				throw new Error('The AI query (ai_generate) is not set up on this page yet.');
+			if (typeof AI_API === 'undefined') {
+				throw new Error('The AI query (AI_API) is not set up on this page yet.');
 			}
 			await storeValue('aiBusy', 'Writing the query…', false);
-			let sql = this._cleanSql(this._text(await ai_generate.run({ prompt: this._sqlPrompt(q, history) })));
+			let sql = this._cleanSql(this._text(await AI_API.run({ prompt: this._sqlPrompt(q, history) })));
 			let rows;
 			try {
 				this._checkSql(sql);
@@ -64,7 +64,7 @@ export default {
 			} catch (first) {
 				reply.sql = sql;
 				await storeValue('aiBusy', 'Fixing the query…', false);
-				sql = this._cleanSql(this._text(await ai_generate.run({ prompt: this._fixPrompt(q, sql, this._msg(first)) })));
+				sql = this._cleanSql(this._text(await AI_API.run({ prompt: this._fixPrompt(q, sql, this._msg(first)) })));
 				reply.sql = sql;
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
@@ -77,7 +77,7 @@ export default {
 			reply.rows = rows.slice(0, this.maxShownRows);
 
 			await storeValue('aiBusy', 'Writing the answer…', false);
-			reply.text = this._text(await ai_generate.run({ prompt: this._explainPrompt(q, sql, rows) })).trim()
+			reply.text = this._text(await AI_API.run({ prompt: this._explainPrompt(q, sql, rows) })).trim()
 				|| 'The query ran, but the AI returned no explanation. See the table below.';
 		} catch (e) {
 			reply.error = this._msg(e);
@@ -158,19 +158,25 @@ Result (${rows.length} rows${rows.length > 40 ? ', first 40 shown' : ''}): ${sam
 	},
 
 	// The AI datasource's response shape differs by provider and version, so
-	// pull the text out of whichever shape comes back.
+	// pull the text out of whichever shape comes back. Walks the response with a
+	// local stack: a method calling itself reads as a cycle to Appsmith.
 	_text(res) {
-		if (res == null) return '';
-		if (typeof res === 'string') return res;
-		if (Array.isArray(res)) return res.map(r => this._text(r)).join('');
-		const c = res.candidates && res.candidates[0] && res.candidates[0].content;
-		if (c && Array.isArray(c.parts)) return c.parts.map(p => p.text || '').join('');
-		const ch = res.choices && res.choices[0];
-		if (ch) return (ch.message && ch.message.content) || ch.text || '';
-		for (const k of ['response', 'text', 'content', 'output', 'data', 'parts', 'message']) {
-			if (res[k] != null) return this._text(res[k]);
+		const out = [];
+		const stack = [res];
+		while (stack.length) {
+			const r = stack.pop();
+			if (r == null) continue;
+			if (typeof r === 'string') { out.push(r); continue; }
+			if (typeof r !== 'object') continue;
+			if (Array.isArray(r)) { for (let i = r.length - 1; i >= 0; i--) stack.push(r[i]); continue; }
+			const c = r.candidates && r.candidates[0] && r.candidates[0].content;
+			if (c && Array.isArray(c.parts)) { out.push(c.parts.map(p => p.text || '').join('')); continue; }
+			const ch = r.choices && r.choices[0];
+			if (ch) { out.push((ch.message && ch.message.content) || ch.text || ''); continue; }
+			const k = ['response', 'text', 'content', 'output', 'data', 'parts', 'message'].find(x => r[x] != null);
+			if (k) stack.push(r[k]);
 		}
-		return '';
+		return out.join('');
 	},
 
 	_cleanSql(text) {

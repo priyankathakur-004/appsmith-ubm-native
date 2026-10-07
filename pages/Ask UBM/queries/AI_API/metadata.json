@@ -16,7 +16,7 @@
         "messages": {
           "data": [
             {
-              "content": "",
+              "content": "{{ this.params.prompt }}",
               "role": "user",
               "type": "text"
             }
@@ -33,7 +33,11 @@
       "name": "Google  Gemini",
       "pluginId": "Google AI"
     },
-    "dynamicBindingPathList": [],
+    "dynamicBindingPathList": [
+      {
+        "key": "formData.messages.data[0].content"
+      }
+    ],
     "name": "AI_API",
     "pageId": "Ask UBM",
     "runBehaviour": "MANUAL",
