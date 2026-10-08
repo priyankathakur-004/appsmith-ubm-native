@@ -73,6 +73,13 @@ export default {
 			}
 			rows = Array.isArray(rows) ? rows : [];
 			reply.sql = sql;
+			// The AI's "cannot answer" row: say so plainly, with no table or summary.
+			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
+				reply.text = "That isn't in the data I can see. I can answer questions about monthly usage and cost by location, vendor, utility, account or meter, plus square footage and heating/cooling degree days.";
+				await storeValue('aiMessages', msgs.concat([reply]), false);
+				await storeValue('aiBusy', '', false);
+				return;
+			}
 			reply.rowCount = rows.length;
 			reply.columns = rows.length ? Object.keys(rows[0]) : [];
 			reply.rows = rows.slice(0, this.maxShownRows);
@@ -164,6 +171,7 @@ Rules:
 - Return only the SQL, with no explanation and no markdown.
 - One statement: SELECT, or WITH ... SELECT. Read only monthly_usage. No semicolon, no comments.
 - Never add consumption across different utilities or units: group by utility and consumption_unit whenever you sum consumption. Cost can be added across utilities.
+- For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
 - Round dollars to 2 decimals and consumption to whole numbers.
 - Name every output column in readable snake_case.
 - Sort the result sensibly and return at most 100 rows.
@@ -183,13 +191,14 @@ Return a corrected query only.`;
 	},
 
 	_explainPrompt(question, sql, rows) {
-		const sample = JSON.stringify(rows.slice(0, 40));
+		const sample = JSON.stringify(rows.slice(0, 100));
 		return `You are a utility-billing analyst. Answer the user's question in 1 to 3 short sentences, using only the query result below.
 State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found.
+The full result is shown to the user as a table under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
 
 Question: ${question}
 SQL that was run: ${sql}
-Result (${rows.length} rows${rows.length > 40 ? ', first 40 shown' : ''}): ${sample}`;
+Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''}): ${sample}`;
 	},
 
 	// The AI datasource's response shape differs by provider and version, so
