@@ -25,7 +25,6 @@
         "systemPrompt": {
           "data": ""
         },
-        "temperature": "0",
         "visionModel": {
           "data": ""
         }
