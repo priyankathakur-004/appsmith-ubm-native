@@ -50,7 +50,7 @@ export default {
 		const msgs = before.concat([{ role: 'user', text: q }]);
 		await storeValue('aiMessages', msgs, false);
 
-		const reply = { role: 'assistant', text: '', sql: '', columns: [], rows: [], rowCount: 0, error: '' };
+		const reply = { role: 'assistant', text: '', sql: '', columns: [], rows: [], rowCount: 0, chart: null, error: '' };
 		let rows = null;
 		try {
 			if (typeof AI_API === 'undefined') {
@@ -85,8 +85,9 @@ export default {
 			reply.rows = rows.slice(0, this.maxShownRows);
 
 			await storeValue('aiBusy', 'Writing the answer…', false);
-			reply.text = (await this._ai(this._explainPrompt(q, sql, rows))).trim()
-				|| 'Here are the results.';
+			const out = this._parseAnswer(await this._ai(this._explainPrompt(q, sql, rows)));
+			reply.text = out.answer || 'Here are the results.';
+			reply.chart = this._checkChart(out.chart, reply.columns, reply.rows);
 		} catch (e) {
 			if (rows) {
 				reply.text = 'Here are the results. (The AI could not write a summary just now.)';
@@ -190,15 +191,58 @@ It failed with: ${error}
 Return a corrected query only.`;
 	},
 
+	// The summary step also picks the chart, so a chart costs no extra AI call.
+	// The chart is drawn from the database rows; the AI only names the columns.
 	_explainPrompt(question, sql, rows) {
 		const sample = JSON.stringify(rows.slice(0, 100));
-		return `You are a utility-billing analyst. Answer the user's question in 1 to 3 short sentences, using only the query result below.
-State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found.
-The full result is shown to the user as a table under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
+		const cols = rows.length ? Object.keys(rows[0]).join(', ') : '(none)';
+		return `You are a utility-billing analyst. Reply with JSON only (no markdown), in this shape:
+{"answer": "...", "chart": null}
+or
+{"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}}
+
+answer: 1 to 3 short sentences answering the question, using only the result below. State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
+
+chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
+- Use only these result columns: ${cols}
+- type "bar" for rankings and comparisons between categories; "line" for trends over time (x is the month or date column).
+- x: the category or month column. y: one or more numeric columns measured in the same unit; never put dollars and usage on one chart, pick the one the question is about.
+- series: when the result is long form (for example month, utility, value), the column whose values become separate bars or lines, with exactly one y column. Otherwise null.
+- title: a short chart title. y_label: the unit, for example "$", "kWh" or "therms".
 
 Question: ${question}
 SQL that was run: ${sql}
 Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''}): ${sample}`;
+	},
+
+	// The summary reply is JSON; fall back to treating it all as the answer.
+	_parseAnswer(text) {
+		const t = String(text || '').replace(/```(?:json)?/gi, '').trim();
+		const start = t.indexOf('{');
+		const end = t.lastIndexOf('}');
+		if (start >= 0 && end > start) {
+			try {
+				const o = JSON.parse(t.slice(start, end + 1));
+				if (o && typeof o.answer === 'string') return { answer: o.answer.trim(), chart: o.chart || null };
+			} catch (e) { /* not JSON: use the text as it is */ }
+		}
+		return { answer: t, chart: null };
+	},
+
+	// Keep the chart only if it names real columns with numbers in them.
+	_checkChart(chart, columns, rows) {
+		if (!chart || typeof chart !== 'object' || rows.length < 2) return null;
+		const has = c => columns.includes(c);
+		const numeric = c => rows.slice(0, 20).some(r => r[c] != null && r[c] !== '' && !isNaN(Number(r[c])));
+		const type = chart.type === 'line' ? 'line' : 'bar';
+		const y = (Array.isArray(chart.y) ? chart.y : [chart.y]).filter(c => has(c) && numeric(c));
+		const series = chart.series && has(chart.series) && chart.series !== chart.x ? chart.series : null;
+		if (!has(chart.x) || !y.length) return null;
+		return {
+			type, x: chart.x, y: series ? [y[0]] : y, series,
+			title: String(chart.title || '').slice(0, 120),
+			y_label: String(chart.y_label || '').slice(0, 30)
+		};
 	},
 
 	// The AI datasource's response shape differs by provider and version, so
