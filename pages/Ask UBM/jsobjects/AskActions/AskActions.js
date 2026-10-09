@@ -3,8 +3,9 @@ export default {
 	// query holds the same id, so widen both together.
 	defaultCustomer: 76013,
 
-	// Rows kept for the on-screen table. The database side caps at 500.
-	maxShownRows: 200,
+	// Rows kept with each answer, for the table and its CSV download. The
+	// database side caps at 500, so this keeps the whole result.
+	maxShownRows: 500,
 
 	// The chat widget is the only consumer of this page's queries, and Appsmith
 	// does not run on-load queries for a custom widget's model, so the small
