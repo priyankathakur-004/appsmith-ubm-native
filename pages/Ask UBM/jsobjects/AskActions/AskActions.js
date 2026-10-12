@@ -15,8 +15,10 @@ export default {
 		// starts clean.
 		await storeValue('aiMessages', [], false);
 		await storeValue('aiBusy', '', false);
-		if (!Number(appsmith.store.aiCustomer)) await storeValue('aiCustomer', this.defaultCustomer);
-		ai_customers.run();
+		// Fall back to the default when the remembered customer is no longer
+		// offered in the dropdown.
+		const offered = ((await ai_customers.run()) || []).map(c => Number(c.id));
+		if (!offered.includes(Number(appsmith.store.aiCustomer))) await storeValue('aiCustomer', this.defaultCustomer);
 		await this.loadFacts();
 	},
 
@@ -46,6 +48,8 @@ export default {
 	async ask(question) {
 		const q = String(question || '').trim();
 		if (!q || appsmith.store.aiBusy) return;
+		// The customer is fixed for the whole question and passed to the query.
+		const cust = Number(appsmith.store.aiCustomer) || 0;
 		const before = appsmith.store.aiMessages || [];
 		const history = before.filter(m => m.role === 'user').slice(-3).map(m => m.text);
 		const msgs = before.concat([{ role: 'user', text: q }]);
@@ -62,7 +66,7 @@ export default {
 			try {
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
-				rows = await run_ai_sql.run({ sql });
+				rows = await run_ai_sql.run({ sql, cust });
 			} catch (first) {
 				reply.sql = sql;
 				await storeValue('aiBusy', 'Fixing the query…', false);
@@ -70,7 +74,7 @@ export default {
 				reply.sql = sql;
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
-				rows = await run_ai_sql.run({ sql });
+				rows = await run_ai_sql.run({ sql, cust });
 			}
 			rows = Array.isArray(rows) ? rows : [];
 			reply.sql = sql;
@@ -97,8 +101,10 @@ export default {
 				reply.error = this._friendly(e);
 			}
 		}
-		await storeValue('aiMessages', msgs.concat([reply]), false);
 		await storeValue('aiBusy', '', false);
+		// Customer changed while answering: that chat was cleared, drop the reply.
+		if ((Number(appsmith.store.aiCustomer) || 0) !== cust) return;
+		await storeValue('aiMessages', msgs.concat([reply]), false);
 	},
 
 	// One AI call, retried when the service is busy (503/529 "overloaded" or a

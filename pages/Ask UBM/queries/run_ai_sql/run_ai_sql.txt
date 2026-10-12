@@ -1,5 +1,6 @@
 -- Runs one SELECT written by the AI on the Ask UBM page. The AI only ever
--- sees monthly_usage, built here and already limited to the picked customer;
+-- sees monthly_usage, built here and limited to the customer the question
+-- was asked for (passed in, so a customer switch mid-question cannot leak);
 -- the page checks the statement (single SELECT, this table only) before it
 -- gets here, the login is read-only, and the result is capped at 500 rows.
 -- Consumption is the canonical measure: generation for Supply Only bills,
@@ -29,7 +30,7 @@ WITH monthly_usage AS (
     FROM bill_management_v2.reports_customer_monthly_usage m
     LEFT JOIN bill_management_v2.locations l
         ON l.id = m.location_id
-    WHERE m.customer_id = {{ Number(appsmith.store.aiCustomer) || 0 }}
+    WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
 )
 SELECT * FROM (
 {{ this.params.sql || "SELECT 'no question' AS answer" }}
