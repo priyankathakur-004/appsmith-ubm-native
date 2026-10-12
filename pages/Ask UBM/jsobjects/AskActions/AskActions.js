@@ -15,6 +15,8 @@ export default {
 		// starts clean.
 		await storeValue('aiMessages', [], false);
 		await storeValue('aiBusy', '', false);
+		await storeValue('aiSavedData', {}, false);
+		await storeValue('aiSavedLoading', false, false);
 		// Fall back to the default when the remembered customer is no longer
 		// offered in the dropdown.
 		const offered = ((await ai_customers.run()) || []).map(c => Number(c.id));
@@ -32,10 +34,67 @@ export default {
 		await storeValue('aiFacts', (rows || [])[0] || {}, false);
 	},
 
-	async pickCustomer(picked) {
+	async pickCustomer(picked, savedTab) {
 		await storeValue('aiCustomer', Number(picked) || 0);
 		await storeValue('aiMessages', [], false);
+		await storeValue('aiSavedData', {}, false);
 		await this.loadFacts();
+		if (savedTab) await this.loadSaved();
+	},
+
+	// ---- saved charts (option 1: kept in this browser) -------------------------
+	// A saved chart keeps the question, its SQL and the chart settings, never
+	// the numbers: the Saved tab re-runs the SQL, so it always shows the latest
+	// data and needs no AI call. aiSaved is persisted by the browser (the
+	// default for storeValue); the loaded rows (aiSavedData) are not.
+
+	async saveAnswer(index) {
+		const msgs = appsmith.store.aiMessages || [];
+		const i = Number(index);
+		const m = msgs[i];
+		if (!m || m.role !== 'assistant' || !m.sql) return;
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		const saved = appsmith.store.aiSaved || [];
+		if (saved.some(x => Number(x.cust) === cust && x.sql === m.sql)) return;
+		const item = {
+			id: String(Date.now()), cust, question: (msgs[i - 1] || {}).text || '',
+			sql: m.sql, chart: m.chart || null, savedAt: new Date().toISOString()
+		};
+		await storeValue('aiSaved', [item].concat(saved).slice(0, 100));
+		// Show it straight away with the rows already on screen.
+		const data = Object.assign({}, appsmith.store.aiSavedData || {});
+		data[item.id] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount };
+		await storeValue('aiSavedData', data, false);
+	},
+
+	async removeSaved(id) {
+		await storeValue('aiSaved', (appsmith.store.aiSaved || []).filter(x => String(x.id) !== String(id)));
+	},
+
+	// Reload every saved chart of the picked customer with the latest data, one
+	// query at a time, showing each as it arrives.
+	async loadSaved() {
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		const list = (appsmith.store.aiSaved || []).filter(x => Number(x.cust) === cust);
+		if (!list.length || appsmith.store.aiSavedLoading) return;
+		await storeValue('aiSavedLoading', true, false);
+		const data = {};
+		list.forEach(x => { data[x.id] = { loading: true }; });
+		await storeValue('aiSavedData', Object.assign({}, data), false);
+		for (const x of list) {
+			if ((Number(appsmith.store.aiCustomer) || 0) !== cust) break;
+			try {
+				// Saved SQL lives in the browser, so it is checked again before it runs.
+				this._checkSql(x.sql);
+				const rows = await run_ai_sql.run({ sql: x.sql, cust });
+				const r = Array.isArray(rows) ? rows : [];
+				data[x.id] = { rows: r.slice(0, this.maxShownRows), columns: r.length ? Object.keys(r[0]) : [], rowCount: r.length };
+			} catch (e) {
+				data[x.id] = { error: 'Could not load this chart. ' + this._friendly(e) };
+			}
+			await storeValue('aiSavedData', Object.assign({}, data), false);
+		}
+		await storeValue('aiSavedLoading', false, false);
 	},
 
 	async clearChat() {
