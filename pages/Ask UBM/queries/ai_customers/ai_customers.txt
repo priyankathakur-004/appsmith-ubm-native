@@ -1,8 +1,6 @@
--- Customers offered in the Ask UBM dropdown (internal use). Each one's
--- monthly usage data is sent to the AI provider when questions are asked,
--- so add ids here only once that is agreed for the customer.
---   76013 UBM Demo   94512 Simon
+-- Customers offered in the Ask UBM dropdown: every customer (internal use).
+-- A customer's monthly usage data is sent to the AI provider when questions
+-- are asked about it.
 SELECT id, name
 FROM bill_management_v2.customers_search
-WHERE id IN (76013, 94512)
 ORDER BY name;

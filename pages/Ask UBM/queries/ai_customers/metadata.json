@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "-- Customers offered in the Ask UBM dropdown (internal use). Each one's\n-- monthly usage data is sent to the AI provider when questions are asked,\n-- so add ids here only once that is agreed for the customer.\n--   76013 UBM Demo   94512 Simon\nSELECT id, name\nFROM bill_management_v2.customers_search\nWHERE id IN (76013, 94512)\nORDER BY name;\n",
+      "body": "-- Customers offered in the Ask UBM dropdown: every customer (internal use).\n-- A customer's monthly usage data is sent to the AI provider when questions\n-- are asked about it.\nSELECT id, name\nFROM bill_management_v2.customers_search\nORDER BY name;\n",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
