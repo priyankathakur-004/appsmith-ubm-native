@@ -1,0 +1,13 @@
+-- What the picked customer's monthly usage data holds: the date range,
+-- location count and utilities with their units. Shown in the page header and
+-- given to the AI so it uses values that exist.
+SELECT
+    {{ Number(appsmith.store.aiCustomer) || 0 }}         AS cust,
+    TO_CHAR(MIN(m.time_period::date), 'YYYY-MM')        AS first_month,
+    TO_CHAR(MAX(m.time_period::date), 'YYYY-MM')        AS last_month,
+    COUNT(DISTINCT m.location_id)                       AS locations,
+    STRING_AGG(DISTINCT m.utility_type, ', ')           AS utilities,
+    STRING_AGG(DISTINCT m.utility_type || ' (' || COALESCE(m.total_consumption_uom, '?') || ')', ', ')
+                                                        AS utility_units
+FROM bill_management_v2.reports_customer_monthly_usage m
+WHERE m.customer_id = {{ Number(appsmith.store.aiCustomer) || 0 }};
