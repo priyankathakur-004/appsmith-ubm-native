@@ -233,6 +233,7 @@ ${cols}
 
 What this company's data holds: months ${f.first_month || '?'} to ${f.last_month || '?'}, ${f.locations || '?'} locations, utilities (with units): ${f.utility_units || 'unknown'}.
 Today is ${new Date().toISOString().slice(0, 10)}. "This year" and "last year" mean calendar years.
+The user is this company: "my", "our", "we" and "us" in the question mean this company's data.
 
 Rules:
 - Return only the SQL, with no explanation and no markdown.
@@ -267,7 +268,7 @@ Return a corrected query only.`;
 or
 {"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}}
 
-answer: 1 to 3 short sentences answering the question, using only the result below. State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
+answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
 
 chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
 - Use only these result columns: ${cols}
