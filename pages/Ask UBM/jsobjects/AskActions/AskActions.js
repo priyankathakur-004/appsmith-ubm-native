@@ -223,7 +223,7 @@ export default {
 				]
 			},
 			line_items: {
-				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month.',
+				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month. Not every bill has its lines broken out (older bills especially), so never use it for total cost; use it to split costs into kinds of charge, and say the breakdown covers the bills that have line detail.',
 				cols: [
 					['bill_id', 'integer', 'UBM bill id'],
 					['invoice_date', 'date', 'bill statement date'],
