@@ -34,9 +34,11 @@ WITH monthly_usage AS (
     WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
 ),
 line_items AS (
-    -- Every line of every bill, with UBM's two report filters: 'live' drops
-    -- back-loaded historical copies that duplicate each charge, 'processed'
-    -- drops bills still in the workflow.
+    -- Every line of every processed bill ('processed' drops bills still in the
+    -- workflow). 'historical' rows are back-loaded copies that duplicate each
+    -- charge, so they are left out; setup, live and special bills are all real.
+    -- Only 'live' is not enough: a recently onboarded customer's bills are
+    -- mostly 'setup' (Simon: 81k setup lines, 402 live, all from 2026).
     SELECT
         li.bill_id,
         li.statement_date::date                                AS invoice_date,
@@ -54,7 +56,7 @@ line_items AS (
         li.charge
     FROM bill_management_v2.analytics_billing_line_items li
     WHERE li.customer_id = {{ Number(this.params.cust) || 0 }}
-      AND li.bill_type = 'live'
+      AND li.bill_type <> 'historical'
       AND li.workflow_state = 'processed'
 ),
 late_last_bill AS (

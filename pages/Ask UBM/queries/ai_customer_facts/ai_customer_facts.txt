@@ -13,7 +13,7 @@ SELECT
     (SELECT STRING_AGG(DISTINCT li.category, ', ')
      FROM bill_management_v2.analytics_billing_line_items li
      WHERE li.customer_id = {{ Number(appsmith.store.aiCustomer) || 0 }}
-       AND li.bill_type = 'live'
+       AND li.bill_type <> 'historical'
        AND li.workflow_state = 'processed'
        AND li.statement_date >= CURRENT_DATE - INTERVAL '24 months') AS charge_categories
 FROM bill_management_v2.reports_customer_monthly_usage m
