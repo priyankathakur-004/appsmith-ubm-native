@@ -293,7 +293,7 @@ Rules:
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
 - Round dollars to 2 decimals and consumption to whole numbers.
 - Name every output column in readable snake_case.
-- Sort the result sensibly and return at most 100 rows.
+- Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows.
 - If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
 
 ${earlier}Question: ${question}`;
@@ -326,7 +326,7 @@ chart: how to plot the result, or null when a chart adds nothing (one row, a sin
 - type "bar" for rankings and comparisons between categories; "line" for trends over time (x is the month or date column).
 - x: the category or month column. y: one or more numeric columns measured in the same unit; never put dollars and usage on one chart, pick the one the question is about.
 - series: when the result is long form (for example month, utility, value), the column whose values become separate bars or lines, with exactly one y column. Otherwise null.
-- title: a short chart title. y_label: the unit, for example "$", "kWh" or "therms".
+- title: a short chart title that describes exactly what the result holds (say "top 10" only if it has 10 rows). y_label: the unit, for example "$", "kWh" or "therms".
 
 Question: ${question}
 SQL that was run: ${sql}
