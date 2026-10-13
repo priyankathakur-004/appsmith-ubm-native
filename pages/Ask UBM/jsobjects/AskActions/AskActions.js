@@ -139,7 +139,7 @@ export default {
 			reply.sql = sql;
 			// The AI's "cannot answer" row: say so plainly, with no table or summary.
 			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
-				reply.text = "That isn't in the data I can see. I can answer questions about monthly usage and cost by location, vendor, utility, account or meter, plus square footage and heating/cooling degree days.";
+				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees) and late bills, by location, vendor, utility, account or meter.";
 				await storeValue('aiMessages', msgs.concat([reply]), false);
 				await storeValue('aiBusy', '', false);
 				return;
@@ -196,54 +196,105 @@ export default {
 		return 'Something went wrong: ' + m.slice(0, 300);
 	},
 
-	// The one table the AI may query. run_ai_sql builds it from
-	// reports_customer_monthly_usage, already limited to the picked customer.
-	_columns() {
-		return [
-			['month', 'date', 'first day of the billing month'],
-			['utility', 'text', 'utility type in capitals, e.g. ELECTRIC, NATURALGAS, WATER'],
-			['bill_type', 'text', 'e.g. Full Service, Distribution Only, Supply Only'],
-			['location_id', 'integer', 'site id'],
-			['location_name', 'text', 'site name'],
-			['city', 'text', ''],
-			['state', 'text', 'two-letter US state'],
-			['building_type', 'text', 'e.g. Office, Retail, Warehouse'],
-			['square_feet', 'numeric', 'site floor area'],
-			['account', 'text', 'utility account number'],
-			['meter', 'text', 'meter serial number'],
-			['vendor', 'text', 'utility company name'],
-			['consumption', 'numeric', 'usage for the month, in consumption_unit'],
-			['consumption_unit', 'text', 'unit of consumption, e.g. kWh, therms, gallons'],
-			['cost', 'numeric', 'total charges in US dollars'],
-			['cdd', 'numeric', 'cooling degree days for the month'],
-			['hdd', 'numeric', 'heating degree days for the month']
-		];
+	// The tables the AI may query. run_ai_sql builds each one, already limited
+	// to the picked customer, from UBM's reporting tables.
+	_tables() {
+		return {
+			monthly_usage: {
+				about: 'Monthly usage and cost, prorated to calendar months. One row per location + account + meter + utility + month. Use it for usage, total cost, trends, per-square-foot and weather questions.',
+				cols: [
+					['month', 'date', 'first day of the calendar month'],
+					['utility', 'text', 'utility type in capitals, e.g. ELECTRIC, NATURALGAS, WATER'],
+					['bill_type', 'text', 'e.g. Full Service, Distribution Only, Supply Only'],
+					['location_id', 'integer', 'site id'],
+					['location_name', 'text', 'site name'],
+					['city', 'text', ''],
+					['state', 'text', 'two-letter US state'],
+					['building_type', 'text', 'e.g. Office, Retail, Warehouse'],
+					['square_feet', 'numeric', 'site floor area'],
+					['account', 'text', 'utility account number'],
+					['meter', 'text', 'meter serial number'],
+					['vendor', 'text', 'utility company name'],
+					['consumption', 'numeric', 'usage for the month, in consumption_unit'],
+					['consumption_unit', 'text', 'unit of consumption, e.g. kWh, therms, gallons'],
+					['cost', 'numeric', 'total charges in US dollars'],
+					['cdd', 'numeric', 'cooling degree days for the month'],
+					['hdd', 'numeric', 'heating degree days for the month']
+				]
+			},
+			line_items: {
+				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month.',
+				cols: [
+					['bill_id', 'integer', 'UBM bill id'],
+					['invoice_date', 'date', 'bill statement date'],
+					['invoice_month', 'date', 'first day of the invoice month'],
+					['utility', 'text', 'utility type in capitals, e.g. ELECTRIC'],
+					['vendor', 'text', 'utility company name'],
+					['location_id', 'integer', 'site id'],
+					['location_name', 'text', 'site name'],
+					['account', 'text', 'utility account number'],
+					['category', 'text', "charge group; 'Usage Information' lines are meter readings (e.g. demand kW) with charge 0"],
+					['charge_code', 'text', "standard code, e.g. LATEFEE (late fee; a negative charge is a refunded late fee), OTH_PENALTY (penalty)"],
+					['description', 'text', 'line name as printed on the bill'],
+					['quantity', 'numeric', 'billed quantity, in unit (may be empty)'],
+					['unit', 'text', 'unit of quantity, e.g. KWH, KW, THERM'],
+					['charge', 'numeric', 'amount in US dollars']
+				]
+			},
+			late_bills: {
+				about: "Bills still to arrive, the same data as UBM's Late Bills report. One row per open service (account + meter + utility) with its latest bill and when the next one was expected. Count DISTINCT billing_account WHERE is_late for the number of late accounts, as the report does.",
+				cols: [
+					['billing_account', 'text', 'utility billing account number'],
+					['service_account', 'text', 'service account id'],
+					['meter', 'text', 'meter id'],
+					['utility', 'text', 'utility type in capitals'],
+					['vendor', 'text', 'utility company name'],
+					['location_id', 'integer', 'site id'],
+					['location_name', 'text', 'site name'],
+					['building_type', 'text', ''],
+					['account_status', 'text', 'Open or Unknown'],
+					['last_bill_date', 'date', 'statement date of the latest bill received'],
+					['last_bill_type', 'text', 'live, historical, setup or special'],
+					['last_due_date', 'date', 'due date of the latest bill'],
+					['days_of_service', 'integer', 'days covered by the latest bill'],
+					['expected_bill_date', 'date', 'when the next bill was expected'],
+					['days_late', 'integer', 'business days since the expected date; 0 or less when not yet due'],
+					['is_late', 'boolean', "late by UBM's rule: expected date reached and latest bill within the last 6 months"]
+				]
+			}
+		};
 	},
 
 	_sqlPrompt(question, history) {
 		const f = appsmith.store.aiFacts || {};
-		const cols = this._columns().map(c => `- ${c[0]} (${c[1]})${c[2] ? ': ' + c[2] : ''}`).join('\n');
+		const tables = this._tables();
+		const described = Object.keys(tables).map(name =>
+			`${name}: ${tables[name].about}\n` +
+			tables[name].cols.map(c => `- ${c[0]} (${c[1]})${c[2] ? ': ' + c[2] : ''}`).join('\n')
+		).join('\n\n');
 		const earlier = (history || []).length
 			? `Earlier questions in this chat (the new question may follow on from them):\n${history.map(h => '- ' + h).join('\n')}\n\n`
 			: '';
 		return `You write one PostgreSQL query that answers a question about one company's utility bills.
 
-There is exactly one table, monthly_usage, already limited to this company. One row per location + account + meter + utility + month. Columns:
-${cols}
+There are exactly three tables, each already limited to this company:
 
-What this company's data holds: months ${f.first_month || '?'} to ${f.last_month || '?'}, ${f.locations || '?'} locations, utilities (with units): ${f.utility_units || 'unknown'}.
+${described}
+
+What this company's data holds: months ${f.first_month || '?'} to ${f.last_month || '?'}, ${f.locations || '?'} locations, utilities (with units): ${f.utility_units || 'unknown'}. Charge categories on its bills: ${f.charge_categories || 'unknown'}.
 Today is ${new Date().toISOString().slice(0, 10)}. "This year" and "last year" mean calendar years.
 The user is this company: "my", "our", "we" and "us" in the question mean this company's data.
 
 Rules:
 - Return only the SQL, with no explanation and no markdown.
-- One statement: SELECT, or WITH ... SELECT. Read only monthly_usage. No semicolon, no comments.
-- Never add consumption across different utilities or units: group by utility and consumption_unit whenever you sum consumption. Cost can be added across utilities.
+- One statement: SELECT, or WITH ... SELECT. Read only the three tables above; they can be joined on location_id. No semicolon, no comments.
+- Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills.
+- Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
 - Round dollars to 2 decimals and consumption to whole numbers.
 - Name every output column in readable snake_case.
 - Sort the result sensibly and return at most 100 rows.
-- If the table cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
+- If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
 
 ${earlier}Question: ${question}`;
 	},
@@ -341,9 +392,9 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		return s.replace(/;\s*$/, '').trim();
 	},
 
-	// The guard for AI-written SQL. The database login is read-only and
-	// monthly_usage is pre-filtered to the customer; this keeps the query to that
-	// one table and to a single read statement.
+	// The guard for AI-written SQL. The database login is read-only and the
+	// tables are pre-filtered to the customer; this keeps the query to those
+	// tables and to a single read statement.
 	_checkSql(sql) {
 		const s = String(sql || '').toLowerCase();
 		if (!/^(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
@@ -351,12 +402,14 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('Comments are not allowed in the query.');
 		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
 		if (banned) throw new Error(`"${banned[0]}" is not allowed in the query.`);
-		const allowed = new Set(['monthly_usage', 'lateral', 'unnest', 'generate_series']);
-		this._columns().forEach(c => allowed.add(c[0]));
+		const tables = this._tables();
+		const allowed = new Set(Object.keys(tables).concat(['lateral', 'unnest', 'generate_series']));
+		// Column names too: EXTRACT(YEAR FROM month) and the like read as FROM.
+		Object.keys(tables).forEach(t => tables[t].cols.forEach(c => allowed.add(c[0])));
 		for (const m of s.matchAll(/(\w+)\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
 		for (const m of s.matchAll(/\b(?:from|join)\s+("?[\w.]+"?)/g)) {
 			const t = m[1].replace(/"/g, '');
-			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error(`The query may only read monthly_usage, not "${t}".`);
+			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error(`The query may only read the Ask UBM tables, not "${t}".`);
 		}
 	},
 
