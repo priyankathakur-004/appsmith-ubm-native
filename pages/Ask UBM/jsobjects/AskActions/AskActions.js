@@ -191,6 +191,7 @@ export default {
 		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
 		if (/credit balance|billing/i.test(m)) return 'The AI account has run out of credit. Top it up or switch the AI_API query to another provider.';
 		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the AI datasource.';
+		if (/timed out|statement timeout|canceling statement/i.test(m)) return 'That question took too long to answer. Try narrowing it, for example to one year, one utility or one location.';
 		if (/not set up/i.test(m)) return m;
 		// Anything else: show the real error (shortened) so it can be fixed.
 		return 'Something went wrong: ' + m.slice(0, 300);
@@ -223,10 +224,10 @@ export default {
 				]
 			},
 			line_items: {
-				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month. Not every bill has its lines broken out (older bills especially), so never use it for total cost; use it to split costs into kinds of charge, and say the breakdown covers the bills that have line detail.',
+				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month. Not every bill has its lines broken out (older bills especially), so never use it for total cost; use it to split costs into kinds of charge (the written answer mentions that only bills with line detail are covered; do not add a note column for it).',
 				cols: [
 					['bill_id', 'integer', 'UBM bill id'],
-					['invoice_date', 'date', 'bill statement date'],
+					['invoice_date', 'timestamp', 'bill statement date (midnight)'],
 					['invoice_month', 'date', 'first day of the invoice month'],
 					['utility', 'text', 'utility type in capitals, e.g. ELECTRIC'],
 					['vendor', 'text', 'utility company name'],
@@ -291,6 +292,7 @@ Rules:
 - Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills.
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
+- Filter dates with ranges, e.g. invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01', never EXTRACT or a cast on the column inside WHERE; it keeps the query fast on large customers.
 - Round dollars to 2 decimals and consumption to whole numbers.
 - Name every output column in readable snake_case.
 - Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows.
