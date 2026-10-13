@@ -321,7 +321,7 @@ Return a corrected query only.`;
 or
 {"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}}
 
-answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
+answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill.
 
 chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
 - Use only these result columns: ${cols}
