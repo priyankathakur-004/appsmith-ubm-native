@@ -106,10 +106,6 @@
       "isDefault": false
     },
     {
-      "id": "Ask UBM",
-      "isDefault": false
-    },
-    {
       "id": "Login",
       "isDefault": false
     },
@@ -123,6 +119,10 @@
     },
     {
       "id": "AG-grid-charts",
+      "isDefault": false
+    },
+    {
+      "id": "Ask UBM",
       "isDefault": false
     }
   ],
