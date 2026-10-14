@@ -16,12 +16,15 @@ export default {
 		await storeValue('aiMessages', [], false);
 		await storeValue('aiBusy', '', false);
 		await storeValue('aiSavedData', {}, false);
+		await storeValue('aiSavedRows', [], false);
 		await storeValue('aiSavedLoading', false, false);
 		// Fall back to the default when the remembered customer is no longer
 		// offered in the dropdown.
 		const offered = ((await ai_customers.run()) || []).map(c => Number(c.id));
 		if (!offered.includes(Number(appsmith.store.aiCustomer))) await storeValue('aiCustomer', this.defaultCustomer);
 		await this.loadFacts();
+		await this._moveBrowserSaves();
+		await this.loadSavedList();
 	},
 
 	// The customer's data range and utilities: shown in the header and given to
@@ -40,13 +43,49 @@ export default {
 		await storeValue('aiSavedData', {}, false);
 		await this.loadFacts();
 		if (savedTab) await this.loadSaved();
+		else await this.loadSavedList();
 	},
 
-	// ---- saved charts (option 1: kept in this browser) -------------------------
-	// A saved chart keeps the question, its SQL and the chart settings, never
-	// the numbers: the Saved tab re-runs the SQL, so it always shows the latest
-	// data and needs no AI call. aiSaved is persisted by the browser (the
-	// default for storeValue); the loaded rows (aiSavedData) are not.
+	// ---- saved charts (ubm_app.ask_ubm_saved_charts on UBM_Appsmith_DB) -------
+	// Shared by everyone who views the customer. A saved chart keeps the
+	// question, its SQL and the chart settings, never the numbers: the Saved tab
+	// re-runs the SQL, so it always shows the latest data and needs no AI call.
+	// aiSavedRows holds the picked customer's list; aiSavedData the rows each
+	// saved chart loaded. Neither is persisted.
+
+	// Text goes into SQL by literal substitution (prepared statements are off),
+	// so it travels as one JSON value with its single quotes doubled here; the
+	// query reads the fields back with ->>.
+	_payload(obj) {
+		return JSON.stringify(obj).split("'").join("''");
+	},
+
+	_savedFromRow(r) {
+		let chart = r.chart;
+		if (typeof chart === 'string') {
+			try { chart = JSON.parse(chart); } catch (e) { chart = null; }
+		}
+		return {
+			id: String(r.id), cust: Number(r.cust), title: r.title, question: r.question, sql: r.sql,
+			chart: chart || null, savedBy: r.created_by || '', savedAt: String(r.created_at || '')
+		};
+	},
+
+	// The picked customer's saved charts, without loading their data: enough for
+	// the Saved tab count and the Save / Saved state of each answer.
+	async loadSavedList() {
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		try {
+			const rows = cust ? await ai_saved_list.run({ cust }) : [];
+			if ((Number(appsmith.store.aiCustomer) || 0) !== cust) return [];
+			const list = (Array.isArray(rows) ? rows : []).map(r => this._savedFromRow(r));
+			await storeValue('aiSavedRows', list, false);
+			return list;
+		} catch (e) {
+			await storeValue('aiSavedRows', [], false);
+			return [];
+		}
+	},
 
 	async saveAnswer(index) {
 		const msgs = appsmith.store.aiMessages || [];
@@ -54,37 +93,50 @@ export default {
 		const m = msgs[i];
 		if (!m || m.role !== 'assistant' || !m.sql) return;
 		const cust = Number(appsmith.store.aiCustomer) || 0;
-		const saved = appsmith.store.aiSaved || [];
-		if (saved.some(x => Number(x.cust) === cust && x.sql === m.sql)) return;
-		const item = {
-			id: String(Date.now()), cust, question: (msgs[i - 1] || {}).text || '',
-			sql: m.sql, chart: m.chart || null, savedAt: new Date().toISOString()
-		};
-		await storeValue('aiSaved', [item].concat(saved).slice(0, 100));
-		// Show it straight away with the rows already on screen.
-		const data = Object.assign({}, appsmith.store.aiSavedData || {});
-		data[item.id] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount };
-		await storeValue('aiSavedData', data, false);
+		if ((appsmith.store.aiSavedRows || []).some(x => x.sql === m.sql)) return;
+		const question = (msgs[i - 1] || {}).text || '';
+		try {
+			const added = await ai_saved_add.run({ payload: this._payload({
+				cust, title: (m.chart && m.chart.title) || question.slice(0, 120) || 'Saved answer',
+				question, sql: m.sql, chart: m.chart || null, by: appsmith.user.email || 'unknown'
+			}) });
+			const id = ((added || [])[0] || {}).id;
+			// Show it straight away with the rows already on screen.
+			if (id) {
+				const data = Object.assign({}, appsmith.store.aiSavedData || {});
+				data[String(id)] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount };
+				await storeValue('aiSavedData', data, false);
+			}
+			await this.loadSavedList();
+		} catch (e) {
+			showAlert('Could not save this chart. ' + this._friendly(e), 'error');
+		}
 	},
 
 	async removeSaved(id) {
-		await storeValue('aiSaved', (appsmith.store.aiSaved || []).filter(x => String(x.id) !== String(id)));
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		try {
+			await ai_saved_remove.run({ id: Number(id) || 0, cust });
+			await this.loadSavedList();
+		} catch (e) {
+			showAlert('Could not remove this chart. ' + this._friendly(e), 'error');
+		}
 	},
 
 	// Reload every saved chart of the picked customer with the latest data, one
 	// query at a time, showing each as it arrives.
 	async loadSaved() {
+		if (appsmith.store.aiSavedLoading) return;
 		const cust = Number(appsmith.store.aiCustomer) || 0;
-		const list = (appsmith.store.aiSaved || []).filter(x => Number(x.cust) === cust);
-		if (!list.length || appsmith.store.aiSavedLoading) return;
 		await storeValue('aiSavedLoading', true, false);
+		const list = await this.loadSavedList();
 		const data = {};
 		list.forEach(x => { data[x.id] = { loading: true }; });
 		await storeValue('aiSavedData', Object.assign({}, data), false);
 		for (const x of list) {
 			if ((Number(appsmith.store.aiCustomer) || 0) !== cust) break;
 			try {
-				// Saved SQL lives in the browser, so it is checked again before it runs.
+				// Saved SQL comes from a shared table, so it is checked again before it runs.
 				this._checkSql(x.sql);
 				const rows = await run_ai_sql.run({ sql: x.sql, cust });
 				const r = Array.isArray(rows) ? rows : [];
@@ -95,6 +147,27 @@ export default {
 			await storeValue('aiSavedData', Object.assign({}, data), false);
 		}
 		await storeValue('aiSavedLoading', false, false);
+	},
+
+	// One-off move of charts saved in this browser (the earlier version) into the
+	// shared table. Anything that fails stays in the browser for the next load.
+	async _moveBrowserSaves() {
+		const old = appsmith.store.aiSaved;
+		if (!Array.isArray(old) || !old.length) return;
+		const left = [];
+		for (const x of old) {
+			try {
+				await ai_saved_add.run({ payload: this._payload({
+					cust: Number(x.cust) || 0,
+					title: (x.chart && x.chart.title) || String(x.question || '').slice(0, 120) || 'Saved answer',
+					question: x.question || '', sql: x.sql, chart: x.chart || null,
+					by: appsmith.user.email || 'unknown'
+				}) });
+			} catch (e) {
+				left.push(x);
+			}
+		}
+		await storeValue('aiSaved', left);
 	},
 
 	async clearChat() {

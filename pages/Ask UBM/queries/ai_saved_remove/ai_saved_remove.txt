@@ -1,0 +1,7 @@
+-- Remove a saved Ask UBM chart for everyone. The row is kept, only marked.
+UPDATE ubm_app.ask_ubm_saved_charts
+SET deleted_at = now()
+WHERE id = {{ Number(this.params.id) || 0 }}
+  AND customer_id = {{ Number(this.params.cust) || 0 }}
+  AND deleted_at IS NULL
+RETURNING id::text AS id;

@@ -1,0 +1,16 @@
+-- The picked customer's saved Ask UBM charts, newest first. Shared by everyone
+-- who views the customer; removed charts (deleted_at set) are left out.
+SELECT
+    id::text      AS id,
+    customer_id   AS cust,
+    title,
+    question,
+    query_sql     AS sql,
+    chart,
+    created_by,
+    created_at
+FROM ubm_app.ask_ubm_saved_charts
+WHERE customer_id = {{ Number(this.params.cust) || 0 }}
+  AND deleted_at IS NULL
+ORDER BY created_at DESC
+LIMIT 200;
