@@ -1,11 +1,23 @@
 -- Runs one SELECT written by the AI on the Ask UBM page. The AI only ever
--- sees monthly_usage, built here and limited to the customer the question
--- was asked for (passed in, so a customer switch mid-question cannot leak);
--- the page checks the statement (single SELECT, this table only) before it
+-- sees the three tables built here, each limited to the customer the question
+-- was asked for (passed in, so a customer switch mid-question cannot leak).
+-- The page checks the statement (single SELECT, these tables only) before it
 -- gets here, the login is read-only, and the result is capped at 500 rows.
--- Consumption is the canonical measure: generation for Supply Only bills,
--- total consumption otherwise.
-WITH monthly_usage AS (
+-- Postgres skips any of these CTEs the AI's query does not use.
+WITH mu AS (
+    -- Third-party supply: a meter then has a Distribution Only row from the
+    -- utility (its kWh in total_consumption) and a Supply Only row from the
+    -- supplier repeating the same kWh as generation. Simon 2025 electric: 69.7M
+    -- delivery kWh vs 68.2M supply kWh. has_delivery flags a location + utility +
+    -- month that has a non-supply row, so the supply row's kWh is not counted
+    -- twice; its cost always is, being a separate charge.
+    SELECT m.*,
+           bool_or(m.bill_type IS DISTINCT FROM 'Supply Only')
+               OVER (PARTITION BY m.location_id, m.utility_type, m.time_period) AS has_delivery
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
+),
+monthly_usage AS (
     SELECT
         m.time_period::date                                    AS month,
         m.utility_type                                         AS utility,
@@ -19,18 +31,100 @@ WITH monthly_usage AS (
         m.client_account                                       AS account,
         m.meter_serial                                         AS meter,
         to_jsonb(m) ->> 'vendor_name'                          AS vendor,
-        CASE WHEN m.bill_type = 'Supply Only'
-             THEN m.total_gen_consumption
-             ELSE m.total_consumption
+        CASE
+            WHEN m.bill_type = 'Supply Only' AND m.has_delivery THEN 0
+            WHEN m.bill_type = 'Supply Only' THEN m.total_gen_consumption
+            ELSE m.total_consumption
         END                                                    AS consumption,
         m.total_consumption_uom                                AS consumption_unit,
         m.total_charges                                        AS cost,
         m.total_cdd                                            AS cdd,
         m.total_hdd                                            AS hdd
-    FROM bill_management_v2.reports_customer_monthly_usage m
+    FROM mu m
     LEFT JOIN bill_management_v2.locations l
         ON l.id = m.location_id
-    WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
+),
+line_items AS (
+    -- Every line of every processed bill ('processed' drops bills still in the
+    -- workflow). 'historical' rows are back-loaded copies that duplicate each
+    -- charge, so they are left out; setup, live and special bills are all real.
+    -- Only 'live' is not enough: a recently onboarded customer's bills are
+    -- mostly 'setup' (Simon: 81k setup lines, 402 live, all from 2026).
+    SELECT
+        li.bill_id,
+        li.statement_date                                      AS invoice_date,  -- uncast, so date ranges can use an index
+        date_trunc('month', li.statement_date)::date           AS invoice_month,
+        UPPER(li.commodity)                                    AS utility,
+        li.vendor_name                                         AS vendor,
+        li.location_id,
+        li.location_description                                AS location_name,
+        li.account_code                                        AS account,
+        li.category,
+        li.code                                                AS charge_code,
+        li.description,
+        li.usage                                               AS quantity,
+        li.uom                                                 AS unit,
+        li.charge
+    FROM bill_management_v2.analytics_billing_line_items li
+    WHERE li.customer_id = {{ Number(this.params.cust) || 0 }}
+      AND li.bill_type <> 'historical'
+      AND li.workflow_state = 'processed'
+),
+late_last_bill AS (
+    -- The latest bill per service, ordered as UBM's Late Bills report does.
+    SELECT virtual_account_id, days_of_service, due_date, last_bill_type, expected_next_bill_date
+    FROM (
+        SELECT a.virtual_account_id,
+               row_number() OVER (PARTITION BY a.virtual_account_id
+                                  ORDER BY a.statement_date DESC, a.bill_adjusted_end_date DESC, b.expected_next_bill_date DESC) AS ord,
+               b.days_of_service, c.due_date, m.bill_type AS last_bill_type, b.expected_next_bill_date
+        FROM bill_management_v2.analytics_bills_items a
+        JOIN bill_management_v2.bill_metas   m ON a.bill_id = m.id
+        JOIN bill_management_v2.bill_items   b ON a.bill_item_id = b.id
+        JOIN bill_management_v2.bill_records c ON b.bill_record_id = c.id AND c.deleted_at IS NULL
+        WHERE a.customer_id = {{ Number(this.params.cust) || 0 }}
+    ) x
+    WHERE x.ord = 1
+),
+late_bills AS (
+    -- One row per open service. days_late counts business days since the
+    -- expected bill date, as UBM does; not yet due keeps the calendar value
+    -- (0 or less). is_late is the report's rule: due, and billed within the
+    -- last 6 months.
+    SELECT
+        rnva.billing_id                                        AS billing_account,
+        rnva.service_account_id                                AS service_account,
+        rnva.meter_id                                          AS meter,
+        UPPER(rnva.utility_type)                               AS utility,
+        rnva.vendor,
+        rnva.location_id,
+        rnva.location                                          AS location_name,
+        l.building_type,
+        rnva.account_status,
+        rnva.date_of_last_bill::date                           AS last_bill_date,
+        lb.last_bill_type,
+        lb.due_date::date                                      AS last_due_date,
+        lb.days_of_service,
+        lb.expected_next_bill_date::date                       AS expected_bill_date,
+        dl.days_late,
+        (COALESCE(dl.days_late >= 0, false)
+         AND rnva.date_of_last_bill >= CURRENT_DATE - INTERVAL '6 months') AS is_late
+    FROM bill_management_v2.reports_new_virtual_accounts rnva
+    LEFT JOIN late_last_bill lb               ON lb.virtual_account_id = rnva.virtual_account_id
+    LEFT JOIN bill_management_v2.locations l  ON l.id = rnva.location_id
+    CROSS JOIN LATERAL (
+        SELECT CASE
+            WHEN lb.expected_next_bill_date IS NULL THEN NULL
+            WHEN lb.expected_next_bill_date::date >= CURRENT_DATE
+                THEN (CURRENT_DATE - lb.expected_next_bill_date::date)
+            ELSE (SELECT COUNT(*)::int
+                  FROM generate_series(lb.expected_next_bill_date::date + 1, CURRENT_DATE, INTERVAL '1 day') gs
+                  WHERE EXTRACT(DOW FROM gs) BETWEEN 1 AND 5)
+        END AS days_late
+    ) dl
+    WHERE rnva.customer_id = {{ Number(this.params.cust) || 0 }}
+      AND rnva.account_status IN ('Open', 'Unknown')
+      AND COALESCE(TRIM(rnva.billing_id), '') <> ''
 )
 SELECT * FROM (
 {{ this.params.sql || "SELECT 'no question' AS answer" }}

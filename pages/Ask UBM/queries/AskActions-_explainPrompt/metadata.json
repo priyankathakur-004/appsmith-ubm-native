@@ -6,7 +6,17 @@
   "unpublishedAction": {
     "actionConfiguration": {
       "encodeParamsToggle": true,
-      "jsArguments": [],
+      "jsArguments": [
+        {
+          "name": "question"
+        },
+        {
+          "name": "sql"
+        },
+        {
+          "name": "rows"
+        }
+      ],
       "paginationType": "NONE",
       "timeoutInMillisecond": 30000
     },

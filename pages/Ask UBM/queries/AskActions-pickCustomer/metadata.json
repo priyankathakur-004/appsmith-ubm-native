@@ -6,7 +6,14 @@
   "unpublishedAction": {
     "actionConfiguration": {
       "encodeParamsToggle": true,
-      "jsArguments": [],
+      "jsArguments": [
+        {
+          "name": "picked"
+        },
+        {
+          "name": "savedTab"
+        }
+      ],
       "paginationType": "NONE",
       "timeoutInMillisecond": 30000
     },

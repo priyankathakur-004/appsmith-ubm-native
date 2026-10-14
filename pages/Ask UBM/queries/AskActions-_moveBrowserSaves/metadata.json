@@ -1,6 +1,6 @@
 {
-  "gitSyncId": "6a42383420f165a7650f6c99_71b9edd0-c53d-5e52-a5af-017a889f83da",
-  "id": "Ask UBM_AskActions._columns",
+  "gitSyncId": "6acf0b6d0c5455e0bc072b78_966a00b4-000f-5238-b427-77ba2c5276c4",
+  "id": "Ask UBM_AskActions._moveBrowserSaves",
   "pluginId": "js-plugin",
   "pluginType": "JS",
   "unpublishedAction": {
@@ -8,7 +8,7 @@
       "encodeParamsToggle": true,
       "jsArguments": [],
       "paginationType": "NONE",
-      "timeoutInMillisecond": 30000
+      "timeoutInMillisecond": 120000
     },
     "collectionId": "Ask UBM_AskActions",
     "confirmBeforeExecute": false,
@@ -22,8 +22,8 @@
         "key": "body"
       }
     ],
-    "fullyQualifiedName": "AskActions._columns",
-    "name": "_columns",
+    "fullyQualifiedName": "AskActions._moveBrowserSaves",
+    "name": "_moveBrowserSaves",
     "pageId": "Ask UBM",
     "runBehaviour": "MANUAL",
     "userSetOnLoad": false

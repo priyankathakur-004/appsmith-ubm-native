@@ -16,12 +16,15 @@ export default {
 		await storeValue('aiMessages', [], false);
 		await storeValue('aiBusy', '', false);
 		await storeValue('aiSavedData', {}, false);
+		await storeValue('aiSavedRows', [], false);
 		await storeValue('aiSavedLoading', false, false);
 		// Fall back to the default when the remembered customer is no longer
 		// offered in the dropdown.
 		const offered = ((await ai_customers.run()) || []).map(c => Number(c.id));
 		if (!offered.includes(Number(appsmith.store.aiCustomer))) await storeValue('aiCustomer', this.defaultCustomer);
 		await this.loadFacts();
+		await this._moveBrowserSaves();
+		await this.loadSavedList();
 	},
 
 	// The customer's data range and utilities: shown in the header and given to
@@ -40,13 +43,49 @@ export default {
 		await storeValue('aiSavedData', {}, false);
 		await this.loadFacts();
 		if (savedTab) await this.loadSaved();
+		else await this.loadSavedList();
 	},
 
-	// ---- saved charts (option 1: kept in this browser) -------------------------
-	// A saved chart keeps the question, its SQL and the chart settings, never
-	// the numbers: the Saved tab re-runs the SQL, so it always shows the latest
-	// data and needs no AI call. aiSaved is persisted by the browser (the
-	// default for storeValue); the loaded rows (aiSavedData) are not.
+	// ---- saved charts (ubm_app.ask_ubm_saved_charts on UBM_Appsmith_DB) -------
+	// Shared by everyone who views the customer. A saved chart keeps the
+	// question, its SQL and the chart settings, never the numbers: the Saved tab
+	// re-runs the SQL, so it always shows the latest data and needs no AI call.
+	// aiSavedRows holds the picked customer's list; aiSavedData the rows each
+	// saved chart loaded. Neither is persisted.
+
+	// Text goes into SQL by literal substitution (prepared statements are off),
+	// so it travels as one JSON value with its single quotes doubled here; the
+	// query reads the fields back with ->>.
+	_payload(obj) {
+		return JSON.stringify(obj).split("'").join("''");
+	},
+
+	_savedFromRow(r) {
+		let chart = r.chart;
+		if (typeof chart === 'string') {
+			try { chart = JSON.parse(chart); } catch (e) { chart = null; }
+		}
+		return {
+			id: String(r.id), cust: Number(r.cust), title: r.title, question: r.question, sql: r.sql,
+			chart: chart || null, savedBy: r.created_by || '', savedAt: String(r.created_at || '')
+		};
+	},
+
+	// The picked customer's saved charts, without loading their data: enough for
+	// the Saved tab count and the Save / Saved state of each answer.
+	async loadSavedList() {
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		try {
+			const rows = cust ? await ai_saved_list.run({ cust }) : [];
+			if ((Number(appsmith.store.aiCustomer) || 0) !== cust) return [];
+			const list = (Array.isArray(rows) ? rows : []).map(r => this._savedFromRow(r));
+			await storeValue('aiSavedRows', list, false);
+			return list;
+		} catch (e) {
+			await storeValue('aiSavedRows', [], false);
+			return [];
+		}
+	},
 
 	async saveAnswer(index) {
 		const msgs = appsmith.store.aiMessages || [];
@@ -54,37 +93,50 @@ export default {
 		const m = msgs[i];
 		if (!m || m.role !== 'assistant' || !m.sql) return;
 		const cust = Number(appsmith.store.aiCustomer) || 0;
-		const saved = appsmith.store.aiSaved || [];
-		if (saved.some(x => Number(x.cust) === cust && x.sql === m.sql)) return;
-		const item = {
-			id: String(Date.now()), cust, question: (msgs[i - 1] || {}).text || '',
-			sql: m.sql, chart: m.chart || null, savedAt: new Date().toISOString()
-		};
-		await storeValue('aiSaved', [item].concat(saved).slice(0, 100));
-		// Show it straight away with the rows already on screen.
-		const data = Object.assign({}, appsmith.store.aiSavedData || {});
-		data[item.id] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount };
-		await storeValue('aiSavedData', data, false);
+		if ((appsmith.store.aiSavedRows || []).some(x => x.sql === m.sql)) return;
+		const question = (msgs[i - 1] || {}).text || '';
+		try {
+			const added = await ai_saved_add.run({ payload: this._payload({
+				cust, title: (m.chart && m.chart.title) || question.slice(0, 120) || 'Saved answer',
+				question, sql: m.sql, chart: m.chart || null, by: appsmith.user.email || 'unknown'
+			}) });
+			const id = ((added || [])[0] || {}).id;
+			// Show it straight away with the rows already on screen.
+			if (id) {
+				const data = Object.assign({}, appsmith.store.aiSavedData || {});
+				data[String(id)] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount };
+				await storeValue('aiSavedData', data, false);
+			}
+			await this.loadSavedList();
+		} catch (e) {
+			showAlert('Could not save this chart. ' + this._friendly(e), 'error');
+		}
 	},
 
 	async removeSaved(id) {
-		await storeValue('aiSaved', (appsmith.store.aiSaved || []).filter(x => String(x.id) !== String(id)));
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		try {
+			await ai_saved_remove.run({ id: Number(id) || 0, cust });
+			await this.loadSavedList();
+		} catch (e) {
+			showAlert('Could not remove this chart. ' + this._friendly(e), 'error');
+		}
 	},
 
 	// Reload every saved chart of the picked customer with the latest data, one
 	// query at a time, showing each as it arrives.
 	async loadSaved() {
+		if (appsmith.store.aiSavedLoading) return;
 		const cust = Number(appsmith.store.aiCustomer) || 0;
-		const list = (appsmith.store.aiSaved || []).filter(x => Number(x.cust) === cust);
-		if (!list.length || appsmith.store.aiSavedLoading) return;
 		await storeValue('aiSavedLoading', true, false);
+		const list = await this.loadSavedList();
 		const data = {};
 		list.forEach(x => { data[x.id] = { loading: true }; });
 		await storeValue('aiSavedData', Object.assign({}, data), false);
 		for (const x of list) {
 			if ((Number(appsmith.store.aiCustomer) || 0) !== cust) break;
 			try {
-				// Saved SQL lives in the browser, so it is checked again before it runs.
+				// Saved SQL comes from a shared table, so it is checked again before it runs.
 				this._checkSql(x.sql);
 				const rows = await run_ai_sql.run({ sql: x.sql, cust });
 				const r = Array.isArray(rows) ? rows : [];
@@ -95,6 +147,27 @@ export default {
 			await storeValue('aiSavedData', Object.assign({}, data), false);
 		}
 		await storeValue('aiSavedLoading', false, false);
+	},
+
+	// One-off move of charts saved in this browser (the earlier version) into the
+	// shared table. Anything that fails stays in the browser for the next load.
+	async _moveBrowserSaves() {
+		const old = appsmith.store.aiSaved;
+		if (!Array.isArray(old) || !old.length) return;
+		const left = [];
+		for (const x of old) {
+			try {
+				await ai_saved_add.run({ payload: this._payload({
+					cust: Number(x.cust) || 0,
+					title: (x.chart && x.chart.title) || String(x.question || '').slice(0, 120) || 'Saved answer',
+					question: x.question || '', sql: x.sql, chart: x.chart || null,
+					by: appsmith.user.email || 'unknown'
+				}) });
+			} catch (e) {
+				left.push(x);
+			}
+		}
+		await storeValue('aiSaved', left);
 	},
 
 	async clearChat() {
@@ -136,10 +209,25 @@ export default {
 				rows = await run_ai_sql.run({ sql, cust });
 			}
 			rows = Array.isArray(rows) ? rows : [];
+			// No rows usually means a filter value that does not exist (a unit or name
+			// spelled differently): give the AI one chance to recheck its filters.
+			if (!rows.length) {
+				try {
+					await storeValue('aiBusy', 'Checking the filters…', false);
+					const retry = this._cleanSql(await this._ai(this._fixPrompt(q, sql,
+						'it ran but returned no rows. Check every filter value (spelling, upper or lower case, units, date range) against what this company\'s data holds; if the question genuinely has no data, return the same query unchanged.')));
+					if (retry && retry !== sql) {
+						this._checkSql(retry);
+						await storeValue('aiBusy', 'Running it on the data…', false);
+						const again = await run_ai_sql.run({ sql: retry, cust });
+						if (Array.isArray(again) && again.length) { rows = again; sql = retry; }
+					}
+				} catch (e) { /* keep the empty result */ }
+			}
 			reply.sql = sql;
 			// The AI's "cannot answer" row: say so plainly, with no table or summary.
 			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
-				reply.text = "That isn't in the data I can see. I can answer questions about monthly usage and cost by location, vendor, utility, account or meter, plus square footage and heating/cooling degree days.";
+				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees) and late bills, by location, vendor, utility, account or meter.";
 				await storeValue('aiMessages', msgs.concat([reply]), false);
 				await storeValue('aiBusy', '', false);
 				return;
@@ -191,59 +279,113 @@ export default {
 		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
 		if (/credit balance|billing/i.test(m)) return 'The AI account has run out of credit. Top it up or switch the AI_API query to another provider.';
 		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the AI datasource.';
+		if (/timed out|statement timeout|canceling statement/i.test(m)) return 'That question took too long to answer. Try narrowing it, for example to one year, one utility or one location.';
 		if (/not set up/i.test(m)) return m;
 		// Anything else: show the real error (shortened) so it can be fixed.
 		return 'Something went wrong: ' + m.slice(0, 300);
 	},
 
-	// The one table the AI may query. run_ai_sql builds it from
-	// reports_customer_monthly_usage, already limited to the picked customer.
-	_columns() {
-		return [
-			['month', 'date', 'first day of the billing month'],
-			['utility', 'text', 'utility type in capitals, e.g. ELECTRIC, NATURALGAS, WATER'],
-			['bill_type', 'text', 'e.g. Full Service, Distribution Only, Supply Only'],
-			['location_id', 'integer', 'site id'],
-			['location_name', 'text', 'site name'],
-			['city', 'text', ''],
-			['state', 'text', 'two-letter US state'],
-			['building_type', 'text', 'e.g. Office, Retail, Warehouse'],
-			['square_feet', 'numeric', 'site floor area'],
-			['account', 'text', 'utility account number'],
-			['meter', 'text', 'meter serial number'],
-			['vendor', 'text', 'utility company name'],
-			['consumption', 'numeric', 'usage for the month, in consumption_unit'],
-			['consumption_unit', 'text', 'unit of consumption, e.g. kWh, therms, gallons'],
-			['cost', 'numeric', 'total charges in US dollars'],
-			['cdd', 'numeric', 'cooling degree days for the month'],
-			['hdd', 'numeric', 'heating degree days for the month']
-		];
+	// The tables the AI may query. run_ai_sql builds each one, already limited
+	// to the picked customer, from UBM's reporting tables.
+	_tables() {
+		return {
+			monthly_usage: {
+				about: 'Monthly usage and cost, prorated to calendar months. One row per location + account + meter + utility + month. Use it for usage, total cost, trends, per-square-foot and weather questions.',
+				cols: [
+					['month', 'date', 'first day of the calendar month'],
+					['utility', 'text', 'utility type in capitals, e.g. ELECTRIC, NATURALGAS, WATER'],
+					['bill_type', 'text', 'e.g. Full Service, Distribution Only, Supply Only'],
+					['location_id', 'integer', 'site id'],
+					['location_name', 'text', 'site name'],
+					['city', 'text', ''],
+					['state', 'text', 'two-letter US state'],
+					['building_type', 'text', 'e.g. Office, Retail, Warehouse'],
+					['square_feet', 'numeric', 'site floor area'],
+					['account', 'text', 'utility account number'],
+					['meter', 'text', 'meter serial number'],
+					['vendor', 'text', 'utility company name'],
+					['consumption', 'numeric', "usage for the month, in consumption_unit, counted once: a Supply Only row shows 0 when the same location's delivery bill already carries that usage, but its cost is still in cost. So SUM(cost) / SUM(consumption) is the all-in rate"],
+					['consumption_unit', 'text', 'unit of consumption, e.g. kWh, therms, gallons'],
+					['cost', 'numeric', 'total charges in US dollars'],
+					['cdd', 'numeric', 'cooling degree days for the month'],
+					['hdd', 'numeric', 'heating degree days for the month']
+				]
+			},
+			line_items: {
+				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month. Not every bill has its lines broken out (older bills especially), so never use it for total cost; use it to split costs into kinds of charge (the written answer mentions that only bills with line detail are covered; do not add a note column for it).',
+				cols: [
+					['bill_id', 'integer', 'UBM bill id'],
+					['invoice_date', 'timestamp', 'bill statement date (midnight)'],
+					['invoice_month', 'date', 'first day of the invoice month'],
+					['utility', 'text', 'utility type in capitals, e.g. ELECTRIC'],
+					['vendor', 'text', 'utility company name'],
+					['location_id', 'integer', 'site id'],
+					['location_name', 'text', 'site name'],
+					['account', 'text', 'utility account number'],
+					['category', 'text', "charge group; 'Usage Information' lines are meter readings (e.g. demand kW) with charge 0"],
+					['charge_code', 'text', "standard code, e.g. LATEFEE (late fee; a negative charge is a refunded late fee), OTH_PENALTY (penalty)"],
+					['description', 'text', 'line name as printed on the bill'],
+					['quantity', 'numeric', 'billed quantity, in unit (may be empty)'],
+					['unit', 'text', 'unit of quantity, e.g. KWH, KW, THERM'],
+					['charge', 'numeric', 'amount in US dollars']
+				]
+			},
+			late_bills: {
+				about: "Bills still to arrive, the same data as UBM's Late Bills report. One row per open service (account + meter + utility) with its latest bill and when the next one was expected. Count DISTINCT billing_account WHERE is_late for the number of late accounts, as the report does.",
+				cols: [
+					['billing_account', 'text', 'utility billing account number'],
+					['service_account', 'text', 'service account id'],
+					['meter', 'text', 'meter id'],
+					['utility', 'text', 'utility type in capitals'],
+					['vendor', 'text', 'utility company name'],
+					['location_id', 'integer', 'site id'],
+					['location_name', 'text', 'site name'],
+					['building_type', 'text', ''],
+					['account_status', 'text', 'Open or Unknown'],
+					['last_bill_date', 'date', 'statement date of the latest bill received'],
+					['last_bill_type', 'text', 'live, historical, setup or special'],
+					['last_due_date', 'date', 'due date of the latest bill'],
+					['days_of_service', 'integer', 'days covered by the latest bill'],
+					['expected_bill_date', 'date', 'when the next bill was expected'],
+					['days_late', 'integer', 'business days since the expected date; 0 or less when not yet due'],
+					['is_late', 'boolean', "late by UBM's rule: expected date reached and latest bill within the last 6 months"]
+				]
+			}
+		};
 	},
 
 	_sqlPrompt(question, history) {
 		const f = appsmith.store.aiFacts || {};
-		const cols = this._columns().map(c => `- ${c[0]} (${c[1]})${c[2] ? ': ' + c[2] : ''}`).join('\n');
+		const tables = this._tables();
+		const described = Object.keys(tables).map(name =>
+			`${name}: ${tables[name].about}\n` +
+			tables[name].cols.map(c => `- ${c[0]} (${c[1]})${c[2] ? ': ' + c[2] : ''}`).join('\n')
+		).join('\n\n');
 		const earlier = (history || []).length
 			? `Earlier questions in this chat (the new question may follow on from them):\n${history.map(h => '- ' + h).join('\n')}\n\n`
 			: '';
 		return `You write one PostgreSQL query that answers a question about one company's utility bills.
 
-There is exactly one table, monthly_usage, already limited to this company. One row per location + account + meter + utility + month. Columns:
-${cols}
+There are exactly three tables, each already limited to this company:
 
-What this company's data holds: months ${f.first_month || '?'} to ${f.last_month || '?'}, ${f.locations || '?'} locations, utilities (with units): ${f.utility_units || 'unknown'}.
+${described}
+
+What this company's data holds: months ${f.first_month || '?'} to ${f.last_month || '?'}, ${f.locations || '?'} locations, utilities (with units): ${f.utility_units || 'unknown'}. Charge categories on its bills: ${f.charge_categories || 'unknown'}.
 Today is ${new Date().toISOString().slice(0, 10)}. "This year" and "last year" mean calendar years.
 The user is this company: "my", "our", "we" and "us" in the question mean this company's data.
 
 Rules:
 - Return only the SQL, with no explanation and no markdown.
-- One statement: SELECT, or WITH ... SELECT. Read only monthly_usage. No semicolon, no comments.
-- Never add consumption across different utilities or units: group by utility and consumption_unit whenever you sum consumption. Cost can be added across utilities.
+- One statement: SELECT, or WITH ... SELECT. Read only the three tables above; they can be joined on location_id. No semicolon, no comments.
+- Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills.
+- Compare text values case-insensitively (UPPER(col) = 'KWH', ILIKE '%cherry creek%'): units, utilities, names and categories vary in case and spelling.
+- Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
+- Filter dates with ranges, e.g. invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01', never EXTRACT or a cast on the column inside WHERE; it keeps the query fast on large customers.
 - Round dollars to 2 decimals and consumption to whole numbers.
 - Name every output column in readable snake_case.
-- Sort the result sensibly and return at most 100 rows.
-- If the table cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
+- Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows.
+- If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
 
 ${earlier}Question: ${question}`;
 	},
@@ -268,14 +410,14 @@ Return a corrected query only.`;
 or
 {"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}}
 
-answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given.
+answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill.
 
 chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
 - Use only these result columns: ${cols}
 - type "bar" for rankings and comparisons between categories; "line" for trends over time (x is the month or date column).
 - x: the category or month column. y: one or more numeric columns measured in the same unit; never put dollars and usage on one chart, pick the one the question is about.
 - series: when the result is long form (for example month, utility, value), the column whose values become separate bars or lines, with exactly one y column. Otherwise null.
-- title: a short chart title. y_label: the unit, for example "$", "kWh" or "therms".
+- title: a short chart title that describes exactly what the result holds (say "top 10" only if it has 10 rows). y_label: the unit, for example "$", "kWh" or "therms".
 
 Question: ${question}
 SQL that was run: ${sql}
@@ -341,9 +483,9 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		return s.replace(/;\s*$/, '').trim();
 	},
 
-	// The guard for AI-written SQL. The database login is read-only and
-	// monthly_usage is pre-filtered to the customer; this keeps the query to that
-	// one table and to a single read statement.
+	// The guard for AI-written SQL. The database login is read-only and the
+	// tables are pre-filtered to the customer; this keeps the query to those
+	// tables and to a single read statement.
 	_checkSql(sql) {
 		const s = String(sql || '').toLowerCase();
 		if (!/^(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
@@ -351,12 +493,14 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('Comments are not allowed in the query.');
 		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
 		if (banned) throw new Error(`"${banned[0]}" is not allowed in the query.`);
-		const allowed = new Set(['monthly_usage', 'lateral', 'unnest', 'generate_series']);
-		this._columns().forEach(c => allowed.add(c[0]));
+		const tables = this._tables();
+		const allowed = new Set(Object.keys(tables).concat(['lateral', 'unnest', 'generate_series']));
+		// Column names too: EXTRACT(YEAR FROM month) and the like read as FROM.
+		Object.keys(tables).forEach(t => tables[t].cols.forEach(c => allowed.add(c[0])));
 		for (const m of s.matchAll(/(\w+)\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
 		for (const m of s.matchAll(/\b(?:from|join)\s+("?[\w.]+"?)/g)) {
 			const t = m[1].replace(/"/g, '');
-			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error(`The query may only read monthly_usage, not "${t}".`);
+			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error(`The query may only read the Ask UBM tables, not "${t}".`);
 		}
 	},
 

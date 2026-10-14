@@ -1,0 +1,17 @@
+-- Save one Ask UBM chart. Prepared statements are off, so the values arrive
+-- as one JSON literal whose single quotes the page has already doubled; the
+-- fields are read back with ->>. The same query saved twice for a customer
+-- hits the unique index and is skipped (no row returned).
+INSERT INTO ubm_app.ask_ubm_saved_charts
+    (customer_id, title, question, query_sql, chart, created_by)
+SELECT
+    (p ->> 'cust')::int,
+    p ->> 'title',
+    p ->> 'question',
+    p ->> 'sql',
+    CASE WHEN jsonb_typeof(p -> 'chart') = 'object' THEN p -> 'chart' END,
+    p ->> 'by'
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE COALESCE(p ->> 'sql', '') <> ''
+ON CONFLICT DO NOTHING
+RETURNING id::text AS id;
