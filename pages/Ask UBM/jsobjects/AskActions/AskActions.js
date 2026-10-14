@@ -289,7 +289,7 @@ export default {
 					['account', 'text', 'utility account number'],
 					['meter', 'text', 'meter serial number'],
 					['vendor', 'text', 'utility company name'],
-					['consumption', 'numeric', 'usage for the month, in consumption_unit'],
+					['consumption', 'numeric', "usage for the month, in consumption_unit, counted once: a Supply Only row shows 0 when the same location's delivery bill already carries that usage, but its cost is still in cost. So SUM(cost) / SUM(consumption) is the all-in rate"],
 					['consumption_unit', 'text', 'unit of consumption, e.g. kWh, therms, gallons'],
 					['cost', 'numeric', 'total charges in US dollars'],
 					['cdd', 'numeric', 'cooling degree days for the month'],

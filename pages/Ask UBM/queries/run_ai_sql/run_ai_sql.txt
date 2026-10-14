@@ -4,9 +4,20 @@
 -- The page checks the statement (single SELECT, these tables only) before it
 -- gets here, the login is read-only, and the result is capped at 500 rows.
 -- Postgres skips any of these CTEs the AI's query does not use.
-WITH monthly_usage AS (
-    -- Consumption is the canonical measure: generation for Supply Only bills,
-    -- total consumption otherwise.
+WITH mu AS (
+    -- Third-party supply: a meter then has a Distribution Only row from the
+    -- utility (its kWh in total_consumption) and a Supply Only row from the
+    -- supplier repeating the same kWh as generation. Simon 2025 electric: 69.7M
+    -- delivery kWh vs 68.2M supply kWh. has_delivery flags a location + utility +
+    -- month that has a non-supply row, so the supply row's kWh is not counted
+    -- twice; its cost always is, being a separate charge.
+    SELECT m.*,
+           bool_or(m.bill_type IS DISTINCT FROM 'Supply Only')
+               OVER (PARTITION BY m.location_id, m.utility_type, m.time_period) AS has_delivery
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
+),
+monthly_usage AS (
     SELECT
         m.time_period::date                                    AS month,
         m.utility_type                                         AS utility,
@@ -20,18 +31,18 @@ WITH monthly_usage AS (
         m.client_account                                       AS account,
         m.meter_serial                                         AS meter,
         to_jsonb(m) ->> 'vendor_name'                          AS vendor,
-        CASE WHEN m.bill_type = 'Supply Only'
-             THEN m.total_gen_consumption
-             ELSE m.total_consumption
+        CASE
+            WHEN m.bill_type = 'Supply Only' AND m.has_delivery THEN 0
+            WHEN m.bill_type = 'Supply Only' THEN m.total_gen_consumption
+            ELSE m.total_consumption
         END                                                    AS consumption,
         m.total_consumption_uom                                AS consumption_unit,
         m.total_charges                                        AS cost,
         m.total_cdd                                            AS cdd,
         m.total_hdd                                            AS hdd
-    FROM bill_management_v2.reports_customer_monthly_usage m
+    FROM mu m
     LEFT JOIN bill_management_v2.locations l
         ON l.id = m.location_id
-    WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
 ),
 line_items AS (
     -- Every line of every processed bill ('processed' drops bills still in the
