@@ -384,7 +384,7 @@ Rules:
 - Filter dates with ranges, e.g. invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01', never EXTRACT or a cast on the column inside WHERE; it keeps the query fast on large customers.
 - Round dollars to 2 decimals and consumption to whole numbers.
 - Name every output column in readable snake_case.
-- Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows.
+- Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
 - If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
 
 ${earlier}Question: ${question}`;
