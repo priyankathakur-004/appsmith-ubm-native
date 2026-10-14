@@ -209,6 +209,21 @@ export default {
 				rows = await run_ai_sql.run({ sql, cust });
 			}
 			rows = Array.isArray(rows) ? rows : [];
+			// No rows usually means a filter value that does not exist (a unit or name
+			// spelled differently): give the AI one chance to recheck its filters.
+			if (!rows.length) {
+				try {
+					await storeValue('aiBusy', 'Checking the filters…', false);
+					const retry = this._cleanSql(await this._ai(this._fixPrompt(q, sql,
+						'it ran but returned no rows. Check every filter value (spelling, upper or lower case, units, date range) against what this company\'s data holds; if the question genuinely has no data, return the same query unchanged.')));
+					if (retry && retry !== sql) {
+						this._checkSql(retry);
+						await storeValue('aiBusy', 'Running it on the data…', false);
+						const again = await run_ai_sql.run({ sql: retry, cust });
+						if (Array.isArray(again) && again.length) { rows = again; sql = retry; }
+					}
+				} catch (e) { /* keep the empty result */ }
+			}
 			reply.sql = sql;
 			// The AI's "cannot answer" row: say so plainly, with no table or summary.
 			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
@@ -363,6 +378,7 @@ Rules:
 - Return only the SQL, with no explanation and no markdown.
 - One statement: SELECT, or WITH ... SELECT. Read only the three tables above; they can be joined on location_id. No semicolon, no comments.
 - Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills.
+- Compare text values case-insensitively (UPPER(col) = 'KWH', ILIKE '%cherry creek%'): units, utilities, names and categories vary in case and spelling.
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
 - Filter dates with ranges, e.g. invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01', never EXTRACT or a cast on the column inside WHERE; it keeps the query fast on large customers.
