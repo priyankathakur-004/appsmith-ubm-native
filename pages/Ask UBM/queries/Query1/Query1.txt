@@ -1,0 +1,4 @@
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'ubm_app' AND table_name = 'ask_ubm_saved_charts'
+ORDER BY ordinal_position;
