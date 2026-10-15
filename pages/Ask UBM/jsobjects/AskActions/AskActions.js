@@ -195,11 +195,16 @@ export default {
 			}
 			await storeValue('aiBusy', 'Writing the query…', false);
 			let sql = this._cleanSql(await this._ai(this._sqlPrompt(q, history)));
+			// Kept on the reply even if running it fails, so a failure can be traced.
+			reply.sql = sql;
 			try {
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
 				rows = await run_ai_sql.run({ sql, cust });
 			} catch (first) {
+				// A timeout is the data's size, not a mistake the AI can fix: re-running
+				// a rewrite only doubles the wait.
+				if (/timed out|statement timeout|canceling statement|could not connect to our servers/i.test(this._msg(first))) throw first;
 				reply.sql = sql;
 				await storeValue('aiBusy', 'Fixing the query…', false);
 				sql = this._cleanSql(await this._ai(this._fixPrompt(q, sql, this._msg(first))));
@@ -227,7 +232,7 @@ export default {
 			reply.sql = sql;
 			// The AI's "cannot answer" row: say so plainly, with no table or summary.
 			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
-				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees) and late bills, by location, vendor, utility, account or meter.";
+				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees), late bills and bill errors, by location, vendor, utility, account or meter.";
 				await storeValue('aiMessages', msgs.concat([reply]), false);
 				await storeValue('aiBusy', '', false);
 				return;
@@ -279,7 +284,9 @@ export default {
 		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
 		if (/credit balance|billing/i.test(m)) return 'The AI account has run out of credit. Top it up or switch the AI_API query to another provider.';
 		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the AI datasource.';
-		if (/timed out|statement timeout|canceling statement/i.test(m)) return 'That question took too long to answer. Try narrowing it, for example to one year, one utility or one location.';
+		// Appsmith's server drops a request after about a minute and reports it
+		// as a lost connection, so that is a timeout too.
+		if (/timed out|statement timeout|canceling statement|could not connect to our servers/i.test(m)) return 'That question took too long to answer. Try narrowing it, for example to one year, one utility or one location.';
 		if (/not set up/i.test(m)) return m;
 		// Anything else: show the real error (shortened) so it can be fixed.
 		return 'Something went wrong: ' + m.slice(0, 300);
@@ -350,6 +357,35 @@ export default {
 					['days_late', 'integer', 'business days since the expected date; 0 or less when not yet due'],
 					['is_late', 'boolean', "late by UBM's rule: expected date reached and latest bill within the last 6 months"]
 				]
+			},
+			bill_errors: {
+				about: "Validation errors UBM raised on this company's current bills in the last 2 years (the Error Explorer's data; errors on deleted or replaced bills are left out). One row per error; a bill can have many. Use it for bill errors: which accounts or vendors have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large: always aggregate and filter dates with ranges on raised_at. For bill ids or locations, join error_bills ON error_bills.bill_ref = bill_errors.bill_ref.",
+				cols: [
+					['error_id', 'integer', 'error id'],
+					['code', 'integer', 'validation check code, e.g. 3004'],
+					['error_name', 'text', 'what the check found, e.g. Duplicate bill'],
+					['category', 'text', 'the component that raised it, e.g. Bill Validator, Bill Analyser'],
+					['severity', 'integer', '10 to 80, higher is more serious; there are no official labels, show the number'],
+					['stage', 'text', 'processing stage the check belongs to, e.g. integrity_check, data_audit_1'],
+					['status', 'text', 'open or resolved'],
+					['raised_at', 'timestamp', 'when the error was raised'],
+					['bill_ref', 'integer', 'bill the error is on; count affected bills with it, join error_bills with it'],
+					['invoice_date', 'timestamp', 'statement date of the bill'],
+					['vendor', 'text', 'utility company name'],
+					['account', 'text', 'utility account number'],
+					['utility', 'text', 'utility type in capitals (may be empty)'],
+					['meter', 'text', 'meter serial (may be empty)'],
+					['message', 'text', 'the error message, with specifics such as amounts or day counts']
+				]
+			},
+			error_bills: {
+				about: 'One row per bill that has errors in bill_errors, with its UBM bill id and location. Join to bill_errors on bill_ref; use it only when the question needs bill ids or locations. Each bill has one location (the first its lines map to), so location totals are close but not exact. To rank individual bills, group by bill_ref (always filled) and show bill_id beside it.',
+				cols: [
+					['bill_ref', 'integer', 'matches bill_errors.bill_ref'],
+					['bill_id', 'integer', 'UBM bill id'],
+					['location_id', 'integer', 'site id (may be empty)'],
+					['location_name', 'text', 'site name (may be empty)']
+				]
 			}
 		};
 	},
@@ -366,7 +402,7 @@ export default {
 			: '';
 		return `You write one PostgreSQL query that answers a question about one company's utility bills.
 
-There are exactly three tables, each already limited to this company:
+There are exactly ${Object.keys(tables).length} tables, each already limited to this company:
 
 ${described}
 
@@ -376,8 +412,8 @@ The user is this company: "my", "our", "we" and "us" in the question mean this c
 
 Rules:
 - Return only the SQL, with no explanation and no markdown.
-- One statement: SELECT, or WITH ... SELECT. Read only the three tables above; they can be joined on location_id. No semicolon, no comments.
-- Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills.
+- One statement: SELECT, or WITH ... SELECT. Read only the tables above; they can be joined on location_id (and bill_errors to error_bills on bill_ref). No semicolon, no comments.
+- Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills; bill errors and validation problems come from bill_errors.
 - Compare text values case-insensitively (UPPER(col) = 'KWH', ILIKE '%cherry creek%'): units, utilities, names and categories vary in case and spelling.
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
@@ -476,10 +512,12 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		return out.join('');
 	},
 
+	// Drop any prose before the SQL, keeping opening brackets that belong to it:
+	// "(SELECT ... LIMIT 10) UNION ALL (SELECT ...)" must keep its first "(".
 	_cleanSql(text) {
 		let s = String(text || '').replace(/```(?:sql)?/gi, '').trim();
-		const start = s.search(/\b(with|select)\b/i);
-		if (start > 0) s = s.slice(start);
+		const m = s.match(/[(\s]*\b(with|select)\b/i);
+		if (m && m.index > 0) s = s.slice(m.index);
 		return s.replace(/;\s*$/, '').trim();
 	},
 
@@ -488,7 +526,15 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 	// tables and to a single read statement.
 	_checkSql(sql) {
 		const s = String(sql || '').toLowerCase();
-		if (!/^(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
+		if (!/^[(\s]*(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
+		// Brackets must balance (ignoring quoted text): the query is wrapped in a
+		// subquery, and a stray ")" ends that early.
+		let depth = 0;
+		for (const ch of s.replace(/'[^']*'/g, '')) {
+			if (ch === '(') depth++;
+			else if (ch === ')' && --depth < 0) break;
+		}
+		if (depth !== 0) throw new Error('The query has unbalanced brackets.');
 		if (s.includes(';')) throw new Error('Only one statement is allowed.');
 		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('Comments are not allowed in the query.');
 		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
