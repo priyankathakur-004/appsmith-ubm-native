@@ -498,10 +498,12 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		return out.join('');
 	},
 
+	// Drop any prose before the SQL, keeping opening brackets that belong to it:
+	// "(SELECT ... LIMIT 10) UNION ALL (SELECT ...)" must keep its first "(".
 	_cleanSql(text) {
 		let s = String(text || '').replace(/```(?:sql)?/gi, '').trim();
-		const start = s.search(/\b(with|select)\b/i);
-		if (start > 0) s = s.slice(start);
+		const m = s.match(/[(\s]*\b(with|select)\b/i);
+		if (m && m.index > 0) s = s.slice(m.index);
 		return s.replace(/;\s*$/, '').trim();
 	},
 
@@ -510,7 +512,15 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 	// tables and to a single read statement.
 	_checkSql(sql) {
 		const s = String(sql || '').toLowerCase();
-		if (!/^(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
+		if (!/^[(\s]*(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
+		// Brackets must balance (ignoring quoted text): the query is wrapped in a
+		// subquery, and a stray ")" ends that early.
+		let depth = 0;
+		for (const ch of s.replace(/'[^']*'/g, '')) {
+			if (ch === '(') depth++;
+			else if (ch === ')' && --depth < 0) break;
+		}
+		if (depth !== 0) throw new Error('The query has unbalanced brackets.');
 		if (s.includes(';')) throw new Error('Only one statement is allowed.');
 		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('Comments are not allowed in the query.');
 		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
