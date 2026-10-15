@@ -359,7 +359,7 @@ export default {
 				]
 			},
 			bill_errors: {
-				about: "Validation errors UBM raised on this company's bills in the last 2 years (the Error Explorer's data). One row per error; a bill can have many. Use it for bill errors: which accounts, vendors or locations have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large and slow: always aggregate, filter dates with ranges on raised_at, use bill_id, location_id and location_name only when the question needs them (they are looked up per error), and never compute two separate rankings in one query (answer the first one asked, e.g. accounts, and mention the other can be asked next).",
+				about: "Validation errors UBM raised on this company's bills in the last 2 years (the Error Explorer's data). One row per error; a bill can have many. Use it for bill errors: which accounts or vendors have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large: always aggregate and filter dates with ranges on raised_at. For bill ids or locations, join error_bills ON error_bills.bill_ref = bill_errors.bill_ref.",
 				cols: [
 					['error_id', 'integer', 'error id'],
 					['code', 'integer', 'validation check code, e.g. 3004'],
@@ -369,16 +369,22 @@ export default {
 					['stage', 'text', 'processing stage the check belongs to, e.g. integrity_check, data_audit_1'],
 					['status', 'text', 'open or resolved'],
 					['raised_at', 'timestamp', 'when the error was raised'],
-					['bill_ref', 'integer', 'bill record the error is on; use it to count affected bills'],
-					['bill_id', 'integer', 'UBM bill id, to show specific bills (slower)'],
+					['bill_ref', 'integer', 'bill the error is on; count affected bills with it, join error_bills with it'],
 					['invoice_date', 'timestamp', 'statement date of the bill'],
 					['vendor', 'text', 'utility company name'],
 					['account', 'text', 'utility account number'],
 					['utility', 'text', 'utility type in capitals (may be empty)'],
 					['meter', 'text', 'meter serial (may be empty)'],
-					['location_id', 'integer', 'site id (empty for errors on a bill as a whole; slower)'],
-					['location_name', 'text', 'site name (may be empty; slower)'],
 					['message', 'text', 'the error message, with specifics such as amounts or day counts']
+				]
+			},
+			error_bills: {
+				about: 'One row per bill that has errors in bill_errors, with its UBM bill id and location. Join to bill_errors on bill_ref; use it only when the question needs bill ids or locations.',
+				cols: [
+					['bill_ref', 'integer', 'matches bill_errors.bill_ref'],
+					['bill_id', 'integer', 'UBM bill id'],
+					['location_id', 'integer', 'site id (may be empty)'],
+					['location_name', 'text', 'site name (may be empty)']
 				]
 			}
 		};
@@ -396,7 +402,7 @@ export default {
 			: '';
 		return `You write one PostgreSQL query that answers a question about one company's utility bills.
 
-There are exactly four tables, each already limited to this company:
+There are exactly ${Object.keys(tables).length} tables, each already limited to this company:
 
 ${described}
 
@@ -406,7 +412,7 @@ The user is this company: "my", "our", "we" and "us" in the question mean this c
 
 Rules:
 - Return only the SQL, with no explanation and no markdown.
-- One statement: SELECT, or WITH ... SELECT. Read only the four tables above; they can be joined on location_id. No semicolon, no comments.
+- One statement: SELECT, or WITH ... SELECT. Read only the tables above; they can be joined on location_id (and bill_errors to error_bills on bill_ref). No semicolon, no comments.
 - Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills; bill errors and validation problems come from bill_errors.
 - Compare text values case-insensitively (UPPER(col) = 'KWH', ILIKE '%cherry creek%'): units, utilities, names and categories vary in case and spelling.
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
