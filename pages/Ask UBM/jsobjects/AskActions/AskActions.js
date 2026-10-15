@@ -195,6 +195,8 @@ export default {
 			}
 			await storeValue('aiBusy', 'Writing the query…', false);
 			let sql = this._cleanSql(await this._ai(this._sqlPrompt(q, history)));
+			// Kept on the reply even if running it fails, so a failure can be traced.
+			reply.sql = sql;
 			try {
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
