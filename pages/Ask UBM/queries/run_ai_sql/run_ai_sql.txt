@@ -146,12 +146,13 @@ bill_errors AS (
         d.workflow_state                                        AS stage,
         CASE WHEN be.resolved IS TRUE THEN 'resolved' ELSE 'open' END AS status,
         be.created_at                                           AS raised_at,
+        be.bill_record_id                                       AS bill_ref,  -- cheap: count bills with this
         (SELECT x.bill_meta_id
          FROM bill_management_v2.bill_metas_bill_records x
          WHERE x.bill_record_id = be.bill_record_id AND x.status = 'active'
          LIMIT 1)                                               AS bill_id,
         br.statement_date                                       AS invoice_date,
-        COALESCE(NULLIF(BTRIM(cvn.pretty_name::text), ''), br.vendor_code) AS vendor,
+        COALESCE(cvn.pretty_name, br.vendor_code)               AS vendor,
         br.client_account                                       AS account,
         UPPER(be.data ->> 'commodity')                          AS utility,
         be.data ->> 'meter_serial'                              AS meter,
@@ -168,8 +169,14 @@ bill_errors AS (
         be.message
     FROM bill_management_v2.bill_errors be
     JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
-    LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
-           ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
+    -- The customer's vendor display names, looked up once (one row per code)
+    -- rather than matched against the whole name list for every error.
+    LEFT JOIN (
+        SELECT p.code, MAX(NULLIF(BTRIM(p.pretty_name::text), '')) AS pretty_name
+        FROM bill_management_v2.customers_providers_pretty_name p
+        WHERE p.customer_id = {{ Number(this.params.cust) || 0 }}
+        GROUP BY p.code
+    ) cvn ON cvn.code = br.vendor_code
     LEFT JOIN bill_management_v2.bill_validation_definitions d
            ON d.id = be.validation_check_id AND d.deleted_at IS NULL
     WHERE br.customer_id = {{ Number(this.params.cust) || 0 }}

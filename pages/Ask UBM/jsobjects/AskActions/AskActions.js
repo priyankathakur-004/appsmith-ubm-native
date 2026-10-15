@@ -357,7 +357,7 @@ export default {
 				]
 			},
 			bill_errors: {
-				about: "Validation errors UBM raised on this company's bills in the last 2 years (the Error Explorer's data). One row per error; a bill can have many. Use it for bill errors: which accounts, vendors or locations have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*), affected bills with COUNT(DISTINCT bill_id). It is large: always aggregate, and filter dates with ranges on raised_at.",
+				about: "Validation errors UBM raised on this company's bills in the last 2 years (the Error Explorer's data). One row per error; a bill can have many. Use it for bill errors: which accounts, vendors or locations have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large and slow: always aggregate, filter dates with ranges on raised_at, use bill_id, location_id and location_name only when the question needs them (they are looked up per error), and never compute two separate rankings in one query (answer the first one asked, e.g. accounts, and mention the other can be asked next).",
 				cols: [
 					['error_id', 'integer', 'error id'],
 					['code', 'integer', 'validation check code, e.g. 3004'],
@@ -367,14 +367,15 @@ export default {
 					['stage', 'text', 'processing stage the check belongs to, e.g. integrity_check, data_audit_1'],
 					['status', 'text', 'open or resolved'],
 					['raised_at', 'timestamp', 'when the error was raised'],
-					['bill_id', 'integer', 'UBM bill id'],
+					['bill_ref', 'integer', 'bill record the error is on; use it to count affected bills'],
+					['bill_id', 'integer', 'UBM bill id, to show specific bills (slower)'],
 					['invoice_date', 'timestamp', 'statement date of the bill'],
 					['vendor', 'text', 'utility company name'],
 					['account', 'text', 'utility account number'],
 					['utility', 'text', 'utility type in capitals (may be empty)'],
 					['meter', 'text', 'meter serial (may be empty)'],
-					['location_id', 'integer', 'site id (empty for errors on a bill as a whole)'],
-					['location_name', 'text', 'site name (may be empty)'],
+					['location_id', 'integer', 'site id (empty for errors on a bill as a whole; slower)'],
+					['location_name', 'text', 'site name (may be empty; slower)'],
 					['message', 'text', 'the error message, with specifics such as amounts or day counts']
 				]
 			}
