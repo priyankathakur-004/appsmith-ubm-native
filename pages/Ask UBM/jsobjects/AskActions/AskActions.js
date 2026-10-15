@@ -200,6 +200,9 @@ export default {
 				await storeValue('aiBusy', 'Running it on the data…', false);
 				rows = await run_ai_sql.run({ sql, cust });
 			} catch (first) {
+				// A timeout is the data's size, not a mistake the AI can fix: re-running
+				// a rewrite only doubles the wait.
+				if (/timed out|statement timeout|canceling statement|could not connect to our servers/i.test(this._msg(first))) throw first;
 				reply.sql = sql;
 				await storeValue('aiBusy', 'Fixing the query…', false);
 				sql = this._cleanSql(await this._ai(this._fixPrompt(q, sql, this._msg(first))));
@@ -279,7 +282,9 @@ export default {
 		if (/\b404\b|NOT_FOUND|not found for API version|is not supported|unknown model|invalid model/i.test(m)) return 'This AI model is not available on our API key. Pick another model in the AI_API query.';
 		if (/credit balance|billing/i.test(m)) return 'The AI account has run out of credit. Top it up or switch the AI_API query to another provider.';
 		if (/\b(401|403)\b|PERMISSION_DENIED|API key not valid|UNAUTHENTICATED/i.test(m)) return 'The AI API key was rejected. Check the AI datasource.';
-		if (/timed out|statement timeout|canceling statement/i.test(m)) return 'That question took too long to answer. Try narrowing it, for example to one year, one utility or one location.';
+		// Appsmith's server drops a request after about a minute and reports it
+		// as a lost connection, so that is a timeout too.
+		if (/timed out|statement timeout|canceling statement|could not connect to our servers/i.test(m)) return 'That question took too long to answer. Try narrowing it, for example to one year, one utility or one location.';
 		if (/not set up/i.test(m)) return m;
 		// Anything else: show the real error (shortened) so it can be fixed.
 		return 'Something went wrong: ' + m.slice(0, 300);

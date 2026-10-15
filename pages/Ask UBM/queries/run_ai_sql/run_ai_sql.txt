@@ -129,9 +129,14 @@ late_bills AS (
 bill_errors AS (
     -- Validation errors UBM raised on the customer's bills in the last two
     -- years: the Error Explorer's data. One row per error; a bill can carry
-    -- many. The location comes from the bill line the error is on, so errors
-    -- on a bill as a whole have none. The same code can mean different checks
-    -- under different categories, so error_name comes from the definition.
+    -- many. The same code can mean different checks under different
+    -- categories, so error_name comes from the definition.
+    -- bill_id and the location are scalar subqueries, not joins: Postgres only
+    -- evaluates them when the AI's query uses those columns, so questions by
+    -- account, vendor or error type skip the per-error lookups (with them as
+    -- LATERAL joins every error paid for both, and big customers timed out).
+    -- The location is that of the bill line the error is on; errors on a bill
+    -- as a whole have none.
     SELECT
         be.id                                                   AS error_id,
         be.validation_check_id                                  AS code,
@@ -141,33 +146,28 @@ bill_errors AS (
         d.workflow_state                                        AS stage,
         CASE WHEN be.resolved IS TRUE THEN 'resolved' ELSE 'open' END AS status,
         be.created_at                                           AS raised_at,
-        bm.bill_meta_id                                         AS bill_id,
+        (SELECT x.bill_meta_id
+         FROM bill_management_v2.bill_metas_bill_records x
+         WHERE x.bill_record_id = be.bill_record_id AND x.status = 'active'
+         LIMIT 1)                                               AS bill_id,
         br.statement_date                                       AS invoice_date,
         COALESCE(NULLIF(BTRIM(cvn.pretty_name::text), ''), br.vendor_code) AS vendor,
         br.client_account                                       AS account,
         UPPER(be.data ->> 'commodity')                          AS utility,
         be.data ->> 'meter_serial'                              AS meter,
-        el.location_id,
-        el.location_name,
+        (SELECT biva.location_id
+         FROM bill_management_v2.bill_items_virtual_accounts biva
+         WHERE biva.bill_item_id = be.bill_item_id AND biva.location_id IS NOT NULL
+         LIMIT 1)                                               AS location_id,
+        (SELECT COALESCE(NULLIF(BTRIM(ld.location_description), ''), l.name)
+         FROM bill_management_v2.bill_items_virtual_accounts biva
+         LEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = biva.location_id
+         LEFT JOIN bill_management_v2.locations l       ON l.id = biva.location_id
+         WHERE biva.bill_item_id = be.bill_item_id AND biva.location_id IS NOT NULL
+         LIMIT 1)                                               AS location_name,
         be.message
     FROM bill_management_v2.bill_errors be
     JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
-    LEFT JOIN LATERAL (
-        SELECT x.bill_meta_id
-        FROM bill_management_v2.bill_metas_bill_records x
-        WHERE x.bill_record_id = br.id AND x.status = 'active'
-        LIMIT 1
-    ) bm ON TRUE
-    LEFT JOIN LATERAL (
-        SELECT biva.location_id,
-               COALESCE(NULLIF(BTRIM(ld.location_description), ''), l.name) AS location_name
-        FROM bill_management_v2.bill_items_virtual_accounts biva
-        LEFT JOIN bill_management_v2.location_detail ld ON ld.location_id = biva.location_id
-        LEFT JOIN bill_management_v2.locations l       ON l.id = biva.location_id
-        WHERE biva.bill_item_id = be.bill_item_id
-          AND biva.location_id IS NOT NULL
-        LIMIT 1
-    ) el ON TRUE
     LEFT JOIN bill_management_v2.customers_providers_pretty_name cvn
            ON cvn.code = br.vendor_code AND cvn.customer_id = br.customer_id
     LEFT JOIN bill_management_v2.bill_validation_definitions d
