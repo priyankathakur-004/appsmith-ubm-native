@@ -227,7 +227,7 @@ export default {
 			reply.sql = sql;
 			// The AI's "cannot answer" row: say so plainly, with no table or summary.
 			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
-				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees) and late bills, by location, vendor, utility, account or meter.";
+				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees), late bills and bill errors, by location, vendor, utility, account or meter.";
 				await storeValue('aiMessages', msgs.concat([reply]), false);
 				await storeValue('aiBusy', '', false);
 				return;
@@ -350,6 +350,28 @@ export default {
 					['days_late', 'integer', 'business days since the expected date; 0 or less when not yet due'],
 					['is_late', 'boolean', "late by UBM's rule: expected date reached and latest bill within the last 6 months"]
 				]
+			},
+			bill_errors: {
+				about: "Validation errors UBM raised on this company's bills in the last 2 years (the Error Explorer's data). One row per error; a bill can have many. Use it for bill errors: which accounts, vendors or locations have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*), affected bills with COUNT(DISTINCT bill_id). It is large: always aggregate, and filter dates with ranges on raised_at.",
+				cols: [
+					['error_id', 'integer', 'error id'],
+					['code', 'integer', 'validation check code, e.g. 3004'],
+					['error_name', 'text', 'what the check found, e.g. Duplicate bill'],
+					['category', 'text', 'the component that raised it, e.g. Bill Validator, Bill Analyser'],
+					['severity', 'integer', '10 to 80, higher is more serious; there are no official labels, show the number'],
+					['stage', 'text', 'processing stage the check belongs to, e.g. integrity_check, data_audit_1'],
+					['status', 'text', 'open or resolved'],
+					['raised_at', 'timestamp', 'when the error was raised'],
+					['bill_id', 'integer', 'UBM bill id'],
+					['invoice_date', 'timestamp', 'statement date of the bill'],
+					['vendor', 'text', 'utility company name'],
+					['account', 'text', 'utility account number'],
+					['utility', 'text', 'utility type in capitals (may be empty)'],
+					['meter', 'text', 'meter serial (may be empty)'],
+					['location_id', 'integer', 'site id (empty for errors on a bill as a whole)'],
+					['location_name', 'text', 'site name (may be empty)'],
+					['message', 'text', 'the error message, with specifics such as amounts or day counts']
+				]
 			}
 		};
 	},
@@ -366,7 +388,7 @@ export default {
 			: '';
 		return `You write one PostgreSQL query that answers a question about one company's utility bills.
 
-There are exactly three tables, each already limited to this company:
+There are exactly four tables, each already limited to this company:
 
 ${described}
 
@@ -376,8 +398,8 @@ The user is this company: "my", "our", "we" and "us" in the question mean this c
 
 Rules:
 - Return only the SQL, with no explanation and no markdown.
-- One statement: SELECT, or WITH ... SELECT. Read only the three tables above; they can be joined on location_id. No semicolon, no comments.
-- Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills.
+- One statement: SELECT, or WITH ... SELECT. Read only the four tables above; they can be joined on location_id. No semicolon, no comments.
+- Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills; bill errors and validation problems come from bill_errors.
 - Compare text values case-insensitively (UPPER(col) = 'KWH', ILIKE '%cherry creek%'): units, utilities, names and categories vary in case and spelling.
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
