@@ -172,6 +172,15 @@ bill_errors AS (
            ON d.id = be.validation_check_id AND d.deleted_at IS NULL
     WHERE br.customer_id = {{ Number(this.params.cust) || 0 }}
       AND be.created_at >= CURRENT_DATE - INTERVAL '24 months'
+      -- Current bills only: a record whose only bill link is 'deleted' belongs
+      -- to a deleted or replaced bill. On Simon those carried 86k of 148k
+      -- errors and 75.8k of 76.8k open ones, so counting them made the
+      -- customer look to have ~76k open problems instead of ~950.
+      AND be.bill_record_id IN (
+          SELECT x.bill_record_id
+          FROM bill_management_v2.bill_metas_bill_records x
+          JOIN bill_management_v2.bill_records r2 ON r2.id = x.bill_record_id
+          WHERE r2.customer_id = {{ Number(this.params.cust) || 0 }} AND x.status = 'active')
 ),
 error_bills AS (
     -- One row per bill that has errors in that window: its UBM bill id and a
@@ -181,12 +190,9 @@ error_bills AS (
     -- rebuilds the whole location hierarchy on every call.
     SELECT
         r.bill_ref,
-        -- The active link first, else any: Simon's bill ids all came back empty
-        -- with 'active' only (its setup bills' links carry another status).
         (SELECT x.bill_meta_id
          FROM bill_management_v2.bill_metas_bill_records x
-         WHERE x.bill_record_id = r.bill_ref
-         ORDER BY (x.status = 'active') DESC, x.bill_meta_id DESC
+         WHERE x.bill_record_id = r.bill_ref AND x.status = 'active'
          LIMIT 1)                                               AS bill_id,
         loc.location_id,
         loc.location_name
@@ -196,6 +202,15 @@ error_bills AS (
         JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
         WHERE br.customer_id = {{ Number(this.params.cust) || 0 }}
           AND be.created_at >= CURRENT_DATE - INTERVAL '24 months'
+          -- Current bills only: a record whose only bill link is 'deleted' belongs
+          -- to a deleted or replaced bill. On Simon those carried 86k of 148k
+          -- errors and 75.8k of 76.8k open ones, so counting them made the
+          -- customer look to have ~76k open problems instead of ~950.
+          AND be.bill_record_id IN (
+              SELECT x.bill_record_id
+              FROM bill_management_v2.bill_metas_bill_records x
+              JOIN bill_management_v2.bill_records r2 ON r2.id = x.bill_record_id
+              WHERE r2.customer_id = {{ Number(this.params.cust) || 0 }} AND x.status = 'active')
     ) r
     LEFT JOIN LATERAL (
         SELECT biva.location_id, l.name AS location_name

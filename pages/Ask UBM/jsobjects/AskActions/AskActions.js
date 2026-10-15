@@ -359,7 +359,7 @@ export default {
 				]
 			},
 			bill_errors: {
-				about: "Validation errors UBM raised on this company's bills in the last 2 years (the Error Explorer's data). One row per error; a bill can have many. Use it for bill errors: which accounts or vendors have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large: always aggregate and filter dates with ranges on raised_at. For bill ids or locations, join error_bills ON error_bills.bill_ref = bill_errors.bill_ref.",
+				about: "Validation errors UBM raised on this company's current bills in the last 2 years (the Error Explorer's data; errors on deleted or replaced bills are left out). One row per error; a bill can have many. Use it for bill errors: which accounts or vendors have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large: always aggregate and filter dates with ranges on raised_at. For bill ids or locations, join error_bills ON error_bills.bill_ref = bill_errors.bill_ref.",
 				cols: [
 					['error_id', 'integer', 'error id'],
 					['code', 'integer', 'validation check code, e.g. 3004'],
