@@ -181,9 +181,12 @@ error_bills AS (
     -- rebuilds the whole location hierarchy on every call.
     SELECT
         r.bill_ref,
+        -- The active link first, else any: Simon's bill ids all came back empty
+        -- with 'active' only (its setup bills' links carry another status).
         (SELECT x.bill_meta_id
          FROM bill_management_v2.bill_metas_bill_records x
-         WHERE x.bill_record_id = r.bill_ref AND x.status = 'active'
+         WHERE x.bill_record_id = r.bill_ref
+         ORDER BY (x.status = 'active') DESC, x.bill_meta_id DESC
          LIMIT 1)                                               AS bill_id,
         loc.location_id,
         loc.location_name

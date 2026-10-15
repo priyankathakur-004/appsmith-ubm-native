@@ -379,7 +379,7 @@ export default {
 				]
 			},
 			error_bills: {
-				about: 'One row per bill that has errors in bill_errors, with its UBM bill id and location. Join to bill_errors on bill_ref; use it only when the question needs bill ids or locations.',
+				about: 'One row per bill that has errors in bill_errors, with its UBM bill id and location. Join to bill_errors on bill_ref; use it only when the question needs bill ids or locations. Each bill has one location (the first its lines map to), so location totals are close but not exact. To rank individual bills, group by bill_ref (always filled) and show bill_id beside it.',
 				cols: [
 					['bill_ref', 'integer', 'matches bill_errors.bill_ref'],
 					['bill_id', 'integer', 'UBM bill id'],
