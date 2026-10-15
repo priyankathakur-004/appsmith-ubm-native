@@ -29,7 +29,7 @@
     ],
     "name": "fetch_monthly_attributes",
     "pageId": "Analytics",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
