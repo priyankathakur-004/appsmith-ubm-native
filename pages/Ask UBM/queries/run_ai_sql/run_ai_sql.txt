@@ -152,7 +152,7 @@ bill_errors AS (
          WHERE x.bill_record_id = be.bill_record_id AND x.status = 'active'
          LIMIT 1)                                               AS bill_id,
         br.statement_date                                       AS invoice_date,
-        COALESCE(cvn.pretty_name, br.vendor_code)               AS vendor,
+        COALESCE(cvp.pretty_name, pvn.pretty_name, br.vendor_code) AS vendor,
         br.client_account                                       AS account,
         UPPER(be.data ->> 'commodity')                          AS utility,
         be.data ->> 'meter_serial'                              AS meter,
@@ -169,14 +169,23 @@ bill_errors AS (
         be.message
     FROM bill_management_v2.bill_errors be
     JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
-    -- The customer's vendor display names, looked up once (one row per code)
-    -- rather than matched against the whole name list for every error.
+    -- Vendor display names the way the Analytics page gets them: the general
+    -- name per vendor code, overridden by the customer's own name. Each side is
+    -- reduced to one row per key first, so a join can never multiply errors.
+    -- (customers_providers_pretty_name, used before, made an accounts-by-vendor
+    -- count on Simon run past the time limit while the same count without
+    -- vendor names was quick.)
     LEFT JOIN (
-        SELECT p.code, MAX(NULLIF(BTRIM(p.pretty_name::text), '')) AS pretty_name
-        FROM bill_management_v2.customers_providers_pretty_name p
-        WHERE p.customer_id = {{ Number(this.params.cust) || 0 }}
+        SELECT p.code, MAX(p.vendor_id) AS vendor_id, MAX(NULLIF(BTRIM(p.pretty_name), '')) AS pretty_name
+        FROM bill_management_v2.providers_pretty_name p
         GROUP BY p.code
-    ) cvn ON cvn.code = br.vendor_code
+    ) pvn ON pvn.code = br.vendor_code
+    LEFT JOIN (
+        SELECT c.vendor_id, MAX(NULLIF(BTRIM(c.pretty_name), '')) AS pretty_name
+        FROM bill_management_v2.customers_vendors_pretty_name c
+        WHERE c.customer_id = {{ Number(this.params.cust) || 0 }}
+        GROUP BY c.vendor_id
+    ) cvp ON cvp.vendor_id = pvn.vendor_id
     LEFT JOIN bill_management_v2.bill_validation_definitions d
            ON d.id = be.validation_check_id AND d.deleted_at IS NULL
     WHERE br.customer_id = {{ Number(this.params.cust) || 0 }}
