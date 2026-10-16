@@ -36,7 +36,7 @@
   "mobileRightColumn": 64,
   "mobileTopRow": 1,
   "needsErrorInfo": false,
-  "onReadyEvent": "{{ getCustomers.run(); fetch_studio_data.run(); }}",
+  "onReadyEvent": "{{ StudioReports.initPage() }}",
   "parentColumnSpace": 16.453125,
   "parentId": "0",
   "parentRowSpace": 10,

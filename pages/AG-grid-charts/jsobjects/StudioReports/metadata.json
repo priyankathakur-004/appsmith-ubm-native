@@ -1,0 +1,20 @@
+{
+  "gitSyncId": "6b0c4a1200000000000b1701_21305831-ef33-4fe9-acb9-4069b5cee6e6",
+  "id": "AG-grid-charts_StudioReports",
+  "unpublishedCollection": {
+    "name": "StudioReports",
+    "pageId": "AG-grid-charts",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "variables": [
+      {
+        "name": "defaultCustomer",
+        "value": "76013"
+      },
+      {
+        "name": "maxStateChars",
+        "value": "1000000"
+      }
+    ]
+  }
+}

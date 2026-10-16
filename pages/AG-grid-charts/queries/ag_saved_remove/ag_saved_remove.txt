@@ -1,0 +1,11 @@
+-- Remove a saved AG Studio report for everyone. The row is kept, only marked,
+-- and its name becomes free for a new report. Same doubled-quote JSON literal
+-- as the add query.
+UPDATE ubm_app.ag_studio_saved_reports AS r
+SET deleted_at = now(),
+    deleted_by = input.p ->> 'by'
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE r.id = (input.p ->> 'id')::bigint
+  AND r.customer_id = (input.p ->> 'cust')::int
+  AND r.deleted_at IS NULL
+RETURNING r.id::text AS id, r.name;
