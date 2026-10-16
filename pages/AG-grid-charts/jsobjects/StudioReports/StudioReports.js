@@ -30,6 +30,7 @@ export default {
 		await storeValue('agReportBusy', '', false);
 		getCustomers.run();
 		fetch_studio_data.run();
+		fetch_studio_demand.run();
 		const list = await this.loadList();
 		const last = appsmith.store.agReportLast || {};
 		if (Number(last.cust) === this._cust() && list.some(r => r.id === String(last.id))) {
@@ -43,6 +44,7 @@ export default {
 		await storeValue('selectedCustomerId', Number(picked) || this.defaultCustomer);
 		await this.newReport();
 		fetch_studio_data.run();
+		fetch_studio_demand.run();
 		await this.loadList();
 	},
 
