@@ -15,7 +15,11 @@ SELECT
     l.state,
     l.building_type,
     SUM(CASE WHEN c.name = 'demand_billblock' THEN c.value ELSE 0 END)              AS demand,
-    SUM(CASE WHEN c.name = 'load_factor_calc_billblock' THEN c.value ELSE NULL END) AS load_factor
+    -- Blank unless positive, as the Analytics view only takes values above zero.
+    CASE
+        WHEN SUM(CASE WHEN c.name = 'load_factor_calc_billblock' THEN c.value END) > 0
+        THEN SUM(CASE WHEN c.name = 'load_factor_calc_billblock' THEN c.value END)
+    END AS load_factor
 FROM bill_management_v2.bill_metas bm
 INNER JOIN bill_management_v2.bill_metas_bill_records bmbr
     ON bmbr.bill_meta_id = bm.id AND bmbr.status = 'active'
@@ -43,5 +47,8 @@ GROUP BY
     l.city,
     l.state,
     l.building_type
-ORDER BY time_period DESC
+-- Same order as the Analytics demand query: by location, newest month first.
+-- Studio's "Last" aggregation follows row order, so Last of load_factor per
+-- location is the oldest month in range, which is the value Analytics shows.
+ORDER BY l.name, time_period DESC
 LIMIT 25000;
