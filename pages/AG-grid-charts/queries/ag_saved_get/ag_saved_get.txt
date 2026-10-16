@@ -1,0 +1,15 @@
+-- One saved AG Studio report with its layout, for opening it. The customer is
+-- checked as well as the id, so a report only opens under its own customer.
+SELECT
+    id::text AS id,
+    name,
+    state,
+    created_by,
+    created_at,
+    updated_by,
+    updated_at,
+    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version
+FROM ubm_app.ag_studio_saved_reports
+WHERE id = {{ Number(this.params.id) || 0 }}
+  AND customer_id = {{ Number(this.params.cust) || 0 }}
+  AND deleted_at IS NULL;

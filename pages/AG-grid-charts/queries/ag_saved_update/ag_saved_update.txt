@@ -1,0 +1,34 @@
+-- Update a saved AG Studio report: its layout, its name, or both, whichever the
+-- payload carries (same doubled-quote JSON literal as the add query). When the
+-- payload has "seen" (the version the page opened), the row is only written
+-- if nobody has saved it since; otherwise no row comes back and the page says
+-- who did. A rename to a name another live report of the customer uses fails
+-- on the unique index.
+UPDATE ubm_app.ag_studio_saved_reports AS r
+SET
+    name = CASE
+               WHEN COALESCE(btrim(input.p ->> 'name'), '') <> '' THEN btrim(input.p ->> 'name')
+               ELSE r.name
+           END,
+    state = CASE
+                WHEN jsonb_typeof(input.p -> 'state') = 'object' THEN input.p -> 'state'
+                ELSE r.state
+            END,
+    updated_by = COALESCE(input.p ->> 'by', r.updated_by),
+    updated_at = now()
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE r.id = (input.p ->> 'id')::bigint
+  AND r.customer_id = (input.p ->> 'cust')::int
+  AND r.deleted_at IS NULL
+  AND (
+        COALESCE(input.p ->> 'seen', '') = ''
+        OR floor(extract(epoch FROM r.updated_at) * 1000000)::bigint::text = input.p ->> 'seen'
+      )
+RETURNING
+    r.id::text AS id,
+    r.name,
+    r.created_by,
+    r.created_at,
+    r.updated_by,
+    r.updated_at,
+    floor(extract(epoch FROM r.updated_at) * 1000000)::bigint::text AS version;

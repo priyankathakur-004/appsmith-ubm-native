@@ -1,0 +1,18 @@
+-- The picked customer's saved AG Studio reports, most recently saved first,
+-- without their layouts (opening one loads its layout separately). Shared by
+-- everyone who views the customer; removed reports (deleted_at set) are left
+-- out. version changes on every save and lets a save notice that someone else
+-- saved the same report first.
+SELECT
+    id::text AS id,
+    name,
+    created_by,
+    created_at,
+    updated_by,
+    updated_at,
+    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version
+FROM ubm_app.ag_studio_saved_reports
+WHERE customer_id = {{ Number(this.params.cust) || 0 }}
+  AND deleted_at IS NULL
+ORDER BY updated_at DESC
+LIMIT 500;

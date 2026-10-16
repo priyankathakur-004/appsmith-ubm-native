@@ -1,0 +1,26 @@
+-- Save a new AG Studio report. Prepared statements are off, so the values
+-- arrive as one JSON literal whose single quotes the page has already doubled;
+-- the fields are read back with ->> and ->. A name already used by a live
+-- report of the same customer (ignoring case) hits the unique index and is
+-- skipped, so no row comes back.
+INSERT INTO ubm_app.ag_studio_saved_reports
+    (customer_id, name, state, created_by, updated_by)
+SELECT
+    (p ->> 'cust')::int,
+    btrim(p ->> 'name'),
+    p -> 'state',
+    p ->> 'by',
+    p ->> 'by'
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE COALESCE(btrim(p ->> 'name'), '') <> ''
+  AND jsonb_typeof(p -> 'state') = 'object'
+  AND COALESCE((p ->> 'cust')::int, 0) > 0
+ON CONFLICT DO NOTHING
+RETURNING
+    id::text AS id,
+    name,
+    created_by,
+    created_at,
+    updated_by,
+    updated_at,
+    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version;

@@ -51,7 +51,7 @@
   "mobileRightColumn": 24,
   "mobileTopRow": 6,
   "needsErrorInfo": false,
-  "onOptionChange": "{{ storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue); fetch_studio_data.run(); }}",
+  "onOptionChange": "{{ StudioReports.pickCustomer(CustomerSelect.selectedOptionValue) }}",
   "optionLabel": "label",
   "optionValue": "value",
   "parentColumnSpace": 16.453125,
