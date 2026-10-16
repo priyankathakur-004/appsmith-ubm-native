@@ -32,10 +32,13 @@ export default {
 		fetch_studio_data.run();
 		fetch_studio_demand.run();
 		const list = await this.loadList();
+		// Reopen the report this browser had open last; failing that, the
+		// customer's most recently saved one (the list comes newest first), so
+		// the page only starts blank when the customer has no saved reports.
 		const last = appsmith.store.agReportLast || {};
-		if (Number(last.cust) === this._cust() && list.some(r => r.id === String(last.id))) {
-			await this.openReport(last.id);
-		}
+		const lastId = Number(last.cust) === this._cust() && list.some(r => r.id === String(last.id)) ? String(last.id) : '';
+		const pick = lastId || (list[0] ? list[0].id : '');
+		if (pick) await this.openReport(pick);
 	},
 
 	// The Customer dropdown's change handler. Reports belong to one customer,
