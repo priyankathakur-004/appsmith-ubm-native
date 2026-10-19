@@ -1,0 +1,228 @@
+-- Runs one SELECT written by the AI on the Ask UBM page. The AI only ever
+-- sees the tables built here, each limited to the customer the question
+-- was asked for (passed in, so a customer switch mid-question cannot leak).
+-- The page checks the statement (single SELECT, these tables only) before it
+-- gets here, the login is read-only, and the result is capped at 500 rows.
+-- Postgres skips any of these CTEs the AI's query does not use.
+WITH mu AS (
+    -- Third-party supply: a meter then has a Distribution Only row from the
+    -- utility (its kWh in total_consumption) and a Supply Only row from the
+    -- supplier repeating the same kWh as generation. Simon 2025 electric: 69.7M
+    -- delivery kWh vs 68.2M supply kWh. has_delivery flags a location + utility +
+    -- month that has a non-supply row, so the supply row's kWh is not counted
+    -- twice; its cost always is, being a separate charge.
+    SELECT m.*,
+           bool_or(m.bill_type IS DISTINCT FROM 'Supply Only')
+               OVER (PARTITION BY m.location_id, m.utility_type, m.time_period) AS has_delivery
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    WHERE m.customer_id = {{ Number(this.params.cust) || 0 }}
+),
+monthly_usage AS (
+    SELECT
+        m.time_period::date                                    AS month,
+        m.utility_type                                         AS utility,
+        m.bill_type,
+        m.location_id,
+        COALESCE(NULLIF(BTRIM(m.location_description), ''), l.name) AS location_name,
+        l.city,
+        l.state,
+        l.building_type,
+        l.square_feet,
+        m.client_account                                       AS account,
+        m.meter_serial                                         AS meter,
+        to_jsonb(m) ->> 'vendor_name'                          AS vendor,
+        CASE
+            WHEN m.bill_type = 'Supply Only' AND m.has_delivery THEN 0
+            WHEN m.bill_type = 'Supply Only' THEN m.total_gen_consumption
+            ELSE m.total_consumption
+        END                                                    AS consumption,
+        m.total_consumption_uom                                AS consumption_unit,
+        m.total_charges                                        AS cost,
+        m.total_cdd                                            AS cdd,
+        m.total_hdd                                            AS hdd
+    FROM mu m
+    LEFT JOIN bill_management_v2.locations l
+        ON l.id = m.location_id
+),
+line_items AS (
+    -- Every line of every processed bill ('processed' drops bills still in the
+    -- workflow). 'historical' rows are back-loaded copies that duplicate each
+    -- charge, so they are left out; setup, live and special bills are all real.
+    -- Only 'live' is not enough: a recently onboarded customer's bills are
+    -- mostly 'setup' (Simon: 81k setup lines, 402 live, all from 2026).
+    SELECT
+        li.bill_id,
+        li.statement_date                                      AS invoice_date,  -- uncast, so date ranges can use an index
+        date_trunc('month', li.statement_date)::date           AS invoice_month,
+        UPPER(li.commodity)                                    AS utility,
+        li.vendor_name                                         AS vendor,
+        li.location_id,
+        li.location_description                                AS location_name,
+        li.account_code                                        AS account,
+        li.category,
+        li.code                                                AS charge_code,
+        li.description,
+        li.usage                                               AS quantity,
+        li.uom                                                 AS unit,
+        li.charge
+    FROM bill_management_v2.analytics_billing_line_items li
+    WHERE li.customer_id = {{ Number(this.params.cust) || 0 }}
+      AND li.bill_type <> 'historical'
+      AND li.workflow_state = 'processed'
+),
+late_last_bill AS (
+    -- The latest bill per service, ordered as UBM's Late Bills report does.
+    SELECT virtual_account_id, days_of_service, due_date, last_bill_type, expected_next_bill_date
+    FROM (
+        SELECT a.virtual_account_id,
+               row_number() OVER (PARTITION BY a.virtual_account_id
+                                  ORDER BY a.statement_date DESC, a.bill_adjusted_end_date DESC, b.expected_next_bill_date DESC) AS ord,
+               b.days_of_service, c.due_date, m.bill_type AS last_bill_type, b.expected_next_bill_date
+        FROM bill_management_v2.analytics_bills_items a
+        JOIN bill_management_v2.bill_metas   m ON a.bill_id = m.id
+        JOIN bill_management_v2.bill_items   b ON a.bill_item_id = b.id
+        JOIN bill_management_v2.bill_records c ON b.bill_record_id = c.id AND c.deleted_at IS NULL
+        WHERE a.customer_id = {{ Number(this.params.cust) || 0 }}
+    ) x
+    WHERE x.ord = 1
+),
+late_bills AS (
+    -- One row per open service. days_late counts business days since the
+    -- expected bill date, as UBM does; not yet due keeps the calendar value
+    -- (0 or less). is_late is the report's rule: due, and billed within the
+    -- last 6 months.
+    SELECT
+        rnva.billing_id                                        AS billing_account,
+        rnva.service_account_id                                AS service_account,
+        rnva.meter_id                                          AS meter,
+        UPPER(rnva.utility_type)                               AS utility,
+        rnva.vendor,
+        rnva.location_id,
+        rnva.location                                          AS location_name,
+        l.building_type,
+        rnva.account_status,
+        rnva.date_of_last_bill::date                           AS last_bill_date,
+        lb.last_bill_type,
+        lb.due_date::date                                      AS last_due_date,
+        lb.days_of_service,
+        lb.expected_next_bill_date::date                       AS expected_bill_date,
+        dl.days_late,
+        (COALESCE(dl.days_late >= 0, false)
+         AND rnva.date_of_last_bill >= CURRENT_DATE - INTERVAL '6 months') AS is_late
+    FROM bill_management_v2.reports_new_virtual_accounts rnva
+    LEFT JOIN late_last_bill lb               ON lb.virtual_account_id = rnva.virtual_account_id
+    LEFT JOIN bill_management_v2.locations l  ON l.id = rnva.location_id
+    CROSS JOIN LATERAL (
+        SELECT CASE
+            WHEN lb.expected_next_bill_date IS NULL THEN NULL
+            WHEN lb.expected_next_bill_date::date >= CURRENT_DATE
+                THEN (CURRENT_DATE - lb.expected_next_bill_date::date)
+            ELSE (SELECT COUNT(*)::int
+                  FROM generate_series(lb.expected_next_bill_date::date + 1, CURRENT_DATE, INTERVAL '1 day') gs
+                  WHERE EXTRACT(DOW FROM gs) BETWEEN 1 AND 5)
+        END AS days_late
+    ) dl
+    WHERE rnva.customer_id = {{ Number(this.params.cust) || 0 }}
+      AND rnva.account_status IN ('Open', 'Unknown')
+      AND COALESCE(TRIM(rnva.billing_id), '') <> ''
+),
+bill_errors AS (
+    -- Validation errors UBM raised on the customer's bills in the last two
+    -- years: the Error Explorer's data. One row per error; a bill can carry
+    -- many. This database's Postgres (before 12) builds every CTE in full,
+    -- so per-row lookups here run for every error whether used or not: with
+    -- them, Simon's ~148k errors ran past the time limit. Only cheap columns
+    -- and hash joins live here; the bill id and location are in error_bills
+    -- (one row per affected bill), joined on bill_ref when a question needs
+    -- them. error_name comes from the definition: one code can mean different
+    -- checks.
+    SELECT
+        be.id                                                   AS error_id,
+        be.validation_check_id                                  AS code,
+        d.name                                                  AS error_name,
+        be.category,
+        be.severity,
+        d.workflow_state                                        AS stage,
+        CASE WHEN be.resolved IS TRUE THEN 'resolved' ELSE 'open' END AS status,
+        be.created_at                                           AS raised_at,
+        be.bill_record_id                                       AS bill_ref,
+        br.statement_date                                       AS invoice_date,
+        COALESCE(cvp.pretty_name, pvn.pretty_name, br.vendor_code) AS vendor,
+        br.client_account                                       AS account,
+        UPPER(be.data ->> 'commodity')                          AS utility,
+        be.data ->> 'meter_serial'                              AS meter,
+        be.message
+    FROM bill_management_v2.bill_errors be
+    JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+    -- Vendor display names the way the Analytics page gets them: the general
+    -- name per vendor code, overridden by the customer's own name, each side
+    -- reduced to one row per key so a join can never multiply errors.
+    LEFT JOIN (
+        SELECT p.code, MAX(p.vendor_id) AS vendor_id, MAX(NULLIF(BTRIM(p.pretty_name), '')) AS pretty_name
+        FROM bill_management_v2.providers_pretty_name p
+        GROUP BY p.code
+    ) pvn ON pvn.code = br.vendor_code
+    LEFT JOIN (
+        SELECT c.vendor_id, MAX(NULLIF(BTRIM(c.pretty_name), '')) AS pretty_name
+        FROM bill_management_v2.customers_vendors_pretty_name c
+        WHERE c.customer_id = {{ Number(this.params.cust) || 0 }}
+        GROUP BY c.vendor_id
+    ) cvp ON cvp.vendor_id = pvn.vendor_id
+    LEFT JOIN bill_management_v2.bill_validation_definitions d
+           ON d.id = be.validation_check_id AND d.deleted_at IS NULL
+    WHERE br.customer_id = {{ Number(this.params.cust) || 0 }}
+      AND be.created_at >= CURRENT_DATE - INTERVAL '24 months'
+      -- Current bills only: a record whose only bill link is 'deleted' belongs
+      -- to a deleted or replaced bill. On Simon those carried 86k of 148k
+      -- errors and 75.8k of 76.8k open ones, so counting them made the
+      -- customer look to have ~76k open problems instead of ~950.
+      AND be.bill_record_id IN (
+          SELECT x.bill_record_id
+          FROM bill_management_v2.bill_metas_bill_records x
+          JOIN bill_management_v2.bill_records r2 ON r2.id = x.bill_record_id
+          WHERE r2.customer_id = {{ Number(this.params.cust) || 0 }} AND x.status = 'active')
+),
+error_bills AS (
+    -- One row per bill that has errors in that window: its UBM bill id and a
+    -- location (the first one its bill lines map to). Far fewer rows than
+    -- errors, so the lookups stay cheap. Join to bill_errors on bill_ref.
+    -- The name comes from locations, not the location_detail view, which
+    -- rebuilds the whole location hierarchy on every call.
+    SELECT
+        r.bill_ref,
+        (SELECT x.bill_meta_id
+         FROM bill_management_v2.bill_metas_bill_records x
+         WHERE x.bill_record_id = r.bill_ref AND x.status = 'active'
+         LIMIT 1)                                               AS bill_id,
+        loc.location_id,
+        loc.location_name
+    FROM (
+        SELECT DISTINCT be.bill_record_id AS bill_ref
+        FROM bill_management_v2.bill_errors be
+        JOIN bill_management_v2.bill_records br ON br.id = be.bill_record_id
+        WHERE br.customer_id = {{ Number(this.params.cust) || 0 }}
+          AND be.created_at >= CURRENT_DATE - INTERVAL '24 months'
+          -- Current bills only: a record whose only bill link is 'deleted' belongs
+          -- to a deleted or replaced bill. On Simon those carried 86k of 148k
+          -- errors and 75.8k of 76.8k open ones, so counting them made the
+          -- customer look to have ~76k open problems instead of ~950.
+          AND be.bill_record_id IN (
+              SELECT x.bill_record_id
+              FROM bill_management_v2.bill_metas_bill_records x
+              JOIN bill_management_v2.bill_records r2 ON r2.id = x.bill_record_id
+              WHERE r2.customer_id = {{ Number(this.params.cust) || 0 }} AND x.status = 'active')
+    ) r
+    LEFT JOIN LATERAL (
+        SELECT biva.location_id, l.name AS location_name
+        FROM bill_management_v2.bill_items bi
+        JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
+        LEFT JOIN bill_management_v2.locations l ON l.id = biva.location_id
+        WHERE bi.bill_record_id = r.bill_ref
+          AND biva.location_id IS NOT NULL
+        LIMIT 1
+    ) loc ON TRUE
+)
+SELECT * FROM (
+{{ this.params.sql || "SELECT 'no question' AS answer" }}
+) AS ai_result
+LIMIT 500;

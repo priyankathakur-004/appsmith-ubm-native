@@ -14,6 +14,12 @@ SET
                 WHEN jsonb_typeof(input.p -> 'state') = 'object' THEN input.p -> 'state'
                 ELSE r.state
             END,
+    -- Sent with every layout save (an empty list when no Ask UBM chart is
+    -- left); a rename sends none and keeps what is there.
+    ask_sources = CASE
+                      WHEN jsonb_typeof(input.p -> 'ask') = 'array' THEN input.p -> 'ask'
+                      ELSE r.ask_sources
+                  END,
     updated_by = COALESCE(input.p ->> 'by', r.updated_by),
     updated_at = now()
 FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input

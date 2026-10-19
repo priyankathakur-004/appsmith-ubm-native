@@ -123,6 +123,39 @@ export default {
 		}
 	},
 
+	// "AG Studio" under a chart: hands the answer to the AG Studio page, which
+	// opens it there as a new report that can be restyled, combined with other
+	// charts and saved. The customer, question, SQL, chart settings and the rows
+	// already on screen travel through the store (taken once by that page);
+	// the AG Studio customer is set to this one so both show the same data.
+	async openInStudio(key) {
+		const k = String(key || '');
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		let item = null;
+		if (k[0] === 'm') {
+			const msgs = appsmith.store.aiMessages || [];
+			const i = Number(k.slice(1));
+			const m = msgs[i];
+			if (m && m.role === 'assistant' && m.sql) {
+				item = { question: (msgs[i - 1] || {}).text || '', sql: m.sql, chart: m.chart || null, columns: m.columns || [], rows: m.rows || [] };
+			}
+		} else if (k[0] === 's') {
+			const id = k.slice(1);
+			const saved = (appsmith.store.aiSavedRows || []).find(x => String(x.id) === id);
+			const data = (appsmith.store.aiSavedData || {})[id] || {};
+			if (saved && Array.isArray(data.rows)) {
+				item = { question: saved.question || '', sql: saved.sql, chart: saved.chart || null, columns: data.columns || [], rows: data.rows };
+			}
+		}
+		if (!cust || !item || !item.rows.length) {
+			showAlert('This answer has no data to open in AG Studio.', 'warning');
+			return;
+		}
+		await storeValue('selectedCustomerId', cust);
+		await storeValue('agImport', Object.assign({ cust, at: Date.now() }, item));
+		navigateTo('AG-grid-charts', {}, 'SAME_WINDOW');
+	},
+
 	// Reload every saved chart of the picked customer with the latest data, one
 	// query at a time, showing each as it arrives.
 	async loadSaved() {

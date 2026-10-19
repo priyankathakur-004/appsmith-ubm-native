@@ -18,6 +18,20 @@ export default {
 	//   agReportBusy     what is in progress, shown in the widget toolbar
 	//   agStudioReport   the layout the widget builds from
 	//   agReportLast     {cust, id} of the report to reopen on the next visit
+	//   agAskSources     Ask UBM charts in the layout: {key, question, title, sql, rows}
+	//   agSuggestedName  name offered by Save for a chart opened from Ask UBM
+	//   agImport         (persisted, set by the Ask UBM page) a chart to open here
+
+	// ---- Ask UBM charts ---------------------------------------------------------
+	// "Open in AG Studio" on the Ask UBM page hands over one answer (question,
+	// SQL, chart settings and rows) through agImport and navigates here. The
+	// answer becomes its own Studio source, ask_<key>, drawn the way Ask UBM drew
+	// it. A saved report keeps each such chart's SQL (never its rows) in
+	// ask_sources and re-runs it when the report opens, so it shows current data
+	// like the rest of the page. The query that re-runs it is a copy of the Ask
+	// UBM page's AI query (Appsmith queries belong to one page), and _askTables
+	// lists that page's AI tables for the same SQL check: when the Ask UBM
+	// tables change, change both copies.
 
 	// Run once by the on-mount init widget, because Appsmith does not run
 	// on-load queries that only a custom widget's model consumes.
@@ -28,10 +42,20 @@ export default {
 		await storeValue('agReports', [], false);
 		await storeValue('agReportCurrent', null, false);
 		await storeValue('agReportBusy', '', false);
+		await storeValue('agAskSources', [], false);
+		await storeValue('agSuggestedName', '', false);
 		getCustomers.run();
 		fetch_studio_data.run();
 		fetch_studio_demand.run();
 		const list = await this.loadList();
+		// A chart sent from Ask UBM wins over reopening a report. It is taken once,
+		// and only if it is recent and for the customer now shown.
+		const imp = appsmith.store.agImport;
+		if (imp) await storeValue('agImport', null);
+		if (imp && Number(imp.cust) === this._cust() && Date.now() - Number(imp.at || 0) < 10 * 60 * 1000) {
+			await this.importAsk(imp);
+			return;
+		}
 		// Reopen the report this browser had open last; failing that, the
 		// customer's most recently saved one (the list comes newest first), so
 		// the page only starts blank when the customer has no saved reports.
@@ -87,6 +111,11 @@ export default {
 				return;
 			}
 			if (this._cust() !== cust) return;
+			// Ask UBM charts first, so the layout is built with their fields present.
+			const ask = await this._loadAsk(this._parse(row.ask_sources), cust);
+			if (this._cust() !== cust) return;
+			await storeValue('agAskSources', ask, false);
+			await storeValue('agSuggestedName', '', false);
 			await storeValue('agStudioReport', state, false);
 			await storeValue('agReportCurrent', this._fromRow(row), false);
 			await storeValue('agReportLast', { cust, id: key });
@@ -130,7 +159,7 @@ export default {
 		await storeValue('agReportBusy', 'Saving…', false);
 		try {
 			if (asNew) {
-				const added = await ag_saved_add.run({ payload: this._payload({ cust: c, name: title, state: clean, by }) });
+				const added = await ag_saved_add.run({ payload: this._payload({ cust: c, name: title, state: clean, ask: this._askFor(clean), by }) });
 				const row = (added || [])[0];
 				if (!row) {
 					// The unique index turned it away: someone saved that name meanwhile.
@@ -142,7 +171,7 @@ export default {
 				showAlert('Saved "' + row.name + '"', 'success');
 			} else {
 				const updated = await ag_saved_update.run({ payload: this._payload({
-					id: Number(current.id), cust: c, state: clean, seen: current.version, by
+					id: Number(current.id), cust: c, state: clean, ask: this._askFor(clean), seen: current.version, by
 				}) });
 				const row = (updated || [])[0];
 				if (!row) {
@@ -228,10 +257,124 @@ export default {
 
 	// Closes the open report and clears the workspace.
 	async newReport() {
+		await storeValue('agAskSources', [], false);
+		await storeValue('agSuggestedName', '', false);
 		await storeValue('agReportCurrent', null, false);
 		await storeValue('agReportLast', null);
 		await storeValue('agStudioReport', null, false);
 		await storeValue('agStudioStateKey', Date.now(), false);
+	},
+
+	// Opens one Ask UBM answer as a new, unsaved report, using the rows it
+	// arrived with (the SQL is only re-run when a saved report opens).
+	async importAsk(imp) {
+		const title = String((imp.chart && imp.chart.title) || imp.question || 'Ask UBM chart').slice(0, 120);
+		const src = {
+			key: Date.now().toString(36),
+			question: String(imp.question || ''),
+			title,
+			sql: String(imp.sql || ''),
+			rows: Array.isArray(imp.rows) ? imp.rows : []
+		};
+		if (!src.sql || !src.rows.length) {
+			showAlert('That Ask UBM answer has no rows to open.', 'warning');
+			return;
+		}
+		try {
+			this._checkAskSql(src.sql);
+		} catch (e) {
+			showAlert('That Ask UBM answer cannot be opened here: ' + e.message, 'warning');
+			return;
+		}
+		await storeValue('agAskSources', [src], false);
+		await storeValue('agSuggestedName', title, false);
+		await storeValue('agReportCurrent', null, false);
+		await storeValue('agStudioReport', this._askLayout(src, imp.chart, imp.columns), false);
+		await storeValue('agStudioStateKey', Date.now(), false);
+		showAlert('Opened "' + title + '" from Ask UBM. Save it to keep it with this customer\'s reports.', 'info');
+	},
+
+	// One widget drawn as Ask UBM drew it: bar becomes a grouped column chart,
+	// line a line chart, series the legend; an answer with no chart a grid.
+	_askLayout(src, chart, columns) {
+		const id = 'ask_' + src.key;
+		const f = c => ({ id: id + '.' + c });
+		const cols = Array.isArray(columns) && columns.length ? columns : Object.keys(src.rows[0] || {});
+		let widget;
+		if (chart && chart.x && Array.isArray(chart.y) && chart.y.length) {
+			const m = { categoryKey: [f(chart.x)], valueKey: chart.y.map(y => ({ id: id + '.' + y, aggregation: 'sum' })) };
+			if (chart.series) m.legendKey = [f(chart.series)];
+			widget = { type: chart.type === 'line' ? 'line-chart' : 'column-chart-grouped', dataMapping: m };
+		} else {
+			widget = { type: 'grid', dataMapping: { cols: cols.map(f) } };
+		}
+		widget.format = { title: { text: src.title, enabled: true } };
+		return {
+			selectedPageId: 'page-1',
+			pages: [{ id: 'page-1', widgets: { [id]: widget }, widgetLayout: { [id]: { xTrack: 0, yTrack: 0, xSpan: 24, ySpan: 22 } } }]
+		};
+	},
+
+	// The Ask UBM charts a layout still uses, without their rows, for saving.
+	_askFor(state) {
+		const text = JSON.stringify(state);
+		return (appsmith.store.agAskSources || [])
+			.filter(a => text.includes('"ask_' + a.key + '.'))
+			.map(a => ({ key: a.key, question: a.question, title: a.title, sql: a.sql }));
+	},
+
+	// Re-runs each saved Ask UBM chart's SQL for the customer, one at a time.
+	// A chart that fails keeps its place with no rows and is reported.
+	async _loadAsk(list, cust) {
+		const out = [];
+		const failed = [];
+		for (const a of Array.isArray(list) ? list : []) {
+			const src = { key: String(a.key || ''), question: String(a.question || ''), title: String(a.title || ''), sql: String(a.sql || ''), rows: [] };
+			if (!src.key || !src.sql) continue;
+			try {
+				this._checkAskSql(src.sql);
+				const rows = await ask_rows.run({ sql: src.sql, cust });
+				src.rows = Array.isArray(rows) ? rows : [];
+				if (!src.rows.length) failed.push('"' + (src.title || src.question) + '" has no data now');
+			} catch (e) {
+				failed.push('"' + (src.title || src.question) + '": ' + this._friendly(e));
+			}
+			out.push(src);
+		}
+		if (failed.length) {
+			showAlert('Some Ask UBM charts in this report could not load (' + failed.join('; ') + '). Saving now would drop them.', 'warning');
+		}
+		return out;
+	},
+
+	// The same check the Ask UBM page applies before running AI-written SQL.
+	_checkAskSql(sql) {
+		const s = String(sql || '').toLowerCase();
+		if (!/^[(\s]*(select|with)\b/.test(s)) throw new Error('not a SELECT query.');
+		let depth = 0;
+		for (const ch of s.replace(/'[^']*'/g, '')) {
+			if (ch === '(') depth++;
+			else if (ch === ')' && --depth < 0) break;
+		}
+		if (depth !== 0) throw new Error('unbalanced brackets.');
+		if (s.includes(';')) throw new Error('only one statement is allowed.');
+		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('comments are not allowed.');
+		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
+		if (banned) throw new Error('"' + banned[0] + '" is not allowed.');
+		const tables = this._askTables();
+		const allowed = new Set(Object.keys(tables).concat(['lateral', 'unnest', 'generate_series']));
+		Object.keys(tables).forEach(t => tables[t].forEach(c => allowed.add(c)));
+		for (const m of s.matchAll(/(\w+)\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
+		for (const m of s.matchAll(/\b(?:from|join)\s+("?[\w.]+"?)/g)) {
+			const t = m[1].replace(/"/g, '');
+			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error('it reads "' + t + '", which is not an Ask UBM table.');
+		}
+	},
+
+	// Table and column names of the Ask UBM page's AI tables (its _tables), for
+	// the check above.
+	_askTables() {
+		return {"monthly_usage":["month","utility","bill_type","location_id","location_name","city","state","building_type","square_feet","account","meter","vendor","consumption","consumption_unit","cost","cdd","hdd"],"line_items":["bill_id","invoice_date","invoice_month","utility","vendor","location_id","location_name","account","category","charge_code","description","quantity","unit","charge"],"late_bills":["billing_account","service_account","meter","utility","vendor","location_id","location_name","building_type","account_status","last_bill_date","last_bill_type","last_due_date","days_of_service","expected_bill_date","days_late","is_late"],"bill_errors":["error_id","code","error_name","category","severity","stage","status","raised_at","bill_ref","invoice_date","vendor","account","utility","meter","message"],"error_bills":["bill_ref","bill_id","location_id","location_name"]};
 	},
 
 	// ---- helpers ----------------------------------------------------------------
