@@ -91,6 +91,9 @@ export default {
 			await storeValue('agReportCurrent', this._fromRow(row), false);
 			await storeValue('agReportLast', { cust, id: key });
 			await storeValue('agStudioStateKey', Date.now(), false);
+			// The list is otherwise only reloaded by this browser's own changes, so
+			// its "saved by" lines go stale when a colleague saves.
+			await this.loadList();
 		} catch (e) {
 			showAlert('Could not open the report. ' + this._friendly(e), 'error');
 		} finally {
