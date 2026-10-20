@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "-- One saved AG Studio report with its layout, for opening it. The customer is\n-- checked as well as the id, so a report only opens under its own customer.\nSELECT\n    id::text AS id,\n    name,\n    state,\n    created_by,\n    created_at,\n    updated_by,\n    updated_at,\n    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version\nFROM ubm_app.ag_studio_saved_reports\nWHERE id = {{ Number(this.params.id) || 0 }}\n  AND customer_id = {{ Number(this.params.cust) || 0 }}\n  AND deleted_at IS NULL;",
+      "body": "-- One saved AG Studio report with its layout, for opening it. The customer is\n-- checked as well as the id, so a report only opens under its own customer.\nSELECT\n    id::text AS id,\n    name,\n    state,\n    ask_sources,\n    created_by,\n    created_at,\n    updated_by,\n    updated_at,\n    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version\nFROM ubm_app.ag_studio_saved_reports\nWHERE id = {{ Number(this.params.id) || 0 }}\n  AND customer_id = {{ Number(this.params.cust) || 0 }}\n  AND deleted_at IS NULL;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [

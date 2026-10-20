@@ -2,13 +2,15 @@
 -- arrive as one JSON literal whose single quotes the page has already doubled;
 -- the fields are read back with ->> and ->. A name already used by a live
 -- report of the same customer (ignoring case) hits the unique index and is
--- skipped, so no row comes back.
+-- skipped, so no row comes back. ask_sources lists the Ask UBM charts the
+-- layout uses ({key, question, title, sql}); their SQL is re-run on open.
 INSERT INTO ubm_app.ag_studio_saved_reports
-    (customer_id, name, state, created_by, updated_by)
+    (customer_id, name, state, ask_sources, created_by, updated_by)
 SELECT
     (p ->> 'cust')::int,
     btrim(p ->> 'name'),
     p -> 'state',
+    CASE WHEN jsonb_typeof(p -> 'ask') = 'array' THEN p -> 'ask' END,
     p ->> 'by',
     p ->> 'by'
 FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input

@@ -123,6 +123,39 @@ export default {
 		}
 	},
 
+	// "AG Studio" under a chart: hands the answer to the AG Studio page, which
+	// opens it there as a new report that can be restyled, combined with other
+	// charts and saved. The customer, question, SQL, chart settings and the rows
+	// already on screen travel through the store (taken once by that page);
+	// the AG Studio customer is set to this one so both show the same data.
+	async openInStudio(key) {
+		const k = String(key || '');
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		let item = null;
+		if (k[0] === 'm') {
+			const msgs = appsmith.store.aiMessages || [];
+			const i = Number(k.slice(1));
+			const m = msgs[i];
+			if (m && m.role === 'assistant' && m.sql) {
+				item = { question: (msgs[i - 1] || {}).text || '', sql: m.sql, chart: m.chart || null, columns: m.columns || [], rows: m.rows || [] };
+			}
+		} else if (k[0] === 's') {
+			const id = k.slice(1);
+			const saved = (appsmith.store.aiSavedRows || []).find(x => String(x.id) === id);
+			const data = (appsmith.store.aiSavedData || {})[id] || {};
+			if (saved && Array.isArray(data.rows)) {
+				item = { question: saved.question || '', sql: saved.sql, chart: saved.chart || null, columns: data.columns || [], rows: data.rows };
+			}
+		}
+		if (!cust || !item || !item.rows.length) {
+			showAlert('This answer has no data to open in AG Studio.', 'warning');
+			return;
+		}
+		await storeValue('selectedCustomerId', cust);
+		await storeValue('agImport', Object.assign({ cust, at: Date.now() }, item));
+		navigateTo('AG-grid-charts', {}, 'SAME_WINDOW');
+	},
+
 	// Reload every saved chart of the picked customer with the latest data, one
 	// query at a time, showing each as it arrives.
 	async loadSaved() {
@@ -454,6 +487,7 @@ chart: how to plot the result, or null when a chart adds nothing (one row, a sin
 - x: the category or month column. y: one or more numeric columns measured in the same unit; never put dollars and usage on one chart, pick the one the question is about.
 - series: when the result is long form (for example month, utility, value), the column whose values become separate bars or lines, with exactly one y column. Otherwise null.
 - title: a short chart title that describes exactly what the result holds (say "top 10" only if it has 10 rows). y_label: the unit, for example "$", "kWh" or "therms".
+- Each x value (each x and series pair when there is a series) must appear in only one row. If the result mixes groupings, for example vendor totals and account rows, use chart null.
 
 Question: ${question}
 SQL that was run: ${sql}
@@ -483,6 +517,14 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		const y = (Array.isArray(chart.y) ? chart.y : [chart.y]).filter(c => has(c) && numeric(c));
 		const series = chart.series && has(chart.series) && chart.series !== chart.x ? chart.series : null;
 		if (!has(chart.x) || !y.length) return null;
+		// A label on more than one row (vendor totals next to account rows, say)
+		// has no single value to draw: neither the last row nor the sum is safe.
+		const seen = new Set();
+		for (const r of rows) {
+			const k = String(r[chart.x]) + '\u0000' + (series ? String(r[series]) : '');
+			if (seen.has(k)) return null;
+			seen.add(k);
+		}
 		return {
 			type, x: chart.x, y: series ? [y[0]] : y, series,
 			title: String(chart.title || '').slice(0, 120),

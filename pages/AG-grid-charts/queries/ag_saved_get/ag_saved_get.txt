@@ -4,6 +4,7 @@ SELECT
     id::text AS id,
     name,
     state,
+    ask_sources,
     created_by,
     created_at,
     updated_by,
