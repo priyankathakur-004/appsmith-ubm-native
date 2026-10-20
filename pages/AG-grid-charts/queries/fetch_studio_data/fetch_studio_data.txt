@@ -1,83 +1,146 @@
--- Feed for the AG Studio POC.
--- Same grain and the same canonical consumption measure as fetch_analytics_data
--- on the Analytics page, bounded because AG Studio holds the rows client-side.
-SELECT
-    m.time_period,
-    m.utility_type,
-    m.bill_type,
-    m.account_status,
-    m.client_account AS service_account,
-    m.meter_serial   AS meter,
-    m.vendor_name,
-    m.location_id::text AS location_id,   -- text, so Studio treats it as a category not a measure
-    l.name           AS location_description,
-    l.city,
-    l.state,
-    l.building_type,
-    l.square_feet,
-
-    CASE
-        WHEN m.bill_type = 'Supply Only'
-        THEN m.total_gen_consumption
-        ELSE m.total_consumption
-    END AS consumption,
-    m.total_consumption_uom AS consumption_uom,
-
-    -- Raw consumption is in each utility's own unit, so it cannot be summed
-    -- across utility types. This is the same mmBTU normalisation the Analytics
-    -- page applies (MA_MonthlyEnergyHelper.getBTUConversionFactor): BTU per unit
-    -- divided by a million. Water, sewer and the non-energy utilities convert to
-    -- zero there too — they carry no energy content.
-    -- Deliberately not rounded: Studio sums these, and rounding each row first
-    -- accumulates error across thousands of rows. Analytics keeps full precision
-    -- and rounds only at display.
-    (
-        (
-            CASE
-                WHEN m.bill_type = 'Supply Only'
-                THEN m.total_gen_consumption
-                ELSE m.total_consumption
-            END
-            * CASE m.utility_type
-                WHEN 'ELECTRIC'   THEN 3412
-                WHEN 'NATURALGAS' THEN 102800
-                WHEN 'OIL2'       THEN 138500
-                WHEN 'STEAM'      THEN 1000
-                ELSE 0
-              END
-        )::numeric / 1000000
-    ) AS consumption_mmbtu,
-
-    m.total_charges,
-
-    COALESCE(amf.total_charges_commodity, 0)   AS charges_commodity,
-    COALESCE(amf.total_charges_demand, 0)      AS charges_demand,
-    COALESCE(amf.total_charges_generation, 0)  AS charges_generation,
-    COALESCE(amf.total_charges_taxes, 0)       AS charges_taxes,
-    COALESCE(amf.total_charges_other, 0)       AS charges_other,
-
-    m.total_cdd,
-    m.total_hdd
-
-FROM bill_management_v2.reports_customer_monthly_usage m
-INNER JOIN bill_management_v2.locations l
-    ON l.id = m.location_id
-LEFT JOIN LATERAL (
+-- Feed for the AG Studio page: the same grain and the same canonical
+-- consumption measure as fetch_analytics_data on the Analytics page, bounded
+-- because AG Studio holds the rows client-side.
+--
+-- Appsmith refuses any response over 5 MB, and as one JSON object per row
+-- (every column name repeated on every row) a large customer such as Simon
+-- went over it. So the rows come back as ONE value, column by column:
+--   n          number of rows
+--   cols       one array per column, all in the same row order
+--   dict       for the repeated text columns, their distinct values; the
+--              column array then holds each row's position in that list
+--   locations  location_id -> [name, city, state, building_type, square_feet],
+--              sent once per location instead of on every row
+-- The page's widget turns this back into the same rows as before.
+WITH base AS (
     SELECT
-        SUM(COALESCE(a.total_charges_commodity, 0))  AS total_charges_commodity,
-        SUM(COALESCE(a.total_charges_demand, 0))     AS total_charges_demand,
-        SUM(COALESCE(a.total_charges_generation, 0)) AS total_charges_generation,
-        SUM(COALESCE(a.total_charges_taxes, 0))      AS total_charges_taxes,
-        SUM(COALESCE(a.total_charges_other, 0))      AS total_charges_other
-    FROM bill_management_v2.analytics_monthly_feed a
-    WHERE a.customer_id = m.customer_id
-      AND a.location_id = m.location_id
-      AND DATE_TRUNC('month', a.time_period) = DATE_TRUNC('month', m.time_period)
-      AND a.utility_type = m.utility_type
-) amf ON TRUE
+        row_number() OVER (ORDER BY m.time_period DESC, m.location_id, m.utility_type) AS rn,
+        m.time_period::date AS time_period,
+        m.utility_type,
+        m.bill_type,
+        m.account_status,
+        m.client_account AS service_account,
+        m.meter_serial   AS meter,
+        m.vendor_name,
+        m.location_id::text AS location_id,   -- text, so Studio treats it as a category not a measure
+        l.name           AS location_description,
+        l.city,
+        l.state,
+        l.building_type,
+        l.square_feet,
 
-WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
-  AND m.time_period >= (CURRENT_DATE - INTERVAL '36 months')
+        CASE
+            WHEN m.bill_type = 'Supply Only'
+            THEN m.total_gen_consumption
+            ELSE m.total_consumption
+        END AS consumption,
+        m.total_consumption_uom AS consumption_uom,
 
-ORDER BY m.time_period DESC
-LIMIT 25000;
+        -- Raw consumption is in each utility's own unit, so it cannot be summed
+        -- across utility types. This is the same mmBTU normalisation the Analytics
+        -- page applies (MA_MonthlyEnergyHelper.getBTUConversionFactor): BTU per unit
+        -- divided by a million. Water, sewer and the non-energy utilities convert to
+        -- zero there too — they carry no energy content. Six decimals is a
+        -- millionth of an mmBTU per row, far below anything a chart can show.
+        round((
+            (
+                CASE
+                    WHEN m.bill_type = 'Supply Only'
+                    THEN m.total_gen_consumption
+                    ELSE m.total_consumption
+                END
+                * CASE m.utility_type
+                    WHEN 'ELECTRIC'   THEN 3412
+                    WHEN 'NATURALGAS' THEN 102800
+                    WHEN 'OIL2'       THEN 138500
+                    WHEN 'STEAM'      THEN 1000
+                    ELSE 0
+                  END
+            )::numeric / 1000000
+        ), 6) AS consumption_mmbtu,
+
+        m.total_charges,
+
+        COALESCE(amf.total_charges_commodity, 0)   AS charges_commodity,
+        COALESCE(amf.total_charges_demand, 0)      AS charges_demand,
+        COALESCE(amf.total_charges_generation, 0)  AS charges_generation,
+        COALESCE(amf.total_charges_taxes, 0)       AS charges_taxes,
+        COALESCE(amf.total_charges_other, 0)       AS charges_other,
+
+        m.total_cdd,
+        m.total_hdd
+
+    FROM bill_management_v2.reports_customer_monthly_usage m
+    INNER JOIN bill_management_v2.locations l
+        ON l.id = m.location_id
+    LEFT JOIN LATERAL (
+        SELECT
+            SUM(COALESCE(a.total_charges_commodity, 0))  AS total_charges_commodity,
+            SUM(COALESCE(a.total_charges_demand, 0))     AS total_charges_demand,
+            SUM(COALESCE(a.total_charges_generation, 0)) AS total_charges_generation,
+            SUM(COALESCE(a.total_charges_taxes, 0))      AS total_charges_taxes,
+            SUM(COALESCE(a.total_charges_other, 0))      AS total_charges_other
+        FROM bill_management_v2.analytics_monthly_feed a
+        WHERE a.customer_id = m.customer_id
+          AND a.location_id = m.location_id
+          AND DATE_TRUNC('month', a.time_period) = DATE_TRUNC('month', m.time_period)
+          AND a.utility_type = m.utility_type
+    ) amf ON TRUE
+
+    WHERE m.customer_id = {{ CustomerSelect.selectedOptionValue || 76013 }}
+      AND m.time_period >= (CURRENT_DATE - INTERVAL '36 months')
+
+    ORDER BY m.time_period DESC, m.location_id, m.utility_type
+    LIMIT 25000
+),
+-- Each repeated text column as a list of its distinct values, and each row's
+-- position in it. NULL sorts last in both, so the positions line up.
+coded AS (
+    SELECT
+        b.*,
+        dense_rank() OVER (ORDER BY b.utility_type)    - 1 AS utility_type_i,
+        dense_rank() OVER (ORDER BY b.bill_type)       - 1 AS bill_type_i,
+        dense_rank() OVER (ORDER BY b.account_status)  - 1 AS account_status_i,
+        dense_rank() OVER (ORDER BY b.vendor_name)     - 1 AS vendor_name_i,
+        dense_rank() OVER (ORDER BY b.consumption_uom) - 1 AS consumption_uom_i
+    FROM base b
+)
+SELECT json_build_object(
+    'n', (SELECT count(*) FROM base),
+    'cols', (
+        SELECT json_build_object(
+            'time_period',        COALESCE(json_agg(c.time_period        ORDER BY c.rn), '[]'),
+            'utility_type',       COALESCE(json_agg(c.utility_type_i     ORDER BY c.rn), '[]'),
+            'bill_type',          COALESCE(json_agg(c.bill_type_i        ORDER BY c.rn), '[]'),
+            'account_status',     COALESCE(json_agg(c.account_status_i   ORDER BY c.rn), '[]'),
+            'service_account',    COALESCE(json_agg(c.service_account    ORDER BY c.rn), '[]'),
+            'meter',              COALESCE(json_agg(c.meter              ORDER BY c.rn), '[]'),
+            'vendor_name',        COALESCE(json_agg(c.vendor_name_i      ORDER BY c.rn), '[]'),
+            'location_id',        COALESCE(json_agg(c.location_id        ORDER BY c.rn), '[]'),
+            'consumption',        COALESCE(json_agg(c.consumption        ORDER BY c.rn), '[]'),
+            'consumption_uom',    COALESCE(json_agg(c.consumption_uom_i  ORDER BY c.rn), '[]'),
+            'consumption_mmbtu',  COALESCE(json_agg(c.consumption_mmbtu  ORDER BY c.rn), '[]'),
+            'total_charges',      COALESCE(json_agg(c.total_charges      ORDER BY c.rn), '[]'),
+            'charges_commodity',  COALESCE(json_agg(c.charges_commodity  ORDER BY c.rn), '[]'),
+            'charges_demand',     COALESCE(json_agg(c.charges_demand     ORDER BY c.rn), '[]'),
+            'charges_generation', COALESCE(json_agg(c.charges_generation ORDER BY c.rn), '[]'),
+            'charges_taxes',      COALESCE(json_agg(c.charges_taxes      ORDER BY c.rn), '[]'),
+            'charges_other',      COALESCE(json_agg(c.charges_other      ORDER BY c.rn), '[]'),
+            'total_cdd',          COALESCE(json_agg(c.total_cdd          ORDER BY c.rn), '[]'),
+            'total_hdd',          COALESCE(json_agg(c.total_hdd          ORDER BY c.rn), '[]')
+        )
+        FROM coded c
+    ),
+    'dict', json_build_object(
+        'utility_type',    (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT utility_type    AS v FROM base) d),
+        'bill_type',       (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT bill_type       AS v FROM base) d),
+        'account_status',  (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT account_status  AS v FROM base) d),
+        'vendor_name',     (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT vendor_name     AS v FROM base) d),
+        'consumption_uom', (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT consumption_uom AS v FROM base) d)
+    ),
+    'locations', (
+        SELECT COALESCE(json_object_agg(x.location_id,
+                   json_build_array(x.location_description, x.city, x.state, x.building_type, x.square_feet)), '{}')
+        FROM (SELECT DISTINCT location_id, location_description, city, state, building_type, square_feet FROM base) x
+    )
+) AS usage;

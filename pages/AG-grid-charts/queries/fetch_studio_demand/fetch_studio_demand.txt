@@ -5,7 +5,18 @@
 -- monthly usage, and the two do not share a grain.
 -- Only the two calculations used are joined, which keeps the join small; the
 -- sums are unchanged because every other calculation added nothing to them.
+--
+-- Like the usage query, the rows come back as one compact value (Appsmith
+-- refuses responses over 5 MB): n, an array per column in row order, the
+-- distinct values of the repeated text columns (dict, which the column arrays
+-- then point into) and each location's details once (locations).
+WITH base AS (
 SELECT
+    -- Same order as the Analytics demand query: by location, newest month
+    -- first. Studio's "Last" aggregation follows row order, so Last of
+    -- load_factor per location is the oldest month in range, which is the
+    -- value Analytics shows.
+    row_number() OVER (ORDER BY l.name, date_trunc('month', br.statement_date)::date DESC, bi.commodity, bi.bill_type) AS rn,
     date_trunc('month', br.statement_date)::date AS time_period,
     bi.commodity                                  AS utility_type,
     bi.bill_type,
@@ -47,8 +58,36 @@ GROUP BY
     l.city,
     l.state,
     l.building_type
--- Same order as the Analytics demand query: by location, newest month first.
--- Studio's "Last" aggregation follows row order, so Last of load_factor per
--- location is the oldest month in range, which is the value Analytics shows.
-ORDER BY l.name, time_period DESC
-LIMIT 25000;
+ORDER BY l.name, time_period DESC, bi.commodity, bi.bill_type
+LIMIT 25000
+),
+coded AS (
+    SELECT
+        b.*,
+        dense_rank() OVER (ORDER BY b.utility_type) - 1 AS utility_type_i,
+        dense_rank() OVER (ORDER BY b.bill_type)    - 1 AS bill_type_i
+    FROM base b
+)
+SELECT json_build_object(
+    'n', (SELECT count(*) FROM base),
+    'cols', (
+        SELECT json_build_object(
+            'time_period',  COALESCE(json_agg(c.time_period    ORDER BY c.rn), '[]'),
+            'utility_type', COALESCE(json_agg(c.utility_type_i ORDER BY c.rn), '[]'),
+            'bill_type',    COALESCE(json_agg(c.bill_type_i    ORDER BY c.rn), '[]'),
+            'location_id',  COALESCE(json_agg(c.location_id    ORDER BY c.rn), '[]'),
+            'demand',       COALESCE(json_agg(c.demand         ORDER BY c.rn), '[]'),
+            'load_factor',  COALESCE(json_agg(c.load_factor    ORDER BY c.rn), '[]')
+        )
+        FROM coded c
+    ),
+    'dict', json_build_object(
+        'utility_type', (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT utility_type AS v FROM base) d),
+        'bill_type',    (SELECT COALESCE(json_agg(v ORDER BY v), '[]') FROM (SELECT DISTINCT bill_type    AS v FROM base) d)
+    ),
+    'locations', (
+        SELECT COALESCE(json_object_agg(x.location_id,
+                   json_build_array(x.location_description, x.city, x.state, x.building_type)), '{}')
+        FROM (SELECT DISTINCT location_id, location_description, city, state, building_type FROM base) x
+    )
+) AS demand;

@@ -86,12 +86,12 @@
   "version": 1,
   "widgetId": "ask_chat_w",
   "widgetName": "AskChat",
-  "onAsk": "{{ AskActions.ask(typeof question !== 'undefined' ? question : '') }}",
-  "onPickCustomer": "{{ AskActions.pickCustomer(typeof pickedCustomer !== 'undefined' ? pickedCustomer : undefined, typeof savedTab !== 'undefined' ? savedTab : false) }}",
+  "onAsk": "{{ AskActions.ask(self.question || '') }}",
+  "onPickCustomer": "{{ AskActions.pickCustomer(self.pickedCustomer, self.savedTab || false) }}",
   "onClear": "{{ AskActions.clearChat() }}",
-  "onDownload": "{{ download(typeof fileData !== 'undefined' ? fileData : '', typeof fileName !== 'undefined' ? fileName : 'ask-ubm', typeof fileType !== 'undefined' ? fileType : 'text/plain') }}",
-  "onSaveAnswer": "{{ AskActions.saveAnswer(typeof answerIndex !== 'undefined' ? answerIndex : -1) }}",
+  "onDownload": "{{ download(self.fileData || '', self.fileName || 'ask-ubm', self.fileType || 'text/plain') }}",
+  "onSaveAnswer": "{{ AskActions.saveAnswer(self.answerIndex == null ? -1 : self.answerIndex) }}",
   "onOpenSaved": "{{ AskActions.loadSaved() }}",
-  "onRemoveSaved": "{{ AskActions.removeSaved(typeof savedId !== 'undefined' ? savedId : '') }}",
-  "onOpenInStudio": "{{ AskActions.openInStudio(typeof studioKey !== 'undefined' ? studioKey : '') }}"
+  "onRemoveSaved": "{{ AskActions.removeSaved(self.savedId || '') }}",
+  "onOpenInStudio": "{{ AskActions.openInStudio(self.studioKey || '') }}"
 }
