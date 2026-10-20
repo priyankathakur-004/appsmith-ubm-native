@@ -291,7 +291,10 @@ export default {
 		await storeValue('agReportCurrent', null, false);
 		await storeValue('agStudioReport', this._askLayout(src, imp.chart, imp.columns), false);
 		await storeValue('agStudioStateKey', Date.now(), false);
-		showAlert('Opened "' + title + '" from Ask UBM. Save it to keep it with this customer\'s reports.', 'info');
+		const dup = this._repeatedLabel(src.rows, imp.chart);
+		showAlert(dup
+			? 'Opened "' + title + '" as a table: "' + dup + '" is on more than one row (the answer mixes groupings), so a chart of it would add them up wrongly. Filter it to one grouping to chart it, then Save.'
+			: 'Opened "' + title + '" from Ask UBM. Save it to keep it with this customer\'s reports.', dup ? 'warning' : 'info');
 	},
 
 	// One widget drawn as Ask UBM drew it: bar becomes a grouped column chart,
@@ -301,7 +304,7 @@ export default {
 		const f = c => ({ id: id + '.' + c });
 		const cols = Array.isArray(columns) && columns.length ? columns : Object.keys(src.rows[0] || {});
 		let widget;
-		if (chart && chart.x && Array.isArray(chart.y) && chart.y.length) {
+		if (chart && chart.x && Array.isArray(chart.y) && chart.y.length && !this._repeatedLabel(src.rows, chart)) {
 			const m = { categoryKey: [f(chart.x)], valueKey: chart.y.map(y => ({ id: id + '.' + y, aggregation: 'sum' })) };
 			if (chart.series) m.legendKey = [f(chart.series)];
 			widget = { type: chart.type === 'line' ? 'line-chart' : 'column-chart-grouped', dataMapping: m };
@@ -313,6 +316,20 @@ export default {
 			selectedPageId: 'page-1',
 			pages: [{ id: 'page-1', widgets: { [id]: widget }, widgetLayout: { [id]: { xTrack: 0, yTrack: 0, xSpan: 24, ySpan: 22 } } }]
 		};
+	},
+
+	// The first chart label that sits on more than one row (within a series), or
+	// ''. Studio would add such rows up, which is wrong when they are different
+	// groupings (vendor totals next to account rows), so those open as a grid.
+	_repeatedLabel(rows, chart) {
+		if (!chart || !chart.x) return '';
+		const seen = new Set();
+		for (const r of rows || []) {
+			const k = String(r[chart.x]) + '\u0000' + (chart.series ? String(r[chart.series]) : '');
+			if (seen.has(k)) return String(r[chart.x]);
+			seen.add(k);
+		}
+		return '';
 	},
 
 	// The Ask UBM charts a layout still uses, without their rows, for saving.

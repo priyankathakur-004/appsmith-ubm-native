@@ -487,6 +487,7 @@ chart: how to plot the result, or null when a chart adds nothing (one row, a sin
 - x: the category or month column. y: one or more numeric columns measured in the same unit; never put dollars and usage on one chart, pick the one the question is about.
 - series: when the result is long form (for example month, utility, value), the column whose values become separate bars or lines, with exactly one y column. Otherwise null.
 - title: a short chart title that describes exactly what the result holds (say "top 10" only if it has 10 rows). y_label: the unit, for example "$", "kWh" or "therms".
+- Each x value (each x and series pair when there is a series) must appear in only one row. If the result mixes groupings, for example vendor totals and account rows, use chart null.
 
 Question: ${question}
 SQL that was run: ${sql}
@@ -516,6 +517,14 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		const y = (Array.isArray(chart.y) ? chart.y : [chart.y]).filter(c => has(c) && numeric(c));
 		const series = chart.series && has(chart.series) && chart.series !== chart.x ? chart.series : null;
 		if (!has(chart.x) || !y.length) return null;
+		// A label on more than one row (vendor totals next to account rows, say)
+		// has no single value to draw: neither the last row nor the sum is safe.
+		const seen = new Set();
+		for (const r of rows) {
+			const k = String(r[chart.x]) + '\u0000' + (series ? String(r[series]) : '');
+			if (seen.has(k)) return null;
+			seen.add(k);
+		}
 		return {
 			type, x: chart.x, y: series ? [y[0]] : y, series,
 			title: String(chart.title || '').slice(0, 120),
