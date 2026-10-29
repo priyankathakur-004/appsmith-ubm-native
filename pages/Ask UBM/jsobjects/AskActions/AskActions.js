@@ -67,7 +67,9 @@ export default {
 		}
 		return {
 			id: String(r.id), cust: Number(r.cust), title: r.title, question: r.question, sql: r.sql,
-			chart: chart || null, savedBy: r.created_by || '', savedAt: String(r.created_at || '')
+			chart: chart || null, savedBy: r.created_by || '', savedAt: String(r.created_at || ''),
+			// For the audit under the chart: the tables and fields its SQL reads.
+			sources: this._sources(r.sql)
 		};
 	},
 
@@ -104,7 +106,7 @@ export default {
 			// Show it straight away with the rows already on screen.
 			if (id) {
 				const data = Object.assign({}, appsmith.store.aiSavedData || {});
-				data[String(id)] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount };
+				data[String(id)] = { rows: m.rows, columns: m.columns, rowCount: m.rowCount, refreshedAt: (m.audit && m.audit.askedAt) || new Date().toISOString() };
 				await storeValue('aiSavedData', data, false);
 			}
 			await this.loadSavedList();
@@ -173,7 +175,7 @@ export default {
 				this._checkSql(x.sql);
 				const rows = await run_ai_sql.run({ sql: x.sql, cust });
 				const r = Array.isArray(rows) ? rows : [];
-				data[x.id] = { rows: r.slice(0, this.maxShownRows), columns: r.length ? Object.keys(r[0]) : [], rowCount: r.length };
+				data[x.id] = { rows: r.slice(0, this.maxShownRows), columns: r.length ? Object.keys(r[0]) : [], rowCount: r.length, refreshedAt: new Date().toISOString() };
 			} catch (e) {
 				data[x.id] = { error: 'Could not load this chart. ' + this._friendly(e) };
 			}
@@ -209,19 +211,25 @@ export default {
 
 	// One question: the AI writes a SELECT on monthly_usage, we check it and run
 	// it (one retry with the error if it fails), then the AI explains the rows.
-	// If only the explaining step fails, the rows are still shown.
+	// If only the explaining step fails, the rows are still shown. Every reply
+	// carries an audit (see _audit) and every question is logged.
 	async ask(question) {
 		const q = String(question || '').trim();
 		if (!q || appsmith.store.aiBusy) return;
 		// The customer is fixed for the whole question and passed to the query.
 		const cust = Number(appsmith.store.aiCustomer) || 0;
+		const started = Date.now();
 		const before = appsmith.store.aiMessages || [];
 		const history = before.filter(m => m.role === 'user').slice(-3).map(m => m.text);
 		const msgs = before.concat([{ role: 'user', text: q }]);
 		await storeValue('aiMessages', msgs, false);
 
-		const reply = { role: 'assistant', text: '', sql: '', columns: [], rows: [], rowCount: 0, chart: null, error: '' };
+		const reply = { role: 'assistant', text: '', sql: '', columns: [], rows: [], rowCount: 0, chart: null, error: '', audit: null };
+		// What happened on the way to the answer, in order, for the audit.
+		const steps = [];
 		let rows = null;
+		let method = null;
+		let status = 'answered';
 		try {
 			if (typeof AI_API === 'undefined') {
 				throw new Error('The AI query (AI_API) is not set up on this page yet.');
@@ -230,6 +238,7 @@ export default {
 			let sql = this._cleanSql(await this._ai(this._sqlPrompt(q, history)));
 			// Kept on the reply even if running it fails, so a failure can be traced.
 			reply.sql = sql;
+			steps.push({ step: 'written', sql });
 			try {
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
@@ -238,10 +247,11 @@ export default {
 				// A timeout is the data's size, not a mistake the AI can fix: re-running
 				// a rewrite only doubles the wait.
 				if (/timed out|statement timeout|canceling statement|could not connect to our servers/i.test(this._msg(first))) throw first;
-				reply.sql = sql;
+				steps.push({ step: 'failed', error: this._short(first) });
 				await storeValue('aiBusy', 'Fixing the query…', false);
 				sql = this._cleanSql(await this._ai(this._fixPrompt(q, sql, this._msg(first))));
 				reply.sql = sql;
+				steps.push({ step: 'rewritten', sql });
 				this._checkSql(sql);
 				await storeValue('aiBusy', 'Running it on the data…', false);
 				rows = await run_ai_sql.run({ sql, cust });
@@ -250,6 +260,7 @@ export default {
 			// No rows usually means a filter value that does not exist (a unit or name
 			// spelled differently): give the AI one chance to recheck its filters.
 			if (!rows.length) {
+				steps.push({ step: 'empty' });
 				try {
 					await storeValue('aiBusy', 'Checking the filters…', false);
 					const retry = this._cleanSql(await this._ai(this._fixPrompt(q, sql,
@@ -258,38 +269,126 @@ export default {
 						this._checkSql(retry);
 						await storeValue('aiBusy', 'Running it on the data…', false);
 						const again = await run_ai_sql.run({ sql: retry, cust });
-						if (Array.isArray(again) && again.length) { rows = again; sql = retry; }
+						const used = Array.isArray(again) && again.length > 0;
+						steps.push({ step: 'rechecked', sql: retry, rows: used ? again.length : 0, used });
+						if (used) { rows = again; sql = retry; }
+					} else {
+						steps.push({ step: 'unchanged' });
 					}
-				} catch (e) { /* keep the empty result */ }
+				} catch (e) {
+					// Keep the empty result.
+					steps.push({ step: 'recheckFailed', error: this._short(e) });
+				}
 			}
 			reply.sql = sql;
-			// The AI's "cannot answer" row: say so plainly, with no table or summary.
 			if (rows.length === 1 && /not available/i.test(String(rows[0].answer || ''))) {
+				// The AI's "cannot answer" row: say so plainly, with no table or summary.
+				status = 'not_available';
 				reply.text = "That isn't in the data I can see. I can answer questions about your monthly usage and cost, the charges on your bills (including late fees), late bills and bill errors, by location, vendor, utility, account or meter.";
-				await storeValue('aiMessages', msgs.concat([reply]), false);
-				await storeValue('aiBusy', '', false);
-				return;
-			}
-			reply.rowCount = rows.length;
-			reply.columns = rows.length ? Object.keys(rows[0]) : [];
-			reply.rows = rows.slice(0, this.maxShownRows);
+			} else {
+				if (!rows.length) status = 'no_data';
+				reply.rowCount = rows.length;
+				reply.columns = rows.length ? Object.keys(rows[0]) : [];
+				reply.rows = rows.slice(0, this.maxShownRows);
 
-			await storeValue('aiBusy', 'Writing the answer…', false);
-			const out = this._parseAnswer(await this._ai(this._explainPrompt(q, sql, rows)));
-			reply.text = out.answer || 'Here are the results.';
-			reply.chart = this._checkChart(out.chart, reply.columns, reply.rows);
+				await storeValue('aiBusy', 'Writing the answer…', false);
+				const out = this._parseAnswer(await this._ai(this._explainPrompt(q, sql, rows)));
+				reply.text = out.answer || 'Here are the results.';
+				reply.chart = this._checkChart(out.chart, reply.columns, reply.rows);
+				method = out.method;
+			}
 		} catch (e) {
 			if (rows) {
 				reply.text = 'Here are the results. (The AI could not write a summary just now.)';
 			} else {
+				status = 'error';
 				reply.text = "Sorry, I couldn't answer that one.";
 				reply.error = this._friendly(e);
+				steps.push({ step: 'failed', error: this._short(e) });
 			}
 		}
+		reply.audit = this._audit({ cust, started, steps, sql: reply.sql, method, rowCount: reply.rowCount, kept: reply.rows.length, status });
 		await storeValue('aiBusy', '', false);
-		// Customer changed while answering: that chat was cleared, drop the reply.
-		if ((Number(appsmith.store.aiCustomer) || 0) !== cust) return;
-		await storeValue('aiMessages', msgs.concat([reply]), false);
+		// Customer changed while answering: that chat was cleared, so the reply is
+		// dropped from the screen, but the question is still logged.
+		const shown = (Number(appsmith.store.aiCustomer) || 0) === cust;
+		if (shown) await storeValue('aiMessages', msgs.concat([reply]), false);
+		const ref = await this._log(q, reply);
+		if (ref && shown) {
+			// The log id goes on the reply as its audit reference, if it is still
+			// the reply on screen.
+			const now = (appsmith.store.aiMessages || []).slice();
+			const m = now[msgs.length];
+			if (m && m.audit && m.audit.askedAt === reply.audit.askedAt) {
+				now[msgs.length] = Object.assign({}, m, { audit: Object.assign({}, m.audit, { ref }) });
+				await storeValue('aiMessages', now, false);
+			}
+		}
+	},
+
+	// ---- audit trail ------------------------------------------------------------
+	// Each reply keeps how it was produced, shown under the answer as "How this
+	// was calculated" and written to ubm_app.ask_ubm_question_log. The data used
+	// (tables, fields, the rules each table applies) is read from the SQL that
+	// ran, not from the AI; only method (the filters and calculation in plain
+	// words) is the AI's description of that SQL.
+	_audit(x) {
+		return {
+			askedAt: new Date(x.started).toISOString(),
+			askedBy: appsmith.user.email || '',
+			cust: x.cust,
+			ms: Date.now() - x.started,
+			status: x.status,
+			steps: x.steps,
+			sources: this._sources(x.sql),
+			method: x.method || null,
+			rowCount: x.rowCount,
+			kept: x.kept,
+			ref: ''
+		};
+	},
+
+	// The Ask UBM tables a query reads, with the fields it names in each.
+	_sources(sql) {
+		// Quoted values are left out, so a filter such as 'Retail' never reads as
+		// a table or field name.
+		const s = String(sql || '').toLowerCase().replace(/'(?:[^']|'')*'/g, "''");
+		if (!s) return [];
+		const tables = this._tables();
+		const star = /(select|,)\s*(\w+\.)?\*/.test(s);
+		const word = w => new RegExp('\\b' + w + '\\b').test(s);
+		return Object.keys(tables)
+			.filter(t => new RegExp('\\b(from|join)\\s+"?' + t + '"?(\\s|\\)|,|$)').test(s))
+			.map(t => ({
+				table: t,
+				label: tables[t].label,
+				from: tables[t].source,
+				rules: tables[t].rules,
+				fields: star ? ['all fields'] : tables[t].cols.map(c => c[0]).filter(word)
+			}));
+	},
+
+	// Writes one question to the log table. Returns its id, or '' when the log
+	// is not available (the table not set up yet, say): logging never stops an
+	// answer.
+	async _log(question, reply) {
+		const a = reply.audit || {};
+		try {
+			const res = await ai_log_add.run({ payload: this._payload({
+				cust: a.cust || 0, question, status: a.status || '', answer: reply.text || '',
+				sql: reply.sql || '', rows: Number(reply.rowCount) || 0, error: reply.error || '',
+				ms: Number(a.ms) || 0, by: a.askedBy || 'unknown',
+				audit: { steps: a.steps, sources: a.sources, method: a.method, chart: reply.chart, columns: reply.columns, kept: a.kept }
+			}) });
+			return String(((res || [])[0] || {}).id || '');
+		} catch (e) {
+			return '';
+		}
+	},
+
+	// An error's own message, short enough for the audit.
+	_short(e) {
+		return String((e && e.message) || this._msg(e)).slice(0, 300);
 	},
 
 	// One AI call, retried when the service is busy (503/529 "overloaded" or a
@@ -326,10 +425,18 @@ export default {
 	},
 
 	// The tables the AI may query. run_ai_sql builds each one, already limited
-	// to the picked customer, from UBM's reporting tables.
+	// to the picked customer, from UBM's reporting tables. label, source and
+	// rules are for the audit under each answer (what the table is built from
+	// and what it already does to the data); the AI sees about and cols.
 	_tables() {
 		return {
 			monthly_usage: {
+				label: 'Monthly usage and cost',
+				source: ['bill_management_v2.reports_customer_monthly_usage', 'bill_management_v2.locations (site details)'],
+				rules: [
+					'Usage is prorated to calendar months.',
+					'Third-party supply: a Supply Only row shows 0 usage when the same location, utility and month has a delivery bill, so usage is counted once. Its cost is always counted.'
+				],
 				about: 'Monthly usage and cost, prorated to calendar months. One row per location + account + meter + utility + month. Use it for usage, total cost, trends, per-square-foot and weather questions.',
 				cols: [
 					['month', 'date', 'first day of the calendar month'],
@@ -352,6 +459,13 @@ export default {
 				]
 			},
 			line_items: {
+				label: 'Bill line items',
+				source: ['bill_management_v2.analytics_billing_line_items'],
+				rules: [
+					'Processed bills only (bills still in the workflow are left out).',
+					"Historical (back-loaded) bills are left out: they repeat charges already on other bills.",
+					'Not every bill has its lines broken out, so totals here can be lower than total cost.'
+				],
 				about: 'Every line on every processed bill. One row per bill line. Use it for kinds of charges (supply, delivery, demand, taxes, fees, late fees, penalties), individual bills, rates and invoice dates. Dated by invoice, so its months do not match monthly_usage month by month. Not every bill has its lines broken out (older bills especially), so never use it for total cost; use it to split costs into kinds of charge (the written answer mentions that only bills with line detail are covered; do not add a note column for it).',
 				cols: [
 					['bill_id', 'integer', 'UBM bill id'],
@@ -371,6 +485,13 @@ export default {
 				]
 			},
 			late_bills: {
+				label: 'Late bills',
+				source: ['bill_management_v2.reports_new_virtual_accounts', 'latest bill per service from analytics_bills_items, bill_metas, bill_items and bill_records', 'bill_management_v2.locations (building type)'],
+				rules: [
+					'Open or Unknown services that have a billing account.',
+					'Days late = business days (Mon–Fri) since the expected bill date.',
+					"Late = the expected date has passed and the latest bill is from the last 6 months (UBM's Late Bills rule)."
+				],
 				about: "Bills still to arrive, the same data as UBM's Late Bills report. One row per open service (account + meter + utility) with its latest bill and when the next one was expected. Count DISTINCT billing_account WHERE is_late for the number of late accounts, as the report does.",
 				cols: [
 					['billing_account', 'text', 'utility billing account number'],
@@ -392,6 +513,12 @@ export default {
 				]
 			},
 			bill_errors: {
+				label: 'Bill errors',
+				source: ['bill_management_v2.bill_errors', 'bill_records', 'bill_validation_definitions (error names)', 'providers_pretty_name and customers_vendors_pretty_name (vendor names)'],
+				rules: [
+					'Errors raised in the last 24 months.',
+					'Current bills only: errors on deleted or replaced bills are left out.'
+				],
 				about: "Validation errors UBM raised on this company's current bills in the last 2 years (the Error Explorer's data; errors on deleted or replaced bills are left out). One row per error; a bill can have many. Use it for bill errors: which accounts or vendors have most, common error types, open vs resolved. An error type is code + error_name (one code can mean different checks). Count errors with COUNT(*) and affected bills with COUNT(DISTINCT bill_ref). It is large: always aggregate and filter dates with ranges on raised_at. For bill ids or locations, join error_bills ON error_bills.bill_ref = bill_errors.bill_ref.",
 				cols: [
 					['error_id', 'integer', 'error id'],
@@ -412,6 +539,11 @@ export default {
 				]
 			},
 			error_bills: {
+				label: 'Bills with errors',
+				source: ['bills in Bill errors', 'bill_metas_bill_records (UBM bill id)', 'bill_items_virtual_accounts and locations (location)'],
+				rules: [
+					"Each bill's location is the first one its lines map to, so location totals are close but not exact."
+				],
 				about: 'One row per bill that has errors in bill_errors, with its UBM bill id and location. Join to bill_errors on bill_ref; use it only when the question needs bill ids or locations. Each bill has one location (the first its lines map to), so location totals are close but not exact. To rank individual bills, group by bill_ref (always filled) and show bill_id beside it.',
 				cols: [
 					['bill_ref', 'integer', 'matches bill_errors.bill_ref'],
@@ -469,15 +601,16 @@ It failed with: ${error}
 Return a corrected query only.`;
 	},
 
-	// The summary step also picks the chart, so a chart costs no extra AI call.
-	// The chart is drawn from the database rows; the AI only names the columns.
+	// The summary step also picks the chart and describes the method for the
+	// audit, so neither costs an extra AI call. The chart is drawn from the
+	// database rows; the AI only names the columns.
 	_explainPrompt(question, sql, rows) {
 		const sample = JSON.stringify(rows.slice(0, 100));
 		const cols = rows.length ? Object.keys(rows[0]).join(', ') : '(none)';
 		return `You are a utility-billing analyst. Reply with JSON only (no markdown), in this shape:
-{"answer": "...", "chart": null}
+{"answer": "...", "chart": null, "method": {"filters": ["..."], "calculation": "..."}}
 or
-{"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}}
+{"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}, "method": {"filters": ["..."], "calculation": "..."}}
 
 answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill.
 
@@ -488,6 +621,10 @@ chart: how to plot the result, or null when a chart adds nothing (one row, a sin
 - series: when the result is long form (for example month, utility, value), the column whose values become separate bars or lines, with exactly one y column. Otherwise null.
 - title: a short chart title that describes exactly what the result holds (say "top 10" only if it has 10 rows). y_label: the unit, for example "$", "kWh" or "therms".
 - Each x value (each x and series pair when there is a series) must appear in only one row. If the result mixes groupings, for example vendor totals and account rows, use chart null.
+
+method: how the SQL below produced the result, for someone checking the numbers by hand. Describe only what the SQL does, in plain words, without SQL syntax or table names.
+- filters: every condition that limits the rows, one per item, with its exact values and dates, for example "Utility is ELECTRIC" or "Invoice date from 2025-01-01 up to, not including, 2026-01-01". Leave out the company limit (applied automatically). Use [] when there are none.
+- calculation: one or two sentences on what is added up, counted, averaged or divided, what it is grouped by, how it is sorted and how many rows are kept.
 
 Question: ${question}
 SQL that was run: ${sql}
@@ -502,10 +639,21 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 		if (start >= 0 && end > start) {
 			try {
 				const o = JSON.parse(t.slice(start, end + 1));
-				if (o && typeof o.answer === 'string') return { answer: o.answer.trim(), chart: o.chart || null };
+				if (o && typeof o.answer === 'string') return { answer: o.answer.trim(), chart: o.chart || null, method: this._checkMethod(o.method) };
 			} catch (e) { /* not JSON: use the text as it is */ }
 		}
-		return { answer: t, chart: null };
+		return { answer: t, chart: null, method: null };
+	},
+
+	// Keep the method only as short plain text: it is shown and logged as is.
+	_checkMethod(m) {
+		if (!m || typeof m !== 'object') return null;
+		const filters = (Array.isArray(m.filters) ? m.filters : [])
+			.filter(f => typeof f === 'string' && f.trim())
+			.slice(0, 15)
+			.map(f => f.trim().slice(0, 200));
+		const calculation = typeof m.calculation === 'string' ? m.calculation.trim().slice(0, 600) : '';
+		return filters.length || calculation ? { filters, calculation } : null;
 	},
 
 	// Keep the chart only if it names real columns with numbers in them.
