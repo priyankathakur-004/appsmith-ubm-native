@@ -1,0 +1,21 @@
+-- Log one Ask UBM question with its audit: how the answer was produced (the
+-- AI's queries in order, any failures, the tables and fields read, the AI's
+-- description of the filters and calculation). Never the result rows. Same
+-- doubled-quote JSON literal as the save query; the page ignores a failure
+-- here, so answers keep working before the table exists.
+INSERT INTO ubm_app.ask_ubm_question_log
+    (customer_id, question, status, answer, query_sql, row_count, error, duration_ms, audit, asked_by)
+SELECT
+    (p ->> 'cust')::int,
+    p ->> 'question',
+    p ->> 'status',
+    p ->> 'answer',
+    NULLIF(p ->> 'sql', ''),
+    (p ->> 'rows')::int,
+    NULLIF(p ->> 'error', ''),
+    (p ->> 'ms')::int,
+    CASE WHEN jsonb_typeof(p -> 'audit') = 'object' THEN p -> 'audit' END,
+    p ->> 'by'
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE COALESCE(p ->> 'question', '') <> ''
+RETURNING id::text AS id;
