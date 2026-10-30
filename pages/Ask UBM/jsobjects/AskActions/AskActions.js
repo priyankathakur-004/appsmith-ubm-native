@@ -567,7 +567,7 @@ export default {
 					'Show severity as its number (higher is more serious); never invent labels such as "critical". For "serious" or "high severity" use a severity threshold and say which.',
 					"Show a stage in plain words: INITCAP(REPLACE(stage, '_', ' ')), e.g. Data Audit 1.",
 					'An error type is code and error_name together: group by both.',
-					'Errors more than 24 months old are not in this table: say so instead of answering for them.'
+					'The table already holds only the last 24 months: add a raised_at filter only when the question names a period, never one for the 24 months themselves. Errors older than that are not in the table: say so instead of answering for them.'
 				]
 			},
 			error_bills: {

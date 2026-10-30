@@ -82,7 +82,9 @@ The Error Explorer's data:
   invent labels such as "critical".
 - Show stages in plain words: `INITCAP(REPLACE(stage, '_', ' '))`.
 - The table is large: always aggregate, and filter dates with a range on
-  `raised_at`.
+  `raised_at` when the question names a period.
+- The table already holds only the last 24 months, so "how many errors" or
+  "the most errors" needs no date filter at all.
 - To rank individual bills, group by `bill_ref` (always filled) and show
   `bill_id` beside it.
 
