@@ -77,6 +77,21 @@ placeholders), and return how many sites were left out in a separate column.
 
 **Trends**: group by `month`, order by `month`.
 
+**Degree days**: one value per location and month, then averaged across
+sites:
+
+```sql
+SELECT month, ROUND(AVG(site_cdd)) AS avg_cdd, ROUND(AVG(site_hdd)) AS avg_hdd
+FROM (
+    SELECT location_id, month, MAX(cdd) AS site_cdd, MAX(hdd) AS site_hdd
+    FROM monthly_usage
+    WHERE month >= '2025-01-01' AND month < '2026-01-01'
+    GROUP BY location_id, month
+) AS site
+GROUP BY month
+ORDER BY month
+```
+
 ## Examples
 
 Total cost by month for 2025:
@@ -139,15 +154,16 @@ LIMIT 20
   needed, the table already counts it once.
 - Adding up `cdd` or `hdd` across meters or accounts of one site: each row
   carries the site's degree days for the month, so a sum counts them once per
-  meter.
+  meter. Take `MAX` per location and month.
 - Comparing months here with invoice months in `line_items`: these are
   calendar months after proration, those are invoice dates.
 
-## To confirm
+## Decisions
 
-- Which utilities, if any, should be left out of "total cost" (for example
-  sewer or waste, if they appear)?
-- Should "usage" questions about electricity also report demand (kW)? Demand
-  is only in `line_items`.
-- Degree days: are `cdd` and `hdd` the same for every meter of a site? The
-  pitfall above assumes so.
+- Total cost includes every utility on the bills (electric, gas, water,
+  sewer, waste and any other) unless the question names utilities.
+- Electricity usage is energy (kWh). Demand (kW) is given only when the
+  question asks for demand, kW or peak, and comes from `line_items`.
+- Degree days describe a site and month: take one value per location and
+  month (`MAX`), and average those across sites. Never add them up across
+  meters or accounts.

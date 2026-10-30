@@ -47,8 +47,8 @@ One line printed on one processed bill.
 
 | They say | Use |
 |---|---|
-| late fee, late payment charge | `charge_code = 'LATEFEE'`. A negative amount is a refunded late fee |
-| penalty | `charge_code = 'OTH_PENALTY'` |
+| late fee, late payment charge | `charge_code = 'LATEFEE'` only. A negative amount is a refunded late fee |
+| penalty | `charge_code = 'OTH_PENALTY'`, only when penalties are asked about |
 | supply, delivery, distribution, taxes, fees | `category`, using the company's own category names |
 | demand, kW, peak | lines with `UPPER(unit) = 'KW'` (see Patterns) |
 | a specific bill | `bill_id`, or `account` + `invoice_date` |
@@ -114,10 +114,10 @@ LIMIT 100
 - Large customers have many lines: always filter `invoice_date` with a range
   and aggregate.
 
-## To confirm
+## Decisions
 
-- The full list of `charge_code` values, and which ones mean "supply",
-  "delivery", "taxes" and "fees". Today the AI relies on `category` for these.
-- Is every Usage Information line with unit `KW` a demand reading, or do some
-  carry other readings in kW?
-- Should "late fees" also include penalties (`OTH_PENALTY`)?
+- Supply, delivery, taxes and fees are the bill's own categories
+  (`category`), not charge codes.
+- Usage Information lines in `KW` are demand readings.
+- Late fees are `LATEFEE` only, with refunds netted off. Penalties
+  (`OTH_PENALTY`) are reported separately, only when asked about.

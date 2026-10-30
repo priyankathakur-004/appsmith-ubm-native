@@ -13,19 +13,18 @@ answers.
 | [late-bills.md](late-bills.md) | Bills expected but not yet received | `late_bills` |
 | [bill-errors.md](bill-errors.md) | Validation errors UBM raised on bills | `bill_errors`, `error_bills` |
 
-## How the notes will be used
+## How the notes are used
 
-Today the AI gets a short description of each table (the `about` and `cols`
-in `AskActions._tables`). The plan is to replace that with these notes:
+The page cannot read files from this folder while it runs, so the rules in
+these notes are copied into the page, `AskActions` in Ask UBM:
 
-1. For each question, pick the topic or topics it is about.
-2. Give the AI `general.md` plus only those topic notes, so prompts stay small.
-3. Show the rules that were applied in the answer's "How this was calculated"
-   panel.
+- each table's `about`, `cols` and `notes` in `_tables` (the topic notes'
+  fields, phrase mappings, patterns and decisions);
+- the rules list in `_sqlPrompt` (`general.md`).
 
-The page cannot read files from this folder while it runs, so the text will
-be copied into the page (or a table in UBM_Appsmith_DB) when it is wired in.
-These files stay the source: change them here first.
+These files stay the source: change a note here first, then copy the change
+into the page. The SQL examples are for people checking answers; they are not
+sent to the AI.
 
 ## Writing a note
 
@@ -35,5 +34,6 @@ These files stay the source: change them here first.
   SELECT) on the Ask UBM tables, with no comments and no semicolon. They are
   written against the Ask UBM tables, which are already limited to one
   customer, so they never filter by customer.
-- Anything not yet confirmed with the client is listed under **To confirm**,
-  not stated as a rule.
+- Where UBM gave no official rule, the note states the rule we chose under
+  **Decisions**. These have been shared with the client, who can ask for any
+  of them to change.

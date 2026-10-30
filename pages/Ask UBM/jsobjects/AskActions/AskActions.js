@@ -429,7 +429,9 @@ export default {
 	// The tables the AI may query. run_ai_sql builds each one, already limited
 	// to the picked customer, from UBM's reporting tables. label, source and
 	// rules are for the audit under each answer (what the table is built from
-	// and what it already does to the data); the AI sees about and cols.
+	// and what it already does to the data); the AI sees about, cols and notes.
+	// notes are the business rules from the topic notes in ask-ubm-reference/
+	// (change them there first).
 	_tables() {
 		return {
 			monthly_usage: {
@@ -458,6 +460,14 @@ export default {
 					['cost', 'numeric', 'total charges in US dollars'],
 					['cdd', 'numeric', 'cooling degree days for the month'],
 					['hdd', 'numeric', 'heating degree days for the month']
+				],
+				notes: [
+					'Usage means SUM(consumption) grouped by utility and consumption_unit; cost, spend or "how much we paid" means SUM(cost).',
+					'A rate ($ per kWh, per therm, all-in rate) is a ratio of totals, ROUND(SUM(cost) / NULLIF(SUM(consumption), 0), 4) per utility and unit, never an average of row rates.',
+					'Total cost includes every utility on the bills (electric, gas, water, sewer, waste and any other); leave none out unless the question names utilities.',
+					'Electricity usage is energy (kWh). Demand (kW) is not in this table: give it only when the question asks for demand, kW or peak, from line_items.',
+					'Degree days (cdd, hdd) describe a site and month, and every meter row repeats them: take one value per location and month (MAX), never a SUM across meters or accounts; across several sites, average those site values.',
+					'"Electricity" or "power" is UPPER(utility) = \'ELECTRIC\'; "gas" is UPPER(utility) = \'NATURALGAS\'. Site, building, facility, store or property means location; utility company, provider or supplier means vendor; delivery vs supply means bill_type.'
 				]
 			},
 			line_items: {
@@ -484,6 +494,12 @@ export default {
 					['quantity', 'numeric', 'billed quantity, in unit (may be empty)'],
 					['unit', 'text', 'unit of quantity, e.g. KWH, KW, THERM'],
 					['charge', 'numeric', 'amount in US dollars']
+				],
+				notes: [
+					"Supply, delivery, distribution, taxes, fees and other kinds of charge are the bill's own categories: group or filter by category, matched case-insensitively against the company's categories listed below, not by charge_code.",
+					"Usage Information lines are readings, not charges (charge 0): leave them out of dollar totals. Those with UPPER(unit) = 'KW' are demand readings; peak demand is MAX(quantity) of them per account or location and month. Demand charges are dollar lines in a demand category.",
+					"Late fees are charge_code = 'LATEFEE' only, refunds (negative charges) netted off. Penalties (charge_code = 'OTH_PENALTY') are separate: include them only when the question asks about penalties.",
+					'Never add quantities across different units (kWh and kW are different things).'
 				]
 			},
 			late_bills: {
@@ -512,6 +528,13 @@ export default {
 					['expected_bill_date', 'date', 'when the next bill was expected'],
 					['days_late', 'integer', 'business days since the expected date; 0 or less when not yet due'],
 					['is_late', 'boolean', "late by UBM's rule: expected date reached and latest bill within the last 6 months"]
+				],
+				notes: [
+					"Late, overdue or missing bills means WHERE is_late. Services with status Open and Unknown both count, as in UBM's Late Bills report.",
+					'An account with several meters has several rows: the number of late accounts is COUNT(DISTINCT billing_account), not a row count.',
+					'days_late is business days once overdue, not calendar days.',
+					"A service with no bill for more than 6 months has stopped billing and is not late. For \"stopped billing\" questions use last_bill_date < CURRENT_DATE - INTERVAL '6 months'.",
+					'Due soon or expected next week: a range on expected_bill_date with NOT is_late.'
 				]
 			},
 			bill_errors: {
@@ -538,6 +561,13 @@ export default {
 					['utility', 'text', 'utility type in capitals (may be empty)'],
 					['meter', 'text', 'meter serial (may be empty)'],
 					['message', 'text', 'the error message, with specifics such as amounts or day counts']
+				],
+				notes: [
+					"\"How many errors\" counts open and resolved errors together, and also returns how many are open (COUNT(*) FILTER (WHERE LOWER(status) = 'open')) in its own column. Open, unresolved or outstanding means status open; fixed, cleared or resolved means status resolved.",
+					'Show severity as its number (higher is more serious); never invent labels such as "critical". For "serious" or "high severity" use a severity threshold and say which.',
+					"Show a stage in plain words: INITCAP(REPLACE(stage, '_', ' ')), e.g. Data Audit 1.",
+					'An error type is code and error_name together: group by both.',
+					'Errors more than 24 months old are not in this table: say so instead of answering for them.'
 				]
 			},
 			error_bills: {
@@ -562,7 +592,8 @@ export default {
 		const tables = this._tables();
 		const described = Object.keys(tables).map(name =>
 			`${name}: ${tables[name].about}\n` +
-			tables[name].cols.map(c => `- ${c[0]} (${c[1]})${c[2] ? ': ' + c[2] : ''}`).join('\n')
+			tables[name].cols.map(c => `- ${c[0]} (${c[1]})${c[2] ? ': ' + c[2] : ''}`).join('\n') +
+			((tables[name].notes || []).length ? `\nRules for ${name}:\n` + tables[name].notes.map(n => '* ' + n).join('\n') : '')
 		).join('\n\n');
 		const earlier = (history || []).length
 			? `Earlier questions in this chat (the new question may follow on from them):\n${history.map(h => '- ' + h).join('\n')}\n\n`
@@ -574,7 +605,7 @@ There are exactly ${Object.keys(tables).length} tables, each already limited to 
 ${described}
 
 What this company's data holds: months ${f.first_month || '?'} to ${f.last_month || '?'}, ${f.locations || '?'} locations, utilities (with units): ${f.utility_units || 'unknown'}. Charge categories on its bills: ${f.charge_categories || 'unknown'}.
-Today is ${new Date().toISOString().slice(0, 10)}. "This year" and "last year" mean calendar years.
+Today is ${new Date().toISOString().slice(0, 10)}. "This year" and "last year" mean calendar years. "Last 12 months" means the 12 full months before the current month, leaving out the current, part-billed month. A fiscal year is taken as the calendar year unless the question says which month it starts.
 The user is this company: "my", "our", "we" and "us" in the question mean this company's data.
 
 Rules:
@@ -585,7 +616,8 @@ Rules:
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
 - Filter dates with ranges, e.g. invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01', never EXTRACT or a cast on the column inside WHERE; it keeps the query fast on large customers.
-- Round dollars to 2 decimals and consumption to whole numbers.
+- Round dollars to 2 decimals and consumption to whole numbers. Divide with NULLIF(..., 0) so an empty total gives an empty value, not an error.
+- Each row of the result is one kind of thing: never mix, for example, vendor totals and account rows in one result.
 - Name every output column in readable snake_case.
 - Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
 - If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
@@ -614,7 +646,7 @@ Return a corrected query only.`;
 or
 {"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}, "method": {"filters": ["..."], "calculation": "..."}}
 
-answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill.
+answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill. If the question asks about a fiscal year without saying which month it starts, say the figures use calendar years.
 
 chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
 - Use only these result columns: ${cols}

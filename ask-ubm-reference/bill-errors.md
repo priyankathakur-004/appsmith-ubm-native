@@ -67,7 +67,7 @@ The Error Explorer's data:
 | They say | Use |
 |---|---|
 | errors, exceptions, issues, validation problems | `bill_errors` |
-| how many errors | `COUNT(*)` |
+| how many errors | `COUNT(*)`, open and resolved together, plus the open count |
 | how many bills have errors, affected bills | `COUNT(DISTINCT bill_ref)` |
 | kind of error, error type, check | `code` and `error_name` together: one code can mean different checks |
 | open, unresolved, outstanding | `status = 'open'` |
@@ -80,6 +80,7 @@ The Error Explorer's data:
 - An error type is `code` + `error_name`: group by both.
 - Severity values seen are 10, 20, 30, 40, 60 and 80. Show the number; do not
   invent labels such as "critical".
+- Show stages in plain words: `INITCAP(REPLACE(stage, '_', ' '))`.
 - The table is large: always aggregate, and filter dates with a range on
   `raised_at`.
 - To rank individual bills, group by `bill_ref` (always filled) and show
@@ -132,10 +133,11 @@ LIMIT 10
   and nothing else.
 - Questions about errors more than 24 months old: they are not in this table.
 
-## To confirm
+## Decisions
 
-- Official names for the severity levels (10–80), if UBM has any.
-- Plain names for the processing stages (`integrity_check`,
-  `data_verification_1`, `data_audit_1` and so on).
-- Should resolved errors be left out by default when someone asks "how many
-  errors"?
+- Severity is shown as its number (higher is more serious). There are no
+  named levels.
+- Stages are shown in plain words by turning the code into a title:
+  `INITCAP(REPLACE(stage, '_', ' '))`, so `data_audit_1` reads Data Audit 1.
+- "How many errors" counts open and resolved errors together, and always
+  shows how many of them are still open.
