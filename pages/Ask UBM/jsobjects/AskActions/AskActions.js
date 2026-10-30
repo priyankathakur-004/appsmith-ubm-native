@@ -355,7 +355,9 @@ export default {
 		const s = String(sql || '').toLowerCase().replace(/'(?:[^']|'')*'/g, "''");
 		if (!s) return [];
 		const tables = this._tables();
-		const star = /(select|,)\s*(\w+\.)?\*/.test(s);
+		// "All fields" only when * reads the table itself: a * over the query's own
+		// WITH steps (SELECT * FROM acct) says nothing about the table's fields.
+		const star = t => new RegExp('select\\s+(distinct\\s+)?\\*\\s+from\\s+"?' + t + '"?(\\s|\\)|,|$)').test(s);
 		const word = w => new RegExp('\\b' + w + '\\b').test(s);
 		return Object.keys(tables)
 			.filter(t => new RegExp('\\b(from|join)\\s+"?' + t + '"?(\\s|\\)|,|$)').test(s))
@@ -364,7 +366,7 @@ export default {
 				label: tables[t].label,
 				from: tables[t].source,
 				rules: tables[t].rules,
-				fields: star ? ['all fields'] : tables[t].cols.map(c => c[0]).filter(word)
+				fields: star(t) ? ['all fields'] : tables[t].cols.map(c => c[0]).filter(word)
 			}));
 	},
 
