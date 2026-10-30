@@ -24,7 +24,7 @@ every bill has its lines broken out.
 ## Dates
 
 - "This year" and "last year" are calendar years. "Last 12 months" means the
-  12 full months before the current month.
+  12 full months before the current month (see Decisions).
 - Filter dates with ranges, for example `month >= '2025-01-01' AND month <
   '2026-01-01'`. Never put `EXTRACT`, `date_trunc` or a cast on the column in
   `WHERE`: it stops the database using its indexes and large customers time
@@ -60,9 +60,15 @@ every bill has its lines broken out.
 - If the tables cannot answer the question, return exactly
   `SELECT 'not available in this data' AS answer`.
 
-## To confirm
+## Decisions
 
-- "Last 12 months": the 12 full months before the current month (used above),
-  or including the current, part-billed month?
-- Fiscal years: does any customer report on a year that does not start in
-  January?
+These are UBM's working rules where nothing official was given. They have
+been shared with the client; change them here if the client disagrees.
+
+- "Last 12 months" is the 12 full months before the current month. The
+  current month is left out because its bills are still arriving.
+- A fiscal year is the calendar year unless the question says which month it
+  starts in, and the answer says calendar years were used.
+- When the period asked about runs past the months the company's data covers
+  (for example the last 12 months when bills stop in February), the answer
+  says which months the figures actually cover.

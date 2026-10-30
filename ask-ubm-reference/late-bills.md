@@ -101,7 +101,9 @@ LIMIT 100
 - Treating every service with an old last bill as late: without a bill in the
   last 6 months it is not counted as late.
 
-## To confirm
+## Decisions
 
-- Should services with status `Unknown` be shown, or only `Open`?
-- Is 6 months the right cut-off for "stopped billing" for every customer?
+- Services with status `Open` and `Unknown` are both included, as in UBM's
+  Late Bills report.
+- A service with no bill for more than 6 months has stopped billing and is
+  not counted as late, for every customer.
