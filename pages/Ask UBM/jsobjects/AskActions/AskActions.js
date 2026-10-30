@@ -641,12 +641,18 @@ Return a corrected query only.`;
 	_explainPrompt(question, sql, rows) {
 		const sample = JSON.stringify(rows.slice(0, 100));
 		const cols = rows.length ? Object.keys(rows[0]).join(', ') : '(none)';
+		// A period that runs past the company's data (the last 12 months when
+		// bills stop in February, say) must not read as a full period.
+		const f = appsmith.store.aiFacts || {};
+		const coverage = f.first_month && f.last_month
+			? `This company's monthly usage and cost data covers ${f.first_month} to ${f.last_month}. If the SQL reads monthly_usage and the period asked about starts before or ends after those months, say which months the figures actually cover (for example "your data runs to ${f.last_month}, so this covers ...") instead of naming the whole period as if it were complete.`
+			: '';
 		return `You are a utility-billing analyst. Reply with JSON only (no markdown), in this shape:
 {"answer": "...", "chart": null, "method": {"filters": ["..."], "calculation": "..."}}
 or
 {"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}, "method": {"filters": ["..."], "calculation": "..."}}
 
-answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill. If the question asks about a fiscal year without saying which month it starts, say the figures use calendar years.
+answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill. If the question asks about a fiscal year without saying which month it starts, say the figures use calendar years. ${coverage}
 
 chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
 - Use only these result columns: ${cols}

@@ -69,3 +69,6 @@ been shared with the client; change them here if the client disagrees.
   current month is left out because its bills are still arriving.
 - A fiscal year is the calendar year unless the question says which month it
   starts in, and the answer says calendar years were used.
+- When the period asked about runs past the months the company's data covers
+  (for example the last 12 months when bills stop in February), the answer
+  says which months the figures actually cover.
