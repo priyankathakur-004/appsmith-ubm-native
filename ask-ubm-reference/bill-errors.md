@@ -80,7 +80,7 @@ The Error Explorer's data:
 - An error type is `code` + `error_name`: group by both.
 - Severity values seen are 10, 20, 30, 40, 60 and 80. Show the number; do not
   invent labels such as "critical".
-- Show stages in plain words: `INITCAP(REPLACE(stage, '_', ' '))`.
+- Show stages in plain words: `COALESCE(INITCAP(REPLACE(stage, '_', ' ')), 'Not recorded')`.
 - The table is large: always aggregate, and filter dates with a range on
   `raised_at` when the question names a period.
 - The table already holds only the last 24 months, so "how many errors" or

@@ -72,10 +72,17 @@ split between March and April.
 `ROUND(SUM(cost) / NULLIF(SUM(consumption), 0), 4)`, grouped by utility and
 unit.
 
+**Rates by vendor** are all-in only for Full Service bills. With third-party
+supply, the supplier's Supply Only bills carry the supply cost but no usage
+(the usage is counted on the delivery bill), and the delivery company's
+Distribution Only bills carry only the delivery cost. Group by `bill_type` as
+well and show cost and usage beside the rate. An all-in rate that includes
+third-party supply is by location, utility or overall.
+
 **Per square foot**: only sites with `square_feet >= 500` (smaller values are
 placeholders), and return how many sites were left out in a separate column.
 
-**Trends**: group by `month`, order by `month`.
+**Trends**: group by `month`, order by `month` (oldest first).
 
 **Degree days**: one value per location and month, then averaged across
 sites:
@@ -116,16 +123,16 @@ ORDER BY total_usage DESC NULLS LAST
 LIMIT 5
 ```
 
-All-in electric rate by vendor in 2025:
+Electric rate by vendor and bill type in 2025:
 
 ```sql
-SELECT vendor, consumption_unit,
+SELECT vendor, bill_type, consumption_unit,
        ROUND(SUM(cost), 2) AS total_cost,
        ROUND(SUM(consumption)) AS total_usage,
        ROUND(SUM(cost) / NULLIF(SUM(consumption), 0), 4) AS cost_per_unit
 FROM monthly_usage
 WHERE UPPER(utility) = 'ELECTRIC' AND month >= '2025-01-01' AND month < '2026-01-01'
-GROUP BY vendor, consumption_unit
+GROUP BY vendor, bill_type, consumption_unit
 ORDER BY cost_per_unit DESC NULLS LAST
 ```
 
