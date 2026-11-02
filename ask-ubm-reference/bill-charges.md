@@ -61,11 +61,15 @@ One line printed on one processed bill.
 - **Usage Information lines are readings, not charges.** They carry a
   quantity (for example demand in kW) and a charge of 0. Leave them out of
   dollar totals, and use them for readings.
-- **Peak demand**: `MAX(quantity)` of lines with `UPPER(unit) = 'KW'`, per
-  account or location (and month if asked), whatever their category. kW
-  appears on Usage Information readings and on demand charge lines; filtering
-  on Usage Information found nothing for UBM Demo. Demand *charges* are lines
-  in a demand category with a dollar `charge`.
+- **Peak demand**: the highest `quantity` of lines with `UPPER(unit) = 'KW'`,
+  per account or location (and month if asked), taking meter readings
+  (Usage Information) first:
+  `COALESCE(MAX(quantity) FILTER (WHERE UPPER(category) = 'USAGE INFORMATION'), MAX(quantity))`.
+  Charge lines also carry kW, but some hold mis-keyed values (Simon has a
+  "Gen Demand - INFO" charge line of 1,323,628,561 kW, where readings top out
+  around 12,000 kW), so they are used only for a location with no readings.
+  UBM Demo has no readings at all, so its peak demand comes from charge lines.
+  Demand *charges* are lines in a demand category with a dollar `charge`.
 - Every answer from this table should say the figures cover bills with line
   detail, which may not include every bill.
 
@@ -95,7 +99,9 @@ ORDER BY total_charges DESC NULLS LAST
 Peak demand by location and invoice month in 2025:
 
 ```sql
-SELECT location_name, invoice_month, MAX(quantity) AS peak_kw
+SELECT location_name, invoice_month,
+       COALESCE(MAX(quantity) FILTER (WHERE UPPER(category) = 'USAGE INFORMATION'),
+                MAX(quantity)) AS peak_kw
 FROM line_items
 WHERE UPPER(unit) = 'KW'
   AND invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01'
@@ -120,7 +126,7 @@ LIMIT 100
 
 - Supply, delivery, taxes and fees are the bill's own categories
   (`category`), not charge codes.
-- Peak demand is the highest kW on any line, whether a Usage Information
-  reading or a demand charge line's billed kW.
+- Peak demand is the highest kW meter reading (Usage Information); a
+  location with no readings falls back to its demand charge lines' kW.
 - Late fees are `LATEFEE` only, with refunds netted off. Penalties
   (`OTH_PENALTY`) are reported separately, only when asked about.

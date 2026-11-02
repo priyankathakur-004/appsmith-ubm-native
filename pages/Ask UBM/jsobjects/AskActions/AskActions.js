@@ -498,7 +498,7 @@ export default {
 				],
 				notes: [
 					"Supply, delivery, distribution, taxes, fees and other kinds of charge are the bill's own categories: group or filter by category, matched case-insensitively against the company's categories listed below, not by charge_code.",
-					"Usage Information lines are readings, not charges (charge 0): leave them out of dollar totals. Peak demand is MAX(quantity) of lines with UPPER(unit) = 'KW' per account or location (and month if asked), whatever their category: kW appears on Usage Information readings and on demand charge lines, so never filter the category for it. Demand charges are dollar lines in a demand category.",
+					"Usage Information lines are readings, not charges (charge 0): leave them out of dollar totals. Peak demand reads lines with UPPER(unit) = 'KW', meter readings first: COALESCE(MAX(quantity) FILTER (WHERE UPPER(category) = 'USAGE INFORMATION'), MAX(quantity)) per account or location (and month if asked). Charge lines' kW can be mis-keyed (millions of kW), so they count only where a location has no readings; never filter the category in WHERE. Demand charges are dollar lines in a demand category.",
 					"Late fees are charge_code = 'LATEFEE' only, refunds (negative charges) netted off. Penalties (charge_code = 'OTH_PENALTY') are separate: include them only when the question asks about penalties.",
 					'Never add quantities across different units (kWh and kW are different things).'
 				]
