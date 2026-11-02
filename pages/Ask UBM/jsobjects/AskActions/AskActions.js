@@ -621,8 +621,8 @@ Rules:
 - Round dollars to 2 decimals and consumption to whole numbers. Divide with NULLIF(..., 0) so an empty total gives an empty value, not an error.
 - Each row of the result is one kind of thing: never mix, for example, vendor totals and account rows in one result.
 - Name every output column in readable snake_case.
-- Sort the result sensibly and return at most 100 rows, except one row per month (a monthly trend), which returns every month, up to 200. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
-- Results by month or year are sorted oldest first.
+- Sort the result sensibly and return at most 100 rows (LIMIT 100), except a result with one row per month (a monthly trend): it ends with LIMIT 200, never LIMIT 100, so no month is cut off. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
+- Results by month or year are sorted oldest first (ORDER BY month).
 - A list that is not a top N and could run past 100 rows also returns COUNT(*) OVER () AS total_count, so the answer can say how many there are in all.
 - Give a grouping value that can be empty a label: COALESCE(vendor, 'Not recorded').
 - If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
