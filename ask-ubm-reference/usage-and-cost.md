@@ -76,7 +76,9 @@ unit.
 supply, the supplier's Supply Only bills carry the supply cost but no usage
 (the usage is counted on the delivery bill), and the delivery company's
 Distribution Only bills carry only the delivery cost. Group by `bill_type` as
-well and show cost and usage beside the rate. An all-in rate that includes
+well and show cost and usage beside the rate. Leave the rate empty for Supply
+Only: the little usage left on those rows gives meaningless figures such as
+$4.49 per kWh. An all-in rate that includes
 third-party supply is by location, utility or overall.
 
 **Per square foot**: only sites with `square_feet >= 500` (smaller values are
