@@ -55,7 +55,8 @@ every bill has its lines broken out.
 
 - One statement: `SELECT`, or `WITH … SELECT`. No semicolon, no comments.
 - Name every output column in readable snake_case (`total_cost`, not `sum`).
-- Sort sensibly and return at most 100 rows. For a top or bottom N, return
+- Sort sensibly and return at most 100 rows; a result with one row per month
+  returns every month, up to 200. For a top or bottom N, return
   exactly N rows, add `NULLS LAST`, and leave out rows where the ranked number
   is empty.
 - Results by month or year are sorted oldest first, so a trend reads left to

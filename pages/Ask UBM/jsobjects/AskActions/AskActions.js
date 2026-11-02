@@ -621,7 +621,7 @@ Rules:
 - Round dollars to 2 decimals and consumption to whole numbers. Divide with NULLIF(..., 0) so an empty total gives an empty value, not an error.
 - Each row of the result is one kind of thing: never mix, for example, vendor totals and account rows in one result.
 - Name every output column in readable snake_case.
-- Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
+- Sort the result sensibly and return at most 100 rows, except one row per month (a monthly trend), which returns every month, up to 200. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
 - Results by month or year are sorted oldest first.
 - A list that is not a top N and could run past 100 rows also returns COUNT(*) OVER () AS total_count, so the answer can say how many there are in all.
 - Give a grouping value that can be empty a label: COALESCE(vendor, 'Not recorded').
@@ -644,7 +644,7 @@ Return a corrected query only.`;
 	// audit, so neither costs an extra AI call. The chart is drawn from the
 	// database rows; the AI only names the columns.
 	_explainPrompt(question, sql, rows) {
-		const sample = JSON.stringify(rows.slice(0, 100));
+		const sample = JSON.stringify(rows.slice(0, 200));
 		const cols = rows.length ? Object.keys(rows[0]).join(', ') : '(none)';
 		// A period that runs past the company's data (the last 12 months when
 		// bills stop in February, say) must not read as a full period.
