@@ -368,23 +368,64 @@ export default {
 	_checkAskSql(sql) {
 		const s = String(sql || '').toLowerCase();
 		if (!/^[(\s]*(select|with)\b/.test(s)) throw new Error('not a SELECT query.');
+		// Text that could hide part of the query from the checks below:
+		// backslashes, E'' and U&'' strings, and dollar quoting.
+		if (s.includes('\\')) throw new Error('dollar quoting, E\'\' strings and backslashes are not allowed.');
+		let inQuote = false;
+		for (let i = 0; i < s.length; i++) {
+			if (s[i] !== "'") continue;
+			if (inQuote && s[i + 1] === "'") { i++; continue; }
+			if (!inQuote && /(^|[^\w])(e|u&)$/.test(s.slice(0, i))) throw new Error('dollar quoting, E\'\' strings and backslashes are not allowed.');
+			inQuote = !inQuote;
+		}
+		// The rest is checked with quoted values blanked, so a filter such as
+		// ILIKE '%set up%' is not read as SQL.
+		const bare = s.replace(/'(?:[^']|'')*'/g, "''");
+		if (bare.includes('$')) throw new Error('dollar quoting, E\'\' strings and backslashes are not allowed.');
+		// Brackets must balance: the query is wrapped in a subquery, and a stray
+		// ")" ends that early.
 		let depth = 0;
-		for (const ch of s.replace(/'[^']*'/g, '')) {
+		for (const ch of bare) {
 			if (ch === '(') depth++;
 			else if (ch === ')' && --depth < 0) break;
 		}
 		if (depth !== 0) throw new Error('unbalanced brackets.');
-		if (s.includes(';')) throw new Error('only one statement is allowed.');
+		if (bare.includes(';')) throw new Error('only one statement is allowed.');
 		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('comments are not allowed.');
-		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
+		// Writes, settings, and functions that read other tables or run SQL given
+		// as text.
+		const banned = bare.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset|table|only)\b|pg_|dblink|lo_\w+|current_setting|set_config|_to_xml|xmlschema|regclass|regproc|regnamespace|regtype/);
 		if (banned) throw new Error('"' + banned[0] + '" is not allowed.');
 		const tables = this._askTables();
-		const allowed = new Set(Object.keys(tables).concat(['lateral', 'unnest', 'generate_series']));
+		const allowed = new Set(Object.keys(tables).concat(['lateral']));
+		// Column names too: EXTRACT(YEAR FROM month) and the like read as FROM.
 		Object.keys(tables).forEach(t => tables[t].forEach(c => allowed.add(c)));
-		for (const m of s.matchAll(/(\w+)\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
-		for (const m of s.matchAll(/\b(?:from|join)\s+("?[\w.]+"?)/g)) {
-			const t = m[1].replace(/"/g, '');
-			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error('it reads "' + t + '", which is not an Ask UBM table.');
+		// The query's own WITH steps, with or without a column list.
+		for (const m of bare.matchAll(/(\w+)\s*(?:\([\w\s,]*\))?\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
+		const functions = new Set(['unnest', 'generate_series']);
+		const check = (name, call) => {
+			const t = name.replace(/"/g, '');
+			if (t === 'lateral' || /^\d+$/.test(t)) return;
+			if (call ? !functions.has(t) : !allowed.has(t)) throw new Error('it reads "' + t + '", which is not an Ask UBM table.');
+		};
+		for (const m of bare.matchAll(/\bjoin\s+(?:lateral\s+)?("?[\w.]+"?)\s*(\()?/g)) check(m[1], m[2]);
+		// Every item of every FROM list, so a comma join (FROM a, b) is checked
+		// like a JOIN. Nested brackets are skipped here: their own FROMs are
+		// found by this same loop.
+		for (const m of bare.matchAll(/\bfrom\b/g)) {
+			if (/\bdistinct\s+$/.test(bare.slice(0, m.index))) continue;
+			let list = '';
+			let level = 0;
+			for (const ch of bare.slice(m.index + 4)) {
+				if (ch === '(') { if (level++ === 0) list += '('; }
+				else if (ch === ')') { if (--level < 0) break; if (level === 0) list += ')'; }
+				else if (level === 0) list += ch;
+			}
+			list = list.split(/\b(?:where|group|order|limit|offset|having|union|intersect|except|window|fetch|for|on|using|join|inner|left|right|full|cross|natural)\b/)[0];
+			for (const item of list.split(',')) {
+				const t = item.trim().match(/^(?:lateral\s+)?("?[\w.]+"?)\s*(\()?/);
+				if (t) check(t[1], t[2]);
+			}
 		}
 	},
 

@@ -464,6 +464,7 @@ export default {
 				notes: [
 					'Usage means SUM(consumption) grouped by utility and consumption_unit; cost, spend or "how much we paid" means SUM(cost).',
 					'A rate ($ per kWh, per therm, all-in rate) is a ratio of totals, ROUND(SUM(cost) / NULLIF(SUM(consumption), 0), 4) per utility and unit, never an average of row rates.',
+					'A rate by vendor is all-in only for Full Service bills: with third-party supply the supplier (Supply Only) has the cost but no usage and the delivery company (Distribution Only) only the delivery cost. For rates by vendor, group by vendor and bill_type too and return the cost and usage beside the rate, leaving the rate empty for Supply Only (CASE WHEN bill_type = \'Supply Only\' THEN NULL ...): their usage is counted on the delivery bill, so any rate there is meaningless; an all-in rate across suppliers is by location, utility or overall.',
 					'Total cost includes every utility on the bills (electric, gas, water, sewer, waste and any other); leave none out unless the question names utilities.',
 					'Electricity usage is energy (kWh). Demand (kW) is not in this table: give it only when the question asks for demand, kW or peak, from line_items.',
 					'Degree days (cdd, hdd) describe a site and month, and every meter row repeats them: take one value per location and month (MAX), never a SUM across meters or accounts; across several sites, average those site values.',
@@ -533,7 +534,7 @@ export default {
 					"Late, overdue or missing bills means WHERE is_late. Services with status Open and Unknown both count, as in UBM's Late Bills report.",
 					'An account with several meters has several rows: the number of late accounts is COUNT(DISTINCT billing_account), not a row count.',
 					'days_late is business days once overdue, not calendar days.',
-					"A service with no bill for more than 6 months has stopped billing and is not late. For \"stopped billing\" questions use last_bill_date < CURRENT_DATE - INTERVAL '6 months'.",
+					"A service with no bill for more than 6 months has stopped billing and is not late. For \"stopped billing\" questions use last_bill_date < CURRENT_DATE - INTERVAL '6 months', one row per billing_account, and sort the longest-stopped first.",
 					'Due soon or expected next week: a range on expected_bill_date with NOT is_late.'
 				]
 			},
@@ -565,7 +566,7 @@ export default {
 				notes: [
 					"\"How many errors\" counts open and resolved errors together, and also returns how many are open (COUNT(*) FILTER (WHERE LOWER(status) = 'open')) in its own column. Open, unresolved or outstanding means status open; fixed, cleared or resolved means status resolved.",
 					'Show severity as its number (higher is more serious); never invent labels such as "critical". For "serious" or "high severity" use a severity threshold and say which.',
-					"Show a stage in plain words: INITCAP(REPLACE(stage, '_', ' ')), e.g. Data Audit 1.",
+					"Show a stage in plain words: COALESCE(INITCAP(REPLACE(stage, '_', ' ')), 'Not recorded'), e.g. Data Audit 1.",
 					'An error type is code and error_name together: group by both.',
 					'The table already holds only the last 24 months: add a raised_at filter only when the question names a period, never one for the 24 months themselves. Errors older than that are not in the table: say so instead of answering for them.'
 				]
@@ -612,14 +613,18 @@ Rules:
 - Return only the SQL, with no explanation and no markdown.
 - One statement: SELECT, or WITH ... SELECT. Read only the tables above; they can be joined on location_id (and bill_errors to error_bills on bill_ref). No semicolon, no comments.
 - Pick the table that fits the question. Total cost and usage come from monthly_usage; breakdowns of a bill's charges come from line_items; late or missing bills come from late_bills; bill errors and validation problems come from bill_errors.
-- Compare text values case-insensitively (UPPER(col) = 'KWH', ILIKE '%cherry creek%'): units, utilities, names and categories vary in case and spelling.
+- Compare text values case-insensitively (UPPER(col) = 'KWH'): units, utilities, names and categories vary in case and spelling.
+- A full name of a site, vendor or account in the question (Site 95, account A410603u731) is matched whole: UPPER(location_name) = UPPER('Site 95'), never ILIKE '%site 95%', which also finds Site 950. Use ILIKE '%...%' only for part of a name (ILIKE '%cherry creek%').
 - Never add consumption or quantities across different utilities or units: group by the utility and unit whenever you sum them. Dollars can be added across utilities.
 - For anything per square foot, use only sites with square_feet of at least 500 (smaller values are placeholders), and return how many sites were left out in a separate column.
 - Filter dates with ranges, e.g. invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01', never EXTRACT or a cast on the column inside WHERE; it keeps the query fast on large customers.
 - Round dollars to 2 decimals and consumption to whole numbers. Divide with NULLIF(..., 0) so an empty total gives an empty value, not an error.
 - Each row of the result is one kind of thing: never mix, for example, vendor totals and account rows in one result.
 - Name every output column in readable snake_case.
-- Sort the result sensibly and return at most 100 rows. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
+- Sort the result sensibly and return at most 100 rows (LIMIT 100), except a result with one row per month (a monthly trend): it ends with LIMIT 200, never LIMIT 100, so no month is cut off. When the question asks for a top N, return exactly N rows. When sorting by a number, add NULLS LAST, and for a top or bottom N leave out rows where that number is empty.
+- Results by month or year are sorted oldest first (ORDER BY month).
+- A list that is not a top N and could run past 100 rows also returns COUNT(*) OVER () AS total_count, so the answer can say how many there are in all.
+- Give a grouping value that can be empty a label: COALESCE(vendor, 'Not recorded').
 - If the tables cannot answer the question, return exactly: SELECT 'not available in this data' AS answer
 
 ${earlier}Question: ${question}`;
@@ -639,7 +644,7 @@ Return a corrected query only.`;
 	// audit, so neither costs an extra AI call. The chart is drawn from the
 	// database rows; the AI only names the columns.
 	_explainPrompt(question, sql, rows) {
-		const sample = JSON.stringify(rows.slice(0, 100));
+		const sample = JSON.stringify(rows.slice(0, 200));
 		const cols = rows.length ? Object.keys(rows[0]).join(', ') : '(none)';
 		// A period that runs past the company's data (the last 12 months when
 		// bills stop in February, say) must not read as a full period.
@@ -651,12 +656,17 @@ Return a corrected query only.`;
 		const coverage = f.first_month && f.last_month
 			? `This company's monthly usage and cost data covers ${monthName(f.first_month)} to ${monthName(f.last_month)}. If the SQL reads monthly_usage and the period asked about starts before or ends after those months, say which months the figures actually cover (for example "your data runs to ${monthName(f.last_month)}, so this covers <first month asked> to ${monthName(f.last_month)}") instead of naming the whole period as if it were complete.`
 			: '';
+		// Demo data that stops months ago makes every account look stopped.
+		const ended = f.last_month ? new Date(String(f.last_month).slice(0, 7) + '-01T00:00:00Z') : null;
+		const stale = ended && !isNaN(ended) && (Date.now() - ended) / 864e5 > 183
+			? ` This company's bill data ends in ${monthName(f.last_month)}, more than 6 months ago. If the SQL reads late_bills about stopped or missing bills, say that the bill data itself ends around then, so the result may reflect the data ending rather than accounts that stopped.`
+			: '';
 		return `You are a utility-billing analyst. Reply with JSON only (no markdown), in this shape:
 {"answer": "...", "chart": null, "method": {"filters": ["..."], "calculation": "..."}}
 or
 {"answer": "...", "chart": {"type": "bar", "x": "column", "y": ["column"], "series": null, "title": "...", "y_label": "..."}, "method": {"filters": ["..."], "calculation": "..."}}
 
-answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Write months and dates in words, for example "February 2026" or "1 October 2025", never 2026-02. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill. If the question asks about a fiscal year without saying which month it starts, say the figures use calendar years. ${coverage}
+answer: 1 to 3 short sentences answering the question, using only the result below. The user is the company the data belongs to: speak to them about their own data ("your cost", "your locations"), never "this customer" or "the company". State units and use $ for costs. Write months and dates in words, for example "February 2026" or "1 October 2025", never 2026-02. Do not invent numbers. If the result is empty, say no matching data was found. The result is shown to the user as a table and chart under your answer, so do not mention rows, queries, SQL or how much of the result you were given. If the SQL reads line_items, end with a short note that the figures cover bills with line-item detail, which may not include every bill. If the question asks about a fiscal year without saying which month it starts, say the figures use calendar years. If the result has a total_count column larger than the rows given, say how many there are in all and describe only what the rows show, not the whole set. ${coverage}${stale}
 
 chart: how to plot the result, or null when a chart adds nothing (one row, a single value, text answers).
 - Use only these result columns: ${cols}
@@ -761,26 +771,64 @@ Result (${rows.length} rows${rows.length > 100 ? ', first 100 given here' : ''})
 	_checkSql(sql) {
 		const s = String(sql || '').toLowerCase();
 		if (!/^[(\s]*(select|with)\b/.test(s)) throw new Error('The AI did not return a SELECT query.');
-		// Brackets must balance (ignoring quoted text): the query is wrapped in a
-		// subquery, and a stray ")" ends that early.
+		// Text that could hide part of the query from the checks below:
+		// backslashes, E'' and U&'' strings, and dollar quoting.
+		if (s.includes('\\')) throw new Error('Dollar quoting, E\'\' strings and backslashes are not allowed in the query.');
+		let inQuote = false;
+		for (let i = 0; i < s.length; i++) {
+			if (s[i] !== "'") continue;
+			if (inQuote && s[i + 1] === "'") { i++; continue; }
+			if (!inQuote && /(^|[^\w])(e|u&)$/.test(s.slice(0, i))) throw new Error('Dollar quoting, E\'\' strings and backslashes are not allowed in the query.');
+			inQuote = !inQuote;
+		}
+		// The rest is checked with quoted values blanked, so a filter such as
+		// ILIKE '%set up%' is not read as SQL.
+		const bare = s.replace(/'(?:[^']|'')*'/g, "''");
+		if (bare.includes('$')) throw new Error('Dollar quoting, E\'\' strings and backslashes are not allowed in the query.');
+		// Brackets must balance: the query is wrapped in a subquery, and a stray
+		// ")" ends that early.
 		let depth = 0;
-		for (const ch of s.replace(/'[^']*'/g, '')) {
+		for (const ch of bare) {
 			if (ch === '(') depth++;
 			else if (ch === ')' && --depth < 0) break;
 		}
 		if (depth !== 0) throw new Error('The query has unbalanced brackets.');
-		if (s.includes(';')) throw new Error('Only one statement is allowed.');
+		if (bare.includes(';')) throw new Error('Only one statement is allowed.');
 		if (/--|\/\*|\{\{|\}\}/.test(s)) throw new Error('Comments are not allowed in the query.');
-		const banned = s.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset)\b|pg_|dblink|lo_import|current_setting|set_config/);
+		// Writes, settings, and functions that read other tables or run SQL given
+		// as text.
+		const banned = bare.match(/\b(insert|update|delete|merge|drop|alter|create|truncate|grant|revoke|copy|call|do|execute|prepare|listen|notify|vacuum|lock|into|set|reset|table|only)\b|pg_|dblink|lo_\w+|current_setting|set_config|_to_xml|xmlschema|regclass|regproc|regnamespace|regtype/);
 		if (banned) throw new Error(`"${banned[0]}" is not allowed in the query.`);
 		const tables = this._tables();
-		const allowed = new Set(Object.keys(tables).concat(['lateral', 'unnest', 'generate_series']));
+		const allowed = new Set(Object.keys(tables).concat(['lateral']));
 		// Column names too: EXTRACT(YEAR FROM month) and the like read as FROM.
 		Object.keys(tables).forEach(t => tables[t].cols.forEach(c => allowed.add(c[0])));
-		for (const m of s.matchAll(/(\w+)\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
-		for (const m of s.matchAll(/\b(?:from|join)\s+("?[\w.]+"?)/g)) {
-			const t = m[1].replace(/"/g, '');
-			if (!allowed.has(t) && !/^\d+$/.test(t)) throw new Error(`The query may only read the Ask UBM tables, not "${t}".`);
+		// The query's own WITH steps, with or without a column list.
+		for (const m of bare.matchAll(/(\w+)\s*(?:\([\w\s,]*\))?\s+as\s+(?:not\s+)?(?:materialized\s+)?\(/g)) allowed.add(m[1]);
+		const functions = new Set(['unnest', 'generate_series']);
+		const check = (name, call) => {
+			const t = name.replace(/"/g, '');
+			if (t === 'lateral' || /^\d+$/.test(t)) return;
+			if (call ? !functions.has(t) : !allowed.has(t)) throw new Error(`The query may only read the Ask UBM tables, not "${t}".`);
+		};
+		for (const m of bare.matchAll(/\bjoin\s+(?:lateral\s+)?("?[\w.]+"?)\s*(\()?/g)) check(m[1], m[2]);
+		// Every item of every FROM list, so a comma join (FROM a, b) is checked
+		// like a JOIN. Nested brackets are skipped here: their own FROMs are
+		// found by this same loop.
+		for (const m of bare.matchAll(/\bfrom\b/g)) {
+			if (/\bdistinct\s+$/.test(bare.slice(0, m.index))) continue;
+			let list = '';
+			let level = 0;
+			for (const ch of bare.slice(m.index + 4)) {
+				if (ch === '(') { if (level++ === 0) list += '('; }
+				else if (ch === ')') { if (--level < 0) break; if (level === 0) list += ')'; }
+				else if (level === 0) list += ch;
+			}
+			list = list.split(/\b(?:where|group|order|limit|offset|having|union|intersect|except|window|fetch|for|on|using|join|inner|left|right|full|cross|natural)\b/)[0];
+			for (const item of list.split(',')) {
+				const t = item.trim().match(/^(?:lateral\s+)?("?[\w.]+"?)\s*(\()?/);
+				if (t) check(t[1], t[2]);
+			}
 		}
 	},
 

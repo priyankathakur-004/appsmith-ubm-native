@@ -58,7 +58,7 @@ account with several meters has several rows.
 | how many late accounts | `COUNT(DISTINCT billing_account) WHERE is_late`, as the report counts |
 | how late, days overdue | `days_late` |
 | due soon, expected next week | `expected_bill_date` range, `NOT is_late` |
-| stopped billing, no bill for months | `last_bill_date < CURRENT_DATE - INTERVAL '6 months'` |
+| stopped billing, no bill for months | `last_bill_date < CURRENT_DATE - INTERVAL '6 months'`, one row per `billing_account`, longest-stopped first, with `COUNT(*) OVER () AS total_count` |
 
 ## Examples
 

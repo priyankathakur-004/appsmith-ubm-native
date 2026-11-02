@@ -33,9 +33,12 @@ every bill has its lines broken out.
 
 ## Text values
 
-- Compare text case-insensitively: `UPPER(utility) = 'ELECTRIC'`,
-  `location_name ILIKE '%cherry creek%'`. Units, utilities, names and
-  categories vary in case and spelling between customers and vendors.
+- Compare text case-insensitively: `UPPER(utility) = 'ELECTRIC'`. Units,
+  utilities, names and categories vary in case and spelling between customers
+  and vendors.
+- A full site, vendor or account name in the question is matched whole:
+  `UPPER(location_name) = UPPER('Site 95')`. `ILIKE '%site 95%'` would also
+  find Site 950. Use `ILIKE '%cherry creek%'` only for part of a name.
 - Utilities are stored in capitals, for example `ELECTRIC`, `NATURALGAS`,
   `WATER`.
 
@@ -52,9 +55,17 @@ every bill has its lines broken out.
 
 - One statement: `SELECT`, or `WITH … SELECT`. No semicolon, no comments.
 - Name every output column in readable snake_case (`total_cost`, not `sum`).
-- Sort sensibly and return at most 100 rows. For a top or bottom N, return
+- Sort sensibly and return at most 100 rows; a result with one row per month
+  ends with `LIMIT 200`, so no month is cut off. For a top or bottom N, return
   exactly N rows, add `NULLS LAST`, and leave out rows where the ranked number
   is empty.
+- Results by month or year are sorted oldest first, so a trend reads left to
+  right.
+- A list that is not a top N and could run past 100 rows also returns
+  `COUNT(*) OVER () AS total_count`, so the answer can say how many there are
+  in all instead of describing the whole set from the first 100.
+- A grouping value that can be empty gets a label:
+  `COALESCE(vendor, 'Not recorded')`.
 - Each row of a result should be one kind of thing. Do not mix vendor totals
   and account rows in one result: the chart cannot draw it.
 - If the tables cannot answer the question, return exactly
