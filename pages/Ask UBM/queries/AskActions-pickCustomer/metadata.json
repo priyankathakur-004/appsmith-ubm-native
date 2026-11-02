@@ -11,7 +11,7 @@
           "name": "picked"
         },
         {
-          "name": "savedTab"
+          "name": "tab"
         }
       ],
       "paginationType": "NONE",
