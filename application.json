@@ -11,7 +11,9 @@
       "navStyle": "sidebar",
       "orientation": "side",
       "position": "static",
+      "showAllApps": true,
       "showNavbar": true,
+      "showShareApp": true,
       "showSignIn": true
     },
     "themeSetting": {
@@ -137,7 +139,9 @@
       "navStyle": "sidebar",
       "orientation": "side",
       "position": "static",
+      "showAllApps": true,
       "showNavbar": true,
+      "showShareApp": true,
       "showSignIn": true
     },
     "themeSetting": {
