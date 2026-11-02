@@ -1,0 +1,26 @@
+-- The picked customer's question log for the History tab, newest first: the
+-- question, answer, status and the audit of how it was answered. Filters come
+-- in one JSON value (single quotes doubled, as for the log and save queries):
+-- by (only this user's questions; empty for everyone's), status, and q (text
+-- in the question, matched literally, so % and _ are not wildcards).
+SELECT
+    l.id::text    AS id,
+    l.asked_at,
+    l.asked_by,
+    l.status,
+    l.question,
+    l.answer,
+    l.query_sql   AS sql,
+    l.row_count,
+    l.duration_ms,
+    l.error,
+    l.audit
+FROM ubm_app.ask_ubm_question_log l,
+     (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE l.customer_id = (input.p ->> 'cust')::int
+  AND (COALESCE(input.p ->> 'by', '') = '' OR l.asked_by = input.p ->> 'by')
+  AND (COALESCE(input.p ->> 'status', '') = '' OR l.status = input.p ->> 'status')
+  AND (COALESCE(input.p ->> 'q', '') = ''
+       OR l.question ILIKE '%' || replace(replace(replace(input.p ->> 'q', '\', '\\'), '%', '\%'), '_', '\_') || '%')
+ORDER BY l.id DESC
+LIMIT 200;

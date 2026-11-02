@@ -18,6 +18,8 @@ export default {
 		await storeValue('aiSavedData', {}, false);
 		await storeValue('aiSavedRows', [], false);
 		await storeValue('aiSavedLoading', false, false);
+		await storeValue('aiHistory', {}, false);
+		await storeValue('aiHistoryData', {}, false);
 		// Fall back to the default when the remembered customer is no longer
 		// offered in the dropdown.
 		const offered = ((await ai_customers.run()) || []).map(c => Number(c.id));
@@ -37,13 +39,17 @@ export default {
 		await storeValue('aiFacts', (rows || [])[0] || {}, false);
 	},
 
-	async pickCustomer(picked, savedTab) {
+	// tab: the widget tab showing ("chat", "saved" or "history"); true still
+	// means the Saved tab.
+	async pickCustomer(picked, tab) {
 		await storeValue('aiCustomer', Number(picked) || 0);
 		await storeValue('aiMessages', [], false);
 		await storeValue('aiSavedData', {}, false);
+		await storeValue('aiHistoryData', {}, false);
 		await this.loadFacts();
-		if (savedTab) await this.loadSaved();
+		if (tab === true || tab === 'saved') await this.loadSaved();
 		else await this.loadSavedList();
+		if (tab === 'history') await this.loadHistory({});
 	},
 
 	// ---- saved charts (ubm_app.ask_ubm_saved_charts on UBM_Appsmith_DB) -------
@@ -141,6 +147,13 @@ export default {
 			if (m && m.role === 'assistant' && m.sql) {
 				item = { question: (msgs[i - 1] || {}).text || '', sql: m.sql, chart: m.chart || null, columns: m.columns || [], rows: m.rows || [] };
 			}
+		} else if (k[0] === 'h') {
+			const id = k.slice(1);
+			const h = ((appsmith.store.aiHistory || {}).rows || []).find(x => x.id === id);
+			const data = (appsmith.store.aiHistoryData || {})[id] || {};
+			if (h && Array.isArray(data.rows)) {
+				item = { question: h.question, sql: h.sql, chart: (h.audit || {}).chart || null, columns: data.columns || [], rows: data.rows };
+			}
 		} else if (k[0] === 's') {
 			const id = k.slice(1);
 			const saved = (appsmith.store.aiSavedRows || []).find(x => String(x.id) === id);
@@ -182,6 +195,71 @@ export default {
 			await storeValue('aiSavedData', Object.assign({}, data), false);
 		}
 		await storeValue('aiSavedLoading', false, false);
+	},
+
+	// ---- question history (ubm_app.ask_ubm_question_log) ----------------------
+	// The History tab lists the picked customer's logged questions with the audit
+	// each was logged with. aiHistory holds the filters and the list; aiHistoryData
+	// the rows of any logged query re-run from the tab. Neither is persisted.
+
+	_historyFromRow(r) {
+		let audit = r.audit;
+		if (typeof audit === 'string') {
+			try { audit = JSON.parse(audit); } catch (e) { audit = null; }
+		}
+		return {
+			id: String(r.id), askedAt: String(r.asked_at || ''), askedBy: r.asked_by || '', status: r.status || '',
+			question: r.question || '', answer: r.answer || '', sql: r.sql || '', rowCount: Number(r.row_count) || 0,
+			ms: Number(r.duration_ms) || 0, error: r.error || '', audit: audit || {}
+		};
+	},
+
+	// filters: any of mine (only this user's questions), status and q (text in
+	// the question); the rest stay as they were.
+	async loadHistory(filters) {
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		const before = appsmith.store.aiHistory || {};
+		const f = Object.assign({ mine: true, status: '', q: '' }, before.filters);
+		Object.keys(filters || {}).forEach(k => { if (filters[k] !== undefined && k in f) f[k] = filters[k]; });
+		f.mine = f.mine !== false;
+		f.q = String(f.q || '').trim().slice(0, 200);
+		// Only the latest request may write the list: filters can change while an
+		// earlier one is still running.
+		const token = Date.now() + Math.random();
+		await storeValue('aiHistory', { filters: f, rows: before.rows || [], loading: true, token }, false);
+		let next;
+		try {
+			const rows = cust ? await ai_log_list.run({ payload: this._payload({
+				cust, by: f.mine ? (appsmith.user.email || 'unknown') : '', status: String(f.status || ''), q: f.q
+			}) }) : [];
+			next = { filters: f, rows: (Array.isArray(rows) ? rows : []).map(r => this._historyFromRow(r)), loading: false };
+		} catch (e) {
+			next = { filters: f, rows: [], loading: false, error: 'Could not load the question history. ' + this._friendly(e) };
+		}
+		if ((appsmith.store.aiHistory || {}).token !== token || (Number(appsmith.store.aiCustomer) || 0) !== cust) return;
+		await storeValue('aiHistory', next, false);
+	},
+
+	// Re-runs a logged query on today's data. Logged SQL comes from a shared
+	// table, so it is checked again before it runs.
+	async openHistory(id) {
+		const k = String(id || '');
+		const cust = Number(appsmith.store.aiCustomer) || 0;
+		const h = ((appsmith.store.aiHistory || {}).rows || []).find(x => x.id === k);
+		if (!cust || !h || !h.sql) return;
+		const put = async v => {
+			if ((Number(appsmith.store.aiCustomer) || 0) !== cust) return;
+			await storeValue('aiHistoryData', Object.assign({}, appsmith.store.aiHistoryData || {}, { [k]: v }), false);
+		};
+		await put({ loading: true });
+		try {
+			this._checkSql(h.sql);
+			const rows = await run_ai_sql.run({ sql: h.sql, cust });
+			const r = Array.isArray(rows) ? rows : [];
+			await put({ rows: r.slice(0, this.maxShownRows), columns: r.length ? Object.keys(r[0]) : [], rowCount: r.length, refreshedAt: new Date().toISOString() });
+		} catch (e) {
+			await put({ error: 'Could not run this query. ' + this._friendly(e) });
+		}
 	},
 
 	// One-off move of charts saved in this browser (the earlier version) into the
