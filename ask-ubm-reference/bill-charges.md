@@ -61,9 +61,11 @@ One line printed on one processed bill.
 - **Usage Information lines are readings, not charges.** They carry a
   quantity (for example demand in kW) and a charge of 0. Leave them out of
   dollar totals, and use them for readings.
-- **Peak demand**: `MAX(quantity)` of Usage Information lines with
-  `UPPER(unit) = 'KW'`, per account or location and month. Demand *charges*
-  are lines in a demand category with a dollar `charge`.
+- **Peak demand**: `MAX(quantity)` of lines with `UPPER(unit) = 'KW'`, per
+  account or location (and month if asked), whatever their category. kW
+  appears on Usage Information readings and on demand charge lines; filtering
+  on Usage Information found nothing for UBM Demo. Demand *charges* are lines
+  in a demand category with a dollar `charge`.
 - Every answer from this table should say the figures cover bills with line
   detail, which may not include every bill.
 
@@ -95,7 +97,7 @@ Peak demand by location and invoice month in 2025:
 ```sql
 SELECT location_name, invoice_month, MAX(quantity) AS peak_kw
 FROM line_items
-WHERE UPPER(unit) = 'KW' AND category ILIKE 'usage information'
+WHERE UPPER(unit) = 'KW'
   AND invoice_date >= '2025-01-01' AND invoice_date < '2026-01-01'
 GROUP BY location_name, invoice_month
 ORDER BY location_name, invoice_month
@@ -118,6 +120,7 @@ LIMIT 100
 
 - Supply, delivery, taxes and fees are the bill's own categories
   (`category`), not charge codes.
-- Usage Information lines in `KW` are demand readings.
+- Peak demand is the highest kW on any line, whether a Usage Information
+  reading or a demand charge line's billed kW.
 - Late fees are `LATEFEE` only, with refunds netted off. Penalties
   (`OTH_PENALTY`) are reported separately, only when asked about.
