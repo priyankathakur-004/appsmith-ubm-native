@@ -8,8 +8,9 @@
   "canOutsideClickClose": true,
   "children": [
     {
+      "backgroundColor": "#0F172A",
       "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
-      "bottomRow": 1050,
+      "bottomRow": 1060,
       "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
       "canExtend": true,
       "detachFromLayout": true,
@@ -48,8 +49,7 @@
       "type": "CANVAS_WIDGET",
       "version": 1,
       "widgetId": "drill_canvas",
-      "widgetName": "DrillCanvas",
-      "backgroundColor": "#0F172A"
+      "widgetName": "DrillCanvas"
     }
   ],
   "detachFromLayout": true,
