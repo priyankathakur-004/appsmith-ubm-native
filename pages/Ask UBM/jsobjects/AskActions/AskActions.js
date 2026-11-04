@@ -131,11 +131,11 @@ export default {
 		}
 	},
 
-	// "AG Studio" under a chart: hands the answer to the AG Studio page, which
+	// "My Charts" under a chart: hands the answer to the My Charts page, which
 	// opens it there as a new report that can be restyled, combined with other
 	// charts and saved. The customer, question, SQL, chart settings and the rows
 	// already on screen travel through the store (taken once by that page);
-	// the AG Studio customer is set to this one so both show the same data.
+	// the My Charts customer is set to this one so both show the same data.
 	async openInStudio(key) {
 		const k = String(key || '');
 		const cust = Number(appsmith.store.aiCustomer) || 0;
@@ -163,12 +163,12 @@ export default {
 			}
 		}
 		if (!cust || !item || !item.rows.length) {
-			showAlert('This answer has no data to open in AG Studio.', 'warning');
+			showAlert('This answer has no data to open in My Charts.', 'warning');
 			return;
 		}
 		await storeValue('selectedCustomerId', cust);
 		await storeValue('agImport', Object.assign({ cust, at: Date.now() }, item));
-		navigateTo('AG-grid-charts', {}, 'SAME_WINDOW');
+		navigateTo('My Charts', {}, 'SAME_WINDOW');
 	},
 
 	// Reload every saved chart of the picked customer with the latest data, one
