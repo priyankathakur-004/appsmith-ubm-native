@@ -58,7 +58,7 @@ export default {
 		const esc = (v) => (v == null || v === "") ? "—" : String(v);
 
 		const pill = (on) => {
-			const color = on ? "#4ade80" : "#94a3b8";
+			const color = on ? appsmith.theme.colors.successColor : appsmith.theme.colors.textSecondaryColor;
 			return `<span style='color:${color};font-weight:700;'>${on ? "On" : "Off"}</span>`;
 		};
 
@@ -66,8 +66,8 @@ export default {
 		const row = (label, valueHtml, indent) => {
 			const pad = indent ? "padding-left:36px;" : "";
 			return `<tr>` +
-				`<td style='padding:9px 14px;color:#94a3b8;width:340px;border-bottom:1px solid #334155;${pad}'>${label}</td>` +
-				`<td style='padding:9px 14px;color:#f1f5f9;font-weight:600;border-bottom:1px solid #334155;'>${valueHtml}</td>` +
+				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:340px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};${pad}'>${label}</td>` +
+				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
 				`</tr>`;
 		};
 
@@ -75,27 +75,27 @@ export default {
 		const arow = (label, valueHtml, auditKey, indent) => {
 			const pad = indent ? "padding-left:36px;" : "";
 			return `<tr>` +
-				`<td style='padding:9px 14px;color:#94a3b8;width:340px;border-bottom:1px solid #334155;${pad}'>${label}</td>` +
-				`<td style='padding:9px 14px;color:#f1f5f9;font-weight:600;width:110px;border-bottom:1px solid #334155;'>${valueHtml}</td>` +
-				`<td style='padding:9px 14px;color:#cbd5e1;border-bottom:1px solid #334155;'>${auditFor(auditKey)}</td>` +
+				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:340px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};${pad}'>${label}</td>` +
+				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;width:110px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
+				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${auditFor(auditKey)}</td>` +
 				`</tr>`;
 		};
 
 		const table = (rowsHtml) =>
-			`<table style='width:100%;border-collapse:collapse;background:#0f172a;border:1px solid #334155;border-radius:6px;overflow:hidden;'>${rowsHtml}</table>`;
+			`<table style='width:100%;border-collapse:collapse;background:${appsmith.theme.colors.surfaceColor};border:1px solid ${appsmith.theme.colors.borderColor};border-radius:6px;overflow:hidden;'>${rowsHtml}</table>`;
 
 		// Collapsible section (closed by default).
 		const details = (title, bodyHtml) =>
-			`<details style='margin-bottom:10px;border-bottom:1px solid #1e293b;padding-bottom:6px;'>` +
-			`<summary style='cursor:pointer;list-style:revert;font-size:15px;font-weight:700;color:#93c5fd;padding:8px 4px;'>${title}</summary>` +
+			`<details style='margin-bottom:10px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};padding-bottom:6px;'>` +
+			`<summary style='cursor:pointer;list-style:revert;font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkColor};padding:8px 4px;'>${title}</summary>` +
 			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
 			`</details>`;
 
 		// Always-expanded section (with a ▼ marker) for the sections that must be
 		// open on load, since the sanitizer drops <details open>.
 		const staticSection = (title, bodyHtml) =>
-			`<div style='margin-bottom:10px;border-bottom:1px solid #1e293b;padding-bottom:6px;'>` +
-			`<div style='font-size:15px;font-weight:700;color:#93c5fd;padding:8px 4px;'>&#9662; ${title}</div>` +
+			`<div style='margin-bottom:10px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};padding-bottom:6px;'>` +
+			`<div style='font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkColor};padding:8px 4px;'>&#9662; ${title}</div>` +
 			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
 			`</div>`;
 
@@ -114,8 +114,8 @@ export default {
 		};
 
 		const statusPill = d.active
-			? "<span style='color:#4ade80;'>&#9679; Active</span>"
-			: "<span style='color:#f87171;'>&#9679; Inactive</span>";
+			? "<span style='color:" + appsmith.theme.colors.successColor + ";'>&#9679; Active</span>"
+			: "<span style='color:" + appsmith.theme.colors.dangerColor + ";'>&#9679; Inactive</span>";
 		const liveDays = (th.live != null) ? Math.round(th.live / 24) : "—";
 
 		// Main Information and Status are open on load (staticSection); the rest
@@ -154,7 +154,7 @@ export default {
 			row("Start Date", fmtDate(c.contract_start_date))));
 
 		const mail = details("Mail To Address",
-			"<div style='padding:10px 14px;color:#94a3b8;'>Select Edit in order to fill in.</div>");
+			"<div style='padding:10px 14px;color:" + appsmith.theme.colors.textSecondaryColor + ";'>Select Edit in order to fill in.</div>");
 
 		return `<div style='font-family:sans-serif;padding:8px 4px;'>${main}${status}${entl}${sftp}${tpt}${contractSec}${mail}</div>`;
 	}

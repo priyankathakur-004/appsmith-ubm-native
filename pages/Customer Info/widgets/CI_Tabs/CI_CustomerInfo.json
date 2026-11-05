@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "borderRadius"
+    },
+    {
+      "key": "textColor"
+    },
+    {
       "key": "fontFamily"
     },
     {
@@ -37,7 +43,7 @@
   "shouldTruncate": false,
   "text": "{{ CustomerInfoHelper.getInfoHtml(fetch_customer_detail.data, fetch_customer_contract.data, fetch_customer_audit.data) }}",
   "textAlign": "LEFT",
-  "textColor": "#E2E8F0",
+  "textColor": "{{appsmith.theme.colors.textColor}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,
