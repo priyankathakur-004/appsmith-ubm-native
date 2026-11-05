@@ -48,7 +48,19 @@
     "colors": {
       "backgroundColor": "#1E293A",
       "primaryColor": "#0F1729",
-      "textColor": "#e2e8f0"
+      "surfaceColor": "#0f172a",
+      "panelColor": "#0f172a",
+      "surfaceAltColor": "#1e293b",
+      "surfaceHoverColor": "#26344b",
+      "borderColor": "#334155",
+      "textStrongColor": "#ffffff",
+      "textColor": "#e2e8f0",
+      "textSecondaryColor": "#94a3b8",
+      "textMutedColor": "#64748b",
+      "linkColor": "#60a5fa",
+      "successColor": "#34d399",
+      "warningColor": "#fbbf24",
+      "dangerColor": "#f87171"
     },
     "fontFamily": {
       "appFont": "Open Sans"

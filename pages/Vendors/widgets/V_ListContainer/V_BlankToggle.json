@@ -7,6 +7,9 @@
   "defaultSwitchState": false,
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "accentColor"
     }
   ],
@@ -22,7 +25,7 @@
   "key": "vblankk001",
   "label": "Show only vendors with blank Pretty Names",
   "labelPosition": "Left",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "leftColumn": 22,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,
