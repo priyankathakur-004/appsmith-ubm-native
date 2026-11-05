@@ -4,6 +4,9 @@
   "bottomRow": 8,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "truncateButtonColor"
     },
     {
@@ -45,7 +48,7 @@
   "shouldTruncate": false,
   "text": "Location: <b>{{getBill.data[0]['location_description']}}</b>",
   "textAlign": "LEFT",
-  "textColor": "#231F20",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 4,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
