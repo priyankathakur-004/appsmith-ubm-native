@@ -29,7 +29,7 @@
     ],
     "name": "getStates",
     "pageId": "Reports",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
