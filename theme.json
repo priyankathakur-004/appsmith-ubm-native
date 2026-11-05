@@ -46,21 +46,21 @@
       "appBoxShadow": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
     },
     "colors": {
-      "backgroundColor": "#1E293A",
-      "primaryColor": "#0F1729",
-      "surfaceColor": "#0f172a",
-      "panelColor": "#0f172a",
-      "surfaceAltColor": "#1e293b",
-      "surfaceHoverColor": "#26344b",
-      "borderColor": "#334155",
-      "textStrongColor": "#ffffff",
-      "textColor": "#e2e8f0",
-      "textSecondaryColor": "#94a3b8",
-      "textMutedColor": "#64748b",
-      "linkColor": "#60a5fa",
-      "successColor": "#34d399",
-      "warningColor": "#fbbf24",
-      "dangerColor": "#f87171"
+      "backgroundColor": "#ffffff",
+      "primaryColor": "#091b44",
+      "surfaceColor": "#ffffff",
+      "panelColor": "#f1f2f4",
+      "surfaceAltColor": "#e4e6ea",
+      "surfaceHoverColor": "#dde9f7",
+      "borderColor": "#d1d8e3",
+      "textStrongColor": "#091b44",
+      "textColor": "#606266",
+      "textSecondaryColor": "#606266",
+      "textMutedColor": "#5f6672",
+      "linkColor": "#1c4aad",
+      "successColor": "#166534",
+      "warningColor": "#92400e",
+      "dangerColor": "#b91c1c"
     },
     "fontFamily": {
       "appFont": "Open Sans"
