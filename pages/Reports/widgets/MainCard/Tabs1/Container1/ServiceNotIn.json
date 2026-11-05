@@ -5,7 +5,14 @@
   "bottomRow": 22,
   "boxShadow": "none",
   "defaultSwitchState": false,
-  "dynamicBindingPathList": [],
+  "dynamicBindingPathList": [
+    {
+      "key": "labelTextColor"
+    },
+    {
+      "key": "accentColor"
+    }
+  ],
   "dynamicHeight": "AUTO_HEIGHT",
   "dynamicTriggerPathList": [
     {
@@ -18,7 +25,7 @@
   "key": "cr_svcnotin",
   "label": "Service Not In",
   "labelPosition": "Left",
-  "labelTextColor": "#FFFFFF",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "leftColumn": 55,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,

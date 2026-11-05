@@ -60,7 +60,8 @@
       "linkColor": "#1c4aad",
       "successColor": "#166534",
       "warningColor": "#92400e",
-      "dangerColor": "#b91c1c"
+      "dangerColor": "#b91c1c",
+      "accentColor": "#091b44"
     },
     "fontFamily": {
       "appFont": "Open Sans"

@@ -4,6 +4,9 @@
   "bottomRow": 33,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "truncateButtonColor"
     },
     {
@@ -42,7 +45,7 @@
   "shouldTruncate": false,
   "text": "Account Attributes (limit 10)",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 29,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
