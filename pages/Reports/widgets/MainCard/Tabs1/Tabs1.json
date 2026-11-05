@@ -15,18 +15,6 @@
       "containerStyle": "none",
       "detachFromLayout": true,
       "dynamicBindingPathList": [
-    {
-      "key": "borderColor"
-    },
-    {
-      "key": "accentColor"
-    },
-    {
-      "key": "borderColor"
-    },
-    {
-      "key": "accentColor"
-    },
         {
           "key": "borderRadius"
         }
@@ -64,6 +52,12 @@
   ],
   "defaultTab": "Customer Reports",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "accentColor"
+    },
     {
       "key": "borderRadius"
     },

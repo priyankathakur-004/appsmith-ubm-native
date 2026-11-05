@@ -14,12 +14,6 @@
       "containerStyle": "none",
       "detachFromLayout": true,
       "dynamicBindingPathList": [
-    {
-      "key": "borderColor"
-    },
-    {
-      "key": "borderColor"
-    },
         {
           "key": "borderRadius"
         }
@@ -54,6 +48,9 @@
   ],
   "containerStyle": "card",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
     {
       "key": "borderRadius"
     },
