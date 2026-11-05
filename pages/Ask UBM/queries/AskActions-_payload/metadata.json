@@ -6,7 +6,11 @@
   "unpublishedAction": {
     "actionConfiguration": {
       "encodeParamsToggle": true,
-      "jsArguments": [],
+      "jsArguments": [
+        {
+          "name": "obj"
+        }
+      ],
       "paginationType": "NONE",
       "timeoutInMillisecond": 30000
     },
