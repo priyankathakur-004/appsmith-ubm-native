@@ -47,7 +47,8 @@
     },
     "colors": {
       "backgroundColor": "#1E293A",
-      "primaryColor": "#0F1729"
+      "primaryColor": "#0F1729",
+      "textColor": "#e2e8f0"
     },
     "fontFamily": {
       "appFont": "Open Sans"
