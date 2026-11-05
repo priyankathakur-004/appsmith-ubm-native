@@ -4,6 +4,12 @@
   "bottomRow": 39,
   "dynamicBindingPathList": [
     {
+      "key": "borderRadius"
+    },
+    {
+      "key": "textColor"
+    },
+    {
       "key": "text"
     },
     {
@@ -39,7 +45,7 @@
   "shouldTruncate": false,
   "text": "{{ ReportSpecs.status() }}",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 35,
   "type": "TEXT_WIDGET",
   "version": 1,

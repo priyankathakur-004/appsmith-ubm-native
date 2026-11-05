@@ -4,6 +4,12 @@
   "bottomRow": 4,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     },
     {

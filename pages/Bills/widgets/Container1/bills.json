@@ -1,7 +1,7 @@
 {
   "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
-  "borderColor": "#E0DEDE",
+  "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 121,
@@ -63,6 +63,9 @@
   "defaultSelectedRowIndices": "",
   "delimiter": ",",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
     {
       "key": "accentColor"
     },

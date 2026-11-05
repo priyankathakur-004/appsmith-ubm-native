@@ -9,6 +9,9 @@
   "datePickerType": "DATE_PICKER",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "accentColor"
     },
     {
@@ -26,7 +29,7 @@
   "label": "Date Marked for Payment",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 0,

@@ -1,5 +1,5 @@
 {
-  "accentColor": "#0F2A47",
+  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 18,
@@ -10,6 +10,12 @@
   "datePickerType": "DATE_PICKER",
   "defaultDate": "",
   "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "labelTextColor"
+    },
     {
       "key": "minDate"
     },
@@ -52,7 +58,7 @@
   "labelPosition": "Top",
   "labelStyle": "",
   "labelText": "To Month/Period",
-  "labelTextColor": "#ffffff",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 17,
