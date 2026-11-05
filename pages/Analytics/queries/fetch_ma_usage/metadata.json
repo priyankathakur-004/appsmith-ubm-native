@@ -29,7 +29,7 @@
     ],
     "name": "fetch_ma_usage",
     "pageId": "Analytics",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }

@@ -29,7 +29,7 @@
     ],
     "name": "fetch_late_bills",
     "pageId": "Analytics",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }
