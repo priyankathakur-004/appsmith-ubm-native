@@ -4,6 +4,9 @@
   "bottomRow": 4,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -36,7 +39,7 @@
   "shouldTruncate": false,
   "text": "Users",
   "textAlign": "LEFT",
-  "textColor": "#f4f4f5",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
