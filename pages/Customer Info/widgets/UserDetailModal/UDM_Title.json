@@ -4,6 +4,15 @@
   "bottomRow": 5,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "textColor"
+    },
+    {
       "key": "fontFamily"
     },
     {
@@ -35,7 +44,7 @@
   "shouldTruncate": false,
   "text": "{{ `User Info for ${(fetch_user_detail.data && fetch_user_detail.data[0]) ? ((fetch_user_detail.data[0].first_name||'') + ' ' + (fetch_user_detail.data[0].last_name||'')).trim() : ''}` }}",
   "textAlign": "LEFT",
-  "textColor": "#F1F5F9",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 1,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

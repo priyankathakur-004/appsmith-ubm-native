@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "borderRadius"
+    },
+    {
+      "key": "textColor"
+    },
+    {
       "key": "fontFamily"
     },
     {
@@ -37,7 +43,7 @@
   "shouldTruncate": false,
   "text": "{{ UserInfoHelper.getCustomersHtml(fetch_user_customers.data) }}",
   "textAlign": "LEFT",
-  "textColor": "#E2E8F0",
+  "textColor": "{{appsmith.theme.colors.textColor}}",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,
