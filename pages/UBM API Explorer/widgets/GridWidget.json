@@ -1,12 +1,18 @@
 {
-  "backgroundColor": "#FFFFFF",
-  "borderColor": "#E0DEDE",
+  "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
+  "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 130,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{ ({ rows: UBMUtils.rows(), columns: FieldsSelect.selectedOptionValues }) }}",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "backgroundColor"
+    },
     { "key": "theme" },
     { "key": "borderRadius" },
     { "key": "boxShadow" },

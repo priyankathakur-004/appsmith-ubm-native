@@ -4,6 +4,15 @@
   "bottomRow": 11,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -36,7 +45,7 @@
   "shouldTruncate": false,
   "text": "Pick a customer to list its electric accounts, then run one account or all of them",
   "textAlign": "LEFT",
-  "textColor": "#f4f4f5",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 7,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

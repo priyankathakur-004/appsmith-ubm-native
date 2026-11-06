@@ -4,6 +4,12 @@
   "bottomRow": 6,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -36,7 +42,7 @@
   "shouldTruncate": false,
   "text": "Rate Class",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 2,
   "type": "TEXT_WIDGET",
   "version": 1,

@@ -7,6 +7,9 @@
   "defaultOptionValue": "ppg",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "accentColor"
     },
     {
@@ -37,7 +40,7 @@
   "labelPosition": "Top",
   "labelStyle": "",
   "labelText": "Customer",
-  "labelTextColor": "#ffffff",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "1rem",
   "labelWidth": 5,
   "leftColumn": 0,

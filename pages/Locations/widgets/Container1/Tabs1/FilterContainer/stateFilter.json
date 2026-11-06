@@ -7,6 +7,9 @@
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "accentColor"
     },
     {
@@ -39,7 +42,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "State",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 18,

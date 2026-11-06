@@ -7,6 +7,9 @@
   "defaultOptionValue": "{{ appsmith.store.notifDays || 0 }}",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "sourceData"
     },
     {
@@ -40,7 +43,7 @@
   "labelPosition": "Top",
   "labelStyle": "",
   "labelText": "Date range",
-  "labelTextColor": "#5f7688",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 43,

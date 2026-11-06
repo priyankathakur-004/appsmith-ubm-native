@@ -4,6 +4,12 @@
   "bottomRow": 12,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -39,7 +45,7 @@
   "shouldTruncate": false,
   "text": "{{ `Rate Plans total: ${RateClassData.calcResults().length}` }}",
   "textAlign": "LEFT",
-  "textColor": "#d4d4d8",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 8,
   "type": "TEXT_WIDGET",
   "version": 1,
