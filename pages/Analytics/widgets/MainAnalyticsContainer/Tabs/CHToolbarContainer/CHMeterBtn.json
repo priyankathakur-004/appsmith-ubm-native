@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 7,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.chViewBy || 'Location') === 'Meter' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.surfaceAltColor}}",
+  "buttonColor": "{{(appsmith.store.chViewBy || 'Location') === 'Meter' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.textStrongColor}}",
   "buttonVariant": "{{(appsmith.store.chViewBy || 'Location') === 'Meter' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
