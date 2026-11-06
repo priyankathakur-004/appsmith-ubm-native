@@ -162,11 +162,11 @@ export default {
 				}
 			},
 			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: appsmith.theme.colors.textColor }, data: Object.keys(colorOf) },
-			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12, fontWeight: 600 } },
+			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 12, fontWeight: 600 } },
 			series: [{
 				type: 'pie', radius: ['45%', '72%'], center: ['38%', '52%'],
 				avoidLabelOverlap: true,
-				label: { color: appsmith.theme.colors.textColor, formatter: '{c} ({d}%)' },
+				label: { color: appsmith.theme.colors.textStrongColor, formatter: '{c} ({d}%)' },
 				labelLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
 				data: data
 			}]

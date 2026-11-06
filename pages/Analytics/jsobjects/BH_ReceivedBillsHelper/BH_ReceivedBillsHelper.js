@@ -236,7 +236,7 @@ export default {
 			title: { text: 'Count of Bills by Utility Types', left: 12, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 14, fontWeight: 600 } },
 			tooltip: {
 				trigger: 'axis',
-				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }
+				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textStrongColor }
 			},
 			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 40, textStyle: { color: appsmith.theme.colors.textColor }, data: utilKeys },
 			grid: { left: 48, right: 150, top: 56, bottom: 64 },
@@ -529,7 +529,7 @@ export default {
 			backgroundColor: appsmith.theme.colors.surfaceColor,
 			title: { text: 'Decomposition of bill numbers by utility type and rate codes', left: 12, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 14, fontWeight: 600 } },
 			tooltip: {
-				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor },
+				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textStrongColor },
 				enterable: true,
 				extraCssText: 'max-width:none;box-shadow:0 8px 20px rgba(0,0,0,0.55);',
 				formatter: function (p) {

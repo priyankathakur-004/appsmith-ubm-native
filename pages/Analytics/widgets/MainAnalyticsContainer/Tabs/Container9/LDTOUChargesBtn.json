@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 6,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.ldViewBy || 'ChargesVsConsumption') === 'TOUChargeTypes' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.surfaceAltColor}}",
+  "buttonColor": "{{(appsmith.store.ldViewBy || 'ChargesVsConsumption') === 'TOUChargeTypes' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.textStrongColor}}",
   "buttonVariant": "{{(appsmith.store.ldViewBy || 'ChargesVsConsumption') === 'TOUChargeTypes' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

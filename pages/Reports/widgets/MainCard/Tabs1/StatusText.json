@@ -1,5 +1,5 @@
 {
-  "animateLoading": true,
+  "animateLoading": false,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 39,
   "dynamicBindingPathList": [

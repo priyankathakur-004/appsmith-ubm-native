@@ -43,7 +43,7 @@
   "key": "7sc77slwun",
   "label": "",
   "leftColumn": 60,
-  "menuColor": "{{appsmith.theme.colors.primaryColor}}",
+  "menuColor": "{{appsmith.theme.colors.textStrongColor}}",
   "menuItems": {
     "menuItem1": {
       "id": "menuItem1",
@@ -65,7 +65,7 @@
     }
   },
   "menuItemsSource": "STATIC",
-  "menuVariant": "PRIMARY",
+  "menuVariant": "TERTIARY",
   "mobileBottomRow": 5,
   "mobileLeftColumn": 48,
   "mobileRightColumn": 64,

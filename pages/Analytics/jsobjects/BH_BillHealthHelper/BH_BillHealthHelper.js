@@ -678,7 +678,7 @@ export default {
 			backgroundColor: appsmith.theme.colors.surfaceColor,
 			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 15, fontWeight: 600 } },
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { data: dates, top: 40, right: 8, textStyle: { color: appsmith.theme.colors.textColor } },
+			legend: { data: dates, top: 40, right: 8, textStyle: { color: appsmith.theme.colors.textStrongColor } },
 			grid: { left: 84, right: 24, top: 66, bottom: 44, containLabel: false },
 			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: appsmith.theme.colors.textSecondaryColor }, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			yAxis: { type: 'category', data: locs, axisLabel: { color: appsmith.theme.colors.textSecondaryColor } },
