@@ -7,6 +7,9 @@
   "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
   "dynamicBindingPathList": [
     {
+      "key": "accentColor"
+    },
+    {
       "key": "sourceData"
     },
     {

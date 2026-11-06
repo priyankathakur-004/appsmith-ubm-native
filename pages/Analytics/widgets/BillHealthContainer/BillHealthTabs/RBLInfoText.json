@@ -5,6 +5,18 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "text"
+    },
+    {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -32,9 +44,9 @@
   "rightColumn": 59,
   "shouldScrollContents": false,
   "shouldTruncate": false,
-  "text": "<div style=\"color:#9FB0C4;font-weight:400;font-size:13px;line-height:1.45;\">&#9432; This table shows the number of bills received per location for each month. Notice the applied filter on invoice dates on top of this page.</div><div style=\"color:#F1F5F9;font-weight:700;font-size:15px;margin-top:3px;\">Bill counts by months for various locations</div>",
+  "text": "<div style=\"color:{{appsmith.theme.colors.textColor}};font-weight:400;font-size:13px;line-height:1.45;\">&#9432; This table shows the number of bills received per location for each month. Notice the applied filter on invoice dates on top of this page.</div><div style=\"color:{{appsmith.theme.colors.textStrongColor}};font-weight:700;font-size:15px;margin-top:3px;\">Bill counts by months for various locations</div>",
   "textAlign": "LEFT",
-  "textColor": "#F1F5F9",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

@@ -344,7 +344,7 @@ export default {
 		}
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 			tooltip: {
 				trigger: 'axis',
 				formatter: tooltipFormatter
@@ -354,17 +354,17 @@ export default {
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12 },
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
 			},
 			grid: { left: 80, right: 140, top: 40, bottom: 60 },
-			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: '#94a3b8' } },
+			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: appsmith.theme.colors.textSecondaryColor } },
 			yAxis: {
 				type: 'value',
-				axisLabel: { color: '#94a3b8' },
-				splitLine: { lineStyle: { color: '#475569', type: 'dashed' } }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			series: series
 		};
@@ -441,16 +441,16 @@ export default {
 
 		
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
 				confine: true,
 				enterable: false,
 				extraCssText: 'pointer-events: none;',
-				backgroundColor: '#0f172a',
-				borderColor: '#334155',
-				textStyle: { color: '#e2e8f0' },
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				borderColor: appsmith.theme.colors.borderColor,
+				textStyle: { color: appsmith.theme.colors.textColor },
 				formatter: function(params) {
 					if (!params || !params.length) return '';
 					var header = (params[0] && (params[0].axisValueLabel || params[0].name)) || '';
@@ -467,7 +467,7 @@ export default {
 				type: 'scroll',
 				right: 40,
 				top: 10,
-				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12 },
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
@@ -479,19 +479,19 @@ export default {
 				name: 'MonthYear',
 				nameLocation: 'middle',
 				nameGap: 35,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8', rotate: 35 },
-				axisLine: { lineStyle: { color: '#334155' } }
+				nameTextStyle: { color: appsmith.theme.colors.textColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, rotate: 35 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			yAxis: {
 				type: 'value',
 				name: yAxisLabel,
 				nameLocation: 'middle',
 				nameGap: 55,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8', formatter: xAxisFormatter },
-				axisLine: { lineStyle: { color: '#334155' } },
-				splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }
+				nameTextStyle: { color: appsmith.theme.colors.textColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, formatter: xAxisFormatter },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			series: series
 

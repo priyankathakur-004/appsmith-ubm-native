@@ -90,7 +90,7 @@ export default {
 	getMatrixHtml() {
 		const months = this.getMonths();
 		if (!months.length) {
-			return '<div style="padding:24px;color:#94A3B8;font-size:13px;">No received bills for the current filters.</div>';
+			return '<div style="padding:24px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:13px;">No received bills for the current filters.</div>';
 		}
 		const tree = this._buildTree();
 		const mn = this._monthNames();
@@ -115,20 +115,20 @@ export default {
 		/* Mirror the UBM matrix exactly (dark theme): group rows (Location > Utility > Meter) show
 		   a collapse icon + label with BLANK month cells; only the leaf (Bill Type) row carries the
 		   underlined, click-style bill counts. */
-		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;background:#334155;line-height:16px;';
-		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;background:#334155;line-height:16px;';
+		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
+		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
 		const s1 = 'position:sticky;top:0;z-index:6;';
 		const s2 = 'position:sticky;top:30px;z-index:6;';
-		const sep = 'border-left:1px solid #475569;';
-		const tdBlank = 'padding:5px 9px;border-bottom:1px solid #243140;';
-		const tdNum = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;';
+		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const tdBlank = 'padding:5px 9px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const tdNum = 'padding:5px 9px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;';
 		const lvlPad = [10, 26, 44, 66];
-		const lvlBg = ['#2B3B53', '#24344A', '#1E2A3C', '#172131'];
-		const lvlText = ['color:#FFFFFF;font-weight:700;', 'color:#E2E8F0;font-weight:600;', 'color:#C7D2E0;font-weight:600;', 'color:#D7DEE8;'];
-		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:#9FB0C4;margin-right:8px;vertical-align:middle;">-</span>';
-		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
+		const lvlBg = [appsmith.theme.colors.surfaceHoverColor, appsmith.theme.colors.surfaceColor, appsmith.theme.colors.surfaceColor, appsmith.theme.colors.surfaceColor];
+		const lvlText = ['color:' + appsmith.theme.colors.textStrongColor + ';font-weight:700;', 'color:' + appsmith.theme.colors.textColor + ';font-weight:600;', 'color:' + appsmith.theme.colors.textStrongColor + ';font-weight:600;', 'color:' + appsmith.theme.colors.textStrongColor + ';'];
+		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:' + appsmith.theme.colors.borderColor + ';margin-right:8px;vertical-align:middle;">-</span>';
+		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
 
-		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
+		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:' + appsmith.theme.colors.surfaceColor + ';min-width:100%;margin:0;">\n';
 		/* header row 1: Service Year + year spans (sticky to top of the scroll area) */
 		h += '<tr><th style="' + thL + s1 + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + s1 + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
@@ -232,25 +232,25 @@ export default {
 		const self = this;
 		const labels = monthsAsc.map(m => self._monthLabel(m));
 		return {
-			backgroundColor: '#1E293B',
-			title: { text: 'Count of Bills by Utility Types', left: 12, top: 8, textStyle: { color: '#F1F5F9', fontSize: 14, fontWeight: 600 } },
+			backgroundColor: appsmith.theme.colors.surfaceColor,
+			title: { text: 'Count of Bills by Utility Types', left: 12, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 14, fontWeight: 600 } },
 			tooltip: {
 				trigger: 'axis',
-				backgroundColor: '#0F172A', borderColor: '#334155', textStyle: { color: '#E2E8F0' }
+				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }
 			},
-			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 40, textStyle: { color: '#E2E8F0' }, data: utilKeys },
+			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 40, textStyle: { color: appsmith.theme.colors.textColor }, data: utilKeys },
 			grid: { left: 48, right: 150, top: 56, bottom: 64 },
 			xAxis: {
 				type: 'category',
 				data: labels,
-				axisLabel: { color: '#94A3B8', rotate: 45, fontSize: 10 },
-				axisLine: { lineStyle: { color: '#475569' } }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, rotate: 45, fontSize: 10 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			yAxis: {
 				type: 'value', name: 'Count of Bills',
-				nameTextStyle: { color: '#94A3B8' },
-				axisLabel: { color: '#94A3B8' },
-				splitLine: { lineStyle: { color: '#2B3A4F' } }
+				nameTextStyle: { color: appsmith.theme.colors.textSecondaryColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			series: series
 		};
@@ -288,7 +288,7 @@ export default {
 	getLocationMatrixHtml() {
 		const months = this.getMonths();
 		if (!months.length) {
-			return '<div style="padding:24px;color:#94A3B8;font-size:13px;">No received bills for the current filters.</div>';
+			return '<div style="padding:24px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:13px;">No received bills for the current filters.</div>';
 		}
 		const mn = this._monthNames();
 		const byLoc = {};
@@ -311,15 +311,15 @@ export default {
 		});
 		const colVal = (mc, c) => c.kind === 'm' ? (mc[c.month] || 0) : c.months.reduce((s, m) => s + (mc[m] || 0), 0);
 
-		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;background:#334155;line-height:16px;';
-		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;background:#334155;line-height:16px;';
+		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
+		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
 		const s1 = 'position:sticky;top:0;z-index:6;';
 		const s2 = 'position:sticky;top:30px;z-index:6;';
-		const sep = 'border-left:1px solid #475569;';
-		const tdL = 'padding:5px 12px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;color:#E2E8F0;';
-		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;color:#E2E8F0;';
+		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const tdL = 'padding:5px 12px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;color:' + appsmith.theme.colors.textColor + ';';
+		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;color:' + appsmith.theme.colors.textColor + ';';
 
-		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
+		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:' + appsmith.theme.colors.surfaceColor + ';min-width:100%;margin:0;">\n';
 		h += '<tr><th style="' + thL + s1 + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + s1 + '" colspan="' + (g.months.length + 1) + '">' + g.year + '</th>'; });
 		h += '</tr>\n';
@@ -335,20 +335,20 @@ export default {
 		locs.forEach((loc, i) => {
 			const mc = byLoc[loc];
 			for (const m in mc) grand[m] = (grand[m] || 0) + mc[m];
-			const bg = (i % 2) ? 'background:#1B2738;' : 'background:#172131;';
+			const bg = (i % 2) ? 'background:' + appsmith.theme.colors.surfaceColor + ';' : 'background:' + appsmith.theme.colors.surfaceColor + ';';
 			let r = '<tr><td style="' + tdL + bg + '">' + loc + '</td>';
 			cols.forEach(c => {
 				const v = colVal(mc, c);
-				const st = tdC + bg + (c.kind === 'yt' ? 'font-weight:700;color:#F8FAFC;' + sep : '');
+				const st = tdC + bg + (c.kind === 'yt' ? 'font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';' + sep : '');
 				r += '<td style="' + st + '">' + (v ? v : '') + '</td>';
 			});
 			h += r + '</tr>\n';
 		});
 		const sb = 'position:sticky;bottom:0;z-index:6;';
-		let tr = '<tr><td style="' + tdL + 'background:#334155;font-weight:700;color:#F8FAFC;border-top:2px solid #475569;' + sb + '">Total</td>';
+		let tr = '<tr><td style="' + tdL + 'background:' + appsmith.theme.colors.surfaceHoverColor + ';font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';border-top:2px solid ' + appsmith.theme.colors.borderColor + ';' + sb + '">Total</td>';
 		cols.forEach(c => {
 			const v = colVal(grand, c);
-			tr += '<td style="' + tdC + 'background:#334155;font-weight:700;color:#F8FAFC;border-top:2px solid #475569;' + (c.kind === 'yt' ? sep : '') + sb + '">' + (v ? v : '') + '</td>';
+			tr += '<td style="' + tdC + 'background:' + appsmith.theme.colors.surfaceHoverColor + ';font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';border-top:2px solid ' + appsmith.theme.colors.borderColor + ';' + (c.kind === 'yt' ? sep : '') + sb + '">' + (v ? v : '') + '</td>';
 		});
 		h += tr + '</tr>\n</table></div>';
 		return h;
@@ -384,7 +384,7 @@ export default {
 	getRateMatrixHtml() {
 		const months = this.getMonths();
 		if (!months.length) {
-			return '<div style="padding:24px;color:#94A3B8;font-size:13px;">No received bills for the current filters.</div>';
+			return '<div style="padding:24px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:13px;">No received bills for the current filters.</div>';
 		}
 		const mn = this._monthNames();
 		const self = this;
@@ -410,21 +410,21 @@ export default {
 		const cols = [];
 		yearGroups.forEach(g => { g.months.forEach(m => cols.push({ month: m })); });
 
-		const th = 'padding:6px 9px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:center;white-space:nowrap;background:#334155;line-height:16px;';
-		const thL = 'padding:6px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:left;white-space:nowrap;background:#334155;line-height:16px;';
+		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
+		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
 		const s1 = 'position:sticky;top:0;z-index:6;';
 		const s2 = 'position:sticky;top:30px;z-index:6;';
-		const sep = 'border-left:1px solid #475569;';
-		const tdBlank = 'padding:5px 9px;border-bottom:1px solid #243140;';
-		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid #243140;text-align:center;white-space:nowrap;';
+		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const tdBlank = 'padding:5px 9px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;';
 		const lvlPad = [10, 26, 44, 66];
-		const lvlBg = ['#2B3B53', '#24344A', '#1E2A3C', '#172131'];
-		const lvlText = ['color:#FFFFFF;font-weight:700;', 'color:#E2E8F0;font-weight:600;', 'color:#C7D2E0;font-weight:600;', 'color:#D7DEE8;'];
-		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:#9FB0C4;margin-right:8px;vertical-align:middle;">-</span>';
-		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid #243140;text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
+		const lvlBg = [appsmith.theme.colors.surfaceHoverColor, appsmith.theme.colors.surfaceColor, appsmith.theme.colors.surfaceColor, appsmith.theme.colors.surfaceColor];
+		const lvlText = ['color:' + appsmith.theme.colors.textStrongColor + ';font-weight:700;', 'color:' + appsmith.theme.colors.textColor + ';font-weight:600;', 'color:' + appsmith.theme.colors.textStrongColor + ';font-weight:600;', 'color:' + appsmith.theme.colors.textStrongColor + ';'];
+		const icon = '<span style="display:inline-block;width:12px;height:12px;line-height:10px;text-align:center;border:1px solid #6B7A90;border-radius:2px;font-size:12px;color:' + appsmith.theme.colors.borderColor + ';margin-right:8px;vertical-align:middle;">-</span>';
+		const labelStyle = (lvl) => 'padding:5px 10px 5px ' + lvlPad[lvl] + 'px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;' + lvlText[lvl] + 'background:' + lvlBg[lvl] + ';';
 		const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
-		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:#172131;min-width:100%;margin:0;">\n';
+		let h = '<div style="width:100%;height:100%;max-height:838px;overflow:auto;margin:0;"><table style="border-collapse:collapse;background:' + appsmith.theme.colors.surfaceColor + ';min-width:100%;margin:0;">\n';
 		h += '<tr><th style="' + thL + s1 + '">Service Year</th>';
 		yearGroups.forEach(g => { h += '<th style="' + th + sep + s1 + '" colspan="' + g.months.length + '">' + g.year + '</th>'; });
 		h += '</tr>\n';
@@ -526,10 +526,10 @@ export default {
 			return { name: u, value: total, itemStyle: { color: color }, children: children, _locs: locs, _util: u };
 		});
 		return {
-			backgroundColor: '#1E293B',
-			title: { text: 'Decomposition of bill numbers by utility type and rate codes', left: 12, top: 8, textStyle: { color: '#F1F5F9', fontSize: 14, fontWeight: 600 } },
+			backgroundColor: appsmith.theme.colors.surfaceColor,
+			title: { text: 'Decomposition of bill numbers by utility type and rate codes', left: 12, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 14, fontWeight: 600 } },
 			tooltip: {
-				backgroundColor: '#0F172A', borderColor: '#334155', textStyle: { color: '#E2E8F0' },
+				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor },
 				enterable: true,
 				extraCssText: 'max-width:none;box-shadow:0 8px 20px rgba(0,0,0,0.55);',
 				formatter: function (p) {
@@ -557,11 +557,11 @@ export default {
 						var pct = total ? (top[i].value / total * 100).toFixed(1) : '0';
 						leg += '<div style="display:flex;align-items:center;margin:1px 0;white-space:nowrap;"><span style="width:9px;height:9px;background:' + palette2[i % palette2.length] + ';display:inline-block;margin-right:5px;border-radius:2px;"></span>' + top[i].name + ': ' + top[i].value + ' (' + pct + '%)</div>';
 					}
-					if (locs.length > 10) leg += '<div style="color:#94A3B8;margin-top:2px;">+' + (locs.length - 10) + ' more…</div>';
+					if (locs.length > 10) leg += '<div style="color:' + appsmith.theme.colors.textSecondaryColor + ';margin-top:2px;">+' + (locs.length - 10) + ' more…</div>';
 					var hdr = d._util || p.name;
 					return '<div style="display:flex;align-items:flex-start;">'
-						+ '<div style="text-align:center;"><div style="font-weight:700;color:#F1F5F9;margin-bottom:2px;">' + hdr + '</div><svg width="140" height="140" viewBox="0 0 140 140">' + paths + '</svg></div>'
-						+ '<div style="margin-left:10px;font-size:11px;color:#E2E8F0;max-height:140px;overflow:auto;"><div style="color:#94A3B8;font-weight:700;margin-bottom:3px;">Location</div>' + leg + '</div></div>';
+						+ '<div style="text-align:center;"><div style="font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';margin-bottom:2px;">' + hdr + '</div><svg width="140" height="140" viewBox="0 0 140 140">' + paths + '</svg></div>'
+						+ '<div style="margin-left:10px;font-size:11px;color:' + appsmith.theme.colors.textColor + ';max-height:140px;overflow:auto;"><div style="color:' + appsmith.theme.colors.textSecondaryColor + ';font-weight:700;margin-bottom:3px;">Location</div>' + leg + '</div></div>';
 				}
 			},
 			series: [{
@@ -571,11 +571,11 @@ export default {
 				nodeClick: false,
 				breadcrumb: { show: false },
 				visibleMin: 1,
-				label: { show: true, position: 'insideTopLeft', color: '#FFFFFF', fontSize: 13, fontWeight: 700, formatter: '{b}' },
+				label: { show: true, position: 'insideTopLeft', color: appsmith.theme.colors.textStrongColor, fontSize: 13, fontWeight: 700, formatter: '{b}' },
 				upperLabel: { show: false },
 				levels: [
-					{ itemStyle: { borderColor: '#0F172A', borderWidth: 2, gapWidth: 2 } },
-					{ itemStyle: { borderColor: '#1E293B', borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
+					{ itemStyle: { borderColor: appsmith.theme.colors.surfaceColor, borderWidth: 2, gapWidth: 2 } },
+					{ itemStyle: { borderColor: appsmith.theme.colors.borderColor, borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
 				],
 				data: data
 			}]

@@ -241,8 +241,8 @@ export default {
 				name: 'Trend',
 				type: 'line',
 				showSymbol: false,
-				lineStyle: { type: 'dashed', color: '#64748b', width: 2 },
-				itemStyle: { color: '#64748b' },
+				lineStyle: { type: 'dashed', color: appsmith.theme.colors.borderColor, width: 2 },
+				itemStyle: { color: appsmith.theme.colors.textMutedColor },
 				data: [[minXs, Number(y1.toFixed(4))], [maxXs, Number(y2.toFixed(4))]],
 				tooltip: { show: false },
 				z: 0
@@ -250,13 +250,13 @@ export default {
 		}
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 			tooltip: {
 				trigger: 'item',
 				formatter: '{b}',
-				backgroundColor: '#ffffff',
-				textStyle: { color: '#1e293b', fontSize: 13 },
-				borderColor: '#e2e8f0',
+				backgroundColor: appsmith.theme.colors.textStrongColor,
+				textStyle: { color: appsmith.theme.colors.surfaceColor, fontSize: 13 },
+				borderColor: appsmith.theme.colors.borderColor,
 				borderWidth: 1,
 				confine: true,
 				extraCssText: 'white-space:pre; font-family:system-ui; line-height:1.8; padding:10px 14px;'
@@ -266,7 +266,7 @@ export default {
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12 },
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10,
@@ -278,8 +278,8 @@ export default {
 				name: 'Consumption (KWH)',
 				nameLocation: 'middle',
 				nameGap: 40,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8', formatter: '{value}' + xScale.suffix },
+				nameTextStyle: { color: appsmith.theme.colors.textColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, formatter: '{value}' + xScale.suffix },
 				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.25)', type: [2, 4], width: 1 } }
 			},
 			yAxis: {
@@ -287,8 +287,8 @@ export default {
 				name: 'Charges ($)',
 				nameLocation: 'middle',
 				nameGap: 55,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8', formatter: '${value}' + yScale.suffix },
+				nameTextStyle: { color: appsmith.theme.colors.textColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, formatter: '${value}' + yScale.suffix },
 				splitLine: { lineStyle: { color: 'rgba(51,65,85,0.25)', type: [2, 4], width: 1 } }
 			},
 			dataZoom: [
@@ -297,22 +297,22 @@ export default {
 					xAxisIndex: 0,
 					bottom: 5,
 					height: 18,
-					borderColor: '#334155',
-					backgroundColor: '#0f172a',
+					borderColor: appsmith.theme.colors.borderColor,
+					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.15)',
-					handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
-					textStyle: { color: '#94a3b8' }
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+					textStyle: { color: appsmith.theme.colors.textSecondaryColor }
 				},
 				{
 					type: 'slider',
 					yAxisIndex: 0,
 					left: 5,
 					width: 14,
-					borderColor: '#334155',
-					backgroundColor: '#0f172a',
+					borderColor: appsmith.theme.colors.borderColor,
+					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.18)',
-					handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
-					textStyle: { color: '#94a3b8' },
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+					textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 					showDetail: false
 				},
 				{

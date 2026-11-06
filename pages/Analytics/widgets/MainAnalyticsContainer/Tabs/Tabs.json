@@ -1,5 +1,5 @@
 {
-  "accentColor": "#86efac",
+  "accentColor": "{{appsmith.theme.colors.accentColor}}",
   "animateLoading": true,
   "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
   "borderColor": "{{appsmith.theme.colors.backgroundColor}}",
@@ -688,6 +688,9 @@
   ],
   "defaultTab": "Overview",
   "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
     {
       "key": "backgroundColor"
     },

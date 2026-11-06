@@ -5,6 +5,9 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "menuColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],
@@ -30,7 +33,7 @@
   "isVisible": true,
   "key": "swjsxcrnun",
   "leftColumn": 59,
-  "menuColor": "#ffffff",
+  "menuColor": "{{appsmith.theme.colors.textStrongColor}}",
   "menuItems": {
     "menuItembz6ldwa0c7": {
       "id": "menuItembz6ldwa0c7",

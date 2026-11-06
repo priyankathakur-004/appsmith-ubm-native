@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -29,7 +35,7 @@
   "rightColumn": 64,
   "text": "Bill Type",
   "textAlign": "LEFT",
-  "textColor": "#94a3b8",
+  "textColor": "{{appsmith.theme.colors.textSecondaryColor}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,

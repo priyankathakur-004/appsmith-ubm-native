@@ -5,6 +5,15 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -32,7 +41,7 @@
   "shouldTruncate": false,
   "text": "{{BH_BillHealthHelper.getLegendHtml()}}",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 5,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

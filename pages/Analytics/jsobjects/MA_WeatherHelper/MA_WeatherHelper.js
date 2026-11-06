@@ -89,7 +89,7 @@ export default {
 
         return {
 
-            backgroundColor: "#1E293B",
+            backgroundColor: appsmith.theme.colors.surfaceColor,
 
             tooltip: {
                 trigger: "axis"
@@ -99,7 +99,7 @@ export default {
                 data: ["Total CDD", "Total HDD", "Average Consumption"],
                 top: 6,
                 textStyle: {
-                    color: "#e5e7eb"
+                    color: appsmith.theme.colors.textColor
                 }
             },
 
@@ -117,7 +117,7 @@ export default {
                 axisLabel: {
                     rotate: 40,
                     margin: 10,
-                    color: "#d1d5db"
+                    color: appsmith.theme.colors.textStrongColor
                 },
                 axisLine: {
                     show: false
@@ -131,10 +131,10 @@ export default {
                     type: "value",
                     name: "CDD & HDD",
                     nameTextStyle: {
-                        color: "#e5e7eb"
+                        color: appsmith.theme.colors.textColor
                     },
                     axisLabel: {
-                        color: "#d1d5db"
+                        color: appsmith.theme.colors.textStrongColor
                     },
                     axisLine: {
                         show: false
@@ -144,7 +144,7 @@ export default {
                     },
                     splitLine: {
                         lineStyle: {
-                            color: "#374151"
+                            color: appsmith.theme.colors.textMutedColor
                         }
                     }
                 },
@@ -152,10 +152,10 @@ export default {
                     type: "value",
                     name: "Avg Consumption",
                     nameTextStyle: {
-                        color: "#e5e7eb"
+                        color: appsmith.theme.colors.textColor
                     },
                     axisLabel: {
-                        color: "#d1d5db"
+                        color: appsmith.theme.colors.textStrongColor
                     },
                     axisLine: {
                         show: false
@@ -200,11 +200,11 @@ export default {
                     smooth: true,
                     symbolSize: 6,
                     lineStyle: {
-                        color: "#ffffff",
+                        color: appsmith.theme.colors.borderColor,
                         width: 3
                     },
                     itemStyle: {
-                        color: "#ffffff"
+                        color: appsmith.theme.colors.textStrongColor
                     },
                     data: months.map(m =>
                         monthly[m].cnt > 0 ?
@@ -286,7 +286,7 @@ export default {
 
         return {
 
-            backgroundColor: "#1E293B",
+            backgroundColor: appsmith.theme.colors.surfaceColor,
 
             tooltip: {
                 trigger: "axis"
@@ -302,7 +302,7 @@ export default {
 
             legend: {
                 textStyle: {
-                    color: "#e5e7eb"
+                    color: appsmith.theme.colors.textColor
                 }
             },
 
@@ -312,11 +312,11 @@ export default {
                     xAxisIndex: 0,
                     bottom: 5,
                     height: 18,
-                    borderColor: "#334155",
-                    backgroundColor: "#0f172a",
+                    borderColor: appsmith.theme.colors.borderColor,
+                    backgroundColor: appsmith.theme.colors.surfaceColor,
                     fillerColor: "rgba(59,130,246,0.15)",
-                    handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
-                    textStyle: { color: "#94a3b8" }
+                    handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+                    textStyle: { color: appsmith.theme.colors.textSecondaryColor }
                 },
                 {
                     type: "slider",
@@ -325,11 +325,11 @@ export default {
                     width: 14,
                     start: 0,
                     end: endPct,
-                    borderColor: "#334155",
-                    backgroundColor: "#0f172a",
+                    borderColor: appsmith.theme.colors.borderColor,
+                    backgroundColor: appsmith.theme.colors.surfaceColor,
                     fillerColor: "rgba(59,130,246,0.18)",
-                    handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
-                    textStyle: { color: "#94a3b8" },
+                    handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+                    textStyle: { color: appsmith.theme.colors.textSecondaryColor },
                     showDetail: false
                 },
                 {
@@ -349,11 +349,11 @@ export default {
                 min: 0,
                 max: 1,
                 axisLabel: {
-                    color: "#d1d5db"
+                    color: appsmith.theme.colors.textStrongColor
                 },
                 splitLine: {
                     lineStyle: {
-                        color: "#374151"
+                        color: appsmith.theme.colors.borderColor
                     }
                 }
             },
@@ -363,7 +363,7 @@ export default {
                 inverse: true,
                 data: corrs.map(c => c.name),
                 axisLabel: {
-                    color: "#d1d5db"
+                    color: appsmith.theme.colors.textStrongColor
                 }
             },
 
@@ -400,7 +400,7 @@ export default {
 
         const colors = [
             '#60a5fa', '#1d4ed8', '#fbbf24', '#4ade80',
-            '#059669', '#166534', '#6366f1', '#374151',
+            '#059669', '#166534', '#6366f1', appsmith.theme.colors.textMutedColor,
             '#ef4444', '#1e40af', '#f97316', '#a855f7',
             '#14b8a6', '#ec4899', '#84cc16', '#0ea5e9'
         ];
@@ -427,7 +427,7 @@ export default {
 
         return {
 
-            backgroundColor: "#1E293B",
+            backgroundColor: appsmith.theme.colors.surfaceColor,
 
             tooltip: {
                 trigger: 'item'
@@ -440,7 +440,7 @@ export default {
                 top: 10,
                 height: 220,
                 textStyle: {
-                    color: "#e5e7eb"
+                    color: appsmith.theme.colors.textColor
                 }
             },
 
@@ -456,11 +456,11 @@ export default {
                 name: 'Degree Days',
                 nameGap: 18,
                 axisLabel: {
-                    color: "#d1d5db"
+                    color: appsmith.theme.colors.textStrongColor
                 },
                 splitLine: {
                     lineStyle: {
-                        color: "#374151"
+                        color: appsmith.theme.colors.borderColor
                     }
                 }
             },
@@ -469,7 +469,7 @@ export default {
                 type: 'value',
                 name: 'Consumption',
                 axisLabel: {
-                    color: "#d1d5db",
+                    color: appsmith.theme.colors.textStrongColor,
                     formatter: v => {
                         if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
                         if (v >= 1000) return (v / 1000).toFixed(0) + 'K';
@@ -478,7 +478,7 @@ export default {
                 },
                 splitLine: {
                     lineStyle: {
-                        color: "#374151"
+                        color: appsmith.theme.colors.borderColor
                     }
                 }
             },

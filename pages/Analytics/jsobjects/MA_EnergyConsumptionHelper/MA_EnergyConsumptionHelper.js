@@ -122,12 +122,12 @@ _getUOMColumnLabel(view) {
 
 _buildBarChart(rows, xlabel, gridLeft, labelWidth) {
     return {
-        backgroundColor: "#1E293B",
+        backgroundColor: appsmith.theme.colors.surfaceColor,
         tooltip: {
             trigger: "axis",
             axisPointer: { type: "shadow" },
-            backgroundColor: "#0F172A",
-            textStyle: { color: "#E2E8F0" }
+            backgroundColor: appsmith.theme.colors.surfaceColor,
+            textStyle: { color: appsmith.theme.colors.textColor }
         },
         grid: { left: gridLeft, right: gridLeft === "15%" ? "10%" : "5%", top: "5%", bottom: "10%" },
         xAxis: {
@@ -135,16 +135,16 @@ _buildBarChart(rows, xlabel, gridLeft, labelWidth) {
             name: xlabel,
             nameLocation: "middle",
             nameGap: 40,
-            nameTextStyle: { color: "#CBD5E1" },
-            axisLabel: { color: "#CBD5E1" },
-            axisLine: { lineStyle: { color: "#475569" } },
-            splitLine: { lineStyle: { color: "#334155" } }
+            nameTextStyle: { color: appsmith.theme.colors.textStrongColor },
+            axisLabel: { color: appsmith.theme.colors.textStrongColor },
+            axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+            splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
         },
         yAxis: {
             type: "category",
             inverse: true,
             data: rows.map(r => r.name),
-            axisLabel: { color: "#E2E8F0", width: labelWidth, overflow: "truncate" },
+            axisLabel: { color: appsmith.theme.colors.textColor, width: labelWidth, overflow: "truncate" },
             axisLine: { show: false },
             axisTick: { show: false }
         },
@@ -184,11 +184,11 @@ getLocationChartConfig() {
             xAxisIndex: 0,
             bottom: 5,
             height: 18,
-            borderColor: "#334155",
-            backgroundColor: "#0f172a",
+            borderColor: appsmith.theme.colors.borderColor,
+            backgroundColor: appsmith.theme.colors.surfaceColor,
             fillerColor: "rgba(59,130,246,0.15)",
-            handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
-            textStyle: { color: "#94a3b8" }
+            handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+            textStyle: { color: appsmith.theme.colors.textSecondaryColor }
         },
         {
             type: "slider",
@@ -197,11 +197,11 @@ getLocationChartConfig() {
             width: 14,
             start: 0,
             end: endPct,
-            borderColor: "#334155",
-            backgroundColor: "#0f172a",
+            borderColor: appsmith.theme.colors.borderColor,
+            backgroundColor: appsmith.theme.colors.surfaceColor,
             fillerColor: "rgba(59,130,246,0.18)",
-            handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
-            textStyle: { color: "#94a3b8" },
+            handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+            textStyle: { color: appsmith.theme.colors.textSecondaryColor },
             showDetail: false
         },
         {
@@ -263,20 +263,20 @@ getUtilityPieConfig() {
     const rows = allRows.filter(r => total > 0 ? (r.value / total) * 100 > 0 : r.value > 0);
 
     return {
-        backgroundColor: "#1E293B",
-        tooltip: { trigger: "item", backgroundColor: "#0F172A", textStyle: { color: "#E2E8F0" } },
-        legend: { top: "3%", left: "center", textStyle: { color: "#E2E8F0" } },
+        backgroundColor: appsmith.theme.colors.surfaceColor,
+        tooltip: { trigger: "item", backgroundColor: appsmith.theme.colors.surfaceColor, textStyle: { color: appsmith.theme.colors.textColor } },
+        legend: { top: "3%", left: "center", textStyle: { color: appsmith.theme.colors.textColor } },
         series: [{
             type: "pie",
             radius: ["30%", "45%"],
             center: ["50%", "55%"],
             label: {
-                color: "#E2E8F0",
+                color: appsmith.theme.colors.textColor,
                 formatter: p => p.name + "\n" + p.value.toFixed(2) + "M (" + p.percent.toFixed(1) + "%)"
             },
-            labelLine: { length: 15, length2: 20, lineStyle: { color: "#64748B" } },
+            labelLine: { length: 15, length2: 20, lineStyle: { color: appsmith.theme.colors.borderColor } },
             data: rows,
-            color: rows.map(r => colors[r.name] || "#94A3B8")
+            color: rows.map(r => colors[r.name] || appsmith.theme.colors.textSecondaryColor)
         }]
     };
 },

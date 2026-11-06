@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 9,
   "boxShadow": "none",
-  "buttonColor": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? '#2563eb' : '#ffffff'}}",
+  "buttonColor": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.surfaceAltColor}}",
   "buttonVariant": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
@@ -42,7 +42,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 49,
   "text": "Energy Use Intensity",
-  "textColor": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? '#ffffff' : '#2563eb'}}",
+  "textColor": "{{appsmith.store.mecActiveView === 'EnergyUseIntensity' ? '#ffffff' : appsmith.theme.colors.textStrongColor}}",
   "topRow": 5,
   "type": "BUTTON_WIDGET",
   "version": 1,

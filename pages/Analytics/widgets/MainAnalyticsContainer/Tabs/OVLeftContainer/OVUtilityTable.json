@@ -1,12 +1,24 @@
 {
   "animateLoading": true,
-  "backgroundColor": "#1E293B",
-  "borderColor": "#334155",
+  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 109,
   "boxShadow": "none",
   "dynamicBindingPathList": [
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "backgroundColor"
+    },
     {
       "key": "text"
     },
@@ -41,7 +53,7 @@
   "shouldTruncate": false,
   "text": "{{MA_OverviewHelper.getUtilitySummaryHtml()}}",
   "textAlign": "LEFT",
-  "textColor": "#E2E8F0",
+  "textColor": "{{appsmith.theme.colors.textColor}}",
   "topRow": 39,
   "type": "TEXT_WIDGET",
   "version": 1,

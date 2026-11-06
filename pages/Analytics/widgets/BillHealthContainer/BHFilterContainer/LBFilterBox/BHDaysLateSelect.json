@@ -12,6 +12,9 @@
   ],
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "borderRadius"
     },
     {
@@ -73,7 +76,7 @@
   "widgetId": "bhdayslatesel",
   "widgetName": "BHDaysLateSelect",
   "labelPosition": "Top",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelAlignment": "left"
 }
