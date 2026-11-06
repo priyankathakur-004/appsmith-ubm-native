@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -29,7 +35,7 @@
   "rightColumn": 35,
   "text": "Error Logs",
   "textAlign": "LEFT",
-  "textColor": "#F1F5F9",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,

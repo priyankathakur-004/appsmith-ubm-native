@@ -7,6 +7,9 @@
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "borderRadius"
     },
     {
@@ -36,7 +39,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Display Only",
-  "labelTextColor": "#f1f5f9",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 0,

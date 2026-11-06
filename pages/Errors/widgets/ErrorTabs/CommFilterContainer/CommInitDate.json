@@ -9,6 +9,9 @@
   "datePickerType": "DATE_PICKER",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "accentColor"
     },
     {
@@ -30,7 +33,7 @@
   "label": "Initial Creation Date",
   "labelAlignment": "left",
   "labelPosition": "Top",
-  "labelTextColor": "#E2E8F0",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 1,

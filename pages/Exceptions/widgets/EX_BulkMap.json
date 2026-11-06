@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -34,7 +40,7 @@
   "rightColumn": 64,
   "text": "Bulk Map",
   "textAlign": "RIGHT",
-  "textColor": "#60A5FA",
+  "textColor": "{{appsmith.theme.colors.linkColor}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,

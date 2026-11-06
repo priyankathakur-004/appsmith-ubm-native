@@ -3,9 +3,12 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 59,
   "boxShadow": "none",
-  "buttonColor": "#60A5FA",
+  "buttonColor": "{{appsmith.theme.colors.linkColor}}",
   "buttonVariant": "TERTIARY",
   "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
     {
       "key": "borderRadius"
     }

@@ -7,6 +7,9 @@
   "boxShadow": "none",
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
+    {
+      "key": "labelTextColor"
+    },
     { "key": "accentColor" },
     { "key": "borderRadius" },
     { "key": "sourceData" }
@@ -27,7 +30,7 @@
   "labelPosition": "Top",
   "labelStyle": "",
   "labelText": "Columns to display (leave empty to show all returned fields)",
-  "labelTextColor": "#ffffff",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "1rem",
   "labelWidth": 5,
   "leftColumn": 0,

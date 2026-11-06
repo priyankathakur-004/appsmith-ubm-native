@@ -61,7 +61,8 @@
       "successColor": "#166534",
       "warningColor": "#92400e",
       "dangerColor": "#b91c1c",
-      "accentColor": "#091b44"
+      "accentColor": "#091b44",
+      "actionColor": "#091b44"
     },
     "fontFamily": {
       "appFont": "Open Sans"
