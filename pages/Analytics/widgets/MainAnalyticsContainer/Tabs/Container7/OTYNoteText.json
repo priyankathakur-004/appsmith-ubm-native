@@ -1,12 +1,21 @@
 {
   "animateLoading": true,
-  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
-  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
+  "borderColor": "{{appsmith.theme.colors.surfaceColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 34,
   "boxShadow": "none",
   "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
     {
       "key": "fontFamily"
     },
@@ -36,9 +45,9 @@
   "renderMode": "CANVAS",
   "rightColumn": 14,
   "shouldTruncate": false,
-  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p><b style=\"color:#fbbf24;\">Note</b>: Choose one utility for the consumption and unit cost charts to show correct data. Choosing multiple utilities works for aggregated charges but not other charts.</p></div>",
+  "text": "<div style=\"color:{{appsmith.theme.colors.textColor}};font-size:13px;line-height:1.6;padding:8px;\"><p><b style=\"color:{{appsmith.theme.colors.warningColor}};\">Note</b>: Choose one utility for the consumption and unit cost charts to show correct data. Choosing multiple utilities works for aggregated charges but not other charts.</p></div>",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 17,
   "type": "TEXT_WIDGET",
   "version": 1,

@@ -1,12 +1,21 @@
 {
   "animateLoading": true,
-  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
-  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
+  "borderColor": "{{appsmith.theme.colors.surfaceColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 17,
   "boxShadow": "none",
   "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
     {
       "key": "fontFamily"
     },
@@ -36,9 +45,9 @@
   "renderMode": "CANVAS",
   "rightColumn": 14,
   "shouldTruncate": false,
-  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Graphs show the aggregated measures for all <b style=\"color:#f1f5f9;\">locations</b> by default. To show data for selected locations, use the list in the box below, or filter above. Hold the Control key for multiple options.</p></div>",
+  "text": "<div style=\"color:{{appsmith.theme.colors.textColor}};font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Graphs show the aggregated measures for all <b style=\"color:{{appsmith.theme.colors.textStrongColor}};\">locations</b> by default. To show data for selected locations, use the list in the box below, or filter above. Hold the Control key for multiple options.</p></div>",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,

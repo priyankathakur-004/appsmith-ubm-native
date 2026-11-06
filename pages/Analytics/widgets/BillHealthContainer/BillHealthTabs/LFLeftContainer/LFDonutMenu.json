@@ -5,6 +5,9 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "menuColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],
@@ -30,7 +33,7 @@
   "isVisible": true,
   "key": "lfmenuk1",
   "leftColumn": 55,
-  "menuColor": "#E2E8F0",
+  "menuColor": "{{appsmith.theme.colors.textStrongColor}}",
   "menuItems": {
     "mi_lf_exp": {
       "id": "mi_lf_exp",

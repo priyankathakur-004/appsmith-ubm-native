@@ -7,6 +7,9 @@
   "defaultOptionValue": "Main Analytics Report",
   "dynamicBindingPathList": [
     {
+      "key": "accentColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],

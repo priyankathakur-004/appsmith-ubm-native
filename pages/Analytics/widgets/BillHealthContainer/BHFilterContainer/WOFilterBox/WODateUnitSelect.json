@@ -8,6 +8,12 @@
   "defaultOptionValue": "Months",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
       "key": "isVisible"
     },
     {
@@ -54,6 +60,6 @@
   "widgetName": "WODateUnitSelect",
   "labelPosition": "Top",
   "labelAlignment": "left",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem"
 }

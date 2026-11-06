@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -27,7 +33,7 @@
   "rightColumn": 52,
   "text": "Select UOM:",
   "textAlign": "LEFT",
-  "textColor": "#e2e8f0",
+  "textColor": "{{appsmith.theme.colors.textColor}}",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,

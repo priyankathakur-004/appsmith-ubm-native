@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -32,7 +38,7 @@
   "rightColumn": 60,
   "text": "{{MA_RankLocationHelper.getChartTitle()}}",
   "textAlign": "CENTER",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 5,
   "type": "TEXT_WIDGET",
   "version": 1,

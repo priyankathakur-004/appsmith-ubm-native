@@ -140,12 +140,12 @@ export default {
 			d_charges: Number(g.charges.toFixed(2))
 		}));
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 			tooltip: {
 				trigger: 'item',
-				backgroundColor: '#0F172A',
-				borderColor: '#334155',
-				textStyle: { color: '#E2E8F0' },
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				borderColor: appsmith.theme.colors.borderColor,
+				textStyle: { color: appsmith.theme.colors.textColor },
 				formatter: function (p) {
 					var d = p.data || {};
 					var pct = (p.percent == null ? 0 : p.percent).toFixed(1) + '%';
@@ -161,13 +161,13 @@ export default {
 					return rows.join('<br/>');
 				}
 			},
-			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: '#E2E8F0' }, data: Object.keys(colorOf) },
-			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: '#E2E8F0', fontSize: 12, fontWeight: 600 } },
+			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: appsmith.theme.colors.textColor }, data: Object.keys(colorOf) },
+			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12, fontWeight: 600 } },
 			series: [{
 				type: 'pie', radius: ['45%', '72%'], center: ['38%', '52%'],
 				avoidLabelOverlap: true,
-				label: { color: '#E2E8F0', formatter: '{c} ({d}%)' },
-				labelLine: { lineStyle: { color: '#64748B' } },
+				label: { color: appsmith.theme.colors.textColor, formatter: '{c} ({d}%)' },
+				labelLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
 				data: data
 			}]
 		};
@@ -186,16 +186,16 @@ export default {
 		};
 		const pct = (num, den) => den ? (num / den * 100).toFixed(2) + '%' : '';
 
-		const th = 'padding:8px 12px;color:#F1F5F9;font-size:12px;font-weight:700;border-bottom:2px solid #475569;text-align:right;white-space:nowrap;';
+		const th = 'padding:8px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:right;white-space:nowrap;';
 		const thL = th + 'text-align:left;';
-		const td = 'padding:7px 12px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;text-align:right;white-space:nowrap;';
+		const td = 'padding:7px 12px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:right;white-space:nowrap;';
 		const tdL = td + 'text-align:left;';
 
 		let tot = { net: 0, late: 0, recoup: 0, charges: 0 };
 		keys.forEach(k => { tot.net += agg[k].net; tot.late += agg[k].late; tot.recoup += agg[k].recoup; tot.charges += agg[k].charges; });
 
-		let h = '<div style="max-height:560px;overflow:auto;"><table style="width:100%;border-collapse:collapse;background:#1E293B;">';
-		h += '<tr style="background:#334155;"><th style="' + thL + '">' + dimLabel + '</th>'
+		let h = '<div style="max-height:560px;overflow:auto;"><table style="width:100%;border-collapse:collapse;background:' + appsmith.theme.colors.surfaceColor + ';">';
+		h += '<tr style="background:' + appsmith.theme.colors.surfaceHoverColor + ';"><th style="' + thL + '">' + dimLabel + '</th>'
 			+ '<th style="' + th + '">Net Late Fee</th><th style="' + th + '">Late Fee</th>'
 			+ '<th style="' + th + '">Recouped Late Fee</th><th style="' + th + '">Total Charges</th>'
 			+ '<th style="' + th + '">Recouped/late fees</th><th style="' + th + '">Late fee/charges</th></tr>';
@@ -209,8 +209,8 @@ export default {
 				+ '<td style="' + td + '">' + pct(Math.abs(a.recoup), a.late) + '</td>'
 				+ '<td style="' + td + '">' + pct(a.net, a.charges) + '</td></tr>';
 		});
-		const tf = td + 'font-weight:700;border-top:2px solid #475569;color:#F1F5F9;';
-		const tfL = tdL + 'font-weight:700;border-top:2px solid #475569;color:#F1F5F9;';
+		const tf = td + 'font-weight:700;border-top:2px solid ' + appsmith.theme.colors.borderColor + ';color:' + appsmith.theme.colors.textStrongColor + ';';
+		const tfL = tdL + 'font-weight:700;border-top:2px solid ' + appsmith.theme.colors.borderColor + ';color:' + appsmith.theme.colors.textStrongColor + ';';
 		h += '<tr><td style="' + tfL + '">Total</td>'
 			+ '<td style="' + tf + '">' + money(tot.net) + '</td>'
 			+ '<td style="' + tf + '">' + money(tot.late) + '</td>'

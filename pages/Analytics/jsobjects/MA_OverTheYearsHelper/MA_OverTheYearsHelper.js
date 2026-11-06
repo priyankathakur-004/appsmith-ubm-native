@@ -242,19 +242,19 @@ export default {
 		}));
 
 		return {
-			backgroundColor: "#1E293B",
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 
 			tooltip: {
 				trigger: "axis",
-				backgroundColor: "#0F172A",
-				textStyle: { color: "#E2E8F0" }
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				textStyle: { color: appsmith.theme.colors.textColor }
 			},
 
 			legend: {
 				right: 10,
 				top: 5,
 				orient: "vertical",
-				textStyle: { color: "#E2E8F0" },
+				textStyle: { color: appsmith.theme.colors.textColor },
 				data: years.map(String)
 			},
 
@@ -263,14 +263,14 @@ export default {
 			xAxis: {
 				type: "category",
 				data: months,
-				axisLabel: { color: "#CBD5E1" },
-				axisLine: { lineStyle: { color: "#475569" } }
+				axisLabel: { color: appsmith.theme.colors.textStrongColor },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 
 			yAxis: {
 				type: "value",
-				axisLabel: { color: "#CBD5E1" },
-				splitLine: { lineStyle: { color: "#334155", type: "dashed" } }
+				axisLabel: { color: appsmith.theme.colors.textStrongColor },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: "dashed" } }
 			},
 
 			series
@@ -371,26 +371,26 @@ export default {
 		const isConsumption = chartType === "consumption";
 
 		return {
-			backgroundColor: "#1E293B",
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 
 			tooltip: {
 				trigger: "axis",
 				axisPointer: { type: "shadow" },
-				backgroundColor: "#0F172A",
-				textStyle: { color: "#E2E8F0" }
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				textStyle: { color: appsmith.theme.colors.textColor }
 			},
 			grid: { left: 120, right: 60, top: 10, bottom: 30 },
 			xAxis: {
 				type: "value",
 				axisLabel: {
-					color: "#CBD5E1",
+					color: appsmith.theme.colors.textStrongColor,
 				},
-				splitLine: { lineStyle: { color: "#334155", type: "dashed" } }
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: "dashed" } }
 			},
 			yAxis: {
 				type: "category",
 				data: sorted.map(d => d.loc).reverse(),
-				axisLabel: { fontSize: 11, color: "#CBD5E1" }
+				axisLabel: { fontSize: 11, color: appsmith.theme.colors.textStrongColor }
 			},
 			series: [{
 				type: "bar",

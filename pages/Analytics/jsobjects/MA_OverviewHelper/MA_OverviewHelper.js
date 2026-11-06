@@ -61,8 +61,8 @@ export default {
 		var s = this.getSummary();
 		var cell = function(val, label) {
 			return '<div style="padding:10px 12px;">'
-				+ '<div style="font-size:17px;font-weight:700;color:#F1F5F9;">' + val + '</div>'
-				+ '<div style="font-size:13px;color:#94A3B8;margin-top:2px;">' + label + '</div></div>';
+				+ '<div style="font-size:17px;font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';">' + val + '</div>'
+				+ '<div style="font-size:13px;color:' + appsmith.theme.colors.textSecondaryColor + ';margin-top:2px;">' + label + '</div></div>';
 		};
 		return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;">'
 			+ cell(s.chargesFormatted, 'Charges')
@@ -112,12 +112,12 @@ export default {
 				var pct = Math.round((item.value / maxVal) * 100);
 				var fmt = '$' + Math.round(item.value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 				return '<div style="display:flex;align-items:center;margin:2px 0;">'
-					+ '<div style="width:60px;font-size:11px;color:#CBD5E1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + item.name + '</div>'
-					+ '<div style="flex:1;height:14px;background:#1E293B;border-radius:2px;margin:0 6px;">'
+					+ '<div style="width:60px;font-size:11px;color:' + appsmith.theme.colors.textStrongColor + ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + item.name + '</div>'
+					+ '<div style="flex:1;height:14px;background:' + appsmith.theme.colors.surfaceColor + ';border-radius:2px;margin:0 6px;">'
 					+ '<div style="width:' + pct + '%;height:100%;background:#3B82F6;border-radius:2px;"></div></div>'
-					+ '<div style="font-size:11px;color:#CBD5E1;white-space:nowrap;">' + fmt + '</div></div>';
+					+ '<div style="font-size:11px;color:' + appsmith.theme.colors.textStrongColor + ';white-space:nowrap;">' + fmt + '</div></div>';
 			}).join('');
-			locTooltips[ymKey] = '<div style="padding:4px 0;"><div style="font-weight:bold;font-size:12px;color:#E2E8F0;margin-bottom:4px;">Charges by Location</div>' + bars + '</div>';
+			locTooltips[ymKey] = '<div style="padding:4px 0;"><div style="font-weight:bold;font-size:12px;color:' + appsmith.theme.colors.textColor + ';margin-bottom:4px;">Charges by Location</div>' + bars + '</div>';
 		});
 
 		var series = [];
@@ -143,12 +143,12 @@ export default {
 		});
 
 		return {
-			backgroundColor: '#1E293B',
-			tooltip: { trigger: 'item', backgroundColor: '#0F172A', borderColor: '#334155', textStyle: { color: '#E2E8F0' }, extraCssText: 'max-width:350px;' },
-			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: '#E2E8F0', fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
+			backgroundColor: appsmith.theme.colors.surfaceColor,
+			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }, extraCssText: 'max-width:350px;' },
+			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			grid: { left: 70, right: 120, top: 20, bottom: 40 },
-			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: '#CBD5E1', fontSize: 11 }, axisLine: { lineStyle: { color: '#475569' } }, splitLine: { show: false } },
-			yAxis: { type: 'value', axisLabel: { color: '#CBD5E1' }, axisLine: { lineStyle: { color: '#475569' } }, splitLine: { lineStyle: { color: '#334155', type: 'dashed' } } },
+			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: appsmith.theme.colors.textStrongColor, fontSize: 11 }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }, splitLine: { show: false } },
+			yAxis: { type: 'value', axisLabel: { color: appsmith.theme.colors.textStrongColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } } },
 			series: series
 		};
 	},
@@ -162,7 +162,7 @@ export default {
 			byType[t] += parseFloat(r.total_charges) || 0;
 		});
 
-		var colors = { ELECTRIC: '#3B82F6', NATURALGAS: '#84CC16', LIGHTING: '#FBBF24', SEWER: '#6B7280', WATER: '#22D3EE', OIL2: '#065F46', STEAM: '#F59E0B' };
+		var colors = { ELECTRIC: '#3B82F6', NATURALGAS: '#84CC16', LIGHTING: '#FBBF24', SEWER: appsmith.theme.colors.textMutedColor, WATER: '#22D3EE', OIL2: '#065F46', STEAM: '#F59E0B' };
 		var rows = Object.keys(byType).map(function(k) { return { name: k, value: Number(byType[k].toFixed(2)) }; }).sort(function(a, b) { return b.value - a.value; });
 		var total = rows.reduce(function(s, r) { return s + r.value; }, 0);
 		rows.forEach(function(r) {
@@ -172,17 +172,17 @@ export default {
 		});
 
 		return {
-			backgroundColor: '#1E293B',
-			tooltip: { trigger: 'item', backgroundColor: '#0F172A', textStyle: { color: '#E2E8F0' } },
-			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: '#E2E8F0', fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
+			backgroundColor: appsmith.theme.colors.surfaceColor,
+			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.surfaceColor, textStyle: { color: appsmith.theme.colors.textColor } },
+			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			series: [{
 				type: 'pie',
 				radius: ['35%', '55%'],
 				center: ['40%', '50%'],
-				label: { color: '#E2E8F0' },
-				labelLine: { length: 15, length2: 20, lineStyle: { color: '#64748B' } },
+				label: { color: appsmith.theme.colors.textColor },
+				labelLine: { length: 15, length2: 20, lineStyle: { color: appsmith.theme.colors.borderColor } },
 				data: rows,
-				color: rows.map(function(r) { return colors[r.name] || '#94A3B8'; })
+				color: rows.map(function(r) { return colors[r.name] || appsmith.theme.colors.textSecondaryColor; })
 			}]
 		};
 	},
@@ -222,9 +222,9 @@ export default {
 
 	getUtilitySummaryHtml() {
 		var tbl = this.getUtilityTable();
-		var thStyle = 'padding:14px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;';
-		var tdStyle = 'padding:14px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #1E293B;';
-		var header = '<tr style="background:#334155;">'
+		var thStyle = 'padding:14px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:12px;font-weight:600;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		var tdStyle = 'padding:14px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		var header = '<tr style="background:' + appsmith.theme.colors.surfaceHoverColor + ';">'
 			+ '<th style="' + thStyle + 'text-align:left;">Utility Type</th>'
 			+ '<th style="' + thStyle + 'text-align:right;">Charges</th>'
 			+ '<th style="' + thStyle + 'text-align:right;">Unit Cost</th>'
@@ -236,7 +236,7 @@ export default {
 				+ '<td style="' + tdStyle + 'text-align:right;">' + r['Unit Cost'] + '</td>'
 				+ '<td style="' + tdStyle + 'text-align:right;">' + r['Unit'] + '</td></tr>';
 		}).join('');
-		return '<table style="width:100%;border-collapse:collapse;background:#1E293B;">' + header + rows + '</table>';
+		return '<table style="width:100%;border-collapse:collapse;background:' + appsmith.theme.colors.surfaceColor + ';">' + header + rows + '</table>';
 	},
 
 	getChargesOverYearsTable() {

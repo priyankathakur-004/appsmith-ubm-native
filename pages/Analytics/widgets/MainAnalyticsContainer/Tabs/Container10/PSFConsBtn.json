@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 7,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? '#2563eb' : '#ffffff'}}",
+  "buttonColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.surfaceAltColor}}",
   "buttonVariant": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 41,
   "text": "Consumption per Square Feet",
-  "textColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? '#ffffff' : '#2563eb'}}",
+  "textColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? '#ffffff' : appsmith.theme.colors.textStrongColor}}",
   "topRow": 3,
   "type": "BUTTON_WIDGET",
   "version": 1,

@@ -9,6 +9,9 @@
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "sourceData"
     },
     {
@@ -34,7 +37,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "% Last 12 Mo",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 0,
   "mobileBottomRow": 9,

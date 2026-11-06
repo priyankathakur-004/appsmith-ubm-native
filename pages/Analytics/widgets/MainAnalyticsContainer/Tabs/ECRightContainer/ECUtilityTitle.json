@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -31,7 +37,7 @@
   "shouldTruncate": false,
   "text": "Equivalent Energy Consumption ({{MA_EnergyConsumptionHelper.getUOMLabel()}})",
   "textAlign": "CENTER",
-  "textColor": "#e2e8f0",
+  "textColor": "{{appsmith.theme.colors.textColor}}",
   "topRow": 43,
   "type": "TEXT_WIDGET",
   "version": 1,

@@ -138,7 +138,7 @@ export default {
 			'2027': '#fbbf24',
 			'2028': '#a78bfa'
 		};
-		return map[year] || '#94a3b8';
+		return map[year] || appsmith.theme.colors.textSecondaryColor;
 	},
 
 	_xAxisFormatter(view) {
@@ -191,11 +191,11 @@ export default {
 				xAxisIndex: 0,
 				bottom: 5,
 				height: 18,
-				borderColor: '#334155',
-				backgroundColor: '#0f172a',
+				borderColor: appsmith.theme.colors.borderColor,
+				backgroundColor: appsmith.theme.colors.surfaceColor,
 				fillerColor: 'rgba(59,130,246,0.15)',
-				handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
-				textStyle: { color: '#94a3b8' }
+				handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+				textStyle: { color: appsmith.theme.colors.textSecondaryColor }
 			},
 			{
 				type: 'slider',
@@ -204,11 +204,11 @@ export default {
 				width: 14,
 				start: 0,
 				end: endPct,
-				borderColor: '#334155',
-				backgroundColor: '#0f172a',
+				borderColor: appsmith.theme.colors.borderColor,
+				backgroundColor: appsmith.theme.colors.surfaceColor,
 				fillerColor: 'rgba(59,130,246,0.18)',
-				handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
-				textStyle: { color: '#94a3b8' },
+				handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+				textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 				showDetail: false
 			},
 			{
@@ -270,15 +270,15 @@ export default {
 			});
 
 			return {
-				backgroundColor: '#1E293B',
+				backgroundColor: appsmith.theme.colors.surfaceColor,
 				tooltip: {
 					trigger: 'item',
 					confine: true,
 					enterable: false,
 					extraCssText: 'pointer-events: none;',
-					backgroundColor: '#0f172a',
-					borderColor: '#334155',
-					textStyle: { color: '#e2e8f0' },
+					backgroundColor: appsmith.theme.colors.surfaceColor,
+					borderColor: appsmith.theme.colors.borderColor,
+					textStyle: { color: appsmith.theme.colors.textColor },
 					formatter: function(p) {
 						var loc = (p && p.value && p.value[1]) || '';
 						var label = (p && p.data && p.data.label) || '';
@@ -287,22 +287,22 @@ export default {
 				},
 				legend: {
 					right: 40, top: 10,
-					textStyle: { color: '#e2e8f0', fontSize: 12 },
+					textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12 },
 					icon: 'circle', itemWidth: 10, itemHeight: 10
 				},
 				grid: { left: 130, right: 60, top: 40, bottom: 50 },
 				xAxis: {
 					type: 'value',
-					axisLabel: { color: '#94a3b8', formatter: xFmt },
-					axisLine: { lineStyle: { color: '#334155' } },
-					splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }
+					axisLabel: { color: appsmith.theme.colors.textSecondaryColor, formatter: xFmt },
+					axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+					splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 				},
 				yAxis: {
 					type: 'category',
 					data: locations,
 					inverse: true,
-					axisLabel: { color: '#e2e8f0', width: 110, overflow: 'truncate', fontSize: 12 },
-					axisLine: { lineStyle: { color: '#334155' } }
+					axisLabel: { color: appsmith.theme.colors.textColor, width: 110, overflow: 'truncate', fontSize: 12 },
+					axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 				},
 				dataZoom: dataZoom,
 				series: scatterSeries
@@ -327,7 +327,7 @@ export default {
 					label: {
 						show: true,
 						position: 'right',
-						color: '#e2e8f0',
+						color: appsmith.theme.colors.textColor,
 						fontSize: 11,
 						fontWeight: 'bold',
 						formatter: function(p) {
@@ -344,7 +344,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
@@ -354,9 +354,9 @@ export default {
 				confine: true,
 				enterable: false,
 				extraCssText: 'pointer-events: none;',
-				backgroundColor: '#0f172a',
-				borderColor: '#334155',
-				textStyle: { color: '#e2e8f0' },
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				borderColor: appsmith.theme.colors.borderColor,
+				textStyle: { color: appsmith.theme.colors.textColor },
 				formatter: function(params) {
 					if (!params || !params.length) return '';
 					var lines = ['<b>' + (params[0].axisValueLabel || params[0].name || '') + '</b>'];
@@ -371,7 +371,7 @@ export default {
 			legend: {
 				right: 40,
 				top: 10,
-				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12 },
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
@@ -379,16 +379,16 @@ export default {
 			grid: { left: 130, right: 60, top: 40, bottom: 50 },
 			xAxis: {
 				type: 'value',
-				axisLabel: { color: '#94a3b8', formatter: xFmt },
-				axisLine: { lineStyle: { color: '#334155' } },
-				splitLine: { lineStyle: { color: '#1e293b', type: 'dashed' } }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, formatter: xFmt },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			yAxis: {
 				type: 'category',
 				data: locations,
 				inverse: true,
-				axisLabel: { color: '#e2e8f0', width: 110, overflow: 'truncate', fontSize: 12 },
-				axisLine: { lineStyle: { color: '#334155' } }
+				axisLabel: { color: appsmith.theme.colors.textColor, width: 110, overflow: 'truncate', fontSize: 12 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			dataZoom: dataZoom,
 			series: barSeries

@@ -184,29 +184,29 @@ export default {
 		const yLabel = this._getYLabel(view, uomLabel);
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.surfaceColor,
 			tooltip: {
 				trigger: 'axis',
-				backgroundColor: '#0F172A',
-				borderColor: '#334155',
-				textStyle: { color: '#E2E8F0' }
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				borderColor: appsmith.theme.colors.borderColor,
+				textStyle: { color: appsmith.theme.colors.textColor }
 			},
 			legend: {
 				type: 'scroll',
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#E2E8F0', fontSize: 11 },
-				pageTextStyle: { color: '#94A3B8' },
-				pageIconColor: '#94A3B8',
-				pageIconInactiveColor: '#334155'
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 },
+				pageTextStyle: { color: appsmith.theme.colors.textSecondaryColor },
+				pageIconColor: appsmith.theme.colors.textSecondaryColor,
+				pageIconInactiveColor: appsmith.theme.colors.textMutedColor
 			},
 			grid: { left: 80, right: 160, top: 20, bottom: 60 },
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: '#CBD5E1', fontSize: 11 },
-				axisLine: { lineStyle: { color: '#475569' } },
+				axisLabel: { color: appsmith.theme.colors.textStrongColor, fontSize: 11 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -214,10 +214,10 @@ export default {
 				name: yLabel,
 				nameLocation: 'middle',
 				nameGap: 55,
-				nameTextStyle: { color: '#CBD5E1', fontSize: 12 },
-				axisLabel: { color: '#CBD5E1' },
-				axisLine: { lineStyle: { color: '#475569' } },
-				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
+				nameTextStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 12 },
+				axisLabel: { color: appsmith.theme.colors.textStrongColor },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			series: series
 		};

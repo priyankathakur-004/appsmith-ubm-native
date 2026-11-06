@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -31,7 +37,7 @@
   "shouldTruncate": false,
   "text": "{{MA_EnergyConsumptionHelper.getRightChartTitle()}}",
   "textAlign": "LEFT",
-  "textColor": "#f1f5f9",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,

@@ -4,6 +4,15 @@
   "bottomRow": 4,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -37,7 +46,7 @@
   "shouldTruncate": false,
   "text": "{{\nappsmith.store.chartName === 'MA_Monthly' ? MT_MonthlyAttributesHelper.getChartTitle() : (Tabs.selectedTab === 'Rank of Locations' ? MA_RankLocationHelper.getChartTitle() : '')}}",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

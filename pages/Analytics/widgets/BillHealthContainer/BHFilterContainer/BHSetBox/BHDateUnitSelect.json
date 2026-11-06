@@ -7,6 +7,12 @@
   "defaultOptionValue": "Months",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
       "key": "isVisible"
     },
     {
@@ -30,7 +36,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "\u00a0",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 53,
   "mobileBottomRow": 9,
