@@ -2,6 +2,9 @@
   "bottomRow": 21,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "fontFamily"
     },
     {
@@ -29,7 +32,7 @@
   "shouldTruncate": false,
   "text": "{{ ((u) => (typeof u === 'string' ? (JSON.parse(u) || {}).n : (u || {}).n) || 0)(((fetch_studio_data.data || [])[0] || {}).usage).toLocaleString() + ' rows from fetch_studio_data (last 36 months, capped at 25k). Drag fields from the left panel to build charts and tables. Save keeps the layout for everyone who views this customer; \"Saved reports\" lists them by name, and opening one redraws it on the latest data. Exports are handed to Appsmith to write the file, because the widget\\'s sandboxed iframe cannot save one itself.' }}",
   "textAlign": "LEFT",
-  "textColor": "#94A3B8",
+  "textColor": "{{appsmith.theme.colors.textSecondaryColor}}",
   "topRow": 15,
   "truncateButtonColor": "#FFC13D",
   "type": "TEXT_WIDGET",

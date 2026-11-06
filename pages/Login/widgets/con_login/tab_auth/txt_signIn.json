@@ -5,6 +5,9 @@
   "displayName": "Text",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],
@@ -36,7 +39,7 @@
   "shouldTruncate": false,
   "text": "Welcome to Carbon Accounting",
   "textAlign": "LEFT",
-  "textColor": "#231F20",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 11,
   "truncateButtonColor": "#FFC13D",
   "type": "TEXT_WIDGET",

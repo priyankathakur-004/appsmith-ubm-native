@@ -4,6 +4,9 @@
   "bottomRow": 5,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "truncateButtonColor"
     },
     {
@@ -42,7 +45,7 @@
   "shouldTruncate": false,
   "text": "User Bills",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",
