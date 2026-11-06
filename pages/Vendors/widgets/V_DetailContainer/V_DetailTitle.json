@@ -46,7 +46,7 @@
   "responsiveBehavior": "fill",
   "rightColumn": 45,
   "shouldTruncate": false,
-  "text": "Vendor Details for {{ VendorsData.detailHeader().code }}",
+  "text": "Vendor Details for {{ ((V_fetchVendorDetail.data || [])[0] || {}).code || '' }}",
   "textAlign": "LEFT",
   "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
