@@ -1,7 +1,7 @@
 export default {
 	// Shared dark-themed table/section builders (same look as the Customer Info tab).
 	_row(label, valueHtml, audit) {
-		const auditCell = audit === undefined ? "" :
+		const auditCell = audit === undefined ? `<td style='border-bottom:1px solid ${appsmith.theme.colors.borderColor};'></td>` :
 			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${audit || "Admin System"}</td>`;
 		return `<tr>` +
 			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:320px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${label}</td>` +
