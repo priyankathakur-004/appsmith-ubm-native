@@ -620,7 +620,7 @@ export default {
 			],
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
 			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: appsmith.theme.colors.textColor }, data: cats.map(c => c.name) },
-			grid: { left: 56, right: '62%', top: 44, bottom: 36, containLabel: false },
+			grid: { left: 12, right: '62%', top: 44, bottom: 36, containLabel: true },
 			xAxis: { type: 'category', data: labels, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			yAxis: { type: 'value', axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			series: series
@@ -678,7 +678,7 @@ export default {
 			backgroundColor: appsmith.theme.colors.surfaceColor,
 			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 15, fontWeight: 600 } },
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { data: dates, top: 40, right: 8, textStyle: { color: appsmith.theme.colors.textStrongColor } },
+			legend: { type: 'scroll', data: dates, top: 34, left: 8, right: 8, textStyle: { color: appsmith.theme.colors.textStrongColor } },
 			grid: { left: 84, right: 24, top: 66, bottom: 44, containLabel: false },
 			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: appsmith.theme.colors.textSecondaryColor }, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			yAxis: { type: 'category', data: locs, axisLabel: { color: appsmith.theme.colors.textSecondaryColor } },

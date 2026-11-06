@@ -157,7 +157,7 @@ export default {
 				const tip = esc('Location: ' + loc + '\nUtility Type: ' + util + '\nMeter ID: ' + meter
 					+ '\nBill Type: ' + label + '\nService Year Service Month: ' + yr + ' ' + (mn[idx] || c.month)
 					+ '\nReceived Bills Count: ' + (v ? v : '(Blank)')).replace(/\n/g, '&#10;');
-				r += '<td title="' + tip + '" style="' + tdNum + 'background:' + lvlBg[3] + ';">' + (v ? '<span style="color:#7FB2F0;text-decoration:underline;cursor:pointer;">' + v + '</span>' : '') + '</td>';
+				r += '<td title="' + tip + '" style="' + tdNum + 'background:' + lvlBg[3] + ';">' + (v ? '<span style="color:' + appsmith.theme.colors.linkColor + ';text-decoration:underline;cursor:pointer;">' + v + '</span>' : '') + '</td>';
 			});
 			return r + '</tr>\n';
 		};
@@ -448,7 +448,7 @@ export default {
 					+ '\nBill Type: ' + label + '\nService Year Service Month: ' + yr + ' ' + (mn[idx] || c.month)
 					+ '\nRate Code: ' + (cell ? cell.code : '(Blank)')).replace(/\n/g, '&#10;');
 				const inner = cell
-					? '<a href="' + esc(cell.url) + '" target="_blank" rel="noopener" style="color:#7FB2F0;text-decoration:underline;">' + cell.code + '</a>'
+					? '<a href="' + esc(cell.url) + '" target="_blank" rel="noopener" style="color:' + appsmith.theme.colors.linkColor + ';text-decoration:underline;">' + cell.code + '</a>'
 					: '';
 				r += '<td title="' + tip + '" style="' + tdC + 'background:' + lvlBg[3] + ';">' + inner + '</td>';
 			});
