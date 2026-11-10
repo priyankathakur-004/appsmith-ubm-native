@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 7,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.textStrongColor}}",
+  "buttonColor": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{(appsmith.store.psfViewBy || 'ChargesPerSqft') === 'ConsPerSqft' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

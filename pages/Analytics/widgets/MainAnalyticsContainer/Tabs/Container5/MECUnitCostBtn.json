@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 5,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.mecActiveView || 'Consumption') === 'UnitCost' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.textStrongColor}}",
+  "buttonColor": "{{(appsmith.store.mecActiveView || 'Consumption') === 'UnitCost' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{(appsmith.store.mecActiveView || 'Consumption') === 'UnitCost' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

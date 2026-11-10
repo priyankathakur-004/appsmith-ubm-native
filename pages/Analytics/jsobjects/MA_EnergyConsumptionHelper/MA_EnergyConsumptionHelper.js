@@ -122,7 +122,7 @@ _getUOMColumnLabel(view) {
 
 _buildBarChart(rows, xlabel, gridLeft, labelWidth) {
     return {
-        backgroundColor: appsmith.theme.colors.surfaceColor,
+        backgroundColor: 'transparent',
         tooltip: {
             trigger: "axis",
             axisPointer: { type: "shadow" },
@@ -263,8 +263,8 @@ getUtilityPieConfig() {
     const rows = allRows.filter(r => total > 0 ? (r.value / total) * 100 > 0 : r.value > 0);
 
     return {
-        backgroundColor: appsmith.theme.colors.surfaceColor,
-        tooltip: { trigger: "item", backgroundColor: appsmith.theme.colors.surfaceColor, textStyle: { color: appsmith.theme.colors.textColor } },
+        backgroundColor: 'transparent',
+        tooltip: { trigger: "item", backgroundColor: 'transparent', textStyle: { color: appsmith.theme.colors.textColor } },
         legend: { top: "3%", left: "center", textStyle: { color: appsmith.theme.colors.textColor } },
         series: [{
             type: "pie",

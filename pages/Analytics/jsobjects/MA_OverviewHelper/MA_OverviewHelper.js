@@ -143,8 +143,8 @@ export default {
 		});
 
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
-			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }, extraCssText: 'max-width:350px;' },
+			backgroundColor: 'transparent',
+			tooltip: { trigger: 'item', backgroundColor: 'transparent', borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }, extraCssText: 'max-width:350px;' },
 			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			grid: { left: 70, right: 120, top: 20, bottom: 40 },
 			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: appsmith.theme.colors.textStrongColor, fontSize: 11 }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }, splitLine: { show: false } },
@@ -172,8 +172,8 @@ export default {
 		});
 
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
-			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.surfaceColor, textStyle: { color: appsmith.theme.colors.textColor } },
+			backgroundColor: 'transparent',
+			tooltip: { trigger: 'item', backgroundColor: 'transparent', textStyle: { color: appsmith.theme.colors.textColor } },
 			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			series: [{
 				type: 'pie',

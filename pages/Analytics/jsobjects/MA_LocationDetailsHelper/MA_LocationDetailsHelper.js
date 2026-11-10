@@ -187,7 +187,7 @@ export default {
 		var xLabel = 'Consumption' + (uom ? ' (' + uom + ')' : '');
 
 		return {
-			backgroundColor: t.BG,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: t.TOOLTIP_BG,
@@ -285,7 +285,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: t.BG,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
@@ -361,7 +361,7 @@ export default {
 		];
 
 		return {
-			backgroundColor: t.BG,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
@@ -454,7 +454,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: t.BG,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: t.TOOLTIP_BG,
@@ -545,7 +545,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: t.BG,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: t.TOOLTIP_BG,

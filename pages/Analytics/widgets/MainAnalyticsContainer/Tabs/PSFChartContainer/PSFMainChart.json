@@ -11,6 +11,9 @@
     },
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "backgroundColor"
     }
   ],
   "dynamicTriggerPathList": [],
@@ -31,5 +34,6 @@
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "54unxgaspw",
-  "widgetName": "PSFMainChart"
+  "widgetName": "PSFMainChart",
+  "backgroundColor": "{{appsmith.theme.colors.panelColor}}"
 }

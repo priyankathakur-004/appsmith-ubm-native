@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 11,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.textStrongColor}}",
+  "buttonColor": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

@@ -371,7 +371,7 @@ export default {
 		const isConsumption = chartType === "consumption";
 
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: 'transparent',
 
 			tooltip: {
 				trigger: "axis",

@@ -62,7 +62,9 @@
       "warningColor": "#92400e",
       "dangerColor": "#b91c1c",
       "accentColor": "#091b44",
-      "actionColor": "#091b44"
+      "actionColor": "#091b44",
+      "toggleOnColor": "#1684fc",
+      "toggleOffColor": "#1684fc"
     },
     "fontFamily": {
       "appFont": "Open Sans"

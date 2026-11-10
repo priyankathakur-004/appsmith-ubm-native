@@ -11,6 +11,9 @@
     },
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "backgroundColor"
     }
   ],
   "dynamicTriggerPathList": [
@@ -36,5 +39,6 @@
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "yjghqfm4ly",
-  "widgetName": "OTYUnitCostChart"
+  "widgetName": "OTYUnitCostChart",
+  "backgroundColor": "{{appsmith.theme.colors.panelColor}}"
 }
