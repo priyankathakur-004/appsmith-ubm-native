@@ -60,6 +60,6 @@
   "widgetName": "WODateModeSelect",
   "labelPosition": "Top",
   "labelAlignment": "left",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem"
 }

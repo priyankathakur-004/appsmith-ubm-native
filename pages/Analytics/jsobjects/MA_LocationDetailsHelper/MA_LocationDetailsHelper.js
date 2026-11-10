@@ -108,11 +108,11 @@ export default {
 	// ---- Shared dark-theme axis/grid helpers ----
 	_baseTheme() {
 		return {
-			BG: appsmith.theme.colors.surfaceColor,
+			BG: appsmith.theme.colors.cardColor,
 			AXIS: appsmith.theme.colors.textMutedColor,
 			LABEL: appsmith.theme.colors.textSecondaryColor,
 			TEXT: appsmith.theme.colors.textColor,
-			GRID_LINE: appsmith.theme.colors.borderColor,
+			GRID_LINE: appsmith.theme.colors.borderSoftColor,
 			TOOLTIP_BG: appsmith.theme.colors.surfaceColor,
 			TOOLTIP_BORDER: appsmith.theme.colors.borderColor
 		};
@@ -233,8 +233,8 @@ export default {
 				splitLine: { lineStyle: { color: t.GRID_LINE, type: 'dashed' } }
 			},
 			dataZoom: [
-				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } },
-				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } }
+				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } },
+				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } }
 			],
 			series: series
 		};
@@ -327,8 +327,8 @@ export default {
 				splitLine: { lineStyle: { color: t.GRID_LINE, type: 'dashed' } }
 			},
 			dataZoom: [
-				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } },
-				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } }
+				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } },
+				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } }
 			],
 			series: series
 		};
@@ -403,8 +403,8 @@ export default {
 				splitLine: { lineStyle: { color: t.GRID_LINE, type: 'dashed' } }
 			},
 			dataZoom: [
-				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } },
-				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } }
+				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } },
+				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } }
 			],
 			series: series
 		};
@@ -495,8 +495,8 @@ export default {
 				splitLine: { lineStyle: { color: t.GRID_LINE, type: 'dashed' } }
 			},
 			dataZoom: [
-				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } },
-				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } }
+				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } },
+				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } }
 			],
 			series: series
 		};
@@ -586,8 +586,8 @@ export default {
 				splitLine: { lineStyle: { color: t.GRID_LINE, type: 'dashed' } }
 			},
 			dataZoom: [
-				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } },
-				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderColor }, textStyle: { color: t.LABEL } }
+				{ type: 'slider', xAxisIndex: 0, bottom: 10, height: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } },
+				{ type: 'slider', yAxisIndex: 0, left: 5, width: 20, borderColor: t.AXIS, backgroundColor: appsmith.theme.colors.surfaceColor, fillerColor: 'rgba(59,130,246,0.15)', handleStyle: { color: t.TEXT, borderColor: appsmith.theme.colors.borderStrongColor }, textStyle: { color: t.LABEL } }
 			],
 			series: series
 		};

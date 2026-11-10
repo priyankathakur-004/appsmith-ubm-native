@@ -152,7 +152,7 @@ export default {
 					borderColor: appsmith.theme.colors.borderColor,
 					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.18)',
-					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
 					textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 					showDetail: false
 				},

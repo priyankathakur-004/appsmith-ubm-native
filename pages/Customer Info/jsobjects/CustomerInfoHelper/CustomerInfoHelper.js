@@ -77,7 +77,7 @@ export default {
 			return `<tr>` +
 				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:340px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};${pad}'>${label}</td>` +
 				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;width:110px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
-				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${auditFor(auditKey)}</td>` +
+				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSoftColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${auditFor(auditKey)}</td>` +
 				`</tr>`;
 		};
 
@@ -86,16 +86,16 @@ export default {
 
 		// Collapsible section (closed by default).
 		const details = (title, bodyHtml) =>
-			`<details style='margin-bottom:10px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};padding-bottom:6px;'>` +
-			`<summary style='cursor:pointer;list-style:revert;font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkColor};padding:8px 4px;'>${title}</summary>` +
+			`<details style='margin-bottom:10px;border-bottom:1px solid ${appsmith.theme.colors.borderSoftColor};padding-bottom:6px;'>` +
+			`<summary style='cursor:pointer;list-style:revert;font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkSoftColor};padding:8px 4px;'>${title}</summary>` +
 			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
 			`</details>`;
 
 		// Always-expanded section (with a ▼ marker) for the sections that must be
 		// open on load, since the sanitizer drops <details open>.
 		const staticSection = (title, bodyHtml) =>
-			`<div style='margin-bottom:10px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};padding-bottom:6px;'>` +
-			`<div style='font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkColor};padding:8px 4px;'>&#9662; ${title}</div>` +
+			`<div style='margin-bottom:10px;border-bottom:1px solid ${appsmith.theme.colors.borderSoftColor};padding-bottom:6px;'>` +
+			`<div style='font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkSoftColor};padding:8px 4px;'>&#9662; ${title}</div>` +
 			`<div style='padding:8px 0 4px;'>${bodyHtml}</div>` +
 			`</div>`;
 

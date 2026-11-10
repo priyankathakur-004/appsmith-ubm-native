@@ -36,7 +36,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Location",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 32,
   "mobileBottomRow": 9,

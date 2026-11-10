@@ -36,7 +36,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Vendor",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 8,
   "mobileBottomRow": 9,

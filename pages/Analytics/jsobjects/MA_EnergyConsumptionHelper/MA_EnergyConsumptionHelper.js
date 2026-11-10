@@ -135,9 +135,9 @@ _buildBarChart(rows, xlabel, gridLeft, labelWidth) {
             name: xlabel,
             nameLocation: "middle",
             nameGap: 40,
-            nameTextStyle: { color: appsmith.theme.colors.textStrongColor },
-            axisLabel: { color: appsmith.theme.colors.textStrongColor },
-            axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+            nameTextStyle: { color: appsmith.theme.colors.textSoftColor },
+            axisLabel: { color: appsmith.theme.colors.textSoftColor },
+            axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
             splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
         },
         yAxis: {
@@ -187,7 +187,7 @@ getLocationChartConfig() {
             borderColor: appsmith.theme.colors.borderColor,
             backgroundColor: appsmith.theme.colors.surfaceColor,
             fillerColor: "rgba(59,130,246,0.15)",
-            handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+            handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
             textStyle: { color: appsmith.theme.colors.textSecondaryColor }
         },
         {
@@ -200,7 +200,7 @@ getLocationChartConfig() {
             borderColor: appsmith.theme.colors.borderColor,
             backgroundColor: appsmith.theme.colors.surfaceColor,
             fillerColor: "rgba(59,130,246,0.18)",
-            handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+            handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
             textStyle: { color: appsmith.theme.colors.textSecondaryColor },
             showDetail: false
         },
@@ -274,7 +274,7 @@ getUtilityPieConfig() {
                 color: appsmith.theme.colors.textColor,
                 formatter: p => p.name + "\n" + p.value.toFixed(2) + "M (" + p.percent.toFixed(1) + "%)"
             },
-            labelLine: { length: 15, length2: 20, lineStyle: { color: appsmith.theme.colors.borderColor } },
+            labelLine: { length: 15, length2: 20, lineStyle: { color: appsmith.theme.colors.borderStrongColor } },
             data: rows,
             color: rows.map(r => colors[r.name] || appsmith.theme.colors.textSecondaryColor)
         }]

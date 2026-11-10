@@ -2,7 +2,7 @@ export default {
 	// Shared dark-themed table/section builders (same look as the Customer Info tab).
 	_row(label, valueHtml, audit) {
 		const auditCell = audit === undefined ? `<td style='border-bottom:1px solid ${appsmith.theme.colors.borderColor};'></td>` :
-			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${audit || "Admin System"}</td>`;
+			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSoftColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${audit || "Admin System"}</td>`;
 		return `<tr>` +
 			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:320px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${label}</td>` +
 			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
@@ -11,7 +11,7 @@ export default {
 
 	_section(title, rowsHtml) {
 		return `<div style='margin-bottom:22px;'>` +
-			`<div style='font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkColor};margin-bottom:8px;'>${title}</div>` +
+			`<div style='font-size:15px;font-weight:700;color:${appsmith.theme.colors.linkSoftColor};margin-bottom:8px;'>${title}</div>` +
 			`<table style='width:100%;border-collapse:collapse;background:${appsmith.theme.colors.surfaceColor};border:1px solid ${appsmith.theme.colors.borderColor};border-radius:6px;overflow:hidden;'>${rowsHtml}</table>` +
 			`</div>`;
 	},
@@ -47,8 +47,8 @@ export default {
 	getCustomersHtml(customers) {
 		const rows = Array.isArray(customers) ? customers : [];
 		const esc = (v) => (v == null || v === "") ? "—" : String(v);
-		const th = (t) => `<th style='text-align:left;padding:12px 16px;color:${appsmith.theme.colors.textStrongColor};font-weight:700;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${t}</th>`;
-		const td = (v) => `<td style='padding:12px 16px;color:${appsmith.theme.colors.textColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${v}</td>`;
+		const th = (t) => `<th style='text-align:left;padding:12px 16px;color:${appsmith.theme.colors.textSoftColor};font-weight:700;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${t}</th>`;
+		const td = (v) => `<td style='padding:12px 16px;color:${appsmith.theme.colors.textColor};border-bottom:1px solid ${appsmith.theme.colors.borderSoftColor};'>${v}</td>`;
 		const head = `<tr>${th("ID")}${th("Name")}${th("User Role")}${th("Job Title")}${th("Locations")}</tr>`;
 		const body = rows.length
 			? rows.map((r) =>

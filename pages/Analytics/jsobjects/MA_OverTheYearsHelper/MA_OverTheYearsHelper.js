@@ -263,13 +263,13 @@ export default {
 			xAxis: {
 				type: "category",
 				data: months,
-				axisLabel: { color: appsmith.theme.colors.textStrongColor },
-				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
+				axisLabel: { color: appsmith.theme.colors.textSoftColor },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } }
 			},
 
 			yAxis: {
 				type: "value",
-				axisLabel: { color: appsmith.theme.colors.textStrongColor },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor },
 				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: "dashed" } }
 			},
 
@@ -383,14 +383,14 @@ export default {
 			xAxis: {
 				type: "value",
 				axisLabel: {
-					color: appsmith.theme.colors.textStrongColor,
+					color: appsmith.theme.colors.textSoftColor,
 				},
 				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: "dashed" } }
 			},
 			yAxis: {
 				type: "category",
 				data: sorted.map(d => d.loc).reverse(),
-				axisLabel: { fontSize: 11, color: appsmith.theme.colors.textStrongColor }
+				axisLabel: { fontSize: 11, color: appsmith.theme.colors.textSoftColor }
 			},
 			series: [{
 				type: "bar",

@@ -223,8 +223,8 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: appsmith.theme.colors.textStrongColor, fontSize: 11 },
-				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor, fontSize: 11 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -232,9 +232,9 @@ export default {
 				name: yLabel,
 				nameLocation: 'middle',
 				nameGap: 55,
-				nameTextStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 12 },
-				axisLabel: { color: appsmith.theme.colors.textStrongColor },
-				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				nameTextStyle: { color: appsmith.theme.colors.textSoftColor, fontSize: 12 },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
 				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			series: series

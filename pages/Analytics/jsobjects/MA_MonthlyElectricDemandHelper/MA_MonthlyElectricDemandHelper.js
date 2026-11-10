@@ -364,7 +364,7 @@ export default {
 			yAxis: {
 				type: 'value',
 				axisLabel: { color: appsmith.theme.colors.textSecondaryColor },
-				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor, type: 'dashed' } }
 			},
 			series: series
 		};
@@ -491,7 +491,7 @@ export default {
 				nameTextStyle: { color: appsmith.theme.colors.textColor },
 				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, formatter: xAxisFormatter },
 				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
-				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderSoftColor, type: 'dashed' } }
 			},
 			series: series
 

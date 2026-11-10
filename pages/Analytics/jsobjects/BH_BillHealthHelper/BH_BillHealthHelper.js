@@ -611,7 +611,7 @@ export default {
 		const insight = this._warnInsight(metric);
 
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: appsmith.theme.colors.cardColor,
 			title: [
 				{ text: title, left: 8, top: 6, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 15, fontWeight: 600 } },
 				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: appsmith.theme.colors.textColor, fontSize: 13, fontWeight: 600 } },
@@ -621,7 +621,7 @@ export default {
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
 			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: appsmith.theme.colors.textColor }, data: cats.map(c => c.name) },
 			grid: { left: 12, right: '62%', top: 44, bottom: 36, containLabel: true },
-			xAxis: { type: 'category', data: labels, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
+			xAxis: { type: 'category', data: labels, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } } },
 			yAxis: { type: 'value', axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			series: series
 		};
@@ -675,7 +675,7 @@ export default {
 			data: locs.map(l => Number((byLoc[l].byDate[d] || 0).toFixed(2)))
 		}));
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: appsmith.theme.colors.cardColor,
 			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 15, fontWeight: 600 } },
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
 			legend: { type: 'scroll', data: dates, top: 34, left: 8, right: 8, textStyle: { color: appsmith.theme.colors.textStrongColor } },

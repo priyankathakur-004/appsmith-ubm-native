@@ -3,7 +3,7 @@
   "borderRadius": "0.375rem",
   "bottomRow": 11,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.ecUOM || 'BTU') === 'Joule' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
+  "buttonColor": "{{appsmith.theme.colors.toggleAltColor}}",
   "buttonVariant": "{{(appsmith.store.ecUOM || 'BTU') === 'Joule' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

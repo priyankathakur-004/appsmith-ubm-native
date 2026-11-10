@@ -214,13 +214,13 @@ export default {
 		// Dark theme to match other Analytics tabs
 		const FILL_COLOR = isCharges ? '#22c55e' : '#3b82f6';
 		const TRACK_COLOR = appsmith.theme.colors.surfaceColor;
-		const BORDER_COLOR = appsmith.theme.colors.textMutedColor;
-		const BG_COLOR = appsmith.theme.colors.surfaceColor;
-		const HEADER_COLOR = appsmith.theme.colors.textStrongColor;
+		const BORDER_COLOR = appsmith.theme.colors.textFaintColor;
+		const BG_COLOR = appsmith.theme.colors.cardColor;
+		const HEADER_COLOR = appsmith.theme.colors.textSoftColor;
 		const SEPARATOR_COLOR = appsmith.theme.colors.textMutedColor;
 		const LABEL_NAME_COLOR = appsmith.theme.colors.textColor;
 		const LABEL_VAL_COLOR = appsmith.theme.colors.textSecondaryColor;
-		const EDGE_COLOR = appsmith.theme.colors.textMutedColor;
+		const EDGE_COLOR = appsmith.theme.colors.textFaintColor;
 
 		const headers = ['', 'Utility Type', 'Bill Type', 'Vendor', 'Location', 'Service Account', 'Meter'];
 		const MAX_DEPTH = 6;

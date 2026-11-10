@@ -167,8 +167,8 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: appsmith.theme.colors.textStrongColor, fontSize: 11 },
-				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor, fontSize: 11 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -176,9 +176,9 @@ export default {
 				name: 'Unit Cost',
 				nameLocation: 'middle',
 				nameGap: 55,
-				nameTextStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 12 },
-				axisLabel: { color: appsmith.theme.colors.textStrongColor },
-				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } },
+				nameTextStyle: { color: appsmith.theme.colors.textSoftColor, fontSize: 12 },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
 				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			dataZoom: [
@@ -192,7 +192,7 @@ export default {
 					borderColor: appsmith.theme.colors.borderColor,
 					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.18)',
-					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
 					textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 					showDetail: false
 				},

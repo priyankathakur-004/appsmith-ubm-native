@@ -115,11 +115,11 @@ export default {
 		/* Mirror the UBM matrix exactly (dark theme): group rows (Location > Utility > Meter) show
 		   a collapse icon + label with BLANK month cells; only the leaf (Bill Type) row carries the
 		   underlined, click-style bill counts. */
-		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
-		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
+		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.hoverStrongColor + ';line-height:16px;';
+		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.hoverStrongColor + ';line-height:16px;';
 		const s1 = 'position:sticky;top:0;z-index:6;';
 		const s2 = 'position:sticky;top:30px;z-index:6;';
-		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderMidColor + ';';
 		const tdBlank = 'padding:5px 9px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
 		const tdNum = 'padding:5px 9px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;';
 		const lvlPad = [10, 26, 44, 66];
@@ -232,7 +232,7 @@ export default {
 		const self = this;
 		const labels = monthsAsc.map(m => self._monthLabel(m));
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: appsmith.theme.colors.cardColor,
 			title: { text: 'Count of Bills by Utility Types', left: 12, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 14, fontWeight: 600 } },
 			tooltip: {
 				trigger: 'axis',
@@ -244,7 +244,7 @@ export default {
 				type: 'category',
 				data: labels,
 				axisLabel: { color: appsmith.theme.colors.textSecondaryColor, rotate: 45, fontSize: 10 },
-				axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } }
 			},
 			yAxis: {
 				type: 'value', name: 'Count of Bills',
@@ -311,11 +311,11 @@ export default {
 		});
 		const colVal = (mc, c) => c.kind === 'm' ? (mc[c.month] || 0) : c.months.reduce((s, m) => s + (mc[m] || 0), 0);
 
-		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
-		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
+		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.hoverStrongColor + ';line-height:16px;';
+		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.hoverStrongColor + ';line-height:16px;';
 		const s1 = 'position:sticky;top:0;z-index:6;';
 		const s2 = 'position:sticky;top:30px;z-index:6;';
-		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderMidColor + ';';
 		const tdL = 'padding:5px 12px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;color:' + appsmith.theme.colors.textColor + ';';
 		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;color:' + appsmith.theme.colors.textColor + ';';
 
@@ -345,10 +345,10 @@ export default {
 			h += r + '</tr>\n';
 		});
 		const sb = 'position:sticky;bottom:0;z-index:6;';
-		let tr = '<tr><td style="' + tdL + 'background:' + appsmith.theme.colors.surfaceHoverColor + ';font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';border-top:2px solid ' + appsmith.theme.colors.borderColor + ';' + sb + '">Total</td>';
+		let tr = '<tr><td style="' + tdL + 'background:' + appsmith.theme.colors.hoverStrongColor + ';font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';border-top:2px solid ' + appsmith.theme.colors.borderMidColor + ';' + sb + '">Total</td>';
 		cols.forEach(c => {
 			const v = colVal(grand, c);
-			tr += '<td style="' + tdC + 'background:' + appsmith.theme.colors.surfaceHoverColor + ';font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';border-top:2px solid ' + appsmith.theme.colors.borderColor + ';' + (c.kind === 'yt' ? sep : '') + sb + '">' + (v ? v : '') + '</td>';
+			tr += '<td style="' + tdC + 'background:' + appsmith.theme.colors.hoverStrongColor + ';font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';border-top:2px solid ' + appsmith.theme.colors.borderMidColor + ';' + (c.kind === 'yt' ? sep : '') + sb + '">' + (v ? v : '') + '</td>';
 		});
 		h += tr + '</tr>\n</table></div>';
 		return h;
@@ -410,11 +410,11 @@ export default {
 		const cols = [];
 		yearGroups.forEach(g => { g.months.forEach(m => cols.push({ month: m })); });
 
-		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
-		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.surfaceHoverColor + ';line-height:16px;';
+		const th = 'padding:6px 9px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:center;white-space:nowrap;background:' + appsmith.theme.colors.hoverStrongColor + ';line-height:16px;';
+		const thL = 'padding:6px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:left;white-space:nowrap;background:' + appsmith.theme.colors.hoverStrongColor + ';line-height:16px;';
 		const s1 = 'position:sticky;top:0;z-index:6;';
 		const s2 = 'position:sticky;top:30px;z-index:6;';
-		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		const sep = 'border-left:1px solid ' + appsmith.theme.colors.borderMidColor + ';';
 		const tdBlank = 'padding:5px 9px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
 		const tdC = 'padding:5px 9px;font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:center;white-space:nowrap;';
 		const lvlPad = [10, 26, 44, 66];
@@ -526,7 +526,7 @@ export default {
 			return { name: u, value: total, itemStyle: { color: color }, children: children, _locs: locs, _util: u };
 		});
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: appsmith.theme.colors.cardColor,
 			title: { text: 'Decomposition of bill numbers by utility type and rate codes', left: 12, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 14, fontWeight: 600 } },
 			tooltip: {
 				backgroundColor: appsmith.theme.colors.surfaceColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textStrongColor },
@@ -575,7 +575,7 @@ export default {
 				upperLabel: { show: false },
 				levels: [
 					{ itemStyle: { borderColor: appsmith.theme.colors.surfaceColor, borderWidth: 2, gapWidth: 2 } },
-					{ itemStyle: { borderColor: appsmith.theme.colors.borderColor, borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
+					{ itemStyle: { borderColor: appsmith.theme.colors.borderSoftColor, borderWidth: 1, gapWidth: 1 }, colorSaturation: [0.35, 0.6] }
 				],
 				data: data
 			}]

@@ -54,7 +54,7 @@
   "widgetId": "lblocsel001",
   "widgetName": "LBLocation",
   "labelPosition": "Top",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "isDisabled": false,
   "labelAlignment": "left"

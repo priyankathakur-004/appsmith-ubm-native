@@ -3,7 +3,7 @@
   "borderRadius": "0.375rem",
   "bottomRow": 8,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.maActiveView || 'Consumption') === 'EnergyUseIntensity' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
+  "buttonColor": "{{appsmith.theme.colors.toggleAltColor}}",
   "buttonVariant": "{{(appsmith.store.maActiveView || 'Consumption') === 'EnergyUseIntensity' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

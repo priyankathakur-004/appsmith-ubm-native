@@ -112,10 +112,10 @@ export default {
 				var pct = Math.round((item.value / maxVal) * 100);
 				var fmt = '$' + Math.round(item.value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 				return '<div style="display:flex;align-items:center;margin:2px 0;">'
-					+ '<div style="width:60px;font-size:11px;color:' + appsmith.theme.colors.textStrongColor + ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + item.name + '</div>'
-					+ '<div style="flex:1;height:14px;background:' + appsmith.theme.colors.surfaceColor + ';border-radius:2px;margin:0 6px;">'
+					+ '<div style="width:60px;font-size:11px;color:' + appsmith.theme.colors.textSoftColor + ';overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + item.name + '</div>'
+					+ '<div style="flex:1;height:14px;background:' + appsmith.theme.colors.cardColor + ';border-radius:2px;margin:0 6px;">'
 					+ '<div style="width:' + pct + '%;height:100%;background:#3B82F6;border-radius:2px;"></div></div>'
-					+ '<div style="font-size:11px;color:' + appsmith.theme.colors.textStrongColor + ';white-space:nowrap;">' + fmt + '</div></div>';
+					+ '<div style="font-size:11px;color:' + appsmith.theme.colors.textSoftColor + ';white-space:nowrap;">' + fmt + '</div></div>';
 			}).join('');
 			locTooltips[ymKey] = '<div style="padding:4px 0;"><div style="font-weight:bold;font-size:12px;color:' + appsmith.theme.colors.textColor + ';margin-bottom:4px;">Charges by Location</div>' + bars + '</div>';
 		});
@@ -147,8 +147,8 @@ export default {
 			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.panelColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }, extraCssText: 'max-width:350px;' },
 			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			grid: { left: 70, right: 120, top: 20, bottom: 40 },
-			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: appsmith.theme.colors.textStrongColor, fontSize: 11 }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }, splitLine: { show: false } },
-			yAxis: { type: 'value', axisLabel: { color: appsmith.theme.colors.textStrongColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } } },
+			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: appsmith.theme.colors.textSoftColor, fontSize: 11 }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } }, splitLine: { show: false } },
+			yAxis: { type: 'value', axisLabel: { color: appsmith.theme.colors.textSoftColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } } },
 			series: series
 		};
 	},
@@ -180,7 +180,7 @@ export default {
 				radius: ['35%', '55%'],
 				center: ['40%', '50%'],
 				label: { color: appsmith.theme.colors.textColor },
-				labelLine: { length: 15, length2: 20, lineStyle: { color: appsmith.theme.colors.borderColor } },
+				labelLine: { length: 15, length2: 20, lineStyle: { color: appsmith.theme.colors.borderStrongColor } },
 				data: rows,
 				color: rows.map(function(r) { return colors[r.name] || appsmith.theme.colors.textSecondaryColor; })
 			}]
@@ -222,9 +222,9 @@ export default {
 
 	getUtilitySummaryHtml() {
 		var tbl = this.getUtilityTable();
-		var thStyle = 'padding:14px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:12px;font-weight:600;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
-		var tdStyle = 'padding:14px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
-		var header = '<tr style="background:' + appsmith.theme.colors.surfaceHoverColor + ';">'
+		var thStyle = 'padding:14px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:12px;font-weight:600;border-bottom:1px solid ' + appsmith.theme.colors.borderMidColor + ';';
+		var tdStyle = 'padding:14px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderSoftColor + ';';
+		var header = '<tr style="background:' + appsmith.theme.colors.hoverStrongColor + ';">'
 			+ '<th style="' + thStyle + 'text-align:left;">Utility Type</th>'
 			+ '<th style="' + thStyle + 'text-align:right;">Charges</th>'
 			+ '<th style="' + thStyle + 'text-align:right;">Unit Cost</th>'
@@ -236,7 +236,7 @@ export default {
 				+ '<td style="' + tdStyle + 'text-align:right;">' + r['Unit Cost'] + '</td>'
 				+ '<td style="' + tdStyle + 'text-align:right;">' + r['Unit'] + '</td></tr>';
 		}).join('');
-		return '<table style="width:100%;border-collapse:collapse;background:' + appsmith.theme.colors.surfaceColor + ';">' + header + rows + '</table>';
+		return '<table style="width:100%;border-collapse:collapse;background:' + appsmith.theme.colors.cardColor + ';">' + header + rows + '</table>';
 	},
 
 	getChargesOverYearsTable() {

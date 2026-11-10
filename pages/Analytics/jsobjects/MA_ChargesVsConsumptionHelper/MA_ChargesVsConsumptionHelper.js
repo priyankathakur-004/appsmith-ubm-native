@@ -241,7 +241,7 @@ export default {
 				name: 'Trend',
 				type: 'line',
 				showSymbol: false,
-				lineStyle: { type: 'dashed', color: appsmith.theme.colors.borderColor, width: 2 },
+				lineStyle: { type: 'dashed', color: appsmith.theme.colors.borderStrongColor, width: 2 },
 				itemStyle: { color: appsmith.theme.colors.textMutedColor },
 				data: [[minXs, Number(y1.toFixed(4))], [maxXs, Number(y2.toFixed(4))]],
 				tooltip: { show: false },
@@ -255,7 +255,7 @@ export default {
 				trigger: 'item',
 				formatter: '{b}',
 				backgroundColor: appsmith.theme.colors.textStrongColor,
-				textStyle: { color: appsmith.theme.colors.surfaceColor, fontSize: 13 },
+				textStyle: { color: appsmith.theme.colors.cardColor, fontSize: 13 },
 				borderColor: appsmith.theme.colors.borderColor,
 				borderWidth: 1,
 				confine: true,
@@ -300,7 +300,7 @@ export default {
 					borderColor: appsmith.theme.colors.borderColor,
 					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.15)',
-					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
 					textStyle: { color: appsmith.theme.colors.textSecondaryColor }
 				},
 				{
@@ -311,7 +311,7 @@ export default {
 					borderColor: appsmith.theme.colors.borderColor,
 					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.18)',
-					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderColor },
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
 					textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 					showDetail: false
 				},
