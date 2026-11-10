@@ -3,7 +3,7 @@
   "borderRadius": "0.375rem",
   "bottomRow": 14,
   "boxShadow": "none",
-  "buttonColor": "{{appsmith.theme.colors.accentColor}}",
+  "buttonColor": "{{(appsmith.store.psfChartType || 'bar') === 'bar' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{(appsmith.store.psfChartType || 'bar') === 'bar' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

@@ -11,6 +11,9 @@
     },
     {
       "key": "borderRadius"
+    },
+    {
+      "key": "backgroundColor"
     }
   ],
   "dynamicTriggerPathList": [
@@ -36,5 +39,6 @@
   "type": "CHART_WIDGET",
   "version": 1,
   "widgetId": "2p0ynkvzpe",
-  "widgetName": "OTYConsumptionChart"
+  "widgetName": "OTYConsumptionChart",
+  "backgroundColor": "{{appsmith.theme.colors.panelColor}}"
 }

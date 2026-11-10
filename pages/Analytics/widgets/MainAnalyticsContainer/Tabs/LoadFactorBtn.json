@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 5,
   "boxShadow": "none",
-  "buttonColor": "{{appsmith.store.activeView === 'Load Factor' ? appsmith.theme.colors.actionColor : appsmith.theme.colors.textStrongColor}}",
+  "buttonColor": "{{appsmith.store.activeView === 'Load Factor' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{appsmith.store.activeView === 'Load Factor' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [

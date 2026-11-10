@@ -143,7 +143,7 @@ export default {
 		keys = series.map(function(s) { return s.name; });
 
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: appsmith.theme.colors.surfaceColor,
