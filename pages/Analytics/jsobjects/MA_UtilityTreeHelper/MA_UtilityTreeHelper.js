@@ -368,7 +368,7 @@ export default {
 		const yHalfRange = topmostY + Y_STEP * 0.55;
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: appsmith.theme.colors.surfaceColor,

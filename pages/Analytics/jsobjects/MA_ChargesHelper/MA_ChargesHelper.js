@@ -114,7 +114,7 @@ export default {
 		keys = series.map(function(s) { return s.name; });
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis'
 			},

@@ -242,7 +242,7 @@ export default {
 		}));
 
 		return {
-			backgroundColor: appsmith.theme.colors.surfaceColor,
+			backgroundColor: appsmith.theme.colors.panelColor,
 
 			tooltip: {
 				trigger: "axis",
@@ -371,7 +371,7 @@ export default {
 		const isConsumption = chartType === "consumption";
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 
 			tooltip: {
 				trigger: "axis",
