@@ -270,7 +270,7 @@ export default {
 			});
 
 			return {
-				backgroundColor: 'transparent',
+				backgroundColor: appsmith.theme.colors.panelColor,
 				tooltip: {
 					trigger: 'item',
 					confine: true,
@@ -344,7 +344,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },

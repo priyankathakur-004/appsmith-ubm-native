@@ -340,7 +340,7 @@ export default {
 	// in the CUSTOM_ECHART widget (hidden axes guarantee the chart initialises).
 	_messageConfig(text, size) {
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			xAxis: { show: false, type: 'category', data: [] },
 			yAxis: { show: false, type: 'value' },
 			series: [],
@@ -440,7 +440,7 @@ export default {
 		const yLabel = this._getYLabel(view, uomLabel);
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: appsmith.theme.colors.surfaceColor,

@@ -344,7 +344,7 @@ export default {
 		}
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				formatter: tooltipFormatter
@@ -441,7 +441,7 @@ export default {
 
 		
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },

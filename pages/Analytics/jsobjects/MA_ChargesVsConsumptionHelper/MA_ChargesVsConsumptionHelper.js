@@ -250,7 +250,7 @@ export default {
 		}
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'item',
 				formatter: '{b}',

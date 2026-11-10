@@ -184,7 +184,7 @@ export default {
 		const yLabel = this._getYLabel(view, uomLabel);
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: appsmith.theme.colors.surfaceColor,

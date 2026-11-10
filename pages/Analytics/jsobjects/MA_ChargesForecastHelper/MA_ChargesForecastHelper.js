@@ -20,7 +20,7 @@ export default {
 		var values = years.map(function(y) { return Number(byYear[y].toFixed(2)); });
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: { trigger: 'axis' },
 			grid: { left: 70, right: 30, top: 30, bottom: 40 },
 			xAxis: {
@@ -149,7 +149,7 @@ export default {
 		var lowerData = forecastData.slice();
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: { trigger: 'axis' },
 			legend: {
 				data: ['Charges', 'Charges Forecast'],

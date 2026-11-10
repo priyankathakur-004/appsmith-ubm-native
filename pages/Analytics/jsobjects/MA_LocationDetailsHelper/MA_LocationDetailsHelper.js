@@ -187,7 +187,7 @@ export default {
 		var xLabel = 'Consumption' + (uom ? ' (' + uom + ')' : '');
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'item',
 				backgroundColor: t.TOOLTIP_BG,
@@ -285,7 +285,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
@@ -361,7 +361,7 @@ export default {
 		];
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: { type: 'shadow' },
@@ -454,7 +454,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: t.TOOLTIP_BG,
@@ -545,7 +545,7 @@ export default {
 		});
 
 		return {
-			backgroundColor: 'transparent',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
 				backgroundColor: t.TOOLTIP_BG,
