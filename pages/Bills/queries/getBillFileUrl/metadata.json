@@ -5,7 +5,7 @@
   "pluginType": "DB",
   "unpublishedAction": {
     "actionConfiguration": {
-      "body": "SELECT \n    path\nFROM bill_management_v2.bill_files\nWHERE bill_id = {{ bills.selectedRow.bill_id }}\nLIMIT 1;",
+      "body": "SELECT \n    path\nFROM bill_management_v2.bill_files\nWHERE bill_id = {{ appsmith.store.billsFileBillId || 0 }}\nLIMIT 1;",
       "encodeParamsToggle": true,
       "paginationType": "NONE",
       "pluginSpecifiedTemplates": [
