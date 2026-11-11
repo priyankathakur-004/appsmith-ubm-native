@@ -22,7 +22,7 @@ import sys
 # must have the same keys; add new keys to both.
 THEMES = {
     "dark": {
-        "backgroundColor": "#1E293A",
+        "backgroundColor": "#0F172A",
         "primaryColor": "#0F1729",
         "surfaceColor": "#0f172a",
         "panelColor": "#1e293b",

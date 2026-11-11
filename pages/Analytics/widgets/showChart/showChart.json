@@ -79,7 +79,7 @@
   "rightColumn": 64,
   "shouldScrollContents": true,
   "topRow": -2,
-  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "backgroundColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.backgroundColor : '#1e293b')}}",
   "type": "MODAL_WIDGET",
   "version": 2,
   "widgetId": "olofmhabk0",
