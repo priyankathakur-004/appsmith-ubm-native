@@ -45,7 +45,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 14,
   "shouldTruncate": false,
-  "text": "<div style=\"color:{{appsmith.theme.colors.textColor}};font-size:13px;line-height:1.6;padding:8px;\"><p><b style=\"color:{{appsmith.theme.colors.warningColor}};\">Note</b>: Choose one utility for the consumption and unit cost charts to show correct data. Choosing multiple utilities works for aggregated charges but not other charts.</p></div>",
+  "text": "<div style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textColor : '#cbd5e1')}};font-size:13px;line-height:1.6;padding:8px;\"><p><b style=\"color:{{appsmith.theme.colors.warningColor}};\">Note</b>: Choose one utility for the consumption and unit cost charts to show correct data. Choosing multiple utilities works for aggregated charges but not other charts.</p></div>",
   "textAlign": "LEFT",
   "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 17,

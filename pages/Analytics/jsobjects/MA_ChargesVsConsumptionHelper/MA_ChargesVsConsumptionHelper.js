@@ -256,7 +256,7 @@ export default {
 				formatter: '{b}',
 				backgroundColor: appsmith.theme.colors.textStrongColor,
 				textStyle: { color: appsmith.theme.colors.cardColor, fontSize: 13 },
-				borderColor: appsmith.theme.colors.borderColor,
+				borderColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#e2e8f0'),
 				borderWidth: 1,
 				confine: true,
 				extraCssText: 'white-space:pre; font-family:system-ui; line-height:1.8; padding:10px 14px;'

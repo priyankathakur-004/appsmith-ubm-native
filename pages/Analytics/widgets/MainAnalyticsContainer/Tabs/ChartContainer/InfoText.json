@@ -42,7 +42,7 @@
   "shouldScrollContents": true,
   "text": "{{MA_RankLocationHelper.getInfoText()}}",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.warningColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.warningColor : '#ac6c2f')}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,

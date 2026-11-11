@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 25,
   "text": "Location",
-  "textColor": "{{(appsmith.store.otyViewBy || 'Location') === 'Location' ? '#ffffff' : appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.store.otyViewBy || 'Location') === 'Location' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#2563eb')}}",
   "topRow": 0,
   "type": "BUTTON_WIDGET",
   "version": 1,

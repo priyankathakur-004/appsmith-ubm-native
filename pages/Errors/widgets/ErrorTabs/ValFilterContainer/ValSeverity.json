@@ -35,7 +35,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Severity",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 52,

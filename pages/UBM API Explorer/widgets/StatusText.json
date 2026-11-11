@@ -39,7 +39,7 @@
   "shouldTruncate": false,
   "text": "{{ UBMUtils.statusText() }}",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.textSecondaryColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textSecondaryColor : '#a1a1aa')}}",
   "topRow": 34,
   "type": "TEXT_WIDGET",
   "version": 1,

@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 31,
   "text": "Service Account",
-  "textColor": "{{(appsmith.store.chViewBy || 'Location') === 'Service Account' ? '#ffffff' : appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.store.chViewBy || 'Location') === 'Service Account' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#2563eb')}}",
   "topRow": 3,
   "type": "BUTTON_WIDGET",
   "version": 1,

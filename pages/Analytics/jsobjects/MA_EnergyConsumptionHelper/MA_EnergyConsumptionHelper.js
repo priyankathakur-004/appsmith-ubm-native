@@ -264,7 +264,7 @@ getUtilityPieConfig() {
 
     return {
         backgroundColor: appsmith.theme.colors.panelColor,
-        tooltip: { trigger: "item", backgroundColor: appsmith.theme.colors.panelColor, textStyle: { color: appsmith.theme.colors.textColor } },
+        tooltip: { trigger: "item", backgroundColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.panelColor : '#0f172a'), textStyle: { color: appsmith.theme.colors.textColor } },
         legend: { top: "3%", left: "center", textStyle: { color: appsmith.theme.colors.textColor } },
         series: [{
             type: "pie",

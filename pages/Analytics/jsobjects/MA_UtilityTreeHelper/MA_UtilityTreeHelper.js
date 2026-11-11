@@ -217,7 +217,7 @@ export default {
 		const BORDER_COLOR = appsmith.theme.colors.textFaintColor;
 		const BG_COLOR = appsmith.theme.colors.cardColor;
 		const HEADER_COLOR = appsmith.theme.colors.textSoftColor;
-		const SEPARATOR_COLOR = appsmith.theme.colors.textMutedColor;
+		const SEPARATOR_COLOR = (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155');
 		const LABEL_NAME_COLOR = appsmith.theme.colors.textColor;
 		const LABEL_VAL_COLOR = appsmith.theme.colors.textSecondaryColor;
 		const EDGE_COLOR = appsmith.theme.colors.textFaintColor;

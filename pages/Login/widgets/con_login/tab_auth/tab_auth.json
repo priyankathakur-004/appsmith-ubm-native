@@ -1,8 +1,8 @@
 {
   "accentColor": "{{appsmith.theme.colors.accentColor}}",
   "animateLoading": true,
-  "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
-  "borderColor": "{{appsmith.theme.colors.borderColor}}",
+  "backgroundColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.surfaceColor : '#ffffff')}}",
+  "borderColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#e0dede')}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "",
   "bottomRow": 47,

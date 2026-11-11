@@ -45,7 +45,7 @@
   "shouldTruncate": false,
   "text": "{{ RateClassData.selectedTariffCount() > 0 ? `Tariffs selected: ${RateClassData.selectedTariffCount()} of ${RateClassData.tariffRows().length}` : `Tariffs total: ${RateClassData.tariffRows().length}` }}",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d4d4d8')}}",
   "topRow": 8,
   "type": "TEXT_WIDGET",
   "version": 1,

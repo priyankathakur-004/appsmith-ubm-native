@@ -5,7 +5,7 @@ export default {
 			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSoftColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${audit || "Admin System"}</td>`;
 		return `<tr>` +
 			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:320px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${label}</td>` +
-			`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
+			`<td style='padding:9px 14px;color:${(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')};font-weight:600;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
 			auditCell + `</tr>`;
 	},
 
@@ -21,7 +21,7 @@ export default {
 		const d = (Array.isArray(detail) && detail[0]) || {};
 		const esc = (v) => (v == null || v === "") ? "—" : String(v);
 		const statusPill = d.active
-			? "<span style='color:" + appsmith.theme.colors.successColor + ";'>&#9679; Active</span>"
+			? "<span style='color:" + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.successColor : '#4ade80') + ";'>&#9679; Active</span>"
 			: "<span style='color:" + appsmith.theme.colors.dangerColor + ";'>&#9679; Inactive</span>";
 
 		const main = this._section("Main Information",

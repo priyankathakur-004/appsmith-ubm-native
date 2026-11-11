@@ -37,7 +37,7 @@
   "shouldTruncate": false,
   "text": "{{MA_EnergyConsumptionHelper.getRightChartTitle()}}",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')}}",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,

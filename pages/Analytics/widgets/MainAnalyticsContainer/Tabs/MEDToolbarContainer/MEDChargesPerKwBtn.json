@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 47,
   "text": "Charges / kW",
-  "textColor": "{{(appsmith.store.medViewBy || 'Demand') === 'ChargesPerKw' ? '#ffffff' : appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.store.medViewBy || 'Demand') === 'ChargesPerKw' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#2563eb')}}",
   "topRow": 3,
   "type": "BUTTON_WIDGET",
   "version": 1,

@@ -45,7 +45,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 64,
   "shouldTruncate": false,
-  "text": "<div style=\"color:{{appsmith.theme.colors.textColor}};font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ To change the decomposition and see the most notable contributor at the various levels, click on the item of interest. For example click on NATURALGAS to see the most important contributors to the natural gas charges/consumption.</p></div>",
+  "text": "<div style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textColor : '#cbd5e1')}};font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ To change the decomposition and see the most notable contributor at the various levels, click on the item of interest. For example click on NATURALGAS to see the most important contributors to the natural gas charges/consumption.</p></div>",
   "textAlign": "LEFT",
   "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,

@@ -78,9 +78,9 @@ export default {
     const cols = ["Bill ID", "Due Date", "Invoice Date", "Vendor", "Billing ID", "Amount Due", "Fees", "Amount Paid"];
     const moneyCols = { "Amount Due": 1, "Fees": 1, "Amount Paid": 1 };
     const fmtMoney = (n) => "$" + Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const thBase = "padding:10px 14px;color:" + appsmith.theme.colors.textStrongColor + ";font-size:13px;font-weight:700;border-bottom:2px solid " + appsmith.theme.colors.borderMidColor + ";white-space:nowrap;";
+    const thBase = "padding:10px 14px;color:" + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ";font-size:13px;font-weight:700;border-bottom:2px solid " + appsmith.theme.colors.borderMidColor + ";white-space:nowrap;";
     const tdBase = "padding:10px 14px;color:" + appsmith.theme.colors.textColor + ";font-size:12px;border-bottom:1px solid " + appsmith.theme.colors.borderColor + ";white-space:nowrap;";
-    const header = '<tr style="background:' + appsmith.theme.colors.surfaceAltColor + ';">' + cols.map((c) => {
+    const header = '<tr style="background:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.surfaceAltColor : '#334155') + ';">' + cols.map((c) => {
       const align = moneyCols[c] ? "right" : "left";
       return '<th style="' + thBase + "text-align:" + align + ';">' + c + "</th>";
     }).join("") + "</tr>";

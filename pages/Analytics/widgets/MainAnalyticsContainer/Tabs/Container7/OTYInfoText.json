@@ -45,7 +45,7 @@
   "renderMode": "CANVAS",
   "rightColumn": 14,
   "shouldTruncate": false,
-  "text": "<div style=\"color:{{appsmith.theme.colors.textColor}};font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Graphs show the aggregated measures for all <b style=\"color:{{appsmith.theme.colors.textStrongColor}};\">locations</b> by default. To show data for selected locations, use the list in the box below, or filter above. Hold the Control key for multiple options.</p></div>",
+  "text": "<div style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textColor : '#cbd5e1')}};font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Graphs show the aggregated measures for all <b style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')}};\">locations</b> by default. To show data for selected locations, use the list in the box below, or filter above. Hold the Control key for multiple options.</p></div>",
   "textAlign": "LEFT",
   "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,

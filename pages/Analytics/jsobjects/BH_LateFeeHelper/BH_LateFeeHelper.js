@@ -162,11 +162,11 @@ export default {
 				}
 			},
 			legend: { type: 'scroll', orient: 'vertical', right: 8, top: 20, textStyle: { color: appsmith.theme.colors.textColor }, data: Object.keys(colorOf) },
-			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 12, fontWeight: 600 } },
+			title: { text: titleByDim[dim] || '', right: 8, top: 0, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0'), fontSize: 12, fontWeight: 600 } },
 			series: [{
 				type: 'pie', radius: ['45%', '72%'], center: ['38%', '52%'],
 				avoidLabelOverlap: true,
-				label: { color: appsmith.theme.colors.textStrongColor, formatter: '{c} ({d}%)' },
+				label: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0'), formatter: '{c} ({d}%)' },
 				labelLine: { lineStyle: { color: appsmith.theme.colors.borderStrongColor } },
 				data: data
 			}]
@@ -186,7 +186,7 @@ export default {
 		};
 		const pct = (num, den) => den ? (num / den * 100).toFixed(2) + '%' : '';
 
-		const th = 'padding:8px 12px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:right;white-space:nowrap;';
+		const th = 'padding:8px 12px;color:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ';font-size:12px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';text-align:right;white-space:nowrap;';
 		const thL = th + 'text-align:left;';
 		const td = 'padding:7px 12px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';text-align:right;white-space:nowrap;';
 		const tdL = td + 'text-align:left;';
@@ -209,8 +209,8 @@ export default {
 				+ '<td style="' + td + '">' + pct(Math.abs(a.recoup), a.late) + '</td>'
 				+ '<td style="' + td + '">' + pct(a.net, a.charges) + '</td></tr>';
 		});
-		const tf = td + 'font-weight:700;border-top:2px solid ' + appsmith.theme.colors.borderMidColor + ';color:' + appsmith.theme.colors.textStrongColor + ';';
-		const tfL = tdL + 'font-weight:700;border-top:2px solid ' + appsmith.theme.colors.borderMidColor + ';color:' + appsmith.theme.colors.textStrongColor + ';';
+		const tf = td + 'font-weight:700;border-top:2px solid ' + appsmith.theme.colors.borderMidColor + ';color:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ';';
+		const tfL = tdL + 'font-weight:700;border-top:2px solid ' + appsmith.theme.colors.borderMidColor + ';color:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ';';
 		h += '<tr><td style="' + tfL + '">Total</td>'
 			+ '<td style="' + tf + '">' + money(tot.net) + '</td>'
 			+ '<td style="' + tf + '">' + money(tot.late) + '</td>'

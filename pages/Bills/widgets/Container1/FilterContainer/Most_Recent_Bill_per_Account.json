@@ -1,5 +1,5 @@
 {
-  "accentColor": "{{appsmith.theme.colors.accentColor}}",
+  "accentColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.accentColor : '#22c55e')}}",
   "alignWidget": "LEFT",
   "animateLoading": true,
   "bottomRow": 18,
@@ -21,7 +21,7 @@
   "key": "wios7u2aiz",
   "label": "Most Recent Bill per Account",
   "labelPosition": "Left",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "leftColumn": 44,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,

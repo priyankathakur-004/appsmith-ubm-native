@@ -61,7 +61,7 @@ export default {
 		var s = this.getSummary();
 		var cell = function(val, label) {
 			return '<div style="padding:10px 12px;">'
-				+ '<div style="font-size:17px;font-weight:700;color:' + appsmith.theme.colors.textStrongColor + ';">' + val + '</div>'
+				+ '<div style="font-size:17px;font-weight:700;color:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ';">' + val + '</div>'
 				+ '<div style="font-size:13px;color:' + appsmith.theme.colors.textSecondaryColor + ';margin-top:2px;">' + label + '</div></div>';
 		};
 		return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;">'
@@ -144,7 +144,7 @@ export default {
 
 		return {
 			backgroundColor: appsmith.theme.colors.panelColor,
-			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.panelColor, borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }, extraCssText: 'max-width:350px;' },
+			tooltip: { trigger: 'item', backgroundColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.panelColor : '#0f172a'), borderColor: appsmith.theme.colors.borderColor, textStyle: { color: appsmith.theme.colors.textColor }, extraCssText: 'max-width:350px;' },
 			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			grid: { left: 70, right: 120, top: 20, bottom: 40 },
 			xAxis: { type: 'category', data: monthLabels, axisLabel: { color: appsmith.theme.colors.textSoftColor, fontSize: 11 }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } }, splitLine: { show: false } },
@@ -162,7 +162,7 @@ export default {
 			byType[t] += parseFloat(r.total_charges) || 0;
 		});
 
-		var colors = { ELECTRIC: '#3B82F6', NATURALGAS: '#84CC16', LIGHTING: '#FBBF24', SEWER: appsmith.theme.colors.textMutedColor, WATER: '#22D3EE', OIL2: '#065F46', STEAM: '#F59E0B' };
+		var colors = { ELECTRIC: '#3B82F6', NATURALGAS: '#84CC16', LIGHTING: '#FBBF24', SEWER: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#6b7280'), WATER: '#22D3EE', OIL2: '#065F46', STEAM: '#F59E0B' };
 		var rows = Object.keys(byType).map(function(k) { return { name: k, value: Number(byType[k].toFixed(2)) }; }).sort(function(a, b) { return b.value - a.value; });
 		var total = rows.reduce(function(s, r) { return s + r.value; }, 0);
 		rows.forEach(function(r) {
@@ -173,7 +173,7 @@ export default {
 
 		return {
 			backgroundColor: appsmith.theme.colors.panelColor,
-			tooltip: { trigger: 'item', backgroundColor: appsmith.theme.colors.panelColor, textStyle: { color: appsmith.theme.colors.textColor } },
+			tooltip: { trigger: 'item', backgroundColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.panelColor : '#0f172a'), textStyle: { color: appsmith.theme.colors.textColor } },
 			legend: { type: 'scroll', orient: 'vertical', right: 10, top: 'middle', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 }, icon: 'circle', itemWidth: 10, itemHeight: 10 },
 			series: [{
 				type: 'pie',

@@ -1,5 +1,5 @@
 {
-  "accentColor": "{{appsmith.theme.colors.accentColor}}",
+  "accentColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.accentColor : '#22c55e')}}",
   "animateLoading": true,
   "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
   "borderColor": "{{appsmith.theme.colors.surfaceColor}}",

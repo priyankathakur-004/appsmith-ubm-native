@@ -472,7 +472,7 @@ export default {
 				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 },
 				pageTextStyle: { color: appsmith.theme.colors.textSecondaryColor },
 				pageIconColor: appsmith.theme.colors.textSecondaryColor,
-				pageIconInactiveColor: appsmith.theme.colors.textMutedColor,
+				pageIconInactiveColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155'),
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10

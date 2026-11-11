@@ -613,7 +613,7 @@ export default {
 		return {
 			backgroundColor: appsmith.theme.colors.cardColor,
 			title: [
-				{ text: title, left: 8, top: 6, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 15, fontWeight: 600 } },
+				{ text: title, left: 8, top: 6, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9'), fontSize: 15, fontWeight: 600 } },
 				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: appsmith.theme.colors.textColor, fontSize: 13, fontWeight: 600 } },
 				{ text: 'Auto-Generated Insights', right: '2%', top: 6, textAlign: 'right', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 14, fontWeight: 600 } },
 				{ text: insight, right: '2%', top: 36, textAlign: 'left', textStyle: { color: appsmith.theme.colors.textSecondaryColor, fontSize: 12, fontWeight: 'normal', lineHeight: 18, width: 360, overflow: 'break' } }
@@ -676,9 +676,9 @@ export default {
 		}));
 		return {
 			backgroundColor: appsmith.theme.colors.cardColor,
-			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: appsmith.theme.colors.textStrongColor, fontSize: 15, fontWeight: 600 } },
+			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9'), fontSize: 15, fontWeight: 600 } },
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { type: 'scroll', data: dates, top: 34, left: 8, right: 8, textStyle: { color: appsmith.theme.colors.textStrongColor } },
+			legend: { type: 'scroll', data: dates, top: 34, left: 8, right: 8, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0') } },
 			grid: { left: 84, right: 24, top: 66, bottom: 44, containLabel: false },
 			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: appsmith.theme.colors.textSecondaryColor }, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			yAxis: { type: 'category', data: locs, axisLabel: { color: appsmith.theme.colors.textSecondaryColor } },
@@ -706,7 +706,7 @@ export default {
 	getLegendHtml() {
 		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle;margin-left:2px;"></span>';
 		// small white "document" glyph for the invoice-received marker
-		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid ' + appsmith.theme.colors.borderColor + ';border-radius:2px;background:repeating-linear-gradient(' + appsmith.theme.colors.borderColor + ',' + appsmith.theme.colors.borderColor + ' 2px,' + appsmith.theme.colors.borderColor + ' 3px,' + appsmith.theme.colors.textStrongColor + ' 4px);vertical-align:middle;"></span>';
+		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid ' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#cbd5e1') + ';border-radius:2px;background:repeating-linear-gradient(' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#ffffff') + ',' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#ffffff') + ' 2px,' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#cbd5e1') + ' 3px,' + appsmith.theme.colors.textStrongColor + ' 4px);vertical-align:middle;"></span>';
 		// inline-block items flow left-to-right and wrap as a group (avoids flex justify gaps)
 		const item = (inner, label) => '<span style="display:inline-block;white-space:nowrap;margin-right:36px;color:' + appsmith.theme.colors.textColor + ';font-size:13px;vertical-align:middle;">' + inner + '<span style="vertical-align:middle;margin-left:8px;">' + label + '</span></span>';
 		return '<div style="color:' + appsmith.theme.colors.textColor + ';font-size:13px;line-height:32px;padding:4px 0;">'

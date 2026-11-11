@@ -37,7 +37,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Type",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 19,
   "maxDynamicHeight": 9000,

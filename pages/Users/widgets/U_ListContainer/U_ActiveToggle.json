@@ -21,7 +21,7 @@
   "key": "uactivek01",
   "label": "Active users only",
   "labelPosition": "Left",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "leftColumn": 56,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,

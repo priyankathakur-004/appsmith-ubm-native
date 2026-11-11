@@ -117,7 +117,7 @@ export default {
                 axisLabel: {
                     rotate: 40,
                     margin: 10,
-                    color: appsmith.theme.colors.textStrongColor
+                    color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db')
                 },
                 axisLine: {
                     show: false
@@ -134,7 +134,7 @@ export default {
                         color: appsmith.theme.colors.textColor
                     },
                     axisLabel: {
-                        color: appsmith.theme.colors.textStrongColor
+                        color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db')
                     },
                     axisLine: {
                         show: false
@@ -144,7 +144,7 @@ export default {
                     },
                     splitLine: {
                         lineStyle: {
-                            color: appsmith.theme.colors.textMutedColor
+                            color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#374151')
                         }
                     }
                 },
@@ -155,7 +155,7 @@ export default {
                         color: appsmith.theme.colors.textColor
                     },
                     axisLabel: {
-                        color: appsmith.theme.colors.textStrongColor
+                        color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db')
                     },
                     axisLine: {
                         show: false
@@ -200,7 +200,7 @@ export default {
                     smooth: true,
                     symbolSize: 6,
                     lineStyle: {
-                        color: appsmith.theme.colors.borderColor,
+                        color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#ffffff'),
                         width: 3
                     },
                     itemStyle: {
@@ -349,7 +349,7 @@ export default {
                 min: 0,
                 max: 1,
                 axisLabel: {
-                    color: appsmith.theme.colors.textStrongColor
+                    color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db')
                 },
                 splitLine: {
                     lineStyle: {
@@ -363,7 +363,7 @@ export default {
                 inverse: true,
                 data: corrs.map(c => c.name),
                 axisLabel: {
-                    color: appsmith.theme.colors.textStrongColor
+                    color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db')
                 }
             },
 
@@ -400,7 +400,7 @@ export default {
 
         const colors = [
             '#60a5fa', '#1d4ed8', '#fbbf24', '#4ade80',
-            '#059669', '#166534', '#6366f1', appsmith.theme.colors.textMutedColor,
+            '#059669', '#166534', '#6366f1', (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#6366f1'),
             '#ef4444', '#1e40af', '#f97316', '#a855f7',
             '#14b8a6', '#ec4899', '#84cc16', '#0ea5e9'
         ];
@@ -456,7 +456,7 @@ export default {
                 name: 'Degree Days',
                 nameGap: 18,
                 axisLabel: {
-                    color: appsmith.theme.colors.textStrongColor
+                    color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db')
                 },
                 splitLine: {
                     lineStyle: {
@@ -469,7 +469,7 @@ export default {
                 type: 'value',
                 name: 'Consumption',
                 axisLabel: {
-                    color: appsmith.theme.colors.textStrongColor,
+                    color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#d1d5db'),
                     formatter: v => {
                         if (v >= 1000000) return (v / 1000000).toFixed(1) + 'M';
                         if (v >= 1000) return (v / 1000).toFixed(0) + 'K';

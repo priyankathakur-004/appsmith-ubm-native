@@ -39,7 +39,7 @@
   "shouldTruncate": false,
   "text": "Welcome to Carbon Accounting",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#231f20')}}",
   "topRow": 11,
   "truncateButtonColor": "#FFC13D",
   "type": "TEXT_WIDGET",

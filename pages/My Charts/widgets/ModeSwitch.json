@@ -28,7 +28,7 @@
   "key": "agc_mode_k",
   "label": "Edit mode",
   "labelPosition": "Left",
-  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "leftColumn": 50,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,

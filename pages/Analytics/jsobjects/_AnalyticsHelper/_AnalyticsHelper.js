@@ -141,7 +141,7 @@ export default {
 				const data = this.getTableData();
 				if (!data || !data.length) return '<div style="padding:20px;color:' + appsmith.theme.colors.textSecondaryColor + ';text-align:center;">No data available</div>';
 				const keys = Object.keys(data[0]);
-				const thStyle = 'padding:10px 14px;color:' + appsmith.theme.colors.textStrongColor + ';font-size:13px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';white-space:nowrap;';
+				const thStyle = 'padding:10px 14px;color:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ';font-size:13px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';white-space:nowrap;';
 				const tdStyle = 'padding:10px 14px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
 				const header = '<tr style="background:' + appsmith.theme.colors.hoverStrongColor + ';">' + keys.map(k => '<th style="' + thStyle + 'text-align:left;">' + k + '</th>').join('') + '</tr>';
 				const rows = data.map(r => '<tr>' + keys.map(k => '<td style="' + tdStyle + '">' + (r[k] != null ? r[k] : '') + '</td>').join('') + '</tr>').join('');

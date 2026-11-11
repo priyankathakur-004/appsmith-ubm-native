@@ -58,7 +58,7 @@ export default {
 		const esc = (v) => (v == null || v === "") ? "—" : String(v);
 
 		const pill = (on) => {
-			const color = on ? appsmith.theme.colors.successColor : appsmith.theme.colors.textSecondaryColor;
+			const color = on ? (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.successColor : '#4ade80') : appsmith.theme.colors.textSecondaryColor;
 			return `<span style='color:${color};font-weight:700;'>${on ? "On" : "Off"}</span>`;
 		};
 
@@ -67,7 +67,7 @@ export default {
 			const pad = indent ? "padding-left:36px;" : "";
 			return `<tr>` +
 				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:340px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};${pad}'>${label}</td>` +
-				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
+				`<td style='padding:9px 14px;color:${(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')};font-weight:600;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
 				`</tr>`;
 		};
 
@@ -76,7 +76,7 @@ export default {
 			const pad = indent ? "padding-left:36px;" : "";
 			return `<tr>` +
 				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSecondaryColor};width:340px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};${pad}'>${label}</td>` +
-				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textStrongColor};font-weight:600;width:110px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
+				`<td style='padding:9px 14px;color:${(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')};font-weight:600;width:110px;border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${valueHtml}</td>` +
 				`<td style='padding:9px 14px;color:${appsmith.theme.colors.textSoftColor};border-bottom:1px solid ${appsmith.theme.colors.borderColor};'>${auditFor(auditKey)}</td>` +
 				`</tr>`;
 		};
@@ -114,7 +114,7 @@ export default {
 		};
 
 		const statusPill = d.active
-			? "<span style='color:" + appsmith.theme.colors.successColor + ";'>&#9679; Active</span>"
+			? "<span style='color:" + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.successColor : '#4ade80') + ";'>&#9679; Active</span>"
 			: "<span style='color:" + appsmith.theme.colors.dangerColor + ";'>&#9679; Inactive</span>";
 		const liveDays = (th.live != null) ? Math.round(th.live / 24) : "—";
 

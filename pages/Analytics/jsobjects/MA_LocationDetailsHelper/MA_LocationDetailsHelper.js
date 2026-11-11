@@ -109,7 +109,7 @@ export default {
 	_baseTheme() {
 		return {
 			BG: appsmith.theme.colors.cardColor,
-			AXIS: appsmith.theme.colors.textMutedColor,
+			AXIS: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155'),
 			LABEL: appsmith.theme.colors.textSecondaryColor,
 			TEXT: appsmith.theme.colors.textColor,
 			GRID_LINE: appsmith.theme.colors.borderSoftColor,
@@ -176,8 +176,8 @@ export default {
 				],
 				symbol: 'circle',
 				symbolSize: 12,
-				lineStyle: { type: 'dashed', color: appsmith.theme.colors.borderColor, width: 2 },
-				itemStyle: { color: 'transparent', borderColor: appsmith.theme.colors.borderColor, borderWidth: 2 },
+				lineStyle: { type: 'dashed', color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#94a3b8'), width: 2 },
+				itemStyle: { color: 'transparent', borderColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#e2e8f0'), borderWidth: 2 },
 				showSymbol: true,
 				z: 0
 			});

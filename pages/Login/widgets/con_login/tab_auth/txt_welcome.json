@@ -49,7 +49,7 @@
   "shouldTruncate": false,
   "text": "Enter your email and password to login",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#231f20')}}",
   "topRow": 16,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

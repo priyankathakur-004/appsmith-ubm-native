@@ -204,13 +204,13 @@ export default {
 					name: 'Charges Forecast',
 					type: 'line',
 					itemStyle: { color: '#333333' },
-					lineStyle: { type: 'dashed', color: appsmith.theme.colors.borderColor },
+					lineStyle: { type: 'dashed', color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#94a3b8') },
 					data: forecastData
 				},
 				{
 					name: 'Upper bound',
 					type: 'line',
-					itemStyle: { color: appsmith.theme.colors.textMutedColor },
+					itemStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155') },
 					lineStyle: { width: 0 },
 					data: upperData,
 					showSymbol: false
@@ -218,7 +218,7 @@ export default {
 				{
 					name: 'Lower bound',
 					type: 'line',
-					itemStyle: { color: appsmith.theme.colors.textMutedColor },
+					itemStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155') },
 					lineStyle: { width: 0 },
 					data: lowerData,
 					showSymbol: false

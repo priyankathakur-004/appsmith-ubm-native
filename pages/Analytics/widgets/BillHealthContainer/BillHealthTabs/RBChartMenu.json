@@ -33,7 +33,7 @@
   "isVisible": true,
   "key": "rbchtmenuk",
   "leftColumn": 62,
-  "menuColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "menuColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "menuItems": {
     "mi_rbcht_exp": {
       "id": "mi_rbcht_exp",

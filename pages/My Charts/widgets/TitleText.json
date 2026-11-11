@@ -29,7 +29,7 @@
   "shouldTruncate": false,
   "text": "My Charts",
   "textAlign": "LEFT",
-  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "topRow": 1,
   "truncateButtonColor": "#FFC13D",
   "type": "TEXT_WIDGET",
