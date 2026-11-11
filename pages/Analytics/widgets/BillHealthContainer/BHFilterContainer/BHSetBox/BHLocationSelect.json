@@ -8,6 +8,9 @@
   "defaultOptionValue": "",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "sourceData"
     },
     {
@@ -33,7 +36,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Location",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 32,
   "mobileBottomRow": 9,

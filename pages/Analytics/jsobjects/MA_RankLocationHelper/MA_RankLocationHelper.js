@@ -93,7 +93,7 @@ export default {
 
 				return {
 
-						backgroundColor: "#1E293B",
+						backgroundColor: appsmith.theme.colors.panelColor,
 
 						tooltip: {
 								trigger: "axis",
@@ -116,11 +116,11 @@ export default {
 										xAxisIndex: 0,
 										bottom: 5,
 										height: 18,
-										borderColor: "#334155",
-										backgroundColor: "#0f172a",
+										borderColor: appsmith.theme.colors.borderColor,
+										backgroundColor: appsmith.theme.colors.surfaceColor,
 										fillerColor: "rgba(59,130,246,0.15)",
-										handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
-										textStyle: { color: "#94a3b8" }
+										handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
+										textStyle: { color: appsmith.theme.colors.textSecondaryColor }
 								},
 								{
 										type: "slider",
@@ -129,11 +129,11 @@ export default {
 										width: 14,
 										start: 0,
 										end: endPct,
-										borderColor: "#334155",
-										backgroundColor: "#0f172a",
+										borderColor: appsmith.theme.colors.borderColor,
+										backgroundColor: appsmith.theme.colors.surfaceColor,
 										fillerColor: "rgba(59,130,246,0.18)",
-										handleStyle: { color: "#e2e8f0", borderColor: "#64748b" },
-										textStyle: { color: "#94a3b8" },
+										handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
+										textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 										showDetail: false
 								},
 								{
@@ -152,7 +152,7 @@ export default {
 								type: "value",
 
 								axisLabel: {
-										color: "#CBD5E1"
+										color: appsmith.theme.colors.textSoftColor
 								},
 
 								axisLine: {
@@ -165,7 +165,7 @@ export default {
 
 								splitLine: {
 										lineStyle: {
-												color: "#334155"
+												color: appsmith.theme.colors.borderColor
 										}
 								}
 						},
@@ -177,7 +177,7 @@ export default {
 								data: sorted.map(x => x[0]),
 
 								axisLabel: {
-										color: "#E2E8F0"
+										color: appsmith.theme.colors.textColor
 								},
 
 								axisLine: {

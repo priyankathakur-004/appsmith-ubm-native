@@ -4,6 +4,15 @@
   "bottomRow": 6,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -36,7 +45,7 @@
   "shouldTruncate": false,
   "text": "Rate Class",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 2,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

@@ -8,6 +8,12 @@
   "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
       "key": "isVisible"
     },
     {
@@ -48,7 +54,7 @@
   "widgetId": "lblocsel001",
   "widgetName": "LBLocation",
   "labelPosition": "Top",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "isDisabled": false,
   "labelAlignment": "left"

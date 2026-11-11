@@ -589,7 +589,7 @@ export default {
 		const present = {};
 		keys.forEach(k => Object.keys(data[k]).forEach(c => { present[c] = true; }));
 		const cats = known.filter(c => present[c.name]);
-		const extra = ['#F59E0B', '#EF4444', '#8B5CF6', '#14B8A6', '#64748B'];
+		const extra = ['#F59E0B', '#EF4444', '#8B5CF6', '#14B8A6', appsmith.theme.colors.textMutedColor];
 		let ei = 0;
 		Object.keys(present).sort().forEach(name => {
 			if (!known.some(c => c.name === name)) cats.push({ name: name, color: extra[ei++ % extra.length] });
@@ -611,18 +611,18 @@ export default {
 		const insight = this._warnInsight(metric);
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.cardColor,
 			title: [
-				{ text: title, left: 8, top: 6, textStyle: { color: '#F1F5F9', fontSize: 15, fontWeight: 600 } },
-				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: '#E2E8F0', fontSize: 13, fontWeight: 600 } },
-				{ text: 'Auto-Generated Insights', right: '2%', top: 6, textAlign: 'right', textStyle: { color: '#E2E8F0', fontSize: 14, fontWeight: 600 } },
-				{ text: insight, right: '2%', top: 36, textAlign: 'left', textStyle: { color: '#94A3B8', fontSize: 12, fontWeight: 'normal', lineHeight: 18, width: 360, overflow: 'break' } }
+				{ text: title, left: 8, top: 6, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9'), fontSize: 15, fontWeight: 600 } },
+				{ text: 'Warning', left: '46%', top: 34, textStyle: { color: appsmith.theme.colors.textColor, fontSize: 13, fontWeight: 600 } },
+				{ text: 'Auto-Generated Insights', right: '2%', top: 6, textAlign: 'right', textStyle: { color: appsmith.theme.colors.textColor, fontSize: 14, fontWeight: 600 } },
+				{ text: insight, right: '2%', top: 36, textAlign: 'left', textStyle: { color: appsmith.theme.colors.textSecondaryColor, fontSize: 12, fontWeight: 'normal', lineHeight: 18, width: 360, overflow: 'break' } }
 			],
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: '#E2E8F0' }, data: cats.map(c => c.name) },
-			grid: { left: 56, right: '62%', top: 44, bottom: 36, containLabel: false },
-			xAxis: { type: 'category', data: labels, axisLabel: { color: '#94A3B8' }, axisLine: { lineStyle: { color: '#475569' } } },
-			yAxis: { type: 'value', axisLabel: { color: '#94A3B8' }, splitLine: { lineStyle: { color: '#334155' } } },
+			legend: { orient: 'vertical', left: '46%', top: 58, itemGap: 14, icon: 'circle', textStyle: { color: appsmith.theme.colors.textColor }, data: cats.map(c => c.name) },
+			grid: { left: 12, right: '62%', top: 44, bottom: 36, containLabel: true },
+			xAxis: { type: 'category', data: labels, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } } },
+			yAxis: { type: 'value', axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
 			series: series
 		};
 	},
@@ -675,13 +675,13 @@ export default {
 			data: locs.map(l => Number((byLoc[l].byDate[d] || 0).toFixed(2)))
 		}));
 		return {
-			backgroundColor: '#1E293B',
-			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: '#F1F5F9', fontSize: 15, fontWeight: 600 } },
+			backgroundColor: appsmith.theme.colors.cardColor,
+			title: { text: 'Impacted Locations', left: 8, top: 8, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9'), fontSize: 15, fontWeight: 600 } },
 			tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-			legend: { data: dates, top: 40, right: 8, textStyle: { color: '#E2E8F0' } },
+			legend: { type: 'scroll', data: dates, top: 34, left: 8, right: 8, textStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0') } },
 			grid: { left: 84, right: 24, top: 66, bottom: 44, containLabel: false },
-			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: '#94A3B8' }, axisLabel: { color: '#94A3B8' }, splitLine: { lineStyle: { color: '#334155' } } },
-			yAxis: { type: 'category', data: locs, axisLabel: { color: '#94A3B8' } },
+			xAxis: { type: 'value', name: 'Total Amount', nameLocation: 'middle', nameGap: 28, nameTextStyle: { color: appsmith.theme.colors.textSecondaryColor }, axisLabel: { color: appsmith.theme.colors.textSecondaryColor }, splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } } },
+			yAxis: { type: 'category', data: locs, axisLabel: { color: appsmith.theme.colors.textSecondaryColor } },
 			series: series
 		};
 	},
@@ -706,10 +706,10 @@ export default {
 	getLegendHtml() {
 		const sw = (color) => '<span style="display:inline-block;width:26px;height:15px;border-radius:3px;background:' + color + ';vertical-align:middle;margin-left:2px;"></span>';
 		// small white "document" glyph for the invoice-received marker
-		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid #CBD5E1;border-radius:2px;background:repeating-linear-gradient(#ffffff,#ffffff 2px,#cbd5e1 3px,#ffffff 4px);vertical-align:middle;"></span>';
+		const invoice = '<span style="display:inline-block;width:20px;height:16px;border:1px solid ' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#cbd5e1') + ';border-radius:2px;background:repeating-linear-gradient(' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#ffffff') + ',' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#ffffff') + ' 2px,' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#cbd5e1') + ' 3px,' + appsmith.theme.colors.textStrongColor + ' 4px);vertical-align:middle;"></span>';
 		// inline-block items flow left-to-right and wrap as a group (avoids flex justify gaps)
-		const item = (inner, label) => '<span style="display:inline-block;white-space:nowrap;margin-right:36px;color:#E2E8F0;font-size:13px;vertical-align:middle;">' + inner + '<span style="vertical-align:middle;margin-left:8px;">' + label + '</span></span>';
-		return '<div style="color:#E2E8F0;font-size:13px;line-height:32px;padding:4px 0;">'
+		const item = (inner, label) => '<span style="display:inline-block;white-space:nowrap;margin-right:36px;color:' + appsmith.theme.colors.textColor + ';font-size:13px;vertical-align:middle;">' + inner + '<span style="vertical-align:middle;margin-left:8px;">' + label + '</span></span>';
+		return '<div style="color:' + appsmith.theme.colors.textColor + ';font-size:13px;line-height:32px;padding:4px 0;">'
 			+ item(sw('#15803d'), 'denotes the service period is fully covered by at least 1 bill')
 			+ item(sw('#86efac') + sw('#E76D5F'), 'denotes the service period is partially/not covered')
 			+ item(invoice, 'denotes invoice received')

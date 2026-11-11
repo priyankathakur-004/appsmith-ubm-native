@@ -5,6 +5,9 @@
   "displayName": "Text",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "truncateButtonColor"
     },
     {
@@ -46,7 +49,7 @@
   "shouldTruncate": false,
   "text": "Enter your email and password to login",
   "textAlign": "LEFT",
-  "textColor": "#231F20",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#231f20')}}",
   "topRow": 16,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

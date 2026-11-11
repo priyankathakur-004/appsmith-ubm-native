@@ -20,18 +20,18 @@ export default {
 		var values = years.map(function(y) { return Number(byYear[y].toFixed(2)); });
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: { trigger: 'axis' },
 			grid: { left: 70, right: 30, top: 30, bottom: 40 },
 			xAxis: {
 				type: 'category',
 				data: years,
-				axisLabel: { color: '#94a3b8' }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor }
 			},
 			yAxis: {
 				type: 'value',
-				axisLabel: { color: '#94a3b8' },
-				splitLine: { lineStyle: { color: '#334155' } }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			series: [{
 				type: 'bar',
@@ -149,11 +149,11 @@ export default {
 		var lowerData = forecastData.slice();
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: { trigger: 'axis' },
 			legend: {
 				data: ['Charges', 'Charges Forecast'],
-				textStyle: { color: '#e2e8f0' },
+				textStyle: { color: appsmith.theme.colors.textColor },
 				top: 5
 			},
 			grid: { left: 80, right: 30, top: 40, bottom: 80 },
@@ -163,35 +163,35 @@ export default {
 					xAxisIndex: 0,
 					bottom: 10,
 					height: 20,
-					borderColor: '#334155',
-					backgroundColor: '#0f172a',
+					borderColor: appsmith.theme.colors.borderColor,
+					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.15)',
-					textStyle: { color: '#94a3b8' }
+					textStyle: { color: appsmith.theme.colors.textSecondaryColor }
 				},
 				{
 					type: 'slider',
 					yAxisIndex: 0,
 					right: 5,
 					width: 20,
-					borderColor: '#334155',
-					backgroundColor: '#0f172a',
+					borderColor: appsmith.theme.colors.borderColor,
+					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.15)',
-					textStyle: { color: '#94a3b8' }
+					textStyle: { color: appsmith.theme.colors.textSecondaryColor }
 				}
 			],
 			xAxis: {
 				type: 'category',
 				data: allLabels,
-				axisLabel: { color: '#94a3b8' }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor }
 			},
 			yAxis: {
 				type: 'value',
 				name: 'Charges',
 				nameLocation: 'middle',
 				nameGap: 65,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8' },
-				splitLine: { lineStyle: { color: '#334155' } }
+				nameTextStyle: { color: appsmith.theme.colors.textColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			series: [
 				{
@@ -204,13 +204,13 @@ export default {
 					name: 'Charges Forecast',
 					type: 'line',
 					itemStyle: { color: '#333333' },
-					lineStyle: { type: 'dashed', color: '#94a3b8' },
+					lineStyle: { type: 'dashed', color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#94a3b8') },
 					data: forecastData
 				},
 				{
 					name: 'Upper bound',
 					type: 'line',
-					itemStyle: { color: '#334155' },
+					itemStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155') },
 					lineStyle: { width: 0 },
 					data: upperData,
 					showSymbol: false
@@ -218,7 +218,7 @@ export default {
 				{
 					name: 'Lower bound',
 					type: 'line',
-					itemStyle: { color: '#334155' },
+					itemStyle: { color: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155') },
 					lineStyle: { width: 0 },
 					data: lowerData,
 					showSymbol: false
@@ -300,22 +300,22 @@ export default {
 		var tbl = this.getTableData();
 		if (!tbl || !tbl.length) return '';
 		var keys = Object.keys(tbl[0]);
-		var thStyle = 'padding:8px 12px;color:#94A3B8;font-size:12px;font-weight:600;border-bottom:1px solid #475569;';
-		var tdStyle = 'padding:8px 12px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;';
-		var header = '<tr style="background:#334155;">' + keys.map(function(k) {
+		var thStyle = 'padding:8px 12px;color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:12px;font-weight:600;border-bottom:1px solid ' + appsmith.theme.colors.borderMidColor + ';';
+		var tdStyle = 'padding:8px 12px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
+		var header = '<tr style="background:' + appsmith.theme.colors.hoverStrongColor + ';">' + keys.map(function(k) {
 			var align = k === 'Month' ? 'left' : 'right';
 			return '<th style="' + thStyle + 'text-align:' + align + ';">' + k.trim() + '</th>';
 		}).join('') + '</tr>';
 		var rows = tbl.map(function(r, idx) {
 			var isTotal = r['Month'] === 'Total';
-			var rowStyle = isTotal ? 'background:#334155;font-weight:700;' : '';
+			var rowStyle = isTotal ? 'background:' + appsmith.theme.colors.hoverStrongColor + ';font-weight:700;' : '';
 			return '<tr style="' + rowStyle + '">' + keys.map(function(k) {
 				var align = k === 'Month' ? 'left' : 'right';
 				var fw = isTotal ? 'font-weight:700;' : '';
 				return '<td style="' + tdStyle + 'text-align:' + align + ';' + fw + '">' + (r[k] || '') + '</td>';
 			}).join('') + '</tr>';
 		}).join('');
-		return '<table style="width:100%;border-collapse:collapse;background:#1E293B;">' + header + rows + '</table>';
+		return '<table style="width:100%;border-collapse:collapse;background:' + appsmith.theme.colors.cardColor + ';">' + header + rows + '</table>';
 	},
 
 	setDefaults() {

@@ -7,6 +7,9 @@
   "defaultOptionValue": "All",
   "dynamicBindingPathList": [
     {
+      "key": "accentColor"
+    },
+    {
       "key": "sourceData"
     },
     {

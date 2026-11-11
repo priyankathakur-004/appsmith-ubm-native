@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -36,7 +42,7 @@
   "shouldScrollContents": true,
   "text": "{{MA_RankLocationHelper.getInfoText()}}",
   "textAlign": "LEFT",
-  "textColor": "#ac6c2f",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.warningColor : '#ac6c2f')}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,

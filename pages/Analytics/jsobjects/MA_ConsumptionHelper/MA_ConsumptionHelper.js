@@ -112,7 +112,7 @@ export default {
 		keys = series.map(function(s) { return s.name; });
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis'
 			},
@@ -121,7 +121,7 @@ export default {
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#e2e8f0', fontSize: 12 },
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 12 },
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
@@ -130,16 +130,16 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: '#94a3b8' }
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor }
 			},
 			yAxis: {
 				type: 'value',
 				name: 'Consumption (KWH)',
 				nameLocation: 'middle',
 				nameGap: 55,
-				nameTextStyle: { color: '#e2e8f0' },
-				axisLabel: { color: '#94a3b8' },
-				splitLine: { lineStyle: { color: '#334155' } }
+				nameTextStyle: { color: appsmith.theme.colors.textColor },
+				axisLabel: { color: appsmith.theme.colors.textSecondaryColor },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor } }
 			},
 			dataZoom: [
 				{
@@ -149,11 +149,11 @@ export default {
 					width: 14,
 					start: 0,
 					end: 100,
-					borderColor: '#334155',
-					backgroundColor: '#0f172a',
+					borderColor: appsmith.theme.colors.borderColor,
+					backgroundColor: appsmith.theme.colors.surfaceColor,
 					fillerColor: 'rgba(59,130,246,0.18)',
-					handleStyle: { color: '#e2e8f0', borderColor: '#64748b' },
-					textStyle: { color: '#94a3b8' },
+					handleStyle: { color: appsmith.theme.colors.textColor, borderColor: appsmith.theme.colors.borderStrongColor },
+					textStyle: { color: appsmith.theme.colors.textSecondaryColor },
 					showDetail: false
 				},
 				{

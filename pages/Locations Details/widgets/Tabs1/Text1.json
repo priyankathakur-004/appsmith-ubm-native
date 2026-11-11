@@ -4,6 +4,15 @@
   "bottomRow": 29,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -39,7 +48,7 @@
   "shouldTruncate": false,
   "text": "Virtual Accounts total: {{ (getVirtualAccounts.data && getVirtualAccounts.data.length) || 0 }}",
   "textAlign": "LEFT",
-  "textColor": "#ffffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 25,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

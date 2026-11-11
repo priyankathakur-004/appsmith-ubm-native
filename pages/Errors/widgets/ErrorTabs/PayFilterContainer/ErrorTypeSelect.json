@@ -8,6 +8,9 @@
   "defaultOptionValue": [],
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "sourceData"
     },
     {
@@ -34,7 +37,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Error Type",
-  "labelTextColor": "#E2E8F0",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 13,
   "maxDynamicHeight": 9000,

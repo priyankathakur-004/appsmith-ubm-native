@@ -139,13 +139,13 @@ export default {
 	
 		getTableHtml() {
 				const data = this.getTableData();
-				if (!data || !data.length) return '<div style="padding:20px;color:#94A3B8;text-align:center;">No data available</div>';
+				if (!data || !data.length) return '<div style="padding:20px;color:' + appsmith.theme.colors.textSecondaryColor + ';text-align:center;">No data available</div>';
 				const keys = Object.keys(data[0]);
-				const thStyle = 'padding:10px 14px;color:#F1F5F9;font-size:13px;font-weight:700;border-bottom:2px solid #475569;white-space:nowrap;';
-				const tdStyle = 'padding:10px 14px;color:#E2E8F0;font-size:12px;border-bottom:1px solid #334155;';
-				const header = '<tr style="background:#334155;">' + keys.map(k => '<th style="' + thStyle + 'text-align:left;">' + k + '</th>').join('') + '</tr>';
+				const thStyle = 'padding:10px 14px;color:' + (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9') + ';font-size:13px;font-weight:700;border-bottom:2px solid ' + appsmith.theme.colors.borderMidColor + ';white-space:nowrap;';
+				const tdStyle = 'padding:10px 14px;color:' + appsmith.theme.colors.textColor + ';font-size:12px;border-bottom:1px solid ' + appsmith.theme.colors.borderColor + ';';
+				const header = '<tr style="background:' + appsmith.theme.colors.hoverStrongColor + ';">' + keys.map(k => '<th style="' + thStyle + 'text-align:left;">' + k + '</th>').join('') + '</tr>';
 				const rows = data.map(r => '<tr>' + keys.map(k => '<td style="' + tdStyle + '">' + (r[k] != null ? r[k] : '') + '</td>').join('') + '</tr>').join('');
-				return '<div style="max-height:600px;overflow:auto;"><table style="width:100%;border-collapse:collapse;background:#1E293B;">' + header + rows + '</table></div>';
+				return '<div style="max-height:600px;overflow:auto;"><table style="width:100%;border-collapse:collapse;background:' + appsmith.theme.colors.cardColor + ';">' + header + rows + '</table></div>';
 		},
 
 		exportCSV() {

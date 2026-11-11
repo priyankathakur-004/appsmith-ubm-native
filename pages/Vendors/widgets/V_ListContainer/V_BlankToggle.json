@@ -1,11 +1,14 @@
 {
-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "accentColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.toggleOnColor : '#22c55e')}}",
   "alignWidget": "RIGHT",
   "animateLoading": true,
   "bottomRow": 19,
   "boxShadow": "none",
   "defaultSwitchState": false,
   "dynamicBindingPathList": [
+    {
+      "key": "labelTextColor"
+    },
     {
       "key": "accentColor"
     }
@@ -22,7 +25,7 @@
   "key": "vblankk001",
   "label": "Show only vendors with blank Pretty Names",
   "labelPosition": "Left",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "leftColumn": 22,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,

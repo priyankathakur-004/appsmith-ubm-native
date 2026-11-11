@@ -7,6 +7,9 @@
   "defaultOptionValue": "{{ ((options, serverSideFiltering) => ( appsmith.store.selectedCustomerId || 76013))(CustomerSelect.options, CustomerSelect.serverSideFiltering) }}",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "sourceData"
     },
     {
@@ -42,7 +45,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Customer",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 0,

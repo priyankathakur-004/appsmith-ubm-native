@@ -109,5 +109,5 @@ WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue }}
     : "ORDER BY abi.bill_id DESC, br.client_account" 
 }}
 
-LIMIT {{ bills.pageSize }}
-OFFSET {{ (bills.pageNo - 1) * bills.pageSize }};
+LIMIT {{ appsmith.store.billsPageSize || 20 }}
+OFFSET {{ ((appsmith.store.billsPage || 1) - 1) * (appsmith.store.billsPageSize || 20) }};

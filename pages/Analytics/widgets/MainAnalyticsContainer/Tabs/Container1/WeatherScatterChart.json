@@ -1,13 +1,19 @@
 {
   "animateLoading": true,
-  "backgroundColor": "#1e293b",
-  "borderColor": "#334155",
+  "backgroundColor": "{{appsmith.theme.colors.panelColor}}",
+  "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 100,
   "boxShadow": "none",
   "chartType": "CUSTOM_ECHART",
   "customEChartConfig": "{{MA_WeatherHelper.getScatterConfig()}}",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "backgroundColor"
+    },
     {
       "key": "customEChartConfig"
     },

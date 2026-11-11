@@ -4,6 +4,15 @@
   "bottomRow": 5,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "text"
     },
     {
@@ -34,7 +43,7 @@
   "shouldTruncate": false,
   "text": "{{MA_OverTheYearsHelper.getDrillDownTitle()}}",
   "textAlign": "LEFT",
-  "textColor": "#E2E8F0",
+  "textColor": "{{appsmith.theme.colors.textColor}}",
   "topRow": 1,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

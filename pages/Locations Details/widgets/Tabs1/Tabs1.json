@@ -1,8 +1,8 @@
 {
-  "accentColor": "#22c55e",
+  "accentColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.accentColor : '#22c55e')}}",
   "animateLoading": true,
-  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
-  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
+  "borderColor": "{{appsmith.theme.colors.surfaceColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
   "bottomRow": 162,
@@ -326,6 +326,9 @@
   ],
   "defaultTab": "Metrics",
   "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
     {
       "key": "backgroundColor"
     },

@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -29,7 +35,7 @@
   "shouldTruncate": false,
   "text": "The correlation of consumption and degree days",
   "textAlign": "LEFT",
-  "textColor": "#f1f5f9",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')}}",
   "topRow": 0,
   "type": "TEXT_WIDGET",
   "version": 1,

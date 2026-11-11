@@ -1,5 +1,5 @@
 {
-  "accentColor": "#0F2A47",
+  "accentColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.primaryColor : '#0f2a47')}}",
   "allowSelectAll": true,
   "animateLoading": true,
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
@@ -7,6 +7,12 @@
   "boxShadow": "none",
   "defaultOptionValue": "{{ ReportSpecs.defaultVisibleFields }}",
   "dynamicBindingPathList": [
+    {
+      "key": "accentColor"
+    },
+    {
+      "key": "labelTextColor"
+    },
     {
       "key": "sourceData"
     },
@@ -37,7 +43,7 @@
   "labelPosition": "Top",
   "labelStyle": "",
   "labelText": "Visible Fields",
-  "labelTextColor": "#ffffff",
+  "labelTextColor": "{{appsmith.theme.colors.textStrongColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 17,

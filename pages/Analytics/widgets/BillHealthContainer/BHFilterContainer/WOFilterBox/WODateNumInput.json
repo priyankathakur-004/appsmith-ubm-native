@@ -9,6 +9,9 @@
   "defaultText": "6",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "isVisible"
     },
     {
@@ -39,7 +42,7 @@
   "labelPosition": "Top",
   "labelStyle": "",
   "labelText": " ",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "labelWidth": 5,
   "leftColumn": 55,

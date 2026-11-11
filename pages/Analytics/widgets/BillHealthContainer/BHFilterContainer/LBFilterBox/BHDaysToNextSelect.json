@@ -12,6 +12,9 @@
   ],
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
       "key": "borderRadius"
     },
     {
@@ -65,7 +68,7 @@
   "widgetId": "bhdaystonext1",
   "widgetName": "BHDaysToNextSelect",
   "labelPosition": "Top",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "labelAlignment": "left"
 }

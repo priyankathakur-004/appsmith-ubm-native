@@ -3,6 +3,9 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 37,
   "dynamicBindingPathList": [
+    {
+      "key": "textColor"
+    },
     { "key": "fontFamily" },
     { "key": "borderRadius" },
     { "key": "text" }
@@ -36,7 +39,7 @@
   "shouldTruncate": false,
   "text": "{{ UBMUtils.statusText() }}",
   "textAlign": "LEFT",
-  "textColor": "#a1a1aa",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textSecondaryColor : '#a1a1aa')}}",
   "topRow": 34,
   "type": "TEXT_WIDGET",
   "version": 1,

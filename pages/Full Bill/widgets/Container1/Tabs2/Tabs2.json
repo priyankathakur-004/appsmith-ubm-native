@@ -1,8 +1,8 @@
 {
-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "accentColor": "{{appsmith.theme.colors.accentColor}}",
   "animateLoading": true,
-  "backgroundColor": "#ffffff",
-  "borderColor": "#E0DEDE",
+  "backgroundColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.backgroundColor : '#ffffff')}}",
+  "borderColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.borderColor : '#e0dede')}}",
   "borderRadius": "0px",
   "borderWidth": 1,
   "bottomRow": 116,
@@ -283,6 +283,12 @@
   ],
   "defaultTab": "Full Bill",
   "dynamicBindingPathList": [
+    {
+      "key": "borderColor"
+    },
+    {
+      "key": "backgroundColor"
+    },
     {
       "key": "accentColor"
     },

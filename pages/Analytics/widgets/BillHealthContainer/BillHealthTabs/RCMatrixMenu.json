@@ -5,6 +5,9 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "menuColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],
@@ -30,7 +33,7 @@
   "isVisible": true,
   "key": "rcmtxmenuk",
   "leftColumn": 35,
-  "menuColor": "#E2E8F0",
+  "menuColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#e2e8f0')}}",
   "menuItems": {
     "mi_rcmtx_exp": {
       "id": "mi_rcmtx_exp",

@@ -213,14 +213,14 @@ export default {
 
 		// Dark theme to match other Analytics tabs
 		const FILL_COLOR = isCharges ? '#22c55e' : '#3b82f6';
-		const TRACK_COLOR = '#0F172A';
-		const BORDER_COLOR = '#475569';
-		const BG_COLOR = '#1E293B';
-		const HEADER_COLOR = '#cbd5e1';
-		const SEPARATOR_COLOR = '#334155';
-		const LABEL_NAME_COLOR = '#e2e8f0';
-		const LABEL_VAL_COLOR = '#94a3b8';
-		const EDGE_COLOR = '#475569';
+		const TRACK_COLOR = appsmith.theme.colors.surfaceColor;
+		const BORDER_COLOR = appsmith.theme.colors.textFaintColor;
+		const BG_COLOR = appsmith.theme.colors.cardColor;
+		const HEADER_COLOR = appsmith.theme.colors.textSoftColor;
+		const SEPARATOR_COLOR = (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155');
+		const LABEL_NAME_COLOR = appsmith.theme.colors.textColor;
+		const LABEL_VAL_COLOR = appsmith.theme.colors.textSecondaryColor;
+		const EDGE_COLOR = appsmith.theme.colors.textFaintColor;
 
 		const headers = ['', 'Utility Type', 'Bill Type', 'Vendor', 'Location', 'Service Account', 'Meter'];
 		const MAX_DEPTH = 6;
@@ -368,10 +368,10 @@ export default {
 		const yHalfRange = topmostY + Y_STEP * 0.55;
 
 		return {
-			backgroundColor: BG_COLOR,
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'item',
-				backgroundColor: '#0F172A',
+				backgroundColor: appsmith.theme.colors.surfaceColor,
 				borderColor: SEPARATOR_COLOR,
 				borderWidth: 1,
 				textStyle: { color: LABEL_NAME_COLOR, fontSize: 13 },

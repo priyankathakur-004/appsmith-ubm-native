@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 11,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? '#2563eb' : '#ffffff'}}",
+  "buttonColor": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 56,
   "text": "Scatter Chart",
-  "textColor": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? '#ffffff' : '#2563eb'}}",
+  "textColor": "{{(appsmith.store.mecChartType || 'scatter') === 'scatter' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#60a5fa')}}",
   "topRow": 7,
   "type": "BUTTON_WIDGET",
   "version": 1,

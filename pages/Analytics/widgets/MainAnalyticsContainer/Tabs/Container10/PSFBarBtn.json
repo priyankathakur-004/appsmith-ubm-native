@@ -3,10 +3,13 @@
   "borderRadius": "0.375rem",
   "bottomRow": 14,
   "boxShadow": "none",
-  "buttonColor": "#22c55e",
+  "buttonColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.toggleAltColor : '#22c55e')}}",
   "buttonVariant": "{{(appsmith.store.psfChartType || 'bar') === 'bar' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
     {
       "key": "buttonVariant"
     }
@@ -36,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 56,
   "text": "Bar Chart",
-  "textColor": "{{(appsmith.store.psfChartType || 'bar') === 'bar' ? '#ffffff' : '#2563eb'}}",
+  "textColor": "{{(appsmith.store.psfChartType || 'bar') === 'bar' ? (appsmith.theme.colors.backgroundColor === '#ffffff' ? '#ffffff' : '#0f172a') : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#86efac')}}",
   "topRow": 10,
   "type": "BUTTON_WIDGET",
   "version": 1,

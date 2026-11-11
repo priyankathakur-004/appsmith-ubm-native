@@ -76,6 +76,12 @@
   },
   "dynamicBindingPathList": [
     {
+      "key": "fontFamily"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
       "key": "customEChartConfig"
     },
     {

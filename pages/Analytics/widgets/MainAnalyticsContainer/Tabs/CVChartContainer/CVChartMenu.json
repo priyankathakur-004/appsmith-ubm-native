@@ -5,6 +5,9 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "menuColor"
+    },
+    {
       "key": "borderRadius"
     }
   ],
@@ -30,7 +33,7 @@
   "isVisible": true,
   "key": "cvmnukey1",
   "leftColumn": 60,
-  "menuColor": "#ffffff",
+  "menuColor": "{{appsmith.theme.colors.textStrongColor}}",
   "menuItems": {
     "menuItemcvexport01": {
       "id": "menuItemcvexport01",

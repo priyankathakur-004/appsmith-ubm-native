@@ -1,11 +1,14 @@
 {
-  "accentColor": "{{appsmith.theme.colors.primaryColor}}",
+  "accentColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.toggleOnColor : '#22c55e')}}",
   "alignWidget": "RIGHT",
   "animateLoading": true,
   "bottomRow": 33,
   "boxShadow": "none",
   "defaultSwitchState": true,
   "dynamicBindingPathList": [
+    {
+      "key": "labelTextColor"
+    },
     {
       "key": "accentColor"
     }
@@ -18,7 +21,7 @@
   "key": "uactivek01",
   "label": "Active users only",
   "labelPosition": "Left",
-  "labelTextColor": "#f4f4f5",
+  "labelTextColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "leftColumn": 56,
   "maxDynamicHeight": 9000,
   "minDynamicHeight": 4,

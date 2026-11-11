@@ -4,6 +4,9 @@
   "bottomRow": 29,
   "dynamicBindingPathList": [
     {
+      "key": "textColor"
+    },
+    {
       "key": "truncateButtonColor"
     },
     {
@@ -45,7 +48,7 @@
   "shouldTruncate": false,
   "text": "Locations total: {{ (getLocationLists.data && getLocationLists.data.length) || 0 }}",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 25,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

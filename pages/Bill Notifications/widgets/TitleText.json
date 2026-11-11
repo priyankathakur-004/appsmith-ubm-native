@@ -5,6 +5,15 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
     }
   ],
@@ -30,7 +39,7 @@
   "shouldTruncate": false,
   "text": "Bill Notifications",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

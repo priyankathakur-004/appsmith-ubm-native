@@ -5,6 +5,12 @@
   "boxShadow": "none",
   "dynamicBindingPathList": [
     {
+      "key": "borderRadius"
+    },
+    {
+      "key": "textColor"
+    },
+    {
       "key": "fontFamily"
     },
     {
@@ -32,7 +38,7 @@
   "rightColumn": 35,
   "text": "{{ `Customer Info for ${(fetch_customer_detail.data && fetch_customer_detail.data[0] && fetch_customer_detail.data[0].name) || ''}` }}",
   "textAlign": "LEFT",
-  "textColor": "#F1F5F9",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')}}",
   "topRow": 1,
   "type": "TEXT_WIDGET",
   "version": 1,

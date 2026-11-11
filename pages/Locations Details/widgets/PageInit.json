@@ -8,6 +8,9 @@
   "defaultModel": "{{ ({}) }}",
   "dynamicBindingPathList": [
     {
+      "key": "theme"
+    },
+    {
       "key": "defaultModel"
     },
     {

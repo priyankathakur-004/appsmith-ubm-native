@@ -4,7 +4,16 @@
   "bottomRow": 4,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
       "key": "fontFamily"
+    },
+    {
+      "key": "textColor"
     }
   ],
   "dynamicHeight": "AUTO_HEIGHT",
@@ -36,7 +45,7 @@
   "shouldTruncate": false,
   "text": "Vendors",
   "textAlign": "LEFT",
-  "textColor": "#f4f4f5",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

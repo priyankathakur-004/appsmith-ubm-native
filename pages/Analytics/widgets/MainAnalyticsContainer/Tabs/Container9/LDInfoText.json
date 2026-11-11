@@ -1,12 +1,21 @@
 {
   "animateLoading": true,
-  "backgroundColor": "{{appsmith.theme.colors.primaryColor}}",
-  "borderColor": "{{appsmith.theme.colors.primaryColor}}",
+  "backgroundColor": "{{appsmith.theme.colors.panelColor}}",
+  "borderColor": "{{appsmith.theme.colors.panelColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
   "bottomRow": 11,
   "boxShadow": "none",
   "dynamicBindingPathList": [
+    {
+      "key": "text"
+    },
+    {
+      "key": "textColor"
+    },
+    {
+      "key": "borderRadius"
+    },
     {
       "key": "fontFamily"
     },
@@ -36,9 +45,9 @@
   "renderMode": "CANVAS",
   "rightColumn": 58,
   "shouldTruncate": false,
-  "text": "<div style=\"color:#cbd5e1;font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Make sure only <b style=\"color:#f1f5f9;\">one utility</b> is selected (in the filter above) if <b style=\"color:#f1f5f9;\">Consumption</b> is on the x or y axis. Locations can be limited to one or more.</p></div>",
+  "text": "<div style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textColor : '#cbd5e1')}};font-size:13px;line-height:1.6;padding:8px;\"><p>ⓘ Make sure only <b style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')}};\">one utility</b> is selected (in the filter above) if <b style=\"color:{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f1f5f9')}};\">Consumption</b> is on the x or y axis. Locations can be limited to one or more.</p></div>",
   "textAlign": "LEFT",
-  "textColor": "#ffffff",
+  "textColor": "{{appsmith.theme.colors.textStrongColor}}",
   "topRow": 7,
   "type": "TEXT_WIDGET",
   "version": 1,

@@ -340,7 +340,7 @@ export default {
 	// in the CUSTOM_ECHART widget (hidden axes guarantee the chart initialises).
 	_messageConfig(text, size) {
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			xAxis: { show: false, type: 'category', data: [] },
 			yAxis: { show: false, type: 'value' },
 			series: [],
@@ -350,7 +350,7 @@ export default {
 				top: 20,
 				style: {
 					text: text,
-					fill: '#E2E8F0',
+					fill: appsmith.theme.colors.textColor,
 					fontSize: size || 16,
 					fontWeight: 'bold'
 				}
@@ -440,12 +440,12 @@ export default {
 		const yLabel = this._getYLabel(view, uomLabel);
 
 		return {
-			backgroundColor: '#1E293B',
+			backgroundColor: appsmith.theme.colors.panelColor,
 			tooltip: {
 				trigger: 'axis',
-				backgroundColor: '#0F172A',
-				borderColor: '#334155',
-				textStyle: { color: '#E2E8F0' },
+				backgroundColor: appsmith.theme.colors.surfaceColor,
+				borderColor: appsmith.theme.colors.borderColor,
+				textStyle: { color: appsmith.theme.colors.textColor },
 				formatter: function (params) {
 					const arr = Array.isArray(params) ? params : [params];
 					if (!arr.length) return '';
@@ -457,7 +457,7 @@ export default {
 						s += '<div style="margin-top:2px;">' + p.marker + ' ' + p.seriesName +
 							' &nbsp;<b>' + dd.mainDisp + '</b></div>';
 						if (dd.detail) {
-							s += '<div style="color:#94A3B8;font-size:11px;margin:1px 0 4px 16px;">' +
+							s += '<div style="color:' + appsmith.theme.colors.textSecondaryColor + ';font-size:11px;margin:1px 0 4px 16px;">' +
 								dd.detailLabel + ': ' + dd.detail + '</div>';
 						}
 					});
@@ -469,10 +469,10 @@ export default {
 				orient: 'vertical',
 				right: 10,
 				top: 'middle',
-				textStyle: { color: '#E2E8F0', fontSize: 11 },
-				pageTextStyle: { color: '#94A3B8' },
-				pageIconColor: '#94A3B8',
-				pageIconInactiveColor: '#334155',
+				textStyle: { color: appsmith.theme.colors.textColor, fontSize: 11 },
+				pageTextStyle: { color: appsmith.theme.colors.textSecondaryColor },
+				pageIconColor: appsmith.theme.colors.textSecondaryColor,
+				pageIconInactiveColor: (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textMutedColor : '#334155'),
 				icon: 'circle',
 				itemWidth: 10,
 				itemHeight: 10
@@ -481,8 +481,8 @@ export default {
 			xAxis: {
 				type: 'category',
 				data: monthLabels,
-				axisLabel: { color: '#CBD5E1', fontSize: 11 },
-				axisLine: { lineStyle: { color: '#475569' } },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor, fontSize: 11 },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
 				splitLine: { show: false }
 			},
 			yAxis: {
@@ -490,10 +490,10 @@ export default {
 				name: yLabel,
 				nameLocation: 'middle',
 				nameGap: 65,
-				nameTextStyle: { color: '#CBD5E1', fontSize: 12 },
-				axisLabel: { color: '#CBD5E1' },
-				axisLine: { lineStyle: { color: '#475569' } },
-				splitLine: { lineStyle: { color: '#334155', type: 'dashed' } }
+				nameTextStyle: { color: appsmith.theme.colors.textSoftColor, fontSize: 12 },
+				axisLabel: { color: appsmith.theme.colors.textSoftColor },
+				axisLine: { lineStyle: { color: appsmith.theme.colors.borderMidColor } },
+				splitLine: { lineStyle: { color: appsmith.theme.colors.borderColor, type: 'dashed' } }
 			},
 			series: series
 		};

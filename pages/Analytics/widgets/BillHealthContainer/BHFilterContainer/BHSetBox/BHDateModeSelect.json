@@ -7,6 +7,12 @@
   "defaultOptionValue": "Last",
   "dynamicBindingPathList": [
     {
+      "key": "labelTextColor"
+    },
+    {
+      "key": "accentColor"
+    },
+    {
       "key": "isVisible"
     },
     {
@@ -30,7 +36,7 @@
   "labelAlignment": "left",
   "labelPosition": "Top",
   "labelText": "Date",
-  "labelTextColor": "#94a3b8",
+  "labelTextColor": "{{appsmith.theme.colors.textDimColor}}",
   "labelTextSize": "0.875rem",
   "leftColumn": 40,
   "mobileBottomRow": 9,

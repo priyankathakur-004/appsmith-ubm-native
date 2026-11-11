@@ -3,7 +3,7 @@
   "borderRadius": "20px",
   "bottomRow": 7,
   "boxShadow": "none",
-  "buttonColor": "{{(appsmith.store.chViewBy || 'Location') === 'Location' ? '#2563eb' : '#ffffff'}}",
+  "buttonColor": "{{(appsmith.store.chViewBy || 'Location') === 'Location' ? appsmith.theme.colors.toggleOnColor : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{(appsmith.store.chViewBy || 'Location') === 'Location' ? 'PRIMARY' : 'SECONDARY'}}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 20,
   "text": "Location",
-  "textColor": "{{(appsmith.store.chViewBy || 'Location') === 'Location' ? '#ffffff' : '#2563eb'}}",
+  "textColor": "{{(appsmith.store.chViewBy || 'Location') === 'Location' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#60a5fa')}}",
   "topRow": 3,
   "type": "BUTTON_WIDGET",
   "version": 1,

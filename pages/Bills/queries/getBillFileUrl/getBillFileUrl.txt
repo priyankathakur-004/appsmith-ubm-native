@@ -1,5 +1,5 @@
 SELECT 
     path
 FROM bill_management_v2.bill_files
-WHERE bill_id = {{ bills.selectedRow.bill_id }}
+WHERE bill_id = {{ appsmith.store.billsFileBillId || 0 }}
 LIMIT 1;

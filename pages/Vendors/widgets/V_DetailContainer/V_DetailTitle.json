@@ -4,6 +4,15 @@
   "bottomRow": 4,
   "dynamicBindingPathList": [
     {
+      "key": "truncateButtonColor"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "textColor"
+    },
+    {
       "key": "text"
     },
     {
@@ -37,9 +46,9 @@
   "responsiveBehavior": "fill",
   "rightColumn": 45,
   "shouldTruncate": false,
-  "text": "Vendor Details for {{ VendorsData.detailHeader().code }}",
+  "text": "Vendor Details for {{ ((V_fetchVendorDetail.data || [])[0] || {}).code || '' }}",
   "textAlign": "LEFT",
-  "textColor": "#f4f4f5",
+  "textColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#f4f4f5')}}",
   "topRow": 0,
   "truncateButtonColor": "{{appsmith.theme.colors.primaryColor}}",
   "type": "TEXT_WIDGET",

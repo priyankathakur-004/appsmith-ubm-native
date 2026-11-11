@@ -3,10 +3,13 @@
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "bottomRow": 10,
   "boxShadow": "none",
-  "buttonColor": "#3B82F6",
+  "buttonColor": "{{appsmith.store.lfBreakdown === 'location' ? (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.toggleOnColor : '#3b82f6') : appsmith.theme.colors.toggleOffColor}}",
   "buttonVariant": "{{ appsmith.store.lfBreakdown === 'location' ? 'PRIMARY' : 'SECONDARY' }}",
   "disabledWhenInvalid": false,
   "dynamicBindingPathList": [
+    {
+      "key": "buttonColor"
+    },
     {
       "key": "buttonVariant"
     },
