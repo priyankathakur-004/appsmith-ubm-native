@@ -42,7 +42,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 23,
   "text": "Consumption",
-  "textColor": "{{appsmith.store.mecActiveView === 'Consumption' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#2563eb')}}",
+  "textColor": "{{appsmith.store.mecActiveView === 'Consumption' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#60a5fa')}}",
   "topRow": 5,
   "type": "BUTTON_WIDGET",
   "version": 1,

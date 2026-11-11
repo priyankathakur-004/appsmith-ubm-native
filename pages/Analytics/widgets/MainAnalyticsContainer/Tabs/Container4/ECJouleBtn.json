@@ -39,7 +39,7 @@
   "responsiveBehavior": "hug",
   "rightColumn": 64,
   "text": "Joule",
-  "textColor": "{{(appsmith.store.ecUOM || 'BTU') === 'Joule' ? '#ffffff' : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#1e293b')}}",
+  "textColor": "{{(appsmith.store.ecUOM || 'BTU') === 'Joule' ? (appsmith.theme.colors.backgroundColor === '#ffffff' ? '#ffffff' : '#0f172a') : (appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.textStrongColor : '#86efac')}}",
   "topRow": 7,
   "type": "BUTTON_WIDGET",
   "version": 1,
