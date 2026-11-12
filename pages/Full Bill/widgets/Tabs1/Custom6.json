@@ -1,6 +1,6 @@
 {
-  "backgroundColor": "#334155",
-  "borderColor": "#334155",
+  "backgroundColor": "{{appsmith.theme.colors.cardColor}}",
+  "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
   "bottomRow": 105,
@@ -18,6 +18,12 @@
     },
     {
       "key": "defaultModel"
+    },
+    {
+      "key": "backgroundColor"
+    },
+    {
+      "key": "borderColor"
     }
   ],
   "dynamicHeight": "FIXED",

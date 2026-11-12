@@ -62,7 +62,6 @@
       "key": "boxShadow"
     }
   ],
-  "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "tableData"

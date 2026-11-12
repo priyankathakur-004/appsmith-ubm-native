@@ -29,7 +29,7 @@
     ],
     "name": "fetch_location_vas",
     "pageId": "Exceptions",
-    "runBehaviour": "AUTOMATIC",
+    "runBehaviour": "MANUAL",
     "userSetOnLoad": false
   }
 }
