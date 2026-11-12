@@ -39,6 +39,13 @@ LEFT JOIN bill_management_v2.bills_total_amount_charges_prior btac
     ON abi.bill_id = btac.bill_id
 WHERE br.customer_id = {{ CustomerSelect.selectedOptionValue }}
 
+{{ search.text && search.text.trim()
+    ? "AND (COALESCE(cvn.pretty_name, br.vendor_code) ILIKE '%" + search.text.trim().split("'").join("''").split("%").join("\\%").split("_").join("\\_") + "%'"
+      + " OR br.client_account ILIKE '%" + search.text.trim().split("'").join("''").split("%").join("\\%").split("_").join("\\_") + "%'"
+      + " OR CAST(abi.bill_id AS TEXT) = '" + search.text.trim().split("'").join("''") + "')"
+    : ""
+}}
+
 {{ vendor.selectedOptionValues && vendor.selectedOptionValues.length > 0
     ? "AND br.vendor_code IN (" + vendor.selectedOptionValues.map(v => "'" + v.replace(/'/g, "''") + "'").join(",") + ")"
     : "" 

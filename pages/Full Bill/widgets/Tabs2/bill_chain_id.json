@@ -25,7 +25,11 @@
       "key": "sourceData"
     }
   ],
-  "dynamicTriggerPathList": [],
+  "dynamicTriggerPathList": [
+    {
+      "key": "onOptionChange"
+    }
+  ],
   "isDisabled": false,
   "isFilterable": true,
   "isLoading": false,
@@ -62,5 +66,6 @@
   "type": "SELECT_WIDGET",
   "version": 1,
   "widgetId": "ize4yq8xij",
-  "widgetName": "bill_chain_id"
+  "widgetName": "bill_chain_id",
+  "onOptionChange": "{{getBillChain.run()}}"
 }
