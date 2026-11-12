@@ -35,7 +35,7 @@
   "needsErrorInfo": false,
   "onClick": "{{navigateTo('Bills', {}, 'SAME_WINDOW');}}",
   "parentColumnSpace": 6.7109375,
-  "parentId": "l94p0vszdd",
+  "parentId": "0",
   "parentRowSpace": 10,
   "placement": "START",
   "recaptchaType": "V3",

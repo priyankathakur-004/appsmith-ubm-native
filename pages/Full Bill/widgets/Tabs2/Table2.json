@@ -111,6 +111,7 @@
       "key": "primaryColumns.customColumn1.isCellVisible"
     }
   ],
+  "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "tableData"

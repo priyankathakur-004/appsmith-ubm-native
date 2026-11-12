@@ -1,0 +1,67 @@
+{
+  "backgroundColor": "#334155",
+  "borderColor": "#334155",
+  "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
+  "borderWidth": "0",
+  "bottomRow": 105,
+  "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
+  "defaultModel": "{{\n{ data: getActivityHistory.data\n}\n}}",
+  "dynamicBindingPathList": [
+    {
+      "key": "theme"
+    },
+    {
+      "key": "borderRadius"
+    },
+    {
+      "key": "boxShadow"
+    },
+    {
+      "key": "defaultModel"
+    }
+  ],
+  "dynamicHeight": "FIXED",
+  "dynamicTriggerPathList": [
+    {
+      "key": "onResetClick"
+    }
+  ],
+  "events": [
+    "onResetClick"
+  ],
+  "isCanvas": false,
+  "isLoading": false,
+  "isSearchWildcard": true,
+  "isVisible": true,
+  "key": "jz5x8mhezg",
+  "leftColumn": 0,
+  "maxDynamicHeight": 9000,
+  "minDynamicHeight": 4,
+  "mobileBottomRow": 30,
+  "mobileLeftColumn": 0,
+  "mobileRightColumn": 17,
+  "mobileTopRow": 0,
+  "needsErrorInfo": false,
+  "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
+  "parentColumnSpace": 5.091209411621094,
+  "parentId": "mmm5yq0hrv",
+  "parentRowSpace": 10,
+  "renderMode": "CANVAS",
+  "rightColumn": 64,
+  "srcDoc": {
+    "css": "@charset \"UTF-8\";\nbody {\n  margin: 0px;\n}\n\n.log-container {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow-y: auto;\n  font-family: system-ui, sans-serif;\n  background: var(--appsmith-theme-cardColor, #334155);\n  border-radius: var(--appsmith-theme-borderRadius);\n  box-shadow: var(--appsmith-theme-boxShadow);\n  padding: 20px;\n  box-sizing: border-box;\n}\n\n/* Centered date header with lines */\n.date-separator {\n  text-align: center;\n  font-weight: 600;\n  color: var(--appsmith-theme-textMutedColor, #64748b);\n  font-size: 13px;\n  margin: 18px 0 8px;\n  position: relative;\n}\n\n.date-separator::before,\n.date-separator::after {\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  width: 40%;\n  height: 1px;\n  background: var(--appsmith-theme-borderColor, #334155);\n}\n\n.date-separator::before {\n  left: 0;\n}\n\n.date-separator::after {\n  right: 0;\n}\n\n/* Each log entry */\n.log-entry {\n  display: flex;\n  flex-direction: column;\n  padding: 10px 12px;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: background-color 0.2s ease;\n}\n\n/* ✅ Hover background */\n.log-entry:hover {\n  background-color: var(--appsmith-theme-surfaceHoverColor, #26344b);\n}\n\n.log-datetime {\n  font-size: 12px;\n  color: var(--appsmith-theme-textSecondaryColor, #94a3b8);\n  line-height: 1.5;\n}\n\n.log-user {\n  font-weight: 700;\n  font-size: 13px;\n  color: var(--appsmith-theme-textStrongColor, #ffffff);\n  line-height: 1.5;\n}\n\n.log-message {\n  font-size: 13px;\n  color: var(--appsmith-theme-textStrongColor, #ffffff);\n  line-height: 1.5;\n}\n\n/* Theme scrollbars (no bright default bars in dark) */\n* {\n  scrollbar-color: var(--appsmith-theme-borderColor, #334155) var(--appsmith-theme-surfaceColor, #0f172a);\n  scrollbar-width: thin;\n}\n\n::-webkit-scrollbar {\n  width: 10px;\n  height: 10px;\n  background: var(--appsmith-theme-surfaceColor, #0f172a);\n}\n\n::-webkit-scrollbar-thumb {\n  background: var(--appsmith-theme-borderColor, #334155);\n  border-radius: 5px;\n}\n\n::-webkit-scrollbar-corner {\n  background: var(--appsmith-theme-surfaceColor, #0f172a);\n}\n\n.log-message {\n  overflow-wrap: anywhere;\n  word-break: break-word;\n}",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nimport dayjs from \"https://esm.sh/dayjs@1.11.10\";\n/* Dark mode: restore the original dark shades (--dark-xxxxxx vars); light mode keeps the theme colours. */\n(function () {\n  var H = [\"0f1c3f\", \"222222\", \"666666\", \"999999\", \"e0e0e0\", \"e2f0ff\", \"ffffff\"];\n  function go() {\n    var c = window.appsmith && appsmith.theme || {};\n    c = c.colors || c;\n    var b = String(c.backgroundColor || '').toLowerCase();\n    if (!b && document.body) {\n      var p = document.createElement('i');\n      p.style.color = 'var(--appsmith-theme-backgroundColor, rgb(1, 2, 3))';\n      document.body.appendChild(p);\n      b = getComputedStyle(p).color;\n      document.body.removeChild(p);\n      if (b === 'rgb(1, 2, 3)') b = '';\n    }\n    if (!b) return false;\n    if (!/^(#fff(fff)?|white|rgba?\\(255, ?255, ?255(, ?1)?\\))$/.test(b)) H.forEach(function (x) {\n      document.documentElement.style.setProperty('--dark-' + x, '#' + x);\n    });\n    return true;\n  }\n  (function t(n) {\n    if (!go() && n > 0) setTimeout(function () {\n      t(n - 1);\n    }, 100);\n  })(100);\n})();\nfunction App() {\n  // Pull dynamic logs from Appsmith model or query\n  const logs = appsmith.model.data || [];\n\n  // Group by date\n  const groupedLogs = logs.reduce((acc, log) => {\n    const date = dayjs(log.created_at).format(\"MM/DD/YYYY\");\n    if (!acc[date]) acc[date] = [];\n    acc[date].push(log);\n    return acc;\n  }, {});\n\n  // Sort ascending (oldest first)\n  const dates = Object.keys(groupedLogs).sort((a, b) => new Date(a) - new Date(b));\n  return /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-container\"\n  }, dates.map(date => /*#__PURE__*/React.createElement(\"div\", {\n    key: date,\n    className: \"date-group\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"date-separator\"\n  }, date), groupedLogs[date].map((log, i) => /*#__PURE__*/React.createElement(\"div\", {\n    key: i,\n    className: \"log-entry\"\n  }, /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-datetime\"\n  }, dayjs(log.created_at).format(\"MM/DD/YYYY hh:mm A\")), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-user\"\n  }, log.user_name), /*#__PURE__*/React.createElement(\"div\", {\n    className: \"log-message\"\n  }, log.activity_text))))));\n}\nappsmith.onReady(() => {\n  ReactDOM.render(/*#__PURE__*/React.createElement(App, null), document.getElementById(\"root\"));\n});"
+  },
+  "theme": "{{appsmith.theme}}",
+  "topRow": 0,
+  "type": "CUSTOM_WIDGET",
+  "uncompiledSrcDoc": {
+    "css": "body {\n\tmargin:0px\n}\n.log-container {\n  height: calc(var(--appsmith-ui-height) * 1px);\n  width: calc(var(--appsmith-ui-width) * 1px);\n  overflow-y: auto;\n  font-family: system-ui, sans-serif;\n  background: var(--appsmith-theme-cardColor, #334155);\n  border-radius: var(--appsmith-theme-borderRadius);\n  box-shadow: var(--appsmith-theme-boxShadow);\n  padding: 20px;\n  box-sizing: border-box;\n}\n\n/* Centered date header with lines */\n.date-separator {\n  text-align: center;\n  font-weight: 600;\n  color: var(--appsmith-theme-textMutedColor, #64748b);\n  font-size: 13px;\n  margin: 18px 0 8px;\n  position: relative;\n}\n\n.date-separator::before,\n.date-separator::after {\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  width: 40%;\n  height: 1px;\n  background: var(--appsmith-theme-borderColor, #334155);\n}\n\n.date-separator::before {\n  left: 0;\n}\n\n.date-separator::after {\n  right: 0;\n}\n\n/* Each log entry */\n.log-entry {\n  display: flex;\n  flex-direction: column;\n  padding: 10px 12px;\n  border-radius: 6px;\n  margin-bottom: 8px;\n  transition: background-color 0.2s ease;\n}\n\n/* ✅ Hover background */\n.log-entry:hover {\n  background-color: var(--appsmith-theme-surfaceHoverColor, #26344b);\n}\n\n.log-datetime {\n  font-size: 12px;\n  color: var(--appsmith-theme-textSecondaryColor, #94a3b8);\n\tline-height: 1.5;\n}\n\n.log-user {\n  font-weight: 700;\n  font-size: 13px;\n  color: var(--appsmith-theme-textStrongColor, #ffffff);\n\tline-height: 1.5;\n}\n\n.log-message {\n  font-size: 13px;\n  color: var(--appsmith-theme-textStrongColor, #ffffff);\n  line-height: 1.5;\n}\n\n/* Theme scrollbars (no bright default bars in dark) */\n* { scrollbar-color: var(--appsmith-theme-borderColor, #334155) var(--appsmith-theme-surfaceColor, #0f172a); scrollbar-width: thin; }\n::-webkit-scrollbar { width: 10px; height: 10px; background: var(--appsmith-theme-surfaceColor, #0f172a); }\n::-webkit-scrollbar-thumb { background: var(--appsmith-theme-borderColor, #334155); border-radius: 5px; }\n::-webkit-scrollbar-corner { background: var(--appsmith-theme-surfaceColor, #0f172a); }\n\n.log-message { overflow-wrap: anywhere; word-break: break-word; }\n",
+    "html": "<!-- no need to write html, head, body tags, it is handled by the widget -->\n<div id=\"root\"></div>\n",
+    "js": "import React from \"https://esm.sh/react@18.2.0\";\nimport ReactDOM from \"https://esm.sh/react-dom@18.2.0\";\nimport dayjs from \"https://esm.sh/dayjs@1.11.10\";\n/* Dark mode: restore the original dark shades (--dark-xxxxxx vars); light mode keeps the theme colours. */\n(function(){var H=[\"0f1c3f\", \"222222\", \"666666\", \"999999\", \"e0e0e0\", \"e2f0ff\", \"ffffff\"];function go(){var c=(window.appsmith&&appsmith.theme)||{};c=c.colors||c;var b=String(c.backgroundColor||'').toLowerCase();if(!b&&document.body){var p=document.createElement('i');p.style.color='var(--appsmith-theme-backgroundColor, rgb(1, 2, 3))';document.body.appendChild(p);b=getComputedStyle(p).color;document.body.removeChild(p);if(b==='rgb(1, 2, 3)')b='';}if(!b)return false;if(!/^(#fff(fff)?|white|rgba?\\(255, ?255, ?255(, ?1)?\\))$/.test(b))H.forEach(function(x){document.documentElement.style.setProperty('--dark-'+x,'#'+x);});return true;}(function t(n){if(!go()&&n>0)setTimeout(function(){t(n-1);},100);})(100);})();\n\nfunction App() {\n  // Pull dynamic logs from Appsmith model or query\n  const logs = appsmith.model.data || [];\n\n  // Group by date\n  const groupedLogs = logs.reduce((acc, log) => {\n    const date = dayjs(log.created_at).format(\"MM/DD/YYYY\");\n    if (!acc[date]) acc[date] = [];\n    acc[date].push(log);\n    return acc;\n  }, {});\n\n  // Sort ascending (oldest first)\n  const dates = Object.keys(groupedLogs).sort(\n    (a, b) => new Date(a) - new Date(b)\n  );\n\n  return (\n    <div className=\"log-container\">\n      {dates.map((date) => (\n        <div key={date} className=\"date-group\">\n          <div className=\"date-separator\">{date}</div>\n          {groupedLogs[date].map((log, i) => (\n            <div key={i} className=\"log-entry\">\n              <div className=\"log-datetime\">\n                {dayjs(log.created_at).format(\"MM/DD/YYYY hh:mm A\")}\n              </div>\n              <div className=\"log-user\">{log.user_name}</div>\n              <div className=\"log-message\">{log.activity_text}</div>\n            </div>\n          ))}\n        </div>\n      ))}\n    </div>\n  );\n}\n\nappsmith.onReady(() => {\n  ReactDOM.render(<App />, document.getElementById(\"root\"));\n});\n"
+  },
+  "version": 1,
+  "widgetId": "ne95keq3n9",
+  "widgetName": "Custom6"
+}

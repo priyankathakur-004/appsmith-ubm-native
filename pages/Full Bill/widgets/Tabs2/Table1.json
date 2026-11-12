@@ -123,6 +123,7 @@
       "key": "primaryColumns.bill_id.buttonLabel"
     }
   ],
+  "dynamicHeight": "FIXED",
   "dynamicPropertyPathList": [
     {
       "key": "tableData"

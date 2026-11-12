@@ -3,7 +3,7 @@
   "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "1",
-  "bottomRow": 215,
+  "bottomRow": 65,
   "boxShadow": "{{appsmith.theme.boxShadow.appBoxShadow}}",
   "defaultModel": "{{\n{\n  data: getBill.data\n}\n}}",
   "dynamicBindingPathList": [
@@ -54,7 +54,7 @@
   "mobileTopRow": 8,
   "needsErrorInfo": false,
   "onResetClick": "{{showAlert('Successfully reset!!', '');}}",
-  "originalBottomRow": 226,
+  "originalBottomRow": 119,
   "originalTopRow": 2,
   "parentColumnSpace": 10.421357154846191,
   "parentId": "7tntsa5sim",
