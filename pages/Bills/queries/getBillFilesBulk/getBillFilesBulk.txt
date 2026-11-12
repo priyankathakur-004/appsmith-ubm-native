@@ -1,0 +1,7 @@
+SELECT DISTINCT ON (bill_id)
+    bill_id,
+    path
+FROM bill_management_v2.bill_files
+WHERE bill_id IN ({{ (appsmith.store.billsBulkIds || []).map(Number).filter(n => n > 0).join(',') || 0 }})
+  AND path IS NOT NULL
+ORDER BY bill_id;

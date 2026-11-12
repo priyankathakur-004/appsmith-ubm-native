@@ -1,5 +1,5 @@
 {
-  "backgroundColor": "{{(appsmith.theme.colors.backgroundColor === '#ffffff' ? appsmith.theme.colors.surfaceColor : '#ffffff')}}",
+  "backgroundColor": "{{appsmith.theme.colors.surfaceColor}}",
   "borderColor": "{{appsmith.theme.colors.borderSoftColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": "0",
