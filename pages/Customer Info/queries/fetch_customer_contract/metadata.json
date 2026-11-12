@@ -29,7 +29,7 @@
     ],
     "name": "fetch_customer_contract",
     "pageId": "Customer Info",
-    "runBehaviour": "MANUAL",
+    "runBehaviour": "AUTOMATIC",
     "userSetOnLoad": false
   }
 }
