@@ -1,7 +1,7 @@
 {
   "accentColor": "{{appsmith.theme.colors.accentColor}}",
   "animateLoading": true,
-  "backgroundColor": "{{appsmith.theme.colors.backgroundColor}}",
+  "backgroundColor": "{{appsmith.theme.colors.cardColor}}",
   "borderColor": "{{appsmith.theme.colors.borderColor}}",
   "borderRadius": "{{appsmith.theme.borderRadius.appBorderRadius}}",
   "borderWidth": 1,
