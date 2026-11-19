@@ -126,6 +126,10 @@
     {
       "id": "Ask UBM",
       "isDefault": false
+    },
+    {
+      "id": "Correction Rules",
+      "isDefault": false
     }
   ],
   "unpublishedAppLayout": {

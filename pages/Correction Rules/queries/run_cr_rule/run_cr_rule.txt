@@ -1,0 +1,8 @@
+-- Runs the one SELECT the Correction Rules page builds from the builder's
+-- rule. Every column name in it comes from the page's own field list and every
+-- value is checked and quoted before it gets here; the login is read-only and
+-- the result is capped.
+SELECT * FROM (
+{{ this.params.sql || "SELECT NULL::int AS bill_id WHERE false" }}
+) AS cr_result
+LIMIT 5000;
