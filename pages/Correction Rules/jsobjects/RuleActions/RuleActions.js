@@ -36,7 +36,7 @@ export default {
 			],
 			ops: {
 				text: ['eq', 'neq', 'in', 'not_in', 'contains', 'not_contains', 'starts', 'empty', 'not_empty'],
-				enum: ['eq', 'neq', 'in', 'not_in', 'contains', 'not_contains', 'empty', 'not_empty'],
+				enum: ['eq', 'neq', 'in', 'not_in', 'contains', 'not_contains', 'starts', 'empty', 'not_empty'],
 				number: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'between', 'empty', 'not_empty'],
 				date: ['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'between', 'empty', 'not_empty']
 			},
@@ -166,13 +166,17 @@ export default {
 		};
 		const scopes = c => [c.field, c.mode === 'field' ? c.valueField : null].filter(Boolean).map(r => String(r).split('.')[0]);
 
-		// nested groups, walked with a stack (no self-calls in a JSObject)
-		const tree = root => {
+		// a row with no field picked yet is left out rather than blocking the run
+		const blank = k => !k.conditions && !k.field;
+
+		// nested groups, walked with a stack (no self-calls in a JSObject).
+		// allowed(scope) says which fields this tree may use; badMsg is the error.
+		const tree = (root, allowed, badMsg) => {
 			const out = new Map();
 			const stack = [{ node: root, depth: 0, seen: false }];
 			while (stack.length) {
 				const top = stack[stack.length - 1];
-				const kids = top.node.conditions || [];
+				const kids = (top.node.conditions || []).filter(k => !blank(k));
 				if (top.depth > 4) fail('Groups can nest 4 levels deep at most');
 				if (!top.seen) {
 					top.seen = true;
@@ -182,7 +186,7 @@ export default {
 				stack.pop();
 				const parts = kids.map(k => {
 					if (k.conditions) return out.get(k);
-					scopes(k).forEach(s => s !== 'bill' && fail('Bill conditions can only use bill fields'));
+					scopes(k).forEach(s => !allowed(s) && fail(badMsg));
 					return cond(k);
 				}).filter(Boolean);
 				const j = top.node.match === 'ANY' ? ' OR ' : ' AND ';
@@ -191,14 +195,14 @@ export default {
 			return out.get(root);
 		};
 
-		const top = tree(rule || {});
+		const top = tree(rule || {}, s => s === 'bill', 'Bill conditions can only use bill fields');
 		const present = aliases.filter(a => a.mode !== 'not_exists');
 		const absent = aliases.filter(a => a.mode === 'not_exists');
-		const cross = (rule && rule.cross) || [];
-		const aliasConds = a => (a.conditions || []).map(c => {
-			scopes(c).forEach(s => s !== a.name && s !== 'bill' && fail(a.name + "'s conditions can only use " + a.name + ' and bill fields'));
-			return cond(c);
-		});
+		const cross = ((rule && rule.cross) || []).filter(k => !blank(k));
+		const aliasConds = a => {
+			const sql = tree(a, s => s === a.name || s === 'bill', a.name + "'s conditions can only use " + a.name + ' and bill fields');
+			return sql ? [sql] : [];
+		};
 		cross.forEach(c => scopes(c).forEach(s => s !== 'bill' && !present.some(a => a.name === s) &&
 			fail('Compare only observations that must exist (' + s + ')')));
 		if (cross.length && !present.length) fail('Add an observation that must exist before comparing observations');
