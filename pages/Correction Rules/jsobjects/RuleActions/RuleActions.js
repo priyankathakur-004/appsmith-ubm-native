@@ -245,21 +245,22 @@ export default {
 		const out = {
 			sql: 'SELECT ' + cols + ', COUNT(*) OVER () AS total_matches\nFROM (' + src.bill + ') bl' +
 				build(null) + order + '\nLIMIT ' + limit,
-			obsSql: '',
-			target: ''
+			obs: {},
+			targets: []
 		};
-		// the observation the changes apply to: the first change's target, else
-		// the first observation that must exist
-		const want = ((rule && rule.changes) || []).map(c => c.target).find(Boolean);
-		const t = present.find(a => a.name === want) || present[0];
-		if (t) {
+		// matching lines are listed for each observation a change applies to,
+		// else for the first observation that must exist
+		const wanted = ((rule && rule.changes) || []).map(c => c.target);
+		out.targets = present.filter(a => wanted.indexOf(a.name) >= 0).map(a => a.name);
+		if (!out.targets.length && present.length) out.targets = [present[0].name];
+		out.targets.forEach(name => {
+			const t = present.find(a => a.name === name);
 			const o = sqlName(t);
-			out.target = t.name;
-			out.obsSql = 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' +
+			out.obs[name] = 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' +
 				rowCols.map(c => o + '.' + c).join(', ') + ', COUNT(*) OVER () AS total_matches' +
 				'\nFROM (' + src.bill + ') bl\nJOIN (' + src.obs + ') ' + o + ' ON ' + o + '.bill_id = bl.bill_id' +
 				build(t) + order + ', ' + o + '.code\nLIMIT ' + limit;
-		}
+		});
 		return out;
 	},
 
@@ -274,7 +275,7 @@ export default {
 	async preview(rule) {
 		try {
 			const built = this._compile(rule, this._cust(), 500);
-			await storeValue('crSql', { sql: built.sql, obsSql: built.obsSql, error: '' }, false);
+			await storeValue('crSql', { sql: built.sql, obs: built.obs, error: '' }, false);
 		} catch (e) {
 			await storeValue('crSql', { sql: '', error: this._friendly(e) }, false);
 		}
@@ -282,35 +283,41 @@ export default {
 
 	async run(rule) {
 		const cust = this._cust();
-		if (!cust) return storeValue('crResult', { error: 'Pick a customer first.' }, false);
+		const key = String((rule && rule.key) || '');
+		if (!cust) return storeValue('crResult', { key: key, error: 'Pick a customer first.' }, false);
 		let built;
 		try {
 			built = this._compile(rule, cust, 500);
 		} catch (e) {
 			await storeValue('crSql', { sql: '', error: this._friendly(e) }, false);
-			return storeValue('crResult', { error: this._friendly(e) }, false);
+			return storeValue('crResult', { key: key, error: this._friendly(e) }, false);
 		}
 		await storeValue('crRule', rule);
-		await storeValue('crSql', { sql: built.sql, obsSql: built.obsSql, error: '' }, false);
-		await storeValue('crResult', { loading: true }, false);
+		await storeValue('crSql', { sql: built.sql, obs: built.obs, error: '' }, false);
+		await storeValue('crResult', { key: key, loading: true }, false);
 		const t0 = Date.now();
 		const total = rows => rows.length ? Number(rows[0].total_matches) || rows.length : 0;
 		try {
 			// one after the other: the same query object cannot run twice at once
 			const rows = (await run_cr_rule.run({ sql: built.sql })) || [];
-			const obsRows = built.obsSql && rows.length ? ((await run_cr_rule.run({ sql: built.obsSql })) || []) : [];
+			const obs = {};
+			for (let i = 0; i < built.targets.length; i++) {
+				const name = built.targets[i];
+				const list = rows.length ? ((await run_cr_rule.run({ sql: built.obs[name] })) || []) : [];
+				obs[name] = { rows: list, total: total(list) };
+			}
 			await storeValue('crResult', {
+				key: key,
 				rows: rows,
 				total: total(rows),
-				obsRows: obsRows,
-				obsTotal: total(obsRows),
-				target: built.target,
+				obs: obs,
+				targets: built.targets,
 				ms: Date.now() - t0,
 				cust: cust,
 				ranAt: new Date().toISOString()
 			}, false);
 		} catch (e) {
-			await storeValue('crResult', { error: this._friendly(e) }, false);
+			await storeValue('crResult', { key: key, error: this._friendly(e) }, false);
 		}
 	}
 }
