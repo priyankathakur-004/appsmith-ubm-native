@@ -3,6 +3,8 @@
 -- (bill_items_virtual_accounts.location_id), the same path the Locations
 -- Details chart uses. Errors whose bill blocks map to no location come back
 -- with a NULL location so the list can show them as "Unmapped bills".
+-- Counted the way the page counts: one per bill record + code (the blocks of
+-- one bill with the same code are one error), so the badge matches the total.
 WITH errs AS (
     SELECT be.id, be.validation_check_id AS code, be.severity, be.bill_record_id
     FROM bill_management_v2.bill_errors be
@@ -10,9 +12,13 @@ WITH errs AS (
     WHERE br.customer_id = {{ Number(appsmith.store.eeCustomer) || 0 }}
       AND be.resolved IS NOT TRUE
       AND be.created_at >= CURRENT_DATE - ({{ Number(appsmith.store.eeMonths) || 12 }} * INTERVAL '1 month')
+), grp AS (
+    SELECT bill_record_id, code, MAX(severity) AS severity
+    FROM errs
+    GROUP BY bill_record_id, code
 ), at_loc AS (
-    SELECT DISTINCT e.id, e.code, e.severity, biva.location_id
-    FROM errs e
+    SELECT DISTINCT e.bill_record_id, e.code, e.severity, biva.location_id
+    FROM grp e
     JOIN bill_management_v2.bill_items bi ON bi.bill_record_id = e.bill_record_id
     JOIN bill_management_v2.bill_items_virtual_accounts biva ON biva.bill_item_id = bi.id
     WHERE biva.location_id IS NOT NULL
@@ -22,7 +28,7 @@ WITH errs AS (
     GROUP BY location_id, code
     UNION ALL
     SELECT NULL::bigint, e.code, COUNT(*), MAX(e.severity)
-    FROM errs e
+    FROM grp e
     WHERE NOT EXISTS (
         SELECT 1
         FROM bill_management_v2.bill_items bi
