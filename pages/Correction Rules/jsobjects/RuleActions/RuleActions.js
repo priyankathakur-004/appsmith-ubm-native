@@ -191,49 +191,72 @@ export default {
 			return out.get(root);
 		};
 
-		const where = [];
 		const top = tree(rule || {});
-		if (top) where.push(top);
-
 		const present = aliases.filter(a => a.mode !== 'not_exists');
 		const absent = aliases.filter(a => a.mode === 'not_exists');
+		const cross = (rule && rule.cross) || [];
 		const aliasConds = a => (a.conditions || []).map(c => {
 			scopes(c).forEach(s => s !== a.name && s !== 'bill' && fail(a.name + "'s conditions can only use " + a.name + ' and bill fields'));
 			return cond(c);
 		});
+		cross.forEach(c => scopes(c).forEach(s => s !== 'bill' && !present.some(a => a.name === s) &&
+			fail('Compare only observations that must exist (' + s + ')')));
+		if (cross.length && !present.length) fail('Add an observation that must exist before comparing observations');
 		// two observations are different lines when any of these differ
 		const rowCols = ['code', 'uom', 'usage', 'charge', 'category', 'description'];
 		const row = x => '(' + rowCols.map(c => x + '.' + c).join(', ') + ')';
+		const sqlName = a => 'o_' + a.name.toLowerCase();
 
-		if (present.length) {
-			const al = present.map(a => 'o_' + a.name.toLowerCase());
-			const from = ['(' + src.obs + ') ' + al[0]];
-			const inner = [al[0] + '.bill_id = bl.bill_id'];
-			for (let i = 1; i < al.length; i++) {
-				from.push('JOIN (' + src.obs + ') ' + al[i] + ' ON ' + al[i] + '.bill_id = ' + al[0] + '.bill_id');
-				for (let k = 0; k < i; k++) inner.push(row(al[i]) + ' IS DISTINCT FROM ' + row(al[k]));
+		// WHERE parts. outer = the observation joined in the outer FROM (one
+		// result row per matching line), or null for one row per bill.
+		const build = outer => {
+			const where = top ? [top] : [];
+			const inside = present.filter(a => a !== outer);
+			if (outer) aliasConds(outer).forEach(x => where.push(x));
+			if (inside.length) {
+				const al = inside.map(sqlName);
+				const from = ['(' + src.obs + ') ' + al[0]];
+				const inner = [al[0] + '.bill_id = bl.bill_id'];
+				for (let i = 1; i < al.length; i++) {
+					from.push('JOIN (' + src.obs + ') ' + al[i] + ' ON ' + al[i] + '.bill_id = ' + al[0] + '.bill_id');
+					for (let k = 0; k < i; k++) inner.push(row(al[i]) + ' IS DISTINCT FROM ' + row(al[k]));
+				}
+				if (outer) al.forEach(x => inner.push(row(x) + ' IS DISTINCT FROM ' + row(sqlName(outer))));
+				inside.forEach(a => aliasConds(a).forEach(x => inner.push(x)));
+				cross.forEach(c => inner.push(cond(c)));
+				where.push('EXISTS (SELECT 1 FROM ' + from.join(' ') + ' WHERE ' + inner.join(' AND ') + ')');
+			} else {
+				cross.forEach(c => where.push(cond(c)));
 			}
-			present.forEach(a => aliasConds(a).forEach(x => inner.push(x)));
-			((rule && rule.cross) || []).forEach(c => {
-				scopes(c).forEach(s => s !== 'bill' && !present.some(a => a.name === s) && fail('Compare only observations that must exist (' + s + ')'));
-				inner.push(cond(c));
+			absent.forEach(a => {
+				const x = sqlName(a);
+				const inner = [x + '.bill_id = bl.bill_id'].concat(aliasConds(a));
+				where.push('NOT EXISTS (SELECT 1 FROM (' + src.obs + ') ' + x + ' WHERE ' + inner.join(' AND ') + ')');
 			});
-			where.push('EXISTS (SELECT 1 FROM ' + from.join(' ') + ' WHERE ' + inner.join(' AND ') + ')');
-		} else if (((rule && rule.cross) || []).length) {
-			fail('Add an observation that must exist before comparing observations');
-		}
-		absent.forEach(a => {
-			const x = 'o_' + a.name.toLowerCase();
-			const inner = [x + '.bill_id = bl.bill_id'].concat(aliasConds(a));
-			where.push('NOT EXISTS (SELECT 1 FROM (' + src.obs + ') ' + x + ' WHERE ' + inner.join(' AND ') + ')');
-		});
+			return where.length ? '\nWHERE ' + where.join('\n  AND ') : '';
+		};
+		const order = '\nORDER BY bl.statement_date DESC, bl.bill_id DESC';
 
 		const cols = F.bill.map(f => 'bl.' + ident(f.column)).join(', ');
-		return {
+		const out = {
 			sql: 'SELECT ' + cols + ', COUNT(*) OVER () AS total_matches\nFROM (' + src.bill + ') bl' +
-				(where.length ? '\nWHERE ' + where.join('\n  AND ') : '') +
-				'\nORDER BY bl.statement_date DESC, bl.bill_id DESC\nLIMIT ' + limit
+				build(null) + order + '\nLIMIT ' + limit,
+			obsSql: '',
+			target: ''
 		};
+		// the observation the changes apply to: the first change's target, else
+		// the first observation that must exist
+		const want = ((rule && rule.changes) || []).map(c => c.target).find(Boolean);
+		const t = present.find(a => a.name === want) || present[0];
+		if (t) {
+			const o = sqlName(t);
+			out.target = t.name;
+			out.obsSql = 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' +
+				rowCols.map(c => o + '.' + c).join(', ') + ', COUNT(*) OVER () AS total_matches' +
+				'\nFROM (' + src.bill + ') bl\nJOIN (' + src.obs + ') ' + o + ' ON ' + o + '.bill_id = bl.bill_id' +
+				build(t) + order + ', ' + o + '.code\nLIMIT ' + limit;
+		}
+		return out;
 	},
 
 	_friendly(e) {
@@ -246,8 +269,8 @@ export default {
 	// Builds the SQL without running it.
 	async preview(rule) {
 		try {
-			const sql = this._compile(rule, this._cust(), 500).sql;
-			await storeValue('crSql', { sql: sql, error: '' }, false);
+			const built = this._compile(rule, this._cust(), 500);
+			await storeValue('crSql', { sql: built.sql, obsSql: built.obsSql, error: '' }, false);
 		} catch (e) {
 			await storeValue('crSql', { sql: '', error: this._friendly(e) }, false);
 		}
@@ -256,22 +279,28 @@ export default {
 	async run(rule) {
 		const cust = this._cust();
 		if (!cust) return storeValue('crResult', { error: 'Pick a customer first.' }, false);
-		let sql;
+		let built;
 		try {
-			sql = this._compile(rule, cust, 500).sql;
+			built = this._compile(rule, cust, 500);
 		} catch (e) {
 			await storeValue('crSql', { sql: '', error: this._friendly(e) }, false);
 			return storeValue('crResult', { error: this._friendly(e) }, false);
 		}
 		await storeValue('crRule', rule);
-		await storeValue('crSql', { sql: sql, error: '' }, false);
+		await storeValue('crSql', { sql: built.sql, obsSql: built.obsSql, error: '' }, false);
 		await storeValue('crResult', { loading: true }, false);
 		const t0 = Date.now();
+		const total = rows => rows.length ? Number(rows[0].total_matches) || rows.length : 0;
 		try {
-			const rows = (await run_cr_rule.run({ sql: sql })) || [];
+			// one after the other: the same query object cannot run twice at once
+			const rows = (await run_cr_rule.run({ sql: built.sql })) || [];
+			const obsRows = built.obsSql && rows.length ? ((await run_cr_rule.run({ sql: built.obsSql })) || []) : [];
 			await storeValue('crResult', {
 				rows: rows,
-				total: rows.length ? Number(rows[0].total_matches) || rows.length : 0,
+				total: total(rows),
+				obsRows: obsRows,
+				obsTotal: total(obsRows),
+				target: built.target,
 				ms: Date.now() - t0,
 				cust: cust,
 				ranAt: new Date().toISOString()
