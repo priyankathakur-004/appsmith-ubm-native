@@ -31,7 +31,7 @@ export default {
 				{ id: 'usage', label: 'Quantity', column: 'usage', type: 'number' },
 				{ id: 'charge', label: 'Charge ($)', column: 'charge', type: 'number' },
 				{ id: 'category', label: 'Category', column: 'category', type: 'enum', options: 'category' },
-				{ id: 'description', label: 'Description', column: 'description', type: 'text' },
+				{ id: 'description', label: 'Description', column: 'description', type: 'text', options: 'description' },
 				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility' }
 			],
 			ops: {
@@ -80,7 +80,8 @@ export default {
 				" MAX(li.vendor_name) AS vendor, MAX(li.account_code) AS account, MAX(li.location_description) AS location_name," +
 				" COUNT(*) AS line_count, SUM(li.charge) AS total_charges" +
 				" FROM bill_management_v2.analytics_billing_line_items li WHERE " + where + " GROUP BY li.bill_id",
-			obs: "SELECT li.bill_id, li.code, li.uom, li.usage, li.charge, li.category, li.description, UPPER(li.commodity) AS utility" +
+			obs: "SELECT li.bill_id, li.code, li.uom, li.usage, li.charge, li.category, li.description, UPPER(li.commodity) AS utility," +
+				" li.statement_date::date AS statement_date, li.vendor_name AS vendor" +
 				" FROM bill_management_v2.analytics_billing_line_items li WHERE " + where
 		};
 	},
@@ -212,15 +213,16 @@ export default {
 		const sqlName = a => 'o_' + a.name.toLowerCase();
 
 		// WHERE parts. outer = the observation joined in the outer FROM (one
-		// result row per matching line), or null for one row per bill.
-		const build = outer => {
+		// result row per matching line), or null for one row per bill. billId is
+		// the outer bill id the other observations are tied to.
+		const build = (outer, billId) => {
 			const where = top ? [top] : [];
 			const inside = present.filter(a => a !== outer);
 			if (outer) aliasConds(outer).forEach(x => where.push(x));
 			if (inside.length) {
 				const al = inside.map(sqlName);
 				const from = ['(' + src.obs + ') ' + al[0]];
-				const inner = [al[0] + '.bill_id = bl.bill_id'];
+				const inner = [al[0] + '.bill_id = ' + billId];
 				for (let i = 1; i < al.length; i++) {
 					from.push('JOIN (' + src.obs + ') ' + al[i] + ' ON ' + al[i] + '.bill_id = ' + al[0] + '.bill_id');
 					for (let k = 0; k < i; k++) inner.push(row(al[i]) + ' IS DISTINCT FROM ' + row(al[k]));
@@ -234,7 +236,7 @@ export default {
 			}
 			absent.forEach(a => {
 				const x = sqlName(a);
-				const inner = [x + '.bill_id = bl.bill_id'].concat(aliasConds(a));
+				const inner = [x + '.bill_id = ' + billId].concat(aliasConds(a));
 				where.push('NOT EXISTS (SELECT 1 FROM (' + src.obs + ') ' + x + ' WHERE ' + inner.join(' AND ') + ')');
 			});
 			return where.length ? '\nWHERE ' + where.join('\n  AND ') : '';
@@ -244,7 +246,7 @@ export default {
 		const cols = F.bill.map(f => 'bl.' + ident(f.column)).join(', ');
 		const out = {
 			sql: 'SELECT ' + cols + ', COUNT(*) OVER () AS total_matches\nFROM (' + src.bill + ') bl' +
-				build(null) + order + '\nLIMIT ' + limit,
+				build(null, 'bl.bill_id') + order + '\nLIMIT ' + limit,
 			obs: {},
 			targets: []
 		};
@@ -253,13 +255,20 @@ export default {
 		const wanted = ((rule && rule.changes) || []).map(c => c.target);
 		out.targets = present.filter(a => wanted.indexOf(a.name) >= 0).map(a => a.name);
 		if (!out.targets.length && present.length) out.targets = [present[0].name];
+		// the per-bill totals are only needed when some condition uses a bill field;
+		// otherwise a line list reads the lines alone, which is much quicker
+		const usesBill = /"bill\./.test(JSON.stringify([rule && rule.conditions, aliases, cross]));
 		out.targets.forEach(name => {
 			const t = present.find(a => a.name === name);
 			const o = sqlName(t);
-			out.obs[name] = 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' +
-				rowCols.map(c => o + '.' + c).join(', ') + ', COUNT(*) OVER () AS total_matches' +
-				'\nFROM (' + src.bill + ') bl\nJOIN (' + src.obs + ') ' + o + ' ON ' + o + '.bill_id = bl.bill_id' +
-				build(t) + order + ', ' + o + '.code\nLIMIT ' + limit;
+			const lineCols = rowCols.map(c => o + '.' + c).join(', ') + ', COUNT(*) OVER () AS total_matches';
+			out.obs[name] = usesBill
+				? 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' + lineCols +
+					'\nFROM (' + src.bill + ') bl\nJOIN (' + src.obs + ') ' + o + ' ON ' + o + '.bill_id = bl.bill_id' +
+					build(t, 'bl.bill_id') + order + ', ' + o + '.code\nLIMIT ' + limit
+				: 'SELECT ' + o + '.bill_id, ' + o + '.statement_date, ' + o + '.vendor, ' + o + '.utility, ' + lineCols +
+					'\nFROM (' + src.obs + ') ' + o +
+					build(t, o + '.bill_id') + '\nORDER BY ' + o + '.statement_date DESC, ' + o + '.bill_id DESC, ' + o + '.code\nLIMIT ' + limit;
 		});
 		return out;
 	},

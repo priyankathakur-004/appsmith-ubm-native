@@ -1,17 +1,26 @@
 -- Value lists for the Correction Rules builder's dropdowns: every observation
--- code, unit, category, utility and vendor on the customer's processed,
--- non-historical bill lines, with how many lines carry each. One scan.
-SELECT
-    CASE WHEN GROUPING(li.code) = 0 THEN 'code'
-         WHEN GROUPING(li.uom) = 0 THEN 'uom'
-         WHEN GROUPING(li.category) = 0 THEN 'category'
-         WHEN GROUPING(UPPER(li.commodity)) = 0 THEN 'utility'
-         ELSE 'vendor' END                                       AS field,
-    COALESCE(li.code, li.uom, li.category, UPPER(li.commodity), li.vendor_name)::text AS value,
-    COUNT(*)                                                     AS n
-FROM bill_management_v2.analytics_billing_line_items li
-WHERE li.customer_id = {{ Number(CustomerSelect.selectedOptionValue || appsmith.store.selectedCustomerId) || 0 }}
-  AND li.bill_type <> 'historical'
-  AND li.workflow_state = 'processed'
-GROUP BY GROUPING SETS ((li.code), (li.uom), (li.category), (UPPER(li.commodity)), (li.vendor_name))
-ORDER BY 1, 3 DESC;
+-- code, unit, category, utility, description and vendor on the customer's
+-- processed, non-historical bill lines, with how many lines carry each.
+-- One scan; the 300 most common values per list, so the response stays small.
+SELECT field, value, n
+FROM (
+    SELECT g.*, ROW_NUMBER() OVER (PARTITION BY g.field ORDER BY g.n DESC) AS rn
+    FROM (
+        SELECT
+            CASE WHEN GROUPING(li.code) = 0 THEN 'code'
+                 WHEN GROUPING(li.uom) = 0 THEN 'uom'
+                 WHEN GROUPING(li.category) = 0 THEN 'category'
+                 WHEN GROUPING(UPPER(li.commodity)) = 0 THEN 'utility'
+                 WHEN GROUPING(li.description) = 0 THEN 'description'
+                 ELSE 'vendor' END                                          AS field,
+            COALESCE(li.code, li.uom, li.category, UPPER(li.commodity), li.description, li.vendor_name)::text AS value,
+            COUNT(*)                                                        AS n
+        FROM bill_management_v2.analytics_billing_line_items li
+        WHERE li.customer_id = {{ Number(CustomerSelect.selectedOptionValue || appsmith.store.selectedCustomerId) || 0 }}
+          AND li.bill_type <> 'historical'
+          AND li.workflow_state = 'processed'
+        GROUP BY GROUPING SETS ((li.code), (li.uom), (li.category), (UPPER(li.commodity)), (li.description), (li.vendor_name))
+    ) g
+) r
+WHERE r.rn <= 300
+ORDER BY field, n DESC;
