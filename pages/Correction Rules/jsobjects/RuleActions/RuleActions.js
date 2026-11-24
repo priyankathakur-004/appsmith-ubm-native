@@ -372,5 +372,21 @@ export default {
 		}
 		await storeValue('crSql', { sql: '', obs: sqls, error: '' }, false);
 		await storeValue('crResult', { key: key, parts: out, ms: Date.now() - t0, cust: cust, ranAt: new Date().toISOString() }, false);
+	},
+
+	// Builds the line-list SQL of a page's rules without running it.
+	async previewSet(set) {
+		const cust = this._cust();
+		const parts = (set && set.rules) || [];
+		const sqls = {};
+		try {
+			parts.forEach(part => {
+				const built = this._compile(part.rule, cust, 500);
+				built.targets.forEach(name => { sqls[part.id + ' ' + name] = built.obs[name]; });
+			});
+			await storeValue('crSql', { sql: '', obs: sqls, error: '' }, false);
+		} catch (e) {
+			await storeValue('crSql', { sql: '', obs: {}, error: this._friendly(e) }, false);
+		}
 	}
 }

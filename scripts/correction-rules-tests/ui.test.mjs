@@ -194,21 +194,34 @@ assert(document.body.textContent.includes("Selected observation types (26)"));
 assert.strictEqual([...$(".checks").querySelectorAll("input")].filter(x => x.checked).length, 26);
 [...$(".checks").querySelectorAll(".chk")].find(l => l.textContent === "REACT_DEM").querySelector("input").click(); await tick();
 assert(document.body.textContent.includes("Selected observation types (25)"));
-assert(foot() === "Select a target unit to preview changes." && footBtn().disabled, "preview waits for a unit");
-btn("Run query", card("Find matching observations")).click(); await tick();
+assert(foot() === "Select a target unit to preview changes." && !footBtn().disabled, "run does not wait for a unit");
+assert.deepStrictEqual([...$(".foot").querySelectorAll("button")].map(x => x.textContent), ["Clear all", "Show SQL", "Run query"]);
+assert(![...$$("button")].some(x => /Save|Preview changes|Review changes/.test(x.textContent)), "no save or preview buttons");
+assert(!card("Find matching observations").querySelector(".btn.primary"), "one Run query, in the footer");
+footBtn().click(); await tick();
 let set = lastSet();
 assert(set.key === "demand" && set.rules[0].id === "demand");
 let b = compile(set, "demand");
 assert(b.targets.join() === "A" && b.obs.A.includes("o_a.uom = 'KWH'") && !b.obs.A.includes("'REACT_DEM'") && b.obs.A.includes("'DEM_USE'"), b.obs.A);
 await choose([...card("Changes to make").querySelectorAll(".sel")].pop(), "KW", "kw");
-assert(foot() === "Ready to preview changes." && !footBtn().disabled);
+assert(foot() === "Ready to run." && !footBtn().disabled);
 push({ result: { key: "demand", ms: 900, parts: { demand: { lines: { A: lines([line(4001, { code: "DEM_USE" }), line(4002, { code: "INFO_DEMAND" })]) } } } } });
 await tick();
 assert.deepStrictEqual([...card("Matching observations").querySelectorAll("th")].map(x => x.textContent), ["Bill", "Observation type", "Current UOM", "New UOM"]);
 assert.deepStrictEqual([...card("Matching observations").querySelectorAll(".new")].map(x => x.textContent), ["KW", "KW"]);
-assert(foot() === "2 observations ready for review");
+assert(foot() === "2 observations found");
 footBtn().click(); await tick();
 assert(lastSet().rules[0].rule.changes[0].value === "KW");
+// Show SQL builds the queries without running them
+btn("Show SQL", $(".foot")).click(); await tick();
+let pe = events.pop(); assert(pe.name === "onPreviewSet" && pe.ctx.set.key === "demand" && pe.ctx.set.rules[0].id === "demand");
+push({ sqlInfo: { sql: "", obs: { "demand A": "SELECT 7" }, error: "" } }); await tick();
+assert($(".foot-wrap pre.sql").textContent === "-- Matching line A\nSELECT 7");
+btn("Hide SQL", $(".foot")).click(); await tick();
+assert(!$(".foot-wrap pre.sql"));
+// Clear all puts the page back to its defaults and hides its results
+btn("Clear all", $(".foot")).click(); await tick();
+assert(document.body.textContent.includes("Selected observation types (26)") && !card("Matching observations") && foot() === "Select a target unit to preview changes.");
 
 // Missing consumption
 nav("Missing consumption").click(); await tick();
@@ -219,13 +232,13 @@ assert(fb.querySelector(".row").textContent.includes("Consumption line item") &&
 assert(fb.querySelectorAll(".row")[1].querySelector(".lead").textContent === "AND");
 assert(card("Changes to make").textContent.includes("Target: matched BILLEDUSE_USE observations"));
 assert($(".step.on").textContent.includes("Define changes"));
-btn("Run query", fb).click(); await tick();
+footBtn().click(); await tick();
 set = lastSet();
 b = compile(set, "missing");
 assert(b.obs.A.includes("o_a.code = 'BILLEDUSE_USE'") && b.obs.A.includes("NOT EXISTS") && b.obs.A.includes("o_b.code = 'USE_USE'") && b.targets.join() === "A", b.obs.A);
 push({ result: { key: "missing", ms: 800, parts: { missing: { lines: { A: lines([line(1001, { code: "BILLEDUSE_USE" }), line(1002, { code: "BILLEDUSE_USE" })]) } } } } });
 await tick();
-assert($(".step.on").textContent.includes("Review") && foot() === "2 observations ready for review");
+assert($(".step.on").textContent.includes("Review") && foot() === "2 observations found");
 const pc = card("Preview changes");
 assert.deepStrictEqual([...pc.querySelectorAll(".chip")].map(x => x.textContent), ["BILLEDUSE_USE", "BILLEDUSE_USE"]);
 assert.deepStrictEqual([...pc.querySelectorAll(".new")].map(x => x.textContent), ["USE_USE", "USE_USE"]);
@@ -262,12 +275,21 @@ assert.deepStrictEqual(lastSet().rules.map(x => x.id), ["r2"]);
 // Peak usage mapping: Rule 1 ready, Rule 2 needs a choice
 nav("Peak usage mapping").click(); await tick();
 assert($("h1").textContent === "Update multiple observations");
+// an open dropdown on an untouched page survives the model refresh
+const nvSel = card("Rule 1 · Correct peak usage").querySelector(".ctbl tbody tr td:nth-child(3) .sel");
+nvSel.querySelector(".sel-btn").click(); await tick();
+assert(nvSel.querySelector(".pop"), "New value dropdown opens");
+push({}); await tick(); await tick();
+push({ values: model.values.slice() }); await tick(); await tick();
+assert(card("Rule 1 · Correct peak usage").querySelector(".ctbl tbody tr td:nth-child(3) .pop"), "dropdown still open after refresh");
+card("Rule 1 · Correct peak usage").querySelector(".ctbl tbody tr td:nth-child(3) .sel-btn").click(); await tick();
 const r1c = card("Rule 1 · Correct peak usage"), r2c = card("Rule 2 · Remove duplicate demand");
 assert(r1c.querySelector(".badge-st.ok") && r2c.querySelector(".badge-st.need") && foot() === "Only Rule 1 is ready to preview.");
 assert(r1c.textContent.includes("A and B must exist on the same bill.") && r2c.textContent.includes("Choose which observation to remove. The other will be retained."));
 footBtn().click(); await tick();
 set = lastSet();
-assert.deepStrictEqual(set.rules.map(x => x.id), ["r1"]);
+assert.deepStrictEqual(set.rules.map(x => x.id), ["r1", "r2"]);
+assert(compile(set, "r2").targets.join() === "A,B", "rule 2 lists both lines until one is chosen");
 b = compile(set, "r1");
 assert(b.targets.join() === "A,B" && b.obs.A.includes("o_a.description = 'Use - On Peak (U)'") && b.obs.B.includes("o_b.description = 'Use - Off Peak (U)'"));
 r2c.querySelectorAll(".radio input")[1].click(); await tick();
@@ -297,6 +319,7 @@ ok("mockup rule pages + custom");
 
 // 6. Show SQL lists each line query; running shows elapsed time
 push({ sqlInfo: { sql: "SELECT 1", obs: { A: "SELECT 2", B: "SELECT 3" }, error: "" } });
+// (the custom builder's own bar)
 btn("Show SQL").click(); await tick();
 assert(events.pop().name === "onPreview");
 assert($("pre.sql").textContent.includes("-- Matching lines A\nSELECT 2") && $("pre.sql").textContent.includes("-- Matching lines B\nSELECT 3"));
