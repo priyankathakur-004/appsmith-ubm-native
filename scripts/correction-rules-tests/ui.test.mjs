@@ -176,66 +176,124 @@ ev = events.pop();
 assert.deepStrictEqual([ev.ctx.rule.aliases.length, ev.ctx.rule.changes.length], [0, 0]);
 ok("basic: bill + line conditions in one list, Then change");
 
-// 5. every rule in the list loads, highlights, sets the title, and compiles
+// 5. the mockup rule pages: layout, the rules they send, and how results show
 const nav = t => $$(".nav-i").find(a => a.textContent === t) || assert.fail("no rule " + t);
 assert.deepStrictEqual($$(".nav-i").map(a => a.textContent), ["Missing consumption", "Duplicate generation", "Constellation adjustment",
   "Peak usage mapping", "Duplicate demand", "Demand units", "Custom rule"]);
-const runRule = async name => { nav(name).click(); await tick(); btn("Run query").click(); await tick(); const e = events.pop(); assert(e.name === "onRun"); return e.ctx.rule; };
+const foot = () => $(".foot .foot-txt").textContent;
+const footBtn = () => [...$(".foot").querySelectorAll("button")].pop();
+const lastSet = () => { const e = events.pop(); assert(e && e.name === "onRunSet", "expected onRunSet, got " + (e && e.name)); return e.ctx.set; };
+const compile = (set, id) => R._compile(set.rules.find(x => x.id === id).rule, 76013, 500);
+const line = (bill, extra) => Object.assign({ bill_id: bill, statement_date: "2026-03-01", vendor: "V", code: "X", uom: "KWH", usage: 10, description: "" }, extra);
+const lines = rows => ({ rows, total: rows.length, bills: new Set(rows.map(r => r.bill_id)).size });
 
-let r = await runRule("Missing consumption");
-assert($(".nav-i.on").textContent === "Missing consumption" && $("h1").textContent === "Recover missing consumption");
-let b = R._compile(r, 76013, 500);
-assert(b.sql.includes("o_a.code = 'BILLEDUSE_USE')") && b.sql.includes("o_b.code = 'USE_USE')") && b.obs.A.includes("NOT EXISTS"), b.sql);
-
-r = await runRule("Duplicate generation");
-b = R._compile(r, 76013, 500);
-assert(b.sql.includes("(o_a.code = 'GEN_USE' AND o_a.description = 'Generation (U)')") && b.sql.includes("(o_b.code = 'GEN_USE' AND o_b.description = 'Generation (UC)')") && b.sql.includes("o_a.usage = o_b.usage"), b.sql);
-assert(r.changes[0].action === "remove" && r.changes[0].target === "A" && card("Changes to make").textContent.includes("Keeps line B."));
-assert($(".adv input").checked && $(".adv input").disabled, "pair rules lock Advanced on");
-
-r = await runRule("Constellation adjustment");
-b = R._compile(r, 76013, 500);
-assert(b.sql.includes("bl.vendor::text ILIKE '%Constellation%'") && b.sql.includes("o_a.usage <> o_b.usage") && b.targets.join() === "B", b.sql);
-assert(b.obs.B.includes("GROUP BY li.bill_id) bl"), "vendor condition needs per-bill totals");
-
-r = await runRule("Peak usage mapping");
-b = R._compile(r, 76013, 500);
-assert(b.targets.join() === "A,B" && b.obs.A.includes("o_a.code = 'USE_ONPEAK'") && b.obs.B.includes("o_b.code = 'USE_OFFPEAK'"));
-assert(!b.obs.A.includes("GROUP BY") && !b.obs.B.includes("GROUP BY"), "no bill fields: line lists skip the per-bill totals");
-push({ result: { key: "peak", rows: [{ bill_id: 9, total_matches: 1 }], total: 1, targets: ["A", "B"], ms: 900,
-  obs: { A: { rows: [{ bill_id: 9, code: "USE_ONPEAK", uom: "KWH", total_matches: 1 }], total: 1 },
-         B: { rows: [{ bill_id: 9, code: "USE_OFFPEAK", uom: "KWH", total_matches: 1 }], total: 1 } } } });
+// Demand units
+nav("Demand units").click(); await tick();
+assert($("h1").textContent === "Correct demand units" && card("Find matching observations") && !$(".adv"), "demand page, no Advanced switch");
+assert(document.body.textContent.includes("Selected observation types (26)"));
+assert.strictEqual([...$(".checks").querySelectorAll("input")].filter(x => x.checked).length, 26);
+[...$(".checks").querySelectorAll(".chk")].find(l => l.textContent === "REACT_DEM").querySelector("input").click(); await tick();
+assert(document.body.textContent.includes("Selected observation types (25)"));
+assert(foot() === "Select a target unit to preview changes." && footBtn().disabled, "preview waits for a unit");
+btn("Run query", card("Find matching observations")).click(); await tick();
+let set = lastSet();
+assert(set.key === "demand" && set.rules[0].id === "demand");
+let b = compile(set, "demand");
+assert(b.targets.join() === "A" && b.obs.A.includes("o_a.uom = 'KWH'") && !b.obs.A.includes("'REACT_DEM'") && b.obs.A.includes("'DEM_USE'"), b.obs.A);
+await choose([...card("Changes to make").querySelectorAll(".sel")].pop(), "KW", "kw");
+assert(foot() === "Ready to preview changes." && !footBtn().disabled);
+push({ result: { key: "demand", ms: 900, parts: { demand: { lines: { A: lines([line(4001, { code: "DEM_USE" }), line(4002, { code: "INFO_DEMAND" })]) } } } } });
 await tick();
-assert(btn("Line A · 1") && btn("Line B · 1") && btn("Bills · 1"));
-assert($(".tbl .new").textContent === "BILLEDUSE_ONPEAK");
-btn("Line B · 1").click(); await tick();
-assert($(".tbl .new").textContent === "BILLEDUSE_OFFPEAK");
+assert.deepStrictEqual([...card("Matching observations").querySelectorAll("th")].map(x => x.textContent), ["Bill", "Observation type", "Current UOM", "New UOM"]);
+assert.deepStrictEqual([...card("Matching observations").querySelectorAll(".new")].map(x => x.textContent), ["KW", "KW"]);
+assert(foot() === "2 observations ready for review");
+footBtn().click(); await tick();
+assert(lastSet().rules[0].rule.changes[0].value === "KW");
 
-r = await runRule("Duplicate demand");
-assert(!$(".tbl"), "another rule's results are hidden");
-assert(r.changes[0].action === "remove" && r.changes[0].target === "");
-assert(card("Changes to make").textContent.includes("Choose which line each change applies to."));
-await choose(card("Changes to make").querySelectorAll(".chg .sel")[1], "Line B");
-assert(card("Changes to make").textContent.includes("Keeps line A."));
-push({ result: { key: "dupdem", rows: [{ bill_id: 3, total_matches: 1 }], total: 1, targets: ["B"], ms: 500,
-  obs: { B: { rows: [{ bill_id: 3, code: "INFO_DEMAND", uom: "KW", total_matches: 1 }], total: 1 } } } });
+// Missing consumption
+nav("Missing consumption").click(); await tick();
+assert($("h1").textContent === "Recover missing consumption" && $$(".step").length === 3);
+assert(!card("Matching observations"), "demand results hidden on another page");
+const fb = card("Find matching bills");
+assert(fb.querySelector(".row").textContent.includes("Consumption line item") && fb.querySelector(".row").textContent.includes("does not exist"));
+assert(fb.querySelectorAll(".row")[1].querySelector(".lead").textContent === "AND");
+assert(card("Changes to make").textContent.includes("Target: matched BILLEDUSE_USE observations"));
+assert($(".step.on").textContent.includes("Define changes"));
+btn("Run query", fb).click(); await tick();
+set = lastSet();
+b = compile(set, "missing");
+assert(b.obs.A.includes("o_a.code = 'BILLEDUSE_USE'") && b.obs.A.includes("NOT EXISTS") && b.obs.A.includes("o_b.code = 'USE_USE'") && b.targets.join() === "A", b.obs.A);
+push({ result: { key: "missing", ms: 800, parts: { missing: { lines: { A: lines([line(1001, { code: "BILLEDUSE_USE" }), line(1002, { code: "BILLEDUSE_USE" })]) } } } } });
 await tick();
-assert($(".tbl .gone").textContent === "Remove");
+assert($(".step.on").textContent.includes("Review") && foot() === "2 observations ready for review");
+const pc = card("Preview changes");
+assert.deepStrictEqual([...pc.querySelectorAll(".chip")].map(x => x.textContent), ["BILLEDUSE_USE", "BILLEDUSE_USE"]);
+assert.deepStrictEqual([...pc.querySelectorAll(".new")].map(x => x.textContent), ["USE_USE", "USE_USE"]);
 
-r = await runRule("Demand units");
-assert(!$(".adv input").checked && card("Conditions"), "Demand units opens in Basic");
-assert([...card("Conditions").querySelectorAll(".sel-txt")].some(x => x.textContent === "26 selected"));
-assert(card("Then").querySelector(".chg-basic .val .sel").textContent.includes("KW"));
-push({ result: { key: "demand", rows: [{ bill_id: 1, total_matches: 1 }], total: 1, targets: ["A"], ms: 800,
-  obs: { A: { rows: [{ bill_id: 1, code: "DEM_USE", uom: "KWH", usage: 5, charge: 0, description: "d", total_matches: 1 }], total: 1 } } } });
+// Duplicate generation: pair + two rules, examples from real lines
+nav("Duplicate generation").click(); await tick();
+assert($("h1").textContent === "Compare generation observations" && card("Find a matching pair"));
+assert.strictEqual(card("Find a matching pair").querySelectorAll(".row.pair").length, 2);
+assert(card("Rule 1 · Equal values") && card("Rule 2 · Constellation") && document.body.textContent.includes("Multiple possible pairs are flagged for review."));
+assert(card("Rule 1 · Equal values").textContent.includes("Keep B · Generation (UC)."));
+footBtn().click(); await tick();
+set = lastSet();
+assert.deepStrictEqual(set.rules.map(x => x.id), ["r1", "r2"]);
+b = compile(set, "r1");
+assert(b.targets.join() === "A,B" && b.obs.A.includes("o_a.description = 'Generation (U)'") && b.obs.A.includes("o_a.usage = o_b.usage"), b.obs.A);
+b = compile(set, "r2");
+assert(b.obs.B.includes("o_a.vendor::text ILIKE '%Constellation%'") && b.obs.B.includes("o_a.usage <> o_b.usage") && !b.obs.B.includes("GROUP BY"), b.obs.B);
+push({ result: { key: "dupgen", ms: 1500, parts: {
+  r1: { lines: { A: lines([line(2001, { description: "Generation (U)", usage: 1250 })]), B: lines([line(2001, { description: "Generation (UC)", usage: 1250 })]) } },
+  r2: { lines: { A: lines([line(2002, { description: "Generation (U)", usage: 1250 })]), B: lines([line(2002, { description: "Generation (UC)", usage: 75 })]) } } } } });
 await tick();
-assert($$(".tbl th").map(x => x.textContent).includes("New UOM") && $(".tbl .new").textContent === "KW" && btn("Matching lines · 1"));
+const ex1 = card("Rule 1 · Equal values").querySelector(".example");
+assert(ex1.textContent.includes("2001") && ex1.querySelector(".ex-line.struck").textContent.includes("Generation (U)"), ex1.textContent);
+assert(ex1.querySelector(".ex-line.after").textContent.includes("Generation (UC)"));
+const ex2 = card("Rule 2 · Constellation").querySelector(".example");
+assert(ex2.textContent.includes("2002") && ex2.querySelector(".ex-line.after").textContent.includes("Adjustment (UC)") && ex2.querySelector(".ex-line.after").textContent.includes("75"), ex2.textContent);
 
+// Constellation adjustment: only its rule
+nav("Constellation adjustment").click(); await tick();
+assert(card("Rule 1 · Constellation") && !card("Rule 1 · Equal values"));
+footBtn().click(); await tick();
+assert.deepStrictEqual(lastSet().rules.map(x => x.id), ["r2"]);
+
+// Peak usage mapping: Rule 1 ready, Rule 2 needs a choice
+nav("Peak usage mapping").click(); await tick();
+assert($("h1").textContent === "Update multiple observations");
+const r1c = card("Rule 1 · Correct peak usage"), r2c = card("Rule 2 · Remove duplicate demand");
+assert(r1c.querySelector(".badge-st.ok") && r2c.querySelector(".badge-st.need") && foot() === "Only Rule 1 is ready to preview.");
+assert(r1c.textContent.includes("A and B must exist on the same bill.") && r2c.textContent.includes("Choose which observation to remove. The other will be retained."));
+footBtn().click(); await tick();
+set = lastSet();
+assert.deepStrictEqual(set.rules.map(x => x.id), ["r1"]);
+b = compile(set, "r1");
+assert(b.targets.join() === "A,B" && b.obs.A.includes("o_a.description = 'Use - On Peak (U)'") && b.obs.B.includes("o_b.description = 'Use - Off Peak (U)'"));
+r2c.querySelectorAll(".radio input")[1].click(); await tick();
+assert(card("Rule 2 · Remove duplicate demand").querySelector(".badge-st.ok") && foot() === "Both rules are ready to preview.");
+footBtn().click(); await tick();
+set = lastSet();
+assert.deepStrictEqual(set.rules.map(x => x.id), ["r1", "r2"]);
+b = compile(set, "r2");
+assert(b.targets.join() === "B" && b.obs.B.includes("o_b.description = 'Demand - Info (UC)'") && b.obs.B.includes("o_a.description = 'Demand - Billed (U)'"), b.obs.B);
+push({ result: { key: "peak", ms: 2000, parts: {
+  r1: { lines: { A: lines([line(3001, { description: "Use - On Peak (U)" })]), B: lines([line(3001, { description: "Use - Off Peak (U)" })]) } },
+  r2: { lines: { B: lines([line(3005, { description: "Demand - Info (UC)", code: "INFO_DEMAND" })]) } } } } });
+await tick();
+assert.deepStrictEqual([...card("Rule 1 · Correct peak usage").querySelectorAll(".ptbl .new")].map(x => x.textContent), ["Billed On Peak (U)", "Billed Off Peak (U)"]);
+assert(card("Rule 2 · Remove duplicate demand").querySelector(".gone").textContent === "Removed");
+
+// Duplicate demand: its rule alone, preview waits for the choice
+nav("Duplicate demand").click(); await tick();
+assert($("h1").textContent === "Remove duplicate demand" && card("Rule 1 · Remove duplicate demand") && !card("Rule 1 · Correct peak usage"));
+
+// Custom rule keeps the builder
 nav("Custom rule").click(); await tick();
-assert($("h1").textContent === "Find bills" && !$(".alias"));
+assert($("h1").textContent === "Find bills" && $(".adv") && card("Conditions"));
 push({ result: { key: "custom", rows: [{ bill_id: 1, total_charges: -23.66, total_matches: 1 }], total: 1, targets: [], ms: 800 } }); await tick();
 assert($(".tbl").textContent.includes("-$23.66") && !$(".tbl").textContent.includes("US$"));
-ok("all six rules + custom");
+ok("mockup rule pages + custom");
 
 // 6. Show SQL lists each line query; running shows elapsed time
 push({ sqlInfo: { sql: "SELECT 1", obs: { A: "SELECT 2", B: "SELECT 3" }, error: "" } });

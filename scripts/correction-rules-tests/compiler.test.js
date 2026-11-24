@@ -38,10 +38,11 @@ t('demand units: bills via EXISTS, lines read alone (no per-bill totals)', () =>
     { field: 'A.code', op: 'in', value: ['DEM_USE', 'INFO_DEMAND'] }, { field: 'A.uom', op: 'eq', value: 'KWH' }] }] });
   assert(/EXISTS \(SELECT 1 FROM \(SELECT li\.bill_id, li\.code.*\) o_a WHERE o_a\.bill_id = bl\.bill_id AND \(o_a\.code IN \('DEM_USE', 'INFO_DEMAND'\) AND o_a\.uom = 'KWH'\)\)/.test(r.sql), r.sql);
   assert(r.targets.join() === 'A');
-  assert(r.obs.A.startsWith('SELECT o_a.bill_id, o_a.statement_date, o_a.vendor, o_a.utility, ' + row('o_a')), r.obs.A);
+  assert(r.obs.A.startsWith('SELECT x.*, MAX(x.bill_rank) OVER () AS total_bills\nFROM (\nSELECT o_a.bill_id, o_a.statement_date, o_a.vendor, o_a.utility, ' + row('o_a')), r.obs.A);
+  assert(r.obs.A.includes('DENSE_RANK() OVER (ORDER BY o_a.bill_id) AS bill_rank'), r.obs.A);
   assert(r.obs.A.includes(") o_a\nWHERE (o_a.code IN ('DEM_USE', 'INFO_DEMAND') AND o_a.uom = 'KWH')"), r.obs.A);
   assert(!r.obs.A.includes('GROUP BY') && !r.obs.A.includes('EXISTS'), r.obs.A);
-  assert(r.obs.A.includes('ORDER BY o_a.statement_date DESC, o_a.bill_id DESC, o_a.code'), r.obs.A);
+  assert(r.obs.A.endsWith(') x\nORDER BY x.statement_date DESC, x.bill_id DESC, x.code\nLIMIT 500'), r.obs.A);
 });
 
 t('a bill condition brings the per-bill totals back into the line list', () => {
@@ -77,6 +78,15 @@ t('changes on A and B list both, in observation order', () => {
   assert(r.obs.A.includes(") o_a\nWHERE o_a.code = 'USE_ONPEAK'") && r.obs.B.includes(") o_b\nWHERE o_b.code = 'USE_OFFPEAK'"));
   const r2 = C({ aliases: [{ name: 'A', conditions: [] }, { name: 'B', mode: 'not_exists', conditions: [] }], changes: [{ target: 'B' }] });
   assert(r2.targets.join() === 'A');
+});
+
+t('listAll lists every line that must exist; line vendor is a hidden field', () => {
+  const r = C({ listAll: true, aliases: [
+    { name: 'A', conditions: [{ field: 'A.vendor', op: 'contains', value: 'Constellation' }] },
+    { name: 'B', conditions: [] }, { name: 'C', mode: 'not_exists', conditions: [] }], changes: [{ target: 'B', action: 'remove' }] });
+  assert(r.targets.join() === 'A,B', r.targets.join());
+  assert(r.obs.A.includes("o_a.vendor::text ILIKE '%Constellation%'") && !r.obs.A.includes('GROUP BY'), r.obs.A);
+  assert(R.fields().obs.find(f => f.id === 'vendor').hide === true);
 });
 
 t('cross with a single observation goes inline', () => {

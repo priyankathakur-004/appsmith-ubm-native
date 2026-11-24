@@ -32,7 +32,8 @@ export default {
 				{ id: 'charge', label: 'Charge ($)', column: 'charge', type: 'number' },
 				{ id: 'category', label: 'Category', column: 'category', type: 'enum', options: 'category' },
 				{ id: 'description', label: 'Description', column: 'description', type: 'text', options: 'description' },
-				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility' }
+				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility' },
+				{ id: 'vendor', label: 'Vendor', column: 'vendor', type: 'enum', options: 'vendor', hide: true }
 			],
 			ops: {
 				text: ['eq', 'neq', 'in', 'not_in', 'contains', 'not_contains', 'starts', 'empty', 'not_empty'],
@@ -255,6 +256,7 @@ export default {
 		const wanted = ((rule && rule.changes) || []).map(c => c.target);
 		out.targets = present.filter(a => wanted.indexOf(a.name) >= 0).map(a => a.name);
 		if (!out.targets.length && present.length) out.targets = [present[0].name];
+		if (rule && rule.listAll) out.targets = present.map(a => a.name);
 		// the per-bill totals are only needed when some condition uses a bill field;
 		// otherwise a line list reads the lines alone, which is much quicker
 		const usesBill = /"bill\./.test(JSON.stringify([rule && rule.conditions, aliases, cross]));
@@ -262,13 +264,13 @@ export default {
 			const t = present.find(a => a.name === name);
 			const o = sqlName(t);
 			const lineCols = rowCols.map(c => o + '.' + c).join(', ') + ', COUNT(*) OVER () AS total_matches';
-			out.obs[name] = usesBill
-				? 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' + lineCols +
-					'\nFROM (' + src.bill + ') bl\nJOIN (' + src.obs + ') ' + o + ' ON ' + o + '.bill_id = bl.bill_id' +
-					build(t, 'bl.bill_id') + order + ', ' + o + '.code\nLIMIT ' + limit
-				: 'SELECT ' + o + '.bill_id, ' + o + '.statement_date, ' + o + '.vendor, ' + o + '.utility, ' + lineCols +
-					'\nFROM (' + src.obs + ') ' + o +
-					build(t, o + '.bill_id') + '\nORDER BY ' + o + '.statement_date DESC, ' + o + '.bill_id DESC, ' + o + '.code\nLIMIT ' + limit;
+			const inner = usesBill
+				? 'SELECT bl.bill_id, bl.statement_date, bl.vendor, bl.utility, ' + lineCols + ', DENSE_RANK() OVER (ORDER BY bl.bill_id) AS bill_rank' +
+					'\nFROM (' + src.bill + ') bl\nJOIN (' + src.obs + ') ' + o + ' ON ' + o + '.bill_id = bl.bill_id' + build(t, 'bl.bill_id')
+				: 'SELECT ' + o + '.bill_id, ' + o + '.statement_date, ' + o + '.vendor, ' + o + '.utility, ' + lineCols + ', DENSE_RANK() OVER (ORDER BY ' + o + '.bill_id) AS bill_rank' +
+					'\nFROM (' + src.obs + ') ' + o + build(t, o + '.bill_id');
+			out.obs[name] = 'SELECT x.*, MAX(x.bill_rank) OVER () AS total_bills\nFROM (\n' + inner + '\n) x' +
+				'\nORDER BY x.statement_date DESC, x.bill_id DESC, x.code\nLIMIT ' + limit;
 		});
 		return out;
 	},
@@ -328,5 +330,47 @@ export default {
 		} catch (e) {
 			await storeValue('crResult', { key: key, error: this._friendly(e) }, false);
 		}
+	},
+
+	// Runs the rules of one page (set = { key, rules: [{ id, rule }] }) and
+	// fetches each rule's matching lines. Results land in crResult.parts[id].
+	async runSet(set) {
+		const cust = this._cust();
+		const key = String((set && set.key) || '');
+		if (!cust) return storeValue('crResult', { key: key, error: 'Pick a customer first.' }, false);
+		const parts = (set && set.rules) || [];
+		await storeValue('crResult', { key: key, loading: true }, false);
+		const t0 = Date.now();
+		const out = {};
+		const sqls = {};
+		for (let i = 0; i < parts.length; i++) {
+			const part = parts[i];
+			let built;
+			try {
+				built = this._compile(part.rule, cust, 500);
+			} catch (e) {
+				out[part.id] = { error: this._friendly(e) };
+				continue;
+			}
+			const lines = {};
+			try {
+				// one after the other: the same query object cannot run twice at once
+				for (let k = 0; k < built.targets.length; k++) {
+					const name = built.targets[k];
+					sqls[part.id + ' ' + name] = built.obs[name];
+					const rows = (await run_cr_rule.run({ sql: built.obs[name] })) || [];
+					lines[name] = {
+						rows: rows,
+						total: rows.length ? Number(rows[0].total_matches) || rows.length : 0,
+						bills: rows.length ? Number(rows[0].total_bills) || 0 : 0
+					};
+				}
+				out[part.id] = { lines: lines };
+			} catch (e) {
+				out[part.id] = { error: this._friendly(e) };
+			}
+		}
+		await storeValue('crSql', { sql: '', obs: sqls, error: '' }, false);
+		await storeValue('crResult', { key: key, parts: out, ms: Date.now() - t0, cust: cust, ranAt: new Date().toISOString() }, false);
 	}
 }
