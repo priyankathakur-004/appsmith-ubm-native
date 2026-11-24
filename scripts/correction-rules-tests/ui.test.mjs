@@ -59,45 +59,48 @@ async function choose(sel, text, search) {
   row.dispatchEvent(new W.MouseEvent("mousedown", { bubbles: true })); await tick();
 }
 const rowSels = row => [...row.querySelectorAll(":scope > .sel, :scope > .val > .sel")];
-const summary = () => $(".summary").textContent.replace(/^In plain words/, "");
 // wait for the first render (and its effects) rather than a fixed delay
 for (let i = 0; i < 100 && !($("h1") && document.documentElement.getAttribute("data-scheme")); i++) await tick();
 let n = 0; const ok = name => { n++; console.log("ok", name); };
 
 assert.strictEqual(document.documentElement.getAttribute("data-scheme"), "dark");
 assert.strictEqual($$("select").length, 0); assert.strictEqual($$("datalist").length, 0);
+assert(!$(".summary") && !document.body.textContent.includes("In plain words"), "no plain-words line");
 ok("renders with theme colour scheme, no native selects");
 
-// 1. custom: "field 1 = field 2 and field 3 > 500" and the summary that reads it back
-btn("+ Add condition", card("Bill conditions")).click(); await tick();
-await choose(rowSels(card("Bill conditions").querySelector(".row"))[0], "Total of line charges", "total");
-btn("value", card("Bill conditions")).click(); await tick();
-await choose(rowSels(card("Bill conditions").querySelector(".row"))[2], "Number of lines");
-btn("+ Add condition", card("Bill conditions")).click(); await tick();
-let rows = card("Bill conditions").querySelectorAll(".row");
+// 1. custom: "field 1 = field 2 and field 3 > 500"
+btn("+ Add condition", card("Conditions")).click(); await tick();
+await choose(rowSels(card("Conditions").querySelector(".row"))[0], "Total of line charges", "total");
+btn("value", card("Conditions")).click(); await tick();
+await choose(rowSels(card("Conditions").querySelector(".row"))[2], "Number of lines");
+btn("+ Add condition", card("Conditions")).click(); await tick();
+let rows = card("Conditions").querySelectorAll(".row");
 await choose(rowSels(rows[1])[0], "Total of line charges", "total");
-rows = card("Bill conditions").querySelectorAll(".row");
+rows = card("Conditions").querySelectorAll(".row");
 await choose(rowSels(rows[1])[1], "greater than");
-input(card("Bill conditions").querySelectorAll(".row")[1].querySelector("input"), "500"); await tick();
-assert(summary().includes("where total of line charges is equal to number of lines and total of line charges greater than 500"), summary());
+input(card("Conditions").querySelectorAll(".row")[1].querySelector("input"), "500"); await tick();
 btn("Run query").click(); await tick();
 let ev = events.pop(); assert(ev.name === "onRun" && ev.ctx.rule.key === "custom");
 assert(R._compile(ev.ctx.rule, 76013, 500).sql.includes("WHERE (bl.total_charges = bl.line_count AND bl.total_charges > 500)"));
-ok("custom field = field and > 500, with summary");
+ok("custom field = field and > 500");
 
 // 2. searchable value list with typed values; utility from the list
 btn("Clear all").click(); await tick();
-btn("+ Add condition", card("Bill conditions")).click(); await tick();
-await choose(rowSels(card("Bill conditions").querySelector(".row"))[0], "Utility", "util");
-const valSel = rowSels(card("Bill conditions").querySelector(".row"))[2];
+btn("+ Add condition", card("Conditions")).click(); await tick();
+await choose(rowSels(card("Conditions").querySelector(".row"))[0], "Utility", "util");
+const valSel = rowSels(card("Conditions").querySelector(".row"))[2];
 valSel.querySelector(".sel-btn").click(); await tick();
 input(valSel.querySelector(".pop input"), "gas"); await tick();
 assert.deepStrictEqual([...valSel.querySelectorAll(".pop-row")].map(r => r.firstChild.textContent), ["Use “gas”", "NATURALGAS"]);
 [...valSel.querySelectorAll(".pop-row")][1].dispatchEvent(new W.MouseEvent("mousedown", { bubbles: true })); await tick();
-assert(rowSels(card("Bill conditions").querySelector(".row"))[2].textContent.includes("NATURALGAS"));
+assert(rowSels(card("Conditions").querySelector(".row"))[2].textContent.includes("NATURALGAS"));
 ok("searchable value list");
 
-// 3. groups add/remove; empty rows skipped
+// 3. groups add/remove (Advanced); empty rows skipped
+assert(!$(".adv input").checked && !$(".adv input").disabled, "custom starts in Basic");
+assert(!card("Lines on the same bill") && !card("Compare lines") && card("Then"));
+$(".adv input").click(); await tick();
+assert(card("Bill conditions") && card("Lines on the same bill") && !card("Conditions"));
 btn("+ Add condition", card("Bill conditions")).click(); await tick();
 btn("+ Add group", card("Bill conditions")).click(); await tick();
 await choose($(".group .group-head .sel"), "ANY");
@@ -118,7 +121,7 @@ assert($$(".group").length === 0);
 ok("groups add/remove, empty rows skipped");
 
 // 4. observation with its own group, description picked from the list, typed change value
-btn("+ Add observation").click(); await tick();
+btn("+ Add line").click(); await tick();
 const alias = () => $(".alias");
 await choose(rowSels(alias().querySelector(".row"))[2], "DEM_USE");
 btn("+ Add group", alias()).click(); await tick();
@@ -133,14 +136,45 @@ input(chgVal.querySelector(".pop input"), "KW"); await tick();
 chgVal.querySelector(".pop input").dispatchEvent(new W.KeyboardEvent("keydown", { key: "Enter", bubbles: true })); await tick();
 assert(card("Changes to make").querySelector(".chg .val .sel").textContent.includes("KW") &&
   !card("Changes to make").querySelector(".chg .val .sel").textContent.includes("KWH"), "exact typed match wins");
-assert(summary().includes("with a line A where observation type is equal to DEM_USE and description is equal to Generation (UC); then set A's unit of measure to KW"), summary());
 btn("Run query").click(); await tick();
 ev = events.pop();
 const b2 = R._compile(ev.ctx.rule, 76013, 500);
 assert(b2.obs.A.includes("WHERE bl.utility = 'NATURALGAS'\n  AND (o_a.code = 'DEM_USE' AND o_a.description = 'Generation (UC)')"), b2.obs.A);
 btn("Remove A").click(); await tick();
 assert(!$(".alias") && !card("Changes to make"));
-ok("observation group, description list, typed change, summary");
+ok("observation group, description list, typed change");
+
+// 4b. Basic: a line field joins the line list; "Then" changes that line
+$$(".nav-i").find(a => a.textContent === "Custom rule").click(); await tick();
+assert(!$(".adv input").checked, "blank custom rule is Basic");
+assert(card("Then").textContent.includes("Add a line condition above"));
+btn("+ Add condition", card("Conditions")).click(); await tick();
+await choose(rowSels(card("Conditions").querySelector(".row"))[0], "Line · Unit of measure", "unit");
+await choose(rowSels(card("Conditions").querySelector(".row"))[2], "KWH");
+btn("+ Add condition", card("Conditions")).click(); await tick();
+await choose(rowSels(card("Conditions").querySelectorAll(".row")[1])[0], "Utility", "util");
+await choose(rowSels(card("Conditions").querySelectorAll(".row")[1])[2], "ELECTRIC");
+// rows stay in the order they were added
+assert(rowSels(card("Conditions").querySelectorAll(".row")[0])[0].textContent.includes("Line · Unit of measure"));
+assert(rowSels(card("Conditions").querySelectorAll(".row")[1])[0].textContent.includes("Utility"));
+btn("+ Add change", card("Then")).click(); await tick();
+await choose(card("Then").querySelector(".chg-basic .val .sel"), "KW", "kw");
+btn("Run query").click(); await tick();
+ev = events.pop();
+let bb = R._compile(ev.ctx.rule, 76013, 500);
+assert(bb.sql.includes("WHERE bl.utility = 'ELECTRIC'") && bb.sql.includes("o_a.bill_id = bl.bill_id AND o_a.uom = 'KWH')"), bb.sql);
+assert.deepStrictEqual(ev.ctx.rule.changes.map(c => c.target + ":" + c.field + ":" + c.value), ["A:uom:KW"]);
+push({ result: { key: "custom", rows: [{ bill_id: 5, total_matches: 1 }], total: 1, targets: ["A"], ms: 700,
+  obs: { A: { rows: [{ bill_id: 5, code: "DEM_USE", uom: "KWH", total_matches: 1 }], total: 1 } } } });
+await tick();
+assert(btn("Matching lines · 1") && $(".tbl .new").textContent === "KW");
+// removing the only line condition removes the change too
+card("Conditions").querySelectorAll(".row")[0].querySelector(".x").click(); await tick();
+assert(card("Then").textContent.includes("Add a line condition above"));
+btn("Run query").click(); await tick();
+ev = events.pop();
+assert.deepStrictEqual([ev.ctx.rule.aliases.length, ev.ctx.rule.changes.length], [0, 0]);
+ok("basic: bill + line conditions in one list, Then change");
 
 // 5. every rule in the list loads, highlights, sets the title, and compiles
 const nav = t => $$(".nav-i").find(a => a.textContent === t) || assert.fail("no rule " + t);
@@ -152,12 +186,12 @@ let r = await runRule("Missing consumption");
 assert($(".nav-i.on").textContent === "Missing consumption" && $("h1").textContent === "Recover missing consumption");
 let b = R._compile(r, 76013, 500);
 assert(b.sql.includes("o_a.code = 'BILLEDUSE_USE')") && b.sql.includes("o_b.code = 'USE_USE')") && b.obs.A.includes("NOT EXISTS"), b.sql);
-assert(summary().includes("with a line A where observation type is equal to BILLEDUSE_USE, with no line B where observation type is equal to USE_USE; then set A's observation type to USE_USE"), summary());
 
 r = await runRule("Duplicate generation");
 b = R._compile(r, 76013, 500);
 assert(b.sql.includes("(o_a.code = 'GEN_USE' AND o_a.description = 'Generation (U)')") && b.sql.includes("(o_b.code = 'GEN_USE' AND o_b.description = 'Generation (UC)')") && b.sql.includes("o_a.usage = o_b.usage"), b.sql);
-assert(r.changes[0].action === "remove" && r.changes[0].target === "A" && card("Changes to make").textContent.includes("Keeps observation B."));
+assert(r.changes[0].action === "remove" && r.changes[0].target === "A" && card("Changes to make").textContent.includes("Keeps line B."));
+assert($(".adv input").checked && $(".adv input").disabled, "pair rules lock Advanced on");
 
 r = await runRule("Constellation adjustment");
 b = R._compile(r, 76013, 500);
@@ -172,29 +206,30 @@ push({ result: { key: "peak", rows: [{ bill_id: 9, total_matches: 1 }], total: 1
   obs: { A: { rows: [{ bill_id: 9, code: "USE_ONPEAK", uom: "KWH", total_matches: 1 }], total: 1 },
          B: { rows: [{ bill_id: 9, code: "USE_OFFPEAK", uom: "KWH", total_matches: 1 }], total: 1 } } } });
 await tick();
-assert(btn("Observations A · 1") && btn("Observations B · 1") && btn("Bills · 1"));
+assert(btn("Line A · 1") && btn("Line B · 1") && btn("Bills · 1"));
 assert($(".tbl .new").textContent === "BILLEDUSE_ONPEAK");
-btn("Observations B · 1").click(); await tick();
+btn("Line B · 1").click(); await tick();
 assert($(".tbl .new").textContent === "BILLEDUSE_OFFPEAK");
 
 r = await runRule("Duplicate demand");
 assert(!$(".tbl"), "another rule's results are hidden");
 assert(r.changes[0].action === "remove" && r.changes[0].target === "");
-assert(card("Changes to make").textContent.includes("Choose which observation each change applies to."));
-await choose(card("Changes to make").querySelectorAll(".chg .sel")[1], "Observation B");
-assert(card("Changes to make").textContent.includes("Keeps observation A.") && summary().includes("then remove B"), summary());
+assert(card("Changes to make").textContent.includes("Choose which line each change applies to."));
+await choose(card("Changes to make").querySelectorAll(".chg .sel")[1], "Line B");
+assert(card("Changes to make").textContent.includes("Keeps line A."));
 push({ result: { key: "dupdem", rows: [{ bill_id: 3, total_matches: 1 }], total: 1, targets: ["B"], ms: 500,
   obs: { B: { rows: [{ bill_id: 3, code: "INFO_DEMAND", uom: "KW", total_matches: 1 }], total: 1 } } } });
 await tick();
 assert($(".tbl .gone").textContent === "Remove");
 
 r = await runRule("Demand units");
-assert($$(".alias .sel-txt").some(x => x.textContent === "26 selected"));
-assert(summary().includes("with a line A where observation type is any of 26 values and unit of measure is equal to KWH; then set A's unit of measure to KW."), summary());
+assert(!$(".adv input").checked && card("Conditions"), "Demand units opens in Basic");
+assert([...card("Conditions").querySelectorAll(".sel-txt")].some(x => x.textContent === "26 selected"));
+assert(card("Then").querySelector(".chg-basic .val .sel").textContent.includes("KW"));
 push({ result: { key: "demand", rows: [{ bill_id: 1, total_matches: 1 }], total: 1, targets: ["A"], ms: 800,
   obs: { A: { rows: [{ bill_id: 1, code: "DEM_USE", uom: "KWH", usage: 5, charge: 0, description: "d", total_matches: 1 }], total: 1 } } } });
 await tick();
-assert($$(".tbl th").map(x => x.textContent).includes("New UOM") && $(".tbl .new").textContent === "KW");
+assert($$(".tbl th").map(x => x.textContent).includes("New UOM") && $(".tbl .new").textContent === "KW" && btn("Matching lines · 1"));
 
 nav("Custom rule").click(); await tick();
 assert($("h1").textContent === "Find bills" && !$(".alias"));
@@ -206,7 +241,7 @@ ok("all six rules + custom");
 push({ sqlInfo: { sql: "SELECT 1", obs: { A: "SELECT 2", B: "SELECT 3" }, error: "" } });
 btn("Show SQL").click(); await tick();
 assert(events.pop().name === "onPreview");
-assert($("pre.sql").textContent.includes("-- Matching observations A\nSELECT 2") && $("pre.sql").textContent.includes("-- Matching observations B\nSELECT 3"));
+assert($("pre.sql").textContent.includes("-- Matching lines A\nSELECT 2") && $("pre.sql").textContent.includes("-- Matching lines B\nSELECT 3"));
 push({ running: true }); await tick();
 assert(document.body.textContent.includes("Searching bills… 0s"));
 ok("show SQL and running state");
