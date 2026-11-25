@@ -247,7 +247,7 @@ assert.deepStrictEqual([...pc.querySelectorAll(".new")].map(x => x.textContent),
 nav("Duplicate generation").click(); await tick();
 assert($("h1").textContent === "Compare generation observations" && card("Find a matching pair"));
 assert.strictEqual(card("Find a matching pair").querySelectorAll(".row.pair").length, 2);
-assert(card("Rule 1 · Equal values") && card("Rule 2 · Constellation") && document.body.textContent.includes("Multiple possible pairs are flagged for review."));
+assert(card("Rule 1 · Equal values") && card("Rule 2 · Constellation") && !$(".info"), "no review note before a run");
 assert(card("Rule 1 · Equal values").textContent.includes("Keep B · Generation (UC)."));
 footBtn().click(); await tick();
 set = lastSet();
@@ -265,6 +265,16 @@ assert(ex1.textContent.includes("2001") && ex1.querySelector(".ex-line.struck").
 assert(ex1.querySelector(".ex-line.after").textContent.includes("Generation (UC)"));
 const ex2 = card("Rule 2 · Constellation").querySelector(".example");
 assert(ex2.textContent.includes("2002") && ex2.querySelector(".ex-line.after").textContent.includes("Adjustment (UC)") && ex2.querySelector(".ex-line.after").textContent.includes("75"), ex2.textContent);
+assert($(".info").textContent.includes("No bill has more than one possible pair."));
+push({ result: { key: "dupgen", ms: 1500, parts: {
+  r1: { lines: { A: lines([line(2001), line(2001), line(2003)]), B: lines([line(2001)]) } }, r2: { error: "boom" } } } }); await tick();
+assert($(".info").textContent.includes("1 bill has more than one possible pair and is flagged for review."), $(".info").textContent);
+// a failed run shows its error in the footer and frees the Run button
+push({ running: false, result: { key: "dupgen", error: "Query timed out." } }); await tick();
+assert($(".foot .err").textContent === "Query timed out." && !footBtn().disabled);
+push({ result: { key: "dupgen", loading: true } }); await tick();
+assert(foot() === "Searching bills…" && footBtn().disabled);
+push({ result: null }); await tick();
 
 // Constellation adjustment: only its rule
 nav("Constellation adjustment").click(); await tick();

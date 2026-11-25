@@ -343,35 +343,40 @@ export default {
 		const t0 = Date.now();
 		const out = {};
 		const sqls = {};
-		for (let i = 0; i < parts.length; i++) {
-			const part = parts[i];
-			let built;
-			try {
-				built = this._compile(part.rule, cust, 500);
-			} catch (e) {
-				out[part.id] = { error: this._friendly(e) };
-				continue;
-			}
-			const lines = {};
-			try {
-				// one after the other: the same query object cannot run twice at once
-				for (let k = 0; k < built.targets.length; k++) {
-					const name = built.targets[k];
-					sqls[part.id + ' ' + name] = built.obs[name];
-					const rows = (await run_cr_rule.run({ sql: built.obs[name] })) || [];
-					lines[name] = {
-						rows: rows,
-						total: rows.length ? Number(rows[0].total_matches) || rows.length : 0,
-						bills: rows.length ? Number(rows[0].total_bills) || 0 : 0
-					};
+		try {
+			for (let i = 0; i < parts.length; i++) {
+				const part = parts[i];
+				let built;
+				try {
+					built = this._compile(part.rule, cust, 500);
+				} catch (e) {
+					out[part.id] = { error: this._friendly(e) };
+					continue;
 				}
-				out[part.id] = { lines: lines };
-			} catch (e) {
-				out[part.id] = { error: this._friendly(e) };
+				const lines = {};
+				try {
+					// one after the other: the same query object cannot run twice at once
+					for (let k = 0; k < built.targets.length; k++) {
+						const name = built.targets[k];
+						sqls[part.id + ' ' + name] = built.obs[name];
+						const rows = (await run_cr_rule.run({ sql: built.obs[name] })) || [];
+						lines[name] = {
+							rows: rows,
+							total: rows.length ? Number(rows[0].total_matches) || rows.length : 0,
+							bills: rows.length ? Number(rows[0].total_bills) || 0 : 0
+						};
+					}
+					out[part.id] = { lines: lines };
+				} catch (e) {
+					out[part.id] = { error: this._friendly(e) };
+				}
 			}
+			await storeValue('crSql', { sql: '', obs: sqls, error: '' }, false);
+			await storeValue('crResult', { key: key, parts: out, ms: Date.now() - t0, cust: cust, ranAt: new Date().toISOString() }, false);
+		} catch (e) {
+			// never leave the page stuck on Running
+			await storeValue('crResult', { key: key, error: this._friendly(e) }, false);
 		}
-		await storeValue('crSql', { sql: '', obs: sqls, error: '' }, false);
-		await storeValue('crResult', { key: key, parts: out, ms: Date.now() - t0, cust: cust, ranAt: new Date().toISOString() }, false);
 	},
 
 	// Builds the line-list SQL of a page's rules without running it.
