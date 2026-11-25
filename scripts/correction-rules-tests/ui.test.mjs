@@ -277,13 +277,28 @@ push({ result: { key: "dupgen", ms: 1500, parts: {
 assert($(".info").textContent.includes("1 bill has more than one possible pair and is flagged for review."), $(".info").textContent);
 pt = card("Rule 1 · Matching pairs");
 assert(pt.querySelectorAll("tbody tr").length === 2 && pt.querySelectorAll("tbody .tag-review").length === 2 && pt.querySelector(".card-head .tag-review").textContent === "1 to review");
-assert(!card("Rule 2 · Matching pairs"), "a failed rule has no table");
-// 50 at a time
-push({ result: { key: "dupgen", ms: 1, parts: { r1: { lines: { A: lines(Array.from({ length: 60 }, (_, i) => line(5000 + i))), B: lines(Array.from({ length: 60 }, (_, i) => line(5000 + i))) } } } } }); await tick();
+// pairs follow the rule's comparison; two clean pairs on one bill are not flagged
+push({ result: { key: "dupgen", ms: 1, parts: { r1: { lines: {
+  A: lines([line(7001, { usage: 185.37 }), line(7001, { usage: 303.67 })]), B: lines([line(7001, { usage: 303.67 }), line(7001, { usage: 185.37 })]) } } } } }); await tick();
 pt = card("Rule 1 · Matching pairs");
-assert(pt.querySelectorAll("tbody tr").length === 50 && pt.querySelector(".more").textContent.includes("Show 10 more"));
-pt.querySelector(".more a").click(); await tick();
-assert(card("Rule 1 · Matching pairs").querySelectorAll("tbody tr").length === 60 && !card("Rule 1 · Matching pairs").querySelector(".more"));
+assert.deepStrictEqual([...pt.querySelectorAll("tbody tr")].map(r => [...r.querySelectorAll("td.num")].map(x => x.textContent).join("=")), ["185.37=185.37", "303.67=303.67"]);
+assert(!pt.querySelector(".tag-review") && $(".info").textContent.includes("No bill has more than one possible pair."));
+assert(!card("Rule 2 · Matching pairs"), "a failed rule has no table");
+// paged like the Vendors table: 20 a page, next, go to, rows per page
+push({ result: { key: "dupgen", ms: 1, parts: { r1: { lines: { A: lines(Array.from({ length: 60 }, (_, i) => line(5000 + i))), B: lines(Array.from({ length: 60 }, (_, i) => line(5000 + i))) } } } } }); await tick();
+const pairRows = () => [...card("Rule 1 · Matching pairs").querySelectorAll("tbody tr")];
+const pager = () => card("Rule 1 · Matching pairs").querySelector(".pager");
+assert(pairRows().length === 20 && pager().textContent.includes("1–20 of 60") && pager().querySelector(".pnum").textContent === "1");
+assert(pager().querySelectorAll(".pbtn")[0].disabled);
+pager().querySelectorAll(".pbtn")[1].click(); await tick();
+assert(pager().querySelector(".pnum").textContent === "2" && pairRows()[0].textContent.startsWith("5020"), pairRows()[0].textContent);
+const goto = pager().querySelector(".goto");
+const setVal = (el, v) => { Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set.call(el, v); el.dispatchEvent(new window.Event("input", { bubbles: true })); };
+setVal(goto, "3"); await tick();
+goto.dispatchEvent(new window.KeyboardEvent("keydown", { key: "Enter", bubbles: true })); await tick();
+assert(pager().querySelector(".pnum").textContent === "3" && pager().querySelectorAll(".pbtn")[1].disabled && pairRows().length === 20);
+await choose(pager().querySelector(".sel"), "100 / page");
+assert(pairRows().length === 60 && pager().querySelector(".pnum").textContent === "1" && pager().textContent.includes("of 1"));
 // a failed run shows its error in the footer and frees the Run button
 push({ running: false, result: { key: "dupgen", error: "Query timed out." } }); await tick();
 assert($(".foot .err").textContent === "Query timed out." && !footBtn().disabled);
