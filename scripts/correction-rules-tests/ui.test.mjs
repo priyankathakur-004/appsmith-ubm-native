@@ -282,6 +282,16 @@ push({ result: { key: "dupgen", ms: 1500, parts: {
 assert($(".info").textContent.includes("1 bill has more than one possible pair and is flagged for review."), $(".info").textContent);
 pt = card("Rule 1 · Matching pairs");
 assert(pt.querySelectorAll("tbody tr").length === 2 && pt.querySelectorAll("tbody .tag-review").length === 2 && pt.querySelector(".card-head .tag-review").textContent === "1 to review");
+// the review tag filters the table to the flagged pairs, and back
+push({ result: { key: "dupgen", ms: 1, parts: { r1: { lines: { A: lines([line(2001), line(2001), line(2003), line(2004)]), B: lines([line(2001), line(2003), line(2004)]) } } } } }); await tick();
+const reviewBtn = () => card("Rule 1 · Matching pairs").querySelector("button.tag-review");
+assert(card("Rule 1 · Matching pairs").querySelectorAll("tbody tr").length === 4);
+reviewBtn().click(); await tick();
+let shownBills = [...card("Rule 1 · Matching pairs").querySelectorAll("tbody tr")].map(r => r.querySelector("td").textContent);
+assert.deepStrictEqual(shownBills, ["2001", "2001"]);
+assert(reviewBtn().classList.contains("on") && card("Rule 1 · Matching pairs").textContent.includes("Showing 2 pairs to review"));
+reviewBtn().click(); await tick();
+assert(card("Rule 1 · Matching pairs").querySelectorAll("tbody tr").length === 4 && !reviewBtn().classList.contains("on"));
 // pairs follow the rule's comparison; two clean pairs on one bill are not flagged
 push({ result: { key: "dupgen", ms: 1, parts: { r1: { lines: {
   A: lines([line(7001, { usage: 185.37 }), line(7001, { usage: 303.67 })]), B: lines([line(7001, { usage: 303.67 }), line(7001, { usage: 185.37 })]) } } } } }); await tick();
