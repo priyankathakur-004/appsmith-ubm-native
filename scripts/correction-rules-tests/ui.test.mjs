@@ -266,9 +266,24 @@ assert(ex1.querySelector(".ex-line.after").textContent.includes("Generation (UC)
 const ex2 = card("Rule 2 · Constellation").querySelector(".example");
 assert(ex2.textContent.includes("2002") && ex2.querySelector(".ex-line.after").textContent.includes("Adjustment (UC)") && ex2.querySelector(".ex-line.after").textContent.includes("75"), ex2.textContent);
 assert($(".info").textContent.includes("No bill has more than one possible pair."));
+// each rule lists its pairs with the change it makes
+let pt = card("Rule 1 · Matching pairs");
+assert.deepStrictEqual([...pt.querySelectorAll("th")].map(x => x.textContent), ["Bill", "Date", "Vendor", "A · Generation (U)", "B · Generation (UC)", "Change", ""]);
+assert.deepStrictEqual([...pt.querySelectorAll("tbody td")].map(x => x.textContent), ["2001", "2026-03-01", "V", "1,250", "1,250", "Remove A", ""]);
+pt = card("Rule 2 · Matching pairs");
+assert(pt.querySelector("tbody").textContent.includes("75") && pt.querySelector(".new").textContent === "B → Adjustment (UC)");
 push({ result: { key: "dupgen", ms: 1500, parts: {
   r1: { lines: { A: lines([line(2001), line(2001), line(2003)]), B: lines([line(2001)]) } }, r2: { error: "boom" } } } }); await tick();
 assert($(".info").textContent.includes("1 bill has more than one possible pair and is flagged for review."), $(".info").textContent);
+pt = card("Rule 1 · Matching pairs");
+assert(pt.querySelectorAll("tbody tr").length === 2 && pt.querySelectorAll("tbody .tag-review").length === 2 && pt.querySelector(".card-head .tag-review").textContent === "1 to review");
+assert(!card("Rule 2 · Matching pairs"), "a failed rule has no table");
+// 50 at a time
+push({ result: { key: "dupgen", ms: 1, parts: { r1: { lines: { A: lines(Array.from({ length: 60 }, (_, i) => line(5000 + i))), B: lines(Array.from({ length: 60 }, (_, i) => line(5000 + i))) } } } } }); await tick();
+pt = card("Rule 1 · Matching pairs");
+assert(pt.querySelectorAll("tbody tr").length === 50 && pt.querySelector(".more").textContent.includes("Show 10 more"));
+pt.querySelector(".more a").click(); await tick();
+assert(card("Rule 1 · Matching pairs").querySelectorAll("tbody tr").length === 60 && !card("Rule 1 · Matching pairs").querySelector(".more"));
 // a failed run shows its error in the footer and frees the Run button
 push({ running: false, result: { key: "dupgen", error: "Query timed out." } }); await tick();
 assert($(".foot .err").textContent === "Query timed out." && !footBtn().disabled);
@@ -281,6 +296,12 @@ nav("Constellation adjustment").click(); await tick();
 assert(card("Rule 1 · Constellation") && !card("Rule 1 · Equal values"));
 footBtn().click(); await tick();
 assert.deepStrictEqual(lastSet().rules.map(x => x.id), ["r2"]);
+push({ result: { key: "constellation", ms: 1, parts: { r2: { lines: {
+  A: lines([line(6001, { description: "Generation (U)", vendor: "Constellation", usage: 2674 })]),
+  B: lines([line(6001, { description: "Generation (UC)", usage: -2674 })]) } } } } }); await tick();
+pt = card("Rule 1 · Matching pairs");
+assert(pt && !card("Rule 2 · Matching pairs"), "constellation has its own one table");
+assert.deepStrictEqual([...pt.querySelectorAll("tbody td")].map(x => x.textContent), ["6001", "2026-03-01", "Constellation", "2,674", "-2,674", "B → Adjustment (UC)", ""]);
 
 // Peak usage mapping: Rule 1 ready, Rule 2 needs a choice
 nav("Peak usage mapping").click(); await tick();
@@ -315,6 +336,7 @@ push({ result: { key: "peak", ms: 2000, parts: {
 await tick();
 assert.deepStrictEqual([...card("Rule 1 · Correct peak usage").querySelectorAll(".ptbl .new")].map(x => x.textContent), ["Billed On Peak (U)", "Billed Off Peak (U)"]);
 assert(card("Rule 2 · Remove duplicate demand").querySelector(".gone").textContent === "Removed");
+assert(card("Rule 1 · Matching pairs").querySelector(".new").textContent === "A → Billed On Peak (U), B → Billed Off Peak (U)");
 
 // Duplicate demand: its rule alone, preview waits for the choice
 nav("Duplicate demand").click(); await tick();

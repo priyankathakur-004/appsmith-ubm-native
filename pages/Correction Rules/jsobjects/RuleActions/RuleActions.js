@@ -62,6 +62,15 @@ export default {
 		fetch_cr_values.run();
 	},
 
+	// The query's run function, taken before the first await: Appsmith re-evaluates the page
+	// while an async function waits, and a later lookup of .run can come back empty.
+	_runner() {
+		const q = run_cr_rule;
+		const fn = q && q.run;
+		if (typeof fn !== 'function') return () => { throw new Error('The query is not ready yet. Wait a moment and run again.'); };
+		return fn.bind(q);
+	},
+
 	_cust() {
 		return Number(CustomerSelect.selectedOptionValue || appsmith.store.selectedCustomerId) || 0;
 	},
@@ -295,6 +304,7 @@ export default {
 	async run(rule) {
 		const cust = this._cust();
 		const key = String((rule && rule.key) || '');
+		const runSql = this._runner();
 		if (!cust) return storeValue('crResult', { key: key, error: 'Pick a customer first.' }, false);
 		let built;
 		try {
@@ -310,11 +320,11 @@ export default {
 		const total = rows => rows.length ? Number(rows[0].total_matches) || rows.length : 0;
 		try {
 			// one after the other: the same query object cannot run twice at once
-			const rows = (await run_cr_rule.run({ sql: built.sql })) || [];
+			const rows = (await runSql({ sql: built.sql })) || [];
 			const obs = {};
 			for (let i = 0; i < built.targets.length; i++) {
 				const name = built.targets[i];
-				const list = rows.length ? ((await run_cr_rule.run({ sql: built.obs[name] })) || []) : [];
+				const list = rows.length ? ((await runSql({ sql: built.obs[name] })) || []) : [];
 				obs[name] = { rows: list, total: total(list) };
 			}
 			await storeValue('crResult', {
@@ -337,6 +347,7 @@ export default {
 	async runSet(set) {
 		const cust = this._cust();
 		const key = String((set && set.key) || '');
+		const runSql = this._runner();
 		if (!cust) return storeValue('crResult', { key: key, error: 'Pick a customer first.' }, false);
 		const parts = (set && set.rules) || [];
 		await storeValue('crResult', { key: key, loading: true }, false);
@@ -359,7 +370,7 @@ export default {
 					for (let k = 0; k < built.targets.length; k++) {
 						const name = built.targets[k];
 						sqls[part.id + ' ' + name] = built.obs[name];
-						const rows = (await run_cr_rule.run({ sql: built.obs[name] })) || [];
+						const rows = (await runSql({ sql: built.obs[name] })) || [];
 						lines[name] = {
 							rows: rows,
 							total: rows.length ? Number(rows[0].total_matches) || rows.length : 0,
