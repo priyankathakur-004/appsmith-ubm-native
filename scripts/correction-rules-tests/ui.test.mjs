@@ -212,6 +212,11 @@ assert.deepStrictEqual([...card("Matching observations").querySelectorAll(".new"
 assert(foot() === "2 observations found");
 footBtn().click(); await tick();
 assert(lastSet().rules[0].rule.changes[0].value === "KW");
+// choosing the unit being matched is flagged, not shown as a change
+await choose([...card("Changes to make").querySelectorAll(".sel")].pop(), "KWH", "kwh");
+assert(foot().startsWith("The new unit is the same as the current unit (KWH)") && $(".foot .dot.warn"));
+assert.deepStrictEqual([...card("Matching observations").querySelectorAll("tbody td:last-child")].map(x => x.textContent), ["No change", "No change"]);
+await choose([...card("Changes to make").querySelectorAll(".sel")].pop(), "KW", "kw");
 // Show SQL builds the queries without running them
 btn("Show SQL", $(".foot")).click(); await tick();
 let pe = events.pop(); assert(pe.name === "onPreviewSet" && pe.ctx.set.key === "demand" && pe.ctx.set.rules[0].id === "demand");
