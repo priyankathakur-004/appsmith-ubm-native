@@ -142,4 +142,37 @@ t('guards', () => {
   assert.throws(() => R._compile({ dateFrom: '2026-01-01', dateTo: '2025-12-31' }, 1, 500), /starts after/);
 });
 
+t('row sources and value lists come from fields()', () => {
+  const s = R._sources(94512, D);
+  assert(s.bill.startsWith('SELECT li.bill_id, MAX(li.statement_date)::date AS statement_date, MAX(UPPER(li.commodity)) AS utility,'), s.bill);
+  assert(s.bill.includes('COUNT(*) AS line_count, SUM(li.charge) AS total_charges FROM ') && s.bill.endsWith(' GROUP BY li.bill_id'), s.bill);
+  assert(s.obs.startsWith('SELECT li.bill_id, li.code, li.uom, li.usage, li.charge, li.category, li.description, UPPER(li.commodity) AS utility, li.statement_date::date AS statement_date, li.vendor_name AS vendor FROM '), s.obs);
+  const v = R._valuesSql(94512);
+  assert(v.includes("WHEN GROUPING(li.code) = 0 THEN 'code'") && v.includes("ELSE 'vendor' END AS field"), v);
+  assert(v.includes('GROUP BY GROUPING SETS ((li.code), (li.uom), (li.category), (li.description), (UPPER(li.commodity)), (li.vendor_name))'), v);
+  assert(v.includes("li.customer_id = 94512 AND li.bill_type <> 'historical' AND li.workflow_state = 'processed'") && v.includes('r.rn <= 300'), v);
+  assert(R._valuesSql("1; drop").includes('li.customer_id = 0 '));
+});
+
+t('a field added with one line is filterable and gets its dropdown', () => {
+  const base = R.fields;
+  const add = (bill, obs) => { R.fields = () => { const F = base.call(R); F.bill.push(...bill); F.obs.push(...obs); return F; }; };
+  try {
+    add([{ id: 'has_late_fee', label: 'Has a late fee', column: 'has_late_fee', type: 'number', sql: "MAX(CASE WHEN li.code = 'LATE_FEE' THEN 1 ELSE 0 END)" }],
+      [{ id: 'rate_code', label: 'Rate code', column: 'rate_code', type: 'enum', options: 'rate_code', sql: 'li.rate_code' }]);
+    const r = C({ conditions: [{ field: 'bill.has_late_fee', op: 'eq', value: '1' }],
+      aliases: [{ name: 'A', conditions: [{ field: 'A.rate_code', op: 'eq', value: 'GS-1' }] }] });
+    assert(r.sql.includes("MAX(CASE WHEN li.code = 'LATE_FEE' THEN 1 ELSE 0 END) AS has_late_fee") && r.sql.includes('bl.has_late_fee = 1'), r.sql);
+    assert(r.sql.includes('li.rate_code FROM ') && r.sql.includes("o_a.rate_code = 'GS-1'"), r.sql);
+    assert(r.sql.includes('SELECT bl.bill_id, ') && r.sql.includes('bl.has_late_fee, COUNT(*) OVER ()'), r.sql);
+    const v = R._valuesSql(1);
+    assert(v.includes("WHEN GROUPING(li.vendor_name) = 0 THEN 'vendor' ELSE 'rate_code' END") && v.includes(', (li.rate_code))'), v);
+    // a bad definition fails with a message instead of building broken SQL
+    add([], [{ id: 'x', label: 'X', column: 'Bad Col', type: 'text', sql: 'li.x' }]);
+    throws({}, /Field x needs a column name and sql/);
+    add([{ id: 'rc', label: 'RC', column: 'rc', type: 'enum', options: 'nope', sql: 'MAX(li.x)' }], []);
+    assert.throws(() => R._valuesSql(1), /needs an observation value list named nope/);
+  } finally { R.fields = base; }
+});
+
 if (!quiet) console.log(n + ' compiler tests passed');

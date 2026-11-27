@@ -11,29 +11,45 @@ export default {
 	// are off), so every column name comes from fields() below and every typed
 	// value is checked and quoted in _compile.
 
-	// The fields the builder offers. options names a value list from the
-	// values query (field = that name).
+	// The fields the builder offers. This list is the only place a field is
+	// defined: the row sources and the dropdown value lists are built from it.
+	//
+	// To add a field, add one line:
+	//   id      what rules save (keep it stable once rules exist)
+	//   label   what the builder shows
+	//   column  the column name in the row source (lowercase, a-z 0-9 _)
+	//   type    text | enum | number | date
+	//   sql     the expression over a line of analytics_billing_line_items (li).
+	//           Bill fields sum up all the bill's lines, so they need an
+	//           aggregate (MAX, SUM, COUNT, BOOL_OR, ...); observation fields
+	//           read one line.
+	//   options (enum/text) adds a dropdown of the customer's most common
+	//           values. On an observation field it names a new value list built
+	//           from that field's sql; on a bill field it reuses an observation
+	//           list of the same name.
+	//   hide    usable in saved rules but not offered in the builder
 	fields() {
 		return {
 			bill: [
-				{ id: 'bill_id', label: 'Bill ID', column: 'bill_id', type: 'number' },
-				{ id: 'statement_date', label: 'Statement date', column: 'statement_date', type: 'date' },
-				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility' },
-				{ id: 'vendor', label: 'Vendor', column: 'vendor', type: 'enum', options: 'vendor' },
-				{ id: 'account', label: 'Account number', column: 'account', type: 'text' },
-				{ id: 'location_name', label: 'Location', column: 'location_name', type: 'text' },
-				{ id: 'line_count', label: 'Number of lines', column: 'line_count', type: 'number' },
-				{ id: 'total_charges', label: 'Total of line charges', column: 'total_charges', type: 'number' }
+				{ id: 'bill_id', label: 'Bill ID', column: 'bill_id', type: 'number', sql: 'li.bill_id' },
+				{ id: 'statement_date', label: 'Statement date', column: 'statement_date', type: 'date', sql: 'MAX(li.statement_date)::date' },
+				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility', sql: 'MAX(UPPER(li.commodity))' },
+				{ id: 'vendor', label: 'Vendor', column: 'vendor', type: 'enum', options: 'vendor', sql: 'MAX(li.vendor_name)' },
+				{ id: 'account', label: 'Account number', column: 'account', type: 'text', sql: 'MAX(li.account_code)' },
+				{ id: 'location_name', label: 'Location', column: 'location_name', type: 'text', sql: 'MAX(li.location_description)' },
+				{ id: 'line_count', label: 'Number of lines', column: 'line_count', type: 'number', sql: 'COUNT(*)' },
+				{ id: 'total_charges', label: 'Total of line charges', column: 'total_charges', type: 'number', sql: 'SUM(li.charge)' }
 			],
 			obs: [
-				{ id: 'code', label: 'Observation type (code)', column: 'code', type: 'enum', options: 'code' },
-				{ id: 'uom', label: 'Unit of measure', column: 'uom', type: 'enum', options: 'uom' },
-				{ id: 'usage', label: 'Quantity', column: 'usage', type: 'number' },
-				{ id: 'charge', label: 'Charge ($)', column: 'charge', type: 'number' },
-				{ id: 'category', label: 'Category', column: 'category', type: 'enum', options: 'category' },
-				{ id: 'description', label: 'Description', column: 'description', type: 'text', options: 'description' },
-				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility' },
-				{ id: 'vendor', label: 'Vendor', column: 'vendor', type: 'enum', options: 'vendor', hide: true }
+				{ id: 'code', label: 'Observation type (code)', column: 'code', type: 'enum', options: 'code', sql: 'li.code' },
+				{ id: 'uom', label: 'Unit of measure', column: 'uom', type: 'enum', options: 'uom', sql: 'li.uom' },
+				{ id: 'usage', label: 'Quantity', column: 'usage', type: 'number', sql: 'li.usage' },
+				{ id: 'charge', label: 'Charge ($)', column: 'charge', type: 'number', sql: 'li.charge' },
+				{ id: 'category', label: 'Category', column: 'category', type: 'enum', options: 'category', sql: 'li.category' },
+				{ id: 'description', label: 'Description', column: 'description', type: 'text', options: 'description', sql: 'li.description' },
+				{ id: 'utility', label: 'Utility', column: 'utility', type: 'enum', options: 'utility', sql: 'UPPER(li.commodity)' },
+				{ id: 'statement_date', label: 'Statement date', column: 'statement_date', type: 'date', sql: 'li.statement_date::date', hide: true },
+				{ id: 'vendor', label: 'Vendor', column: 'vendor', type: 'enum', options: 'vendor', sql: 'li.vendor_name', hide: true }
 			],
 			ops: {
 				text: ['eq', 'neq', 'in', 'not_in', 'contains', 'not_contains', 'starts', 'empty', 'not_empty'],
@@ -52,14 +68,52 @@ export default {
 
 	initPage() {
 		getCustomers.run();
-		fetch_cr_values.run();
+		this.loadValues();
+	},
+
+	// Fills the dropdowns for the picked customer.
+	loadValues() {
+		let sql;
+		try {
+			sql = this._valuesSql(this._cust());
+		} catch (e) {
+			return showAlert(this._friendly(e), 'error');
+		}
+		return fetch_cr_values.run({ sql: sql });
+	},
+
+	// One scan of the customer's lines that returns (field, value, n) for every
+	// value list in fields(), the 300 most common values per list.
+	_valuesSql(cust) {
+		const F = this.fields();
+		const lists = [];
+		F.obs.forEach(f => {
+			if (!f.options || lists.some(l => l.name === f.options)) return;
+			if (lists.some(l => l.sql === f.sql)) throw new Error('Two value lists read the same column: ' + f.options);
+			lists.push({ name: f.options, sql: f.sql });
+		});
+		F.bill.forEach(f => {
+			if (f.options && !lists.some(l => l.name === f.options))
+				throw new Error('Bill field ' + f.id + ' needs an observation value list named ' + f.options);
+		});
+		if (!lists.length) return 'SELECT NULL::text AS field, NULL::text AS value, 0 AS n WHERE false';
+		const which = lists.length === 1 ? "'" + lists[0].name + "'"
+			: 'CASE ' + lists.slice(0, -1).map(l => 'WHEN GROUPING(' + l.sql + ") = 0 THEN '" + l.name + "'").join(' ') +
+				" ELSE '" + lists[lists.length - 1].name + "' END";
+		return 'SELECT field, value, n FROM (' +
+			'SELECT g.*, ROW_NUMBER() OVER (PARTITION BY g.field ORDER BY g.n DESC) AS rn FROM (' +
+			'SELECT ' + which + ' AS field, COALESCE(' + lists.map(l => '(' + l.sql + ')::text').join(', ') + ') AS value, COUNT(*) AS n' +
+			' FROM bill_management_v2.analytics_billing_line_items li' +
+			' WHERE li.customer_id = ' + (Number(cust) || 0) + " AND li.bill_type <> 'historical' AND li.workflow_state = 'processed'" +
+			' GROUP BY GROUPING SETS (' + lists.map(l => '(' + l.sql + ')').join(', ') + ')' +
+			') g) r WHERE r.rn <= 300 ORDER BY field, n DESC';
 	},
 
 	async customerChanged() {
 		await storeValue('selectedCustomerId', CustomerSelect.selectedOptionValue);
 		await storeValue('crResult', null, false);
 		await storeValue('crSql', null, false);
-		fetch_cr_values.run();
+		this.loadValues();
 	},
 
 	// The query's run function, taken before the first await: Appsmith re-evaluates the page
@@ -85,14 +139,16 @@ export default {
 		const where = "li.customer_id = " + cust +
 			" AND li.bill_type <> 'historical' AND li.workflow_state = 'processed'" +
 			" AND li.statement_date >= DATE '" + from + "' AND li.statement_date < DATE '" + to + "' + 1";
+		// every field's expression, named by its column; bill_id first, the join key
+		const F = this.fields();
+		const pick = list => list.filter(f => f.column !== 'bill_id').map(f => {
+			if (!/^[a-z_][a-z0-9_]*$/.test(f.column) || !f.sql) throw new Error('Field ' + f.id + ' needs a column name and sql');
+			return f.sql === 'li.' + f.column ? f.sql : f.sql + ' AS ' + f.column;
+		});
+		const table = ' FROM bill_management_v2.analytics_billing_line_items li WHERE ' + where;
 		return {
-			bill: "SELECT li.bill_id, MAX(li.statement_date)::date AS statement_date, MAX(UPPER(li.commodity)) AS utility," +
-				" MAX(li.vendor_name) AS vendor, MAX(li.account_code) AS account, MAX(li.location_description) AS location_name," +
-				" COUNT(*) AS line_count, SUM(li.charge) AS total_charges" +
-				" FROM bill_management_v2.analytics_billing_line_items li WHERE " + where + " GROUP BY li.bill_id",
-			obs: "SELECT li.bill_id, li.code, li.uom, li.usage, li.charge, li.category, li.description, UPPER(li.commodity) AS utility," +
-				" li.statement_date::date AS statement_date, li.vendor_name AS vendor" +
-				" FROM bill_management_v2.analytics_billing_line_items li WHERE " + where
+			bill: 'SELECT ' + ['li.bill_id'].concat(pick(F.bill)).join(', ') + table + ' GROUP BY li.bill_id',
+			obs: 'SELECT ' + ['li.bill_id'].concat(pick(F.obs)).join(', ') + table
 		};
 	},
 
