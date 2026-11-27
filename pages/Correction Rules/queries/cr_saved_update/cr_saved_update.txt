@@ -1,0 +1,31 @@
+-- Save over a correction rule: its settings, and its name when the payload
+-- has one. When the payload has "seen" (the version the page opened), the row
+-- is only written if nobody has saved it since; otherwise no row comes back.
+UPDATE ubm_app.correction_rules_saved AS r
+SET
+    name = CASE
+               WHEN COALESCE(btrim(input.p ->> 'name'), '') <> '' THEN btrim(input.p ->> 'name')
+               ELSE r.name
+           END,
+    state = CASE
+                WHEN jsonb_typeof(input.p -> 'state') = 'object' THEN input.p -> 'state'
+                ELSE r.state
+            END,
+    updated_by = COALESCE(input.p ->> 'by', r.updated_by),
+    updated_at = now()
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE r.id = (input.p ->> 'id')::bigint
+  AND r.rule_key = input.p ->> 'key'
+  AND r.deleted_at IS NULL
+  AND (
+        COALESCE(input.p ->> 'seen', '') = ''
+        OR floor(extract(epoch FROM r.updated_at) * 1000000)::bigint::text = input.p ->> 'seen'
+      )
+RETURNING
+    r.id::text AS id,
+    r.name,
+    r.rule_key,
+    r.state,
+    r.updated_by,
+    r.updated_at,
+    floor(extract(epoch FROM r.updated_at) * 1000000)::bigint::text AS version;

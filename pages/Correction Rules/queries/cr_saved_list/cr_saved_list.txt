@@ -1,0 +1,15 @@
+-- Saved correction rules, most recently saved first, shared by everyone and
+-- every customer. Deleted rules (deleted_at set) are left out. version changes
+-- on every save and lets a save notice that someone else saved the rule first.
+SELECT
+    id::text AS id,
+    name,
+    rule_key,
+    state,
+    updated_by,
+    updated_at,
+    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version
+FROM ubm_app.correction_rules_saved
+WHERE deleted_at IS NULL
+ORDER BY updated_at DESC
+LIMIT 500;

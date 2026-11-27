@@ -195,8 +195,8 @@ assert.strictEqual([...$(".checks").querySelectorAll("input")].filter(x => x.che
 [...$(".checks").querySelectorAll(".chk")].find(l => l.textContent === "REACT_DEM").querySelector("input").click(); await tick();
 assert(document.body.textContent.includes("Selected observation types (25)"));
 assert(foot() === "Select a target unit to preview changes." && !footBtn().disabled, "run does not wait for a unit");
-assert.deepStrictEqual([...$(".foot").querySelectorAll("button")].map(x => x.textContent), ["Clear all", "Show SQL", "Run query"]);
-assert(![...$$("button")].some(x => /Save|Preview changes|Review changes/.test(x.textContent)), "no save or preview buttons");
+assert.deepStrictEqual([...$(".foot").querySelectorAll("button")].map(x => x.textContent), ["Save rule", "Clear all", "Show SQL", "Run query"]);
+assert(![...$$("button")].some(x => /Save changes|Apply|Preview changes|Review changes/.test(x.textContent)), "nothing that writes to UBM (only Save rule)");
 assert(!card("Find matching observations").querySelector(".btn.primary"), "one Run query, in the footer");
 footBtn().click(); await tick();
 let set = lastSet();
@@ -388,6 +388,78 @@ assert($("pre.sql").textContent.includes("-- Matching lines A\nSELECT 2") && $("
 push({ running: true }); await tick();
 assert(document.body.textContent.includes("Searching bills… 0s"));
 ok("show SQL and running state");
+
+// 7. Saved rules: save a page as a new rule, reopen it, save over it, delete it
+push({ running: false, result: null, sqlInfo: null, saved: [], savedError: "", saveResult: null }); await tick();
+assert($(".nav").textContent.includes("No saved rules yet"));
+nav("Duplicate generation").click(); await tick();
+btn("Save rule").click(); await tick();
+assert($("#cr-save-name"), "name box opens");
+assert(btn("Save", $(".save-box")).disabled, "no name, no save");
+input($("#cr-save-name"), "  Victra dup gen  "); await tick();
+btn("Save", $(".save-box")).click(); await tick();
+let sev = events.pop();
+assert(sev.name === "onSaveRule", sev.name);
+const sv = sev.ctx.save;
+assert(sv.mode === "new" && sv.name === "Victra dup gen" && sv.key === "dupgen" && sv.token, JSON.stringify(sv));
+assert(sv.state.params && sv.state.params.r1.op === "eq" && sv.state.params.A.value === "Generation (U)" && !("dateFrom" in sv.state), JSON.stringify(sv.state));
+assert(btn("Saving", $(".foot")).disabled, "busy while saving");
+// an answer meant for another save is ignored
+push({ saveResult: { token: "other", error: "nope" } }); await tick();
+assert(!document.body.textContent.includes("nope"));
+const row = { id: "7", name: "Victra dup gen", key: "dupgen", state: JSON.parse(JSON.stringify(sv.state)), by: "a@b.c", version: "100" };
+push({ saved: [row], saveResult: { token: sv.token, row } }); await tick();
+assert(!$("#cr-save-name") && $(".save-ok").textContent.includes("Saved “Victra dup gen”"));
+assert($(".saved-pill").textContent === "Saved rule: Victra dup gen");
+assert($(".nav-saved.on") && $(".nav-saved .nav-sub").textContent === "Duplicate generation");
+assert(!$$(".nav-i:not(.nav-saved)").some(x => x.classList.contains("on")), "page item not highlighted while a saved rule is open");
+// a second rule with the same name (any case) is stopped in the widget
+btn("Save as new").click(); await tick();
+assert($("#cr-save-name").value === "Victra dup gen (copy)");
+input($("#cr-save-name"), "victra DUP gen"); await tick();
+const before = events.length;
+btn("Save", $(".save-box")).click(); await tick();
+assert(events.length === before, "duplicate name not sent");
+assert($(".save-box .err").textContent.includes("already called"));
+btn("Cancel", $(".save-box")).click(); await tick();
+// Save writes over the open rule, with the version it opened
+btn("Save", $(".foot")).click(); await tick();
+sev = events.pop();
+assert(sev.name === "onSaveRule" && sev.ctx.save.mode === "update" && sev.ctx.save.id === "7" && sev.ctx.save.seen === "100", JSON.stringify(sev.ctx.save));
+push({ saveResult: { token: sev.ctx.save.token, error: "x@y.z saved this rule after you opened it." } }); await tick();
+assert($(".save-box .err").textContent.includes("saved this rule after you opened it"));
+// switching page closes the saved rule; opening it from the list restores its settings
+const saved2 = Object.assign({}, row, { state: { params: Object.assign({}, row.state.params, { r1: Object.assign({}, row.state.params.r1, { op: "gt" }) }) } });
+push({ saved: [saved2] }); await tick();
+nav("Peak usage mapping").click(); await tick();
+assert(!$(".saved-pill") && !$(".nav-saved.on"));
+$(".nav-saved").click(); await tick();
+assert($("h1").textContent === "Compare generation observations" && $(".saved-pill"));
+btn("Show SQL").click(); await tick();
+sev = events.pop();
+assert(sev.name === "onPreviewSet" && sev.ctx.set.rules.find(r => r.id === "r1").rule.cross[0].op === "gt", JSON.stringify(sev.ctx.set.rules));
+btn("Hide SQL").click(); await tick();
+// a saved custom rule comes back with its conditions, new row ids and the page's dates
+const customRow = { id: "8", name: "Late fees", key: "custom", version: "5", by: "a@b.c",
+  state: { rule: { match: "ALL", conditions: [{ id: "n1", field: "bill.total_charges", op: "gt", value: "500", mode: "value", valueField: "" }], aliases: [], cross: [], changes: [] }, advanced: false } };
+push({ saved: [customRow, saved2] }); await tick();
+const dateNow = $("input[type=date]").value;
+$$(".nav-saved")[0].click(); await tick();
+assert($("h1").textContent === "Find bills" && $(".saved-pill").textContent.includes("Late fees"));
+btn("Run query").click(); await tick();
+sev = events.pop();
+assert(sev.name === "onRun" && sev.ctx.rule.conditions[0].value === "500" && sev.ctx.rule.conditions[0].id !== "n1" && sev.ctx.rule.dateFrom === dateNow, JSON.stringify(sev.ctx.rule));
+// delete asks twice
+const before2 = events.length;
+btn("Delete saved rule").click(); await tick();
+assert(events.length === before2, "first click only arms delete");
+btn("Click again to delete").click(); await tick();
+sev = events.pop();
+assert(sev.name === "onDeleteRule" && sev.ctx.del.id === "8", JSON.stringify(sev));
+push({ saved: [saved2], saveResult: { token: sev.ctx.del.token, ok: true } }); await tick();
+assert(!$(".saved-pill") && document.body.textContent.includes("Deleted “Late fees”"));
+assert($$(".nav-saved").length === 1);
+ok("saved rules: save, reopen, save over, delete");
 
 const bad = errs.filter(e => !/not wrapped in act/.test(e));
 assert(bad.length === 0, bad.join("\n"));

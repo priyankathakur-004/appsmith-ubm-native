@@ -1,0 +1,27 @@
+-- Save a new correction rule: the rule page (rule_key) and its settings
+-- (state). Prepared statements are off, so the values arrive as one JSON
+-- literal whose single quotes the page has already doubled. A name another
+-- live rule already uses (ignoring case) hits the unique index and is skipped,
+-- so no row comes back.
+INSERT INTO ubm_app.correction_rules_saved
+    (name, rule_key, state, customer_id, created_by, updated_by)
+SELECT
+    btrim(p ->> 'name'),
+    p ->> 'key',
+    p -> 'state',
+    NULLIF(p ->> 'cust', '')::int,
+    p ->> 'by',
+    p ->> 'by'
+FROM (SELECT '{{ this.params.payload || "{}" }}'::jsonb AS p) AS input
+WHERE COALESCE(btrim(p ->> 'name'), '') <> ''
+  AND COALESCE(p ->> 'key', '') <> ''
+  AND jsonb_typeof(p -> 'state') = 'object'
+ON CONFLICT DO NOTHING
+RETURNING
+    id::text AS id,
+    name,
+    rule_key,
+    state,
+    updated_by,
+    updated_at,
+    floor(extract(epoch FROM updated_at) * 1000000)::bigint::text AS version;

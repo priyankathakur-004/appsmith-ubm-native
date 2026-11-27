@@ -69,6 +69,7 @@ export default {
 	initPage() {
 		getCustomers.run();
 		this.loadValues();
+		this.loadSaved();
 	},
 
 	// Fills the dropdowns for the picked customer.
@@ -118,11 +119,98 @@ export default {
 
 	// The query's run function, taken before the first await: Appsmith re-evaluates the page
 	// while an async function waits, and a later lookup of .run can come back empty.
-	_runner() {
-		const q = run_cr_rule;
+	_runner(query) {
+		const q = query || run_cr_rule;
 		const fn = q && q.run;
 		if (typeof fn !== 'function') return () => { throw new Error('The query is not ready yet. Wait a moment and run again.'); };
 		return fn.bind(q);
+	},
+
+	// ---- saved rules: ubm_app.correction_rules_saved in UBM_Appsmith_DB ----
+	// The UBM database is read-only, so rules are kept in our own database.
+	// A saved rule is one rule page and its settings (never the dates), shared
+	// by everyone and every customer; names are unique ignoring case.
+
+	// Text goes into SQL by literal substitution (prepared statements are off),
+	// so it travels as one JSON value with its single quotes doubled here.
+	_payload(obj) {
+		return JSON.stringify(obj).split("'").join("''");
+	},
+
+	_savedRow(r) {
+		let st = r.state;
+		if (typeof st === 'string') { try { st = JSON.parse(st); } catch (e) { st = null; } }
+		return {
+			id: String(r.id), name: r.name || '', key: r.rule_key || '', state: st || null,
+			by: r.updated_by || '', at: String(r.updated_at || ''), version: String(r.version || '')
+		};
+	},
+
+	async loadSaved() {
+		const list = this._runner(cr_saved_list);
+		try {
+			const rows = (await list()) || [];
+			await storeValue('crSaved', rows.map(r => this._savedRow(r)), false);
+			await storeValue('crSavedError', '', false);
+			return rows;
+		} catch (e) {
+			await storeValue('crSavedError', 'Saved rules could not be loaded. ' + this._friendly(e), false);
+			return [];
+		}
+	},
+
+	// save = { token, mode: new | update, id, seen, name, key, state } from the widget.
+	// The answer goes to crSaveResult with the same token.
+	async saveRule(save) {
+		const add = this._runner(cr_saved_add), update = this._runner(cr_saved_update), list = this._runner(cr_saved_list);
+		const sv = save || {};
+		const reply = r => storeValue('crSaveResult', Object.assign({ token: String(sv.token || '') }, r), false);
+		const by = (appsmith.user && appsmith.user.email) || 'unknown';
+		const keys = ['missing', 'dupgen', 'constellation', 'peak', 'dupdem', 'demand', 'custom'];
+		const name = String(sv.name || '').trim();
+		try {
+			if (keys.indexOf(sv.key) < 0) return reply({ error: 'Unknown rule page: ' + sv.key });
+			if (!sv.state || typeof sv.state !== 'object') return reply({ error: 'Nothing to save.' });
+			let row;
+			if (sv.mode === 'update') {
+				row = ((await update({ payload: this._payload({ id: Number(sv.id), key: sv.key, state: sv.state, seen: sv.seen || '', by }) })) || [])[0];
+				if (!row) {
+					// removed, or saved by someone else since it was opened here
+					const rows = (await list()) || [];
+					await storeValue('crSaved', rows.map(r => this._savedRow(r)), false);
+					const now = rows.find(r => String(r.id) === String(sv.id));
+					return reply({ error: now
+						? now.updated_by + ' saved this rule after you opened it. Open it again to see their version, or use Save as new to keep yours.'
+						: 'This rule was deleted by someone else. Use Save as new to keep it.' });
+				}
+			} else {
+				if (!name) return reply({ error: 'Give the rule a name.' });
+				if (name.length > 80) return reply({ error: 'Keep the name under 80 characters.' });
+				row = ((await add({ payload: this._payload({ name, key: sv.key, state: sv.state, cust: this._cust() || null, by }) })) || [])[0];
+				if (!row) return reply({ error: 'A saved rule is already called “' + name + '”. Pick another name.' });
+			}
+			const rows = (await list()) || [];
+			await storeValue('crSaved', rows.map(r => this._savedRow(r)), false);
+			return reply({ row: this._savedRow(row) });
+		} catch (e) {
+			return reply({ error: 'Could not save the rule. ' + this._friendly(e) });
+		}
+	},
+
+	// del = { token, id }: marks the rule deleted; its name becomes free again.
+	async deleteRule(del) {
+		const remove = this._runner(cr_saved_remove), list = this._runner(cr_saved_list);
+		const d = del || {};
+		const reply = r => storeValue('crSaveResult', Object.assign({ token: String(d.token || '') }, r), false);
+		try {
+			const by = (appsmith.user && appsmith.user.email) || 'unknown';
+			await remove({ payload: this._payload({ id: Number(d.id), by }) });
+			const rows = (await list()) || [];
+			await storeValue('crSaved', rows.map(r => this._savedRow(r)), false);
+			return reply({ ok: true });
+		} catch (e) {
+			return reply({ error: 'Could not delete the rule. ' + this._friendly(e) });
+		}
 	},
 
 	_cust() {
